@@ -1,0 +1,34 @@
+name: Flow
+channels:
+    - conda-forge
+    - defaults
+dependencies:
+    - python>=3.9
+    - pytest
+    - sphinx
+    - numpy 
+    - pandas
+    - matplotlib
+    - cartopy
+    - seaborn
+    - dask 
+    - netCDF4 
+    - bottleneck
+    - statsmodels
+    - pip
+    - nbsphinx
+    - ipywidgets
+    - proplot
+    - iris
+    - pip:
+        - myst_parser
+        - nc-time-axis
+        - black
+        - mdutils
+        - scikit-learn
+        - intake-esm
+        - aiohttp-requests
+        - xarray[complete]
+        - dask_jobqueue
+        - EMD-signal
+        
