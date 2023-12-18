@@ -3,7 +3,7 @@ channels:
     - conda-forge
     - defaults
 dependencies:
-    - python>=3.9
+    - python>=3.12
     - pytest
     - sphinx
     - numpy 
@@ -20,6 +20,7 @@ dependencies:
     - ipywidgets
     - proplot
     - iris
+    - geoviews
     - pip:
         - myst_parser
         - nc-time-axis
@@ -31,4 +32,5 @@ dependencies:
         - xarray[complete]
         - dask_jobqueue
         - EMD-signal
+
         
