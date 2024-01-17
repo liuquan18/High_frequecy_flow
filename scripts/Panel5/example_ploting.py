@@ -21,23 +21,27 @@ days = pd.date_range('1850-06-04','1850-06-30',freq = 'D')
 
 BE = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/example_blocking_event/ex69_first30.nc")
 #%%
-hours = pd.date_range(BE.time[0].values,BE.time[-1].values,periods=BE.time.shape[0]*2)
+def BE_time_int(BE):
+    hours = pd.date_range(BE.time[0].values,BE.time[-1].values,periods=BE.time.shape[0]*2)
 #%%
-BE_int = BE['IB index'].interp(time = hours, method = 'linear')
+    BE_int = BE['IB index'].interp(time = hours, method = 'linear')
 #%%
-BE_sum = BE_int.sum(dim = ('lat','lon'))
+    BE_sum = BE_int.sum(dim = ('lat','lon'))
 #%%
 # find the time when BE_sum is maximum
-time_max = BE_sum.sel(time = BE_sum == BE_sum.max(), method = 'nearest').time
+    time_max = BE_sum.sel(time = BE_sum == BE_sum.max(), method = 'nearest').time
 # divide the hours into 2 parts, before and after the time_max
 # Create a boolean mask
-mask = hours.values < time_max.values
+    mask = hours.values < time_max.values
 
 # Get the hours before time_max
-hours_before = hours[mask]
+    hours_before = hours[mask]
 
 # Get the hours after time_max
-hours_after = hours[~mask]
+    hours_after = hours[~mask]
+    return BE_int,hours_before,hours_after
+
+BE_int, hours_before, hours_after = BE_time_int(BE)
 # %%
 fig, axes = plt.subplots(1, 1, figsize=(10, 10), subplot_kw={'projection': ccrs.Orthographic(-20,60)})
 cmap_before = plt.cm.get_cmap('Reds', len(hours_before))
