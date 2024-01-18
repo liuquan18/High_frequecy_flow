@@ -74,6 +74,7 @@ def _GHGS2(Z, lat_n=80, lat_0=60, lat_s=40, delta=0):
 def IB_index(Z, lat_delta=15, lat0_min=30, lat0_max=75, thresh=-10, LLB_filter=False, LLB_thresh=-5, MGI=False):
     
     # set up memory storage
+    Z = Z.sortby('lat', ascending=False)
     IB = Z.sel(lat=slice(lat0_max, lat0_min)).copy()
     s_test = np.zeros([*IB.shape])
     n_test = np.zeros([*IB.shape])
