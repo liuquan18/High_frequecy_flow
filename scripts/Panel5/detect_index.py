@@ -6,7 +6,7 @@ import pandas as pd
 import glob
 import cartopy.crs as ccrs
 from cartopy.util import add_cyclic_point
-
+import matplotlib.colors as mcolors
 
 import proplot as pplt
 
@@ -56,11 +56,11 @@ def erase_white_line(data):
 
 
 # %%
-def BE_time_int(BE, folder=3):
+def BE_time_int(BE, folder=5):
     hours = pd.date_range(
         BE.time[0].values, BE.time[-1].values, periods=BE.time.shape[0] * folder
     )
-    BE_int = BE.interp(time=hours, method="linear")
+    BE_int = BE.interp(time=hours, method="slinear")
     return BE_int
 
 
@@ -96,7 +96,7 @@ BE_right = BE_R  # .isel(time = slice(0,55))
 fig, axes = plt.subplots(
     1,
     2,
-    figsize=(180 / 25.4, 80 / 25.4),
+    figsize=(180 / 25.4, 90 / 25.4),
     subplot_kw={"projection": ccrs.Orthographic(-20, 60)},
 )
 cmap = pplt.Colormap("Reds")
@@ -131,6 +131,29 @@ for ax in axes:
     ax.set_global()
     ax.gridlines(color="grey4", linestyle="-", linewidth=0.5)
     ax.set_title("")
-fig.tight_layout()
+# Create a new axes for the colorbar
+cbar_ax = fig.add_axes([0.25, 0.05, 0.55, 0.03])
+
+# Create a Normalize instance
+norm = mcolors.Normalize(vmin=0, vmax=30)
+
+# Create a ScalarMappable instance
+sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+sm.set_array([])
+
+# Create the colorbar
+cbar = fig.colorbar(sm, cax=cbar_ax, orientation="horizontal")
+cbar.ax.xaxis.grid(True, which='major', color='black', linestyle='-',linewidth=2)
+
+
+# Set the colorbar ticks
+cbar.set_ticks(np.arange(0, 31, 5))
+# no xmin ticks
+cbar.ax.tick_params(axis='x', which='both', length=0)
+# add text at the end of the colorbar
+cbar.ax.text(31.1, 0.5, 'Days', va='center', ha='left')
+
+# fig.tight_layout()
+
 # plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/panel/Bloking_event.pdf")
 # %%
