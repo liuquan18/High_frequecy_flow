@@ -1,0 +1,82 @@
+Merging files for ssp585 4 with historical
+Merging files for ssp585 2 with historical
+Merging files for ssp585 1 with historical
+Merging files for ssp585 3 with historical
+Merging files for ssp585 5 with historical
+Merging files for ssp585 6 with historical
+Merging files for ssp585 9 with historical
+Merging files for ssp585 7 with historical
+Merging files for ssp585 8 with historical
+Merging files for ssp585 10 with historical
+Merging files for ssp585 11 with historical
+Merging files for ssp585 12 with historical
+Merging files for ssp585 14 with historical
+Merging files for ssp585 15 with historical
+Merging files for ssp585 13 with historical
+Merging files for ssp585 16 with historical
+Merging files for ssp585 20 with historical
+Merging files for ssp585 18 with historical
+Merging files for ssp585 19 with historical
+Merging files for ssp585 17 with historical
+Merging files for ssp585 24 with historical
+Merging files for ssp585 21 with historical
+Merging files for ssp585 22 with historical
+Merging files for ssp585 25 with historical
+Merging files for ssp585 23 with historical
+Merging files for ssp585 26 with historical
+Merging files for ssp585 27 with historical
+Merging files for ssp585 29 with historical
+Merging files for ssp585 28 with historical
+Merging files for ssp585 30 with historical
+Merging files for ssp585 31 with historical
+Merging files for ssp585 32 with historical
+Merging files for ssp585 34 with historical
+Merging files for ssp585 33 with historical
+Merging files for ssp585 35 with historical
+Merging files for ssp585 37 with historical
+Merging files for ssp585 36 with historical
+Merging files for ssp585 38 with historical
+Merging files for ssp585 39 with historical
+Merging files for ssp585 40 with historical
+Merging files for ssp585 41 with historical
+Merging files for ssp585 42 with historical
+Merging files for ssp585 44 with historical
+Merging files for ssp585 43 with historical
+Merging files for ssp585 45 with historical
+Merging files for ssp585 46 with historical
+Merging files for ssp585 47 with historical
+Merging files for ssp585 49 with historical
+Merging files for ssp585 48 with historical
+Merging files for ssp585 50 with historical
+
+********************************************************************************
+*                                                                              *
+*  This is the automated job summary provided by DKRZ.                         *
+*  If you encounter problems, need assistance or have any suggestion, please   *
+*  write an email to                                                           *
+*                                                                              *
+*  --  support@dkrz.de --                                                      *
+*                                                                              *
+*                       We hope you enjoyed the DKRZ supercomputer LEVANTE ... *
+*
+* JobID            : 9877177
+* JobName          : mergetime                                         
+* Account          : mh0033
+* User             : m300883 (40046), mpioes (2100)                    
+* Partition        : compute
+* QOS              : normal
+* Nodelist         : l20695 (1)                                                
+* Submit date      : 2024-04-16T17:57:43
+* Start time       : 2024-04-16T17:58:18
+* End time         : 2024-04-16T19:14:55
+* Elapsed time     : 01:16:37 (Timelimit=08:00:00)                     
+* Command          : /work/mh0033/m300883/High_frequecy_flow/pre_process/
+*                    mergetime.sh
+* WorkDir          : /work/mh0033/m300883/High_frequecy_flow/pre_process
+*
+* StepID | JobName      NodeHours    MaxRSS [Byte] (@task)
+* ------------------------------------------------------------------------------
+* batch  | batch              1.3
+* extern | extern             1.3                2204K (0)
+* ------------------------------------------------------------------------------
+
