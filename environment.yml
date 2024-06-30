@@ -1,4 +1,4 @@
-name: Blocking
+name: air_sea
 channels:
     - conda-forge
 dependencies:
