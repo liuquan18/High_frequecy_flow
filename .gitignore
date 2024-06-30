@@ -161,3 +161,9 @@ cython_debug/
 
 # all data files
 data/*
+
+# all nc data
+*.nc
+
+# all log files
+*.out
