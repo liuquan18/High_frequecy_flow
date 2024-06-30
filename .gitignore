@@ -159,9 +159,11 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# all data files
+data/*
+
 # all nc data
 *.nc
 
 # all log files
 *.out
-

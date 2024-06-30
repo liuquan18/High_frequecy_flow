@@ -1,0 +1,25 @@
+name: Blocking
+channels:
+    - conda-forge
+dependencies:
+    - python>=3.12
+    - pytest
+    - sphinx
+    - numpy 
+    - pandas
+    - matplotlib
+    - cartopy
+    - dask 
+    - netCDF4 
+    - bottleneck
+    - pip
+    - nbsphinx
+    - ipywidgets
+    - pip:
+        - myst_parser
+        - mdutils
+        - aiohttp-requests
+        - xarray[complete]
+        - dask_jobqueue
+
+        
