@@ -22,5 +22,6 @@ dependencies:
         - xarray[complete]
         - dask_jobqueue
         - eofs
+        - scikit-learn
 
         
