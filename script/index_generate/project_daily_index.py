@@ -3,18 +3,22 @@ import xarray as xr
 from src.index_generate.project_index import project_field_to_pattern
 import mpi4py.MPI as MPI
 import numpy as np
+import sys
 
+#%%
+# nodes for different periods
+# first10: 1850-1859
+# last10: 2091-2100
+node = int(sys.argv[1])
+period, year_range = ['first10', '1850_1859'] if node == 1 else ['last10', '2091_2100']
+print(f"Node {node} is working on {period} ({year_range})")
 # %%
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 name = MPI.Get_processor_name()
 
-# %%
-period = 'first10'
-year_range = '1850_1859'
-# period = 'last10'
-# year_range = '2091_2100'
+
 
 daily_field_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/zg_JJA_ano_{period}"
 eof_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/EOF_result/{period[:-2]}_pattern_projected.nc"
