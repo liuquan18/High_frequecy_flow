@@ -30,7 +30,7 @@ members_single = np.array_split(members_all, size)[rank] # members on this core
 for i, member in enumerate (members_single):
     print(f"Rank {rank}, member {member}/{members_single[-1]}")
     daily_field = xr.open_dataset(f"{daily_field_path}/zg_day_MPI-ESM1-2-LR_historical_r{member}i1p1f1_gn_18500601-18590831_ano.nc")
-    daily_field = daily_field.zg.sel(plev = 50000).drop('plev')
+    daily_field = daily_field.zg.sel(plev = 50000).drop_vars('plev')
     eof = xr.open_dataset(eof_path).__xarray_dataarray_variable__
 
     projected_pcs = project_field_to_pattern(daily_field, eof, standard=False)
