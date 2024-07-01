@@ -41,7 +41,7 @@ for i, member in enumerate(members_single):
     projected_pcs = project_field_to_pattern(daily_field, eof, standard=False)
     projected_pcs.name = "pc"
     projected_pcs.to_netcdf(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_{period}/zg_JJA_ano_{year_range}_r{member}_nonstd.nc"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/projected_pc/projected_pc_{period}/zg_JJA_ano_{year_range}_r{member}_nonstd.nc"
     )
 
 # %%
