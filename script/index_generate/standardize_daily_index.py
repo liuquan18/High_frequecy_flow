@@ -3,7 +3,7 @@ import xarray as xr
 import numpy as np
 import glob
 # %%
-period = "last10"
+period = "first10"
 # %%
 # calculate the mean and std from all members and time
 all_pcs = xr.open_mfdataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_{period}_nonstd/*.nc", 
