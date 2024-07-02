@@ -1,14 +1,14 @@
 #!/bin/bash
 #SBATCH --job-name=ind_gen
-#SBATCH --time=08:00:00
+#SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --mem=500G
+#SBATCH --ntasks=5
+#SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
 #SBATCH --output=ind_gen.%j.out
 
 
-mpirun -np 5 python -u project_daily_index.py $1
+mpirun -n 5 python -u project_daily_index.py $1
 # python -u hello0index_generator.py $1 $2 $3

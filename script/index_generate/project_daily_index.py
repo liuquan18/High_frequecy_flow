@@ -9,7 +9,13 @@ import sys
 # nodes for different periods
 # first10: 1850-1859
 # last10: 2091-2100
+
+# nodes and cores
 node = int(sys.argv[1])
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+name = MPI.Get_processor_name()
 
 #%%
 period, year_range, tag, date_range = (
@@ -18,18 +24,9 @@ period, year_range, tag, date_range = (
     else ["last10", "2091_2100", "ssp585", "20910601-21000831"]
 )
 print(f"Node {node} is working on {period} ({year_range})")
-# %%
-
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-size = comm.Get_size()
-name = MPI.Get_processor_name()
-
-
 
 daily_field_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/zg_JJA_ano_{period}"
 eof_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/EOF_result/{period[:-2]}_pattern_projected.nc"
-# %%
 members_all = list(range(1, 51))  # all members
 # %%
 members_single = np.array_split(members_all, size)[rank]  # members on this core
