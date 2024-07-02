@@ -10,6 +10,8 @@ import sys
 # first10: 1850-1859
 # last10: 2091-2100
 node = int(sys.argv[1])
+
+#%%
 period, year_range, tag, date_range = (
     ["first10", "1850_1859", "historical", "18500601-18590831"]
     if node == 1
@@ -17,10 +19,12 @@ period, year_range, tag, date_range = (
 )
 print(f"Node {node} is working on {period} ({year_range})")
 # %%
+
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 name = MPI.Get_processor_name()
+
 
 
 daily_field_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/zg_JJA_ano_{period}"
@@ -39,9 +43,10 @@ for i, member in enumerate(members_single):
     eof = xr.open_dataset(eof_path).__xarray_dataarray_variable__
 
     projected_pcs = project_field_to_pattern(daily_field, eof, standard=False)
+
     projected_pcs.name = "pc"
     projected_pcs.to_netcdf(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/projected_pc/projected_pc_{period}/zg_JJA_ano_{year_range}_r{member}_nonstd.nc"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_{period}_nonstd/zg_JJA_ano_{year_range}_r{member}_nonstd.nc"
     )
 
 # %%
