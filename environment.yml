@@ -21,5 +21,7 @@ dependencies:
         - aiohttp-requests
         - xarray[complete]
         - dask_jobqueue
+        - eofs
+        - scikit-learn
 
         
