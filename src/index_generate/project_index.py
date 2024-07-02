@@ -27,7 +27,7 @@ def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='l
 
     projected_pcs = np.dot(field_flat, eof_flat.T)
 
-    Projected_pcs = xr.DataArray(projected_pcs, dims = field_data.dims[0])
+    Projected_pcs = xr.DataArray(projected_pcs, dims='time', coords={'time':field_data.time})
 
     if standard:
         # standardize the ppc with its std
