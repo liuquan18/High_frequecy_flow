@@ -4,6 +4,9 @@ import pandas as pd
 import datetime
 # %%
 def threshold(pc, N = 7):
+    """
+    extract the 1.5 standard deviation as the threshold
+    """
     df = pc.to_dataframe()
     df_window = pd.concat([df['pc'].shift(periods = i, freq = '1D').rename(i) for i in [-3,-2,-1,0,1,2,3]], axis=1).dropna(axis = 0, how = 'any')
     df_stack = df_window.stack().reset_index()
