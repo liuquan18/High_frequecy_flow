@@ -45,10 +45,11 @@ def extract_pos_extremes(df):
         sum = pd.NamedAgg(column = 'pc',aggfunc = 'sum'),
         mean = pd.NamedAgg(column = 'pc',aggfunc = 'mean'),
         max = pd.NamedAgg(column = 'pc',aggfunc = 'max'),
+        min = pd.NamedAgg(column = 'pc',aggfunc = 'min'),# add mean to make sure the data are all positive
         ).reset_index()    
     Events['end_time'] = Events['start_time'] + pd.to_timedelta(Events['duration']-1, unit='D')
 
-    Events = Events[['start_time','end_time','duration','sum','mean','max']]
+    Events = Events[['start_time','end_time','duration','sum','mean','max', 'min']]
     return Events
 # %%
 def extract_neg_extremes(df):
@@ -67,9 +68,10 @@ def extract_neg_extremes(df):
         duration = pd.NamedAgg(column = 'time',aggfunc = 'size'),
         sum = pd.NamedAgg(column = 'pc',aggfunc = 'sum'),
         mean = pd.NamedAgg(column = 'pc',aggfunc = 'mean'),
+        max = pd.NamedAgg(column = 'pc',aggfunc = 'max'),
         min = pd.NamedAgg(column = 'pc',aggfunc = 'min'),
         ).reset_index()
     Events['end_time'] = Events['start_time'] + pd.to_timedelta(Events['duration']-1, unit='D')
 
-    Events = Events[['start_time','end_time','duration','sum','mean','min']]
+    Events = Events[['start_time','end_time','duration','sum','mean','max', 'min']]
     return Events
