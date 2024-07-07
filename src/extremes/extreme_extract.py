@@ -4,7 +4,7 @@ import pandas as pd
 
 
 #%%
-def subtract_threshold(pc, pos_threshold, neg_threshold):
+def subtract_threshold(pc, threshold):
     # xarray exclude the data at 1st may to 3rd May, and the data during 28th Sep and 31st Sep
     # Create a mask for the dates to exclude
     mask_exclude = (
@@ -19,13 +19,9 @@ def subtract_threshold(pc, pos_threshold, neg_threshold):
 
     G =  df.groupby(df.index.year)['pc']
 
-
-    # positive extremes all be greater than the positive threshold
-    pos_residues = G.transform(lambda x: x - pos_threshold['threshold'].values)
-    # negative extremes all be less than the negative threshold
-    neg_residues = G.transform(lambda x: x - neg_threshold['threshold'].values)
-
-    return pos_residues.reset_index(), neg_residues.reset_index()
+    # subtract the threshold from original data
+    residues = G.transform(lambda x: x - threshold['threshold'].values)
+    return residues.reset_index()
 
 # %%
 def extract_pos_extremes(df):
