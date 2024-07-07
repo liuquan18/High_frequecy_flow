@@ -26,3 +26,50 @@ def subtract_threshold(pc, pos_threshold, neg_threshold):
     neg_residues = G.transform(lambda x: x - neg_threshold['threshold'].values)
 
     return pos_residues.reset_index(), neg_residues.reset_index()
+
+# %%
+def extract_pos_extremes(df):
+    """
+    extract exsecutively above zero events
+    """
+    # A grouper that increaments every time a non-positive value is encountered
+    Grouper_pos = df.groupby(df.time.dt.year)['pc'].transform(lambda x: x.lt(0).cumsum())
+
+    # groupby the year and the grouper
+    G = df[df['pc']>0].groupby([df.time.dt.year, Grouper_pos])
+
+    # Get the statistics of the group
+    Events = G.agg(
+        start_time = pd.NamedAgg(column = 'time',aggfunc='min'),
+        duration = pd.NamedAgg(column = 'time',aggfunc = 'size'),
+        sum = pd.NamedAgg(column = 'pc',aggfunc = 'sum'),
+        mean = pd.NamedAgg(column = 'pc',aggfunc = 'mean'),
+        max = pd.NamedAgg(column = 'pc',aggfunc = 'max'),
+        ).reset_index()    
+    Events['end_time'] = Events['start_time'] + pd.to_timedelta(Events['duration']-1, unit='D')
+
+    Events = Events[['start_time','end_time','duration','sum','mean','max']]
+    return Events
+# %%
+def extract_neg_extremes(df):
+    """
+    extract exsecutively below zero events
+    """
+    # A grouper that increaments every time a non-positive value is encountered
+    Grouper_neg = df.groupby(df.time.dt.year)['pc'].transform(lambda x: x.gt(0).cumsum())
+
+    # groupby the year and the grouper
+    G = df[df['pc']<0].groupby([df.time.dt.year, Grouper_neg])
+
+    # Get the statistics of the group
+    Events = G.agg(
+        start_time = pd.NamedAgg(column = 'time',aggfunc='min'),
+        duration = pd.NamedAgg(column = 'time',aggfunc = 'size'),
+        sum = pd.NamedAgg(column = 'pc',aggfunc = 'sum'),
+        mean = pd.NamedAgg(column = 'pc',aggfunc = 'mean'),
+        min = pd.NamedAgg(column = 'pc',aggfunc = 'min'),
+        ).reset_index()
+    Events['end_time'] = Events['start_time'] + pd.to_timedelta(Events['duration']-1, unit='D')
+
+    Events = Events[['start_time','end_time','duration','sum','mean','min']]
+    return Events
