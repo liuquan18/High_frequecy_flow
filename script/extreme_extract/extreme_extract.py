@@ -1,7 +1,6 @@
 # %%
 import xarray as xr
 import pandas as pd
-from src.extremes.extreme_threshold import threshold
 from src.extremes.extreme_extract import subtract_threshold
 from src.extremes.extreme_extract import extract_pos_extremes
 from src.extremes.extreme_extract import extract_neg_extremes
@@ -33,24 +32,30 @@ members_all = list(range(1, 51))  # all members
 members_single = np.array_split(members_all, size)[rank]  # members on this core
 
 
-#%%
-def extract_extremes(pc):
-    # calculate the threshold
-    pos_threshold, neg_threshold = threshold(pc)
-    # subtract the threshold from original data
-    pos_residues, neg_residues = subtract_threshold(pc, pos_threshold, neg_threshold)
-    # extract positive extremes
-    pos_extremes = extract_pos_extremes(pos_residues)
-    # extract negative extremes
-    neg_extremes = extract_neg_extremes(neg_residues)
-    return pos_extremes, neg_extremes
 
 #%%
 for i, member in enumerate(members_single):
     print(f"Period {period}: Rank {rank}, member {member}/{members_single[-1]}")
+    # read pc index
     pc = xr.open_dataset(
         f"{projected_pc_path}/zg_JJA_ano_{tag}_r{member}.nc"
     ).pc
-    pos_extremes, neg_extremes = extract_extremes(pc)
+
+    # positive extremes
+    # use the threshold from the first 10  all members
+    pos_threshold = pd.read_csv(
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/neg_threshold_first10_allens.csv"
+    )
+    pos_residues = subtract_threshold(pc, pos_threshold)
+    pos_extremes = extract_pos_extremes(pos_residues)
     pos_extremes.to_csv(f"{pos_extreme_save_path}/pos_extreme_events_{tag}_r{member}.csv", index = False)
+
+
+    # negative extremes
+    # use the threshold from the first 10  all members
+    neg_threshold = pd.read_csv(
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/neg_threshold_first10_allens.csv"
+    )
+    neg_residues = subtract_threshold(pc, neg_threshold)
+    neg_extremes = extract_neg_extremes(neg_residues)
     neg_extremes.to_csv(f"{neg_extreme_save_path}/neg_extreme_events_{tag}_r{member}.csv", index = False)
