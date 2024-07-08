@@ -44,7 +44,7 @@ for i, member in enumerate(members_single):
     # positive extremes
     # use the threshold from the first 10  all members
     pos_threshold = pd.read_csv(
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/neg_threshold_first10_allens.csv"
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/pos_threshold_first10_allens.csv"
     )
     pos_residues = subtract_threshold(pc, pos_threshold)
     pos_extremes = extract_pos_extremes(pos_residues)
