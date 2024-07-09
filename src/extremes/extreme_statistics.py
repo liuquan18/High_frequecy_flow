@@ -44,16 +44,19 @@ def days_in_june_to_aug(start, end):
 # %%
 def sel_pc_duration(events, pc):
 
-    sel_pcs = []
-    for i in range(len(events)):
-        sel_pc = pc.sel(time = slice(events.start_time.iloc[i], events.end_time.iloc[i]))
-        sel_pc = sel_pc.assign_coords(duration_index=("time", np.arange(1, sel_pc.sizes['time'] + 1)))
-        sel_pc_df = sel_pc.to_dataframe().reset_index()[['duration_index','pc']]
-        sel_pc_df['duration'] = events.duration.iloc[i]
-        sel_pc_df = sel_pc_df.set_index(['duration', 'duration_index'])
-        sel_pcs.append(sel_pc_df)
+    if len(events) == 0:
+        sel_pcs = None
+    else:
+        sel_pcs = []
+        for i in range(len(events)):
+            sel_pc = pc.sel(time = slice(events.start_time.iloc[i], events.end_time.iloc[i]))
+            sel_pc = sel_pc.assign_coords(duration_index=("time", np.arange(1, sel_pc.sizes['time'] + 1)))
+            sel_pc_df = sel_pc.to_dataframe().reset_index()[['duration_index','pc']]
+            sel_pc_df['duration'] = events.duration.iloc[i]
+            sel_pc_df = sel_pc_df.set_index(['duration', 'duration_index'])
+            sel_pcs.append(sel_pc_df)
 
-    sel_pcs = pd.concat(sel_pcs, axis = 0)
+        sel_pcs = pd.concat(sel_pcs, axis = 0)
     return sel_pcs
 
 # %%
