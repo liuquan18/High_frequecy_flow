@@ -56,7 +56,7 @@ def sel_pc_duration(events, pc):
             sel_pc_df = sel_pc_df.set_index(['duration', 'duration_index'])
             sel_pcs.append(sel_pc_df)
 
-        sel_pcs = pd.concat(sel_pcs, axis = 0)
+        sel_pcs = pd.concat(sel_pcs, axis = 0).sort_index()
     return sel_pcs
 
 # %%
