@@ -7,7 +7,7 @@ import pandas as pd
 # %%
 
 
-def sel_event_duration (df, duration = 5):
+def sel_event_above_duration (df, duration = 5):
 
     """
     select the extreme events, which durates 5 days or more in June to August
@@ -23,6 +23,21 @@ def sel_event_duration (df, duration = 5):
     result = df[df['days_in_JJA'] >= duration]
     return result
 
+def sel_event_duration (df, duration = 5):
+
+    """
+    select the extreme events, which durates 5 days or more in June to August
+    """
+
+    # Convert start_time and end_time to datetime if they aren't already
+    df['start_time'] = pd.to_datetime(df['start_time'])
+    df['end_time'] = pd.to_datetime(df['end_time'])
+    # Apply the function to each row
+    df['days_in_JJA'] = df.apply(lambda row: days_in_june_to_aug(row['start_time'], row['end_time']), axis=1)
+
+    # Filter rows where there are at least 5 days in June to August
+    result = df[df['days_in_JJA'] = duration]
+    return result
 
 
 def days_in_june_to_aug(start, end):
