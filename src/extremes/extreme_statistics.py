@@ -36,7 +36,7 @@ def sel_event_duration (df, duration = 5):
     df['days_in_JJA'] = df.apply(lambda row: days_in_june_to_aug(row['start_time'], row['end_time']), axis=1)
 
     # Filter rows where there are at least 5 days in June to August
-    result = df[df['days_in_JJA'] = duration]
+    result = df[df['days_in_JJA'] == duration]
     return result
 
 
