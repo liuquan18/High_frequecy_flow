@@ -171,3 +171,4 @@ data/*
 # all log files
 *.out
 
+*.png
