@@ -70,6 +70,9 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+# no png files
+docs/*.png
+docs/*.pdf
 
 # PyBuilder
 .pybuilder/
@@ -167,3 +170,5 @@ data/*
 
 # all log files
 *.out
+
+*.png
