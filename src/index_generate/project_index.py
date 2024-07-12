@@ -33,7 +33,7 @@ def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='l
         projected_pcs = field_f.dot(eof_f.T)
         Projected_pcs.append(projected_pcs)
 
-    projected_pcs = xr.concat(Projected_pcs, dim = 'plev')
+    Projected_pcs = xr.concat(Projected_pcs, dim = 'plev')
 
     if standard:
         # standardize the ppc with its std
