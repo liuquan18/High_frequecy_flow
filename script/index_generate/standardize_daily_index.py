@@ -6,10 +6,12 @@ import glob
 period = "last10"
 # %%
 # calculate the mean and std from all members and time
-all_pcs = xr.open_mfdataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_{period}_nonstd/*.nc", 
+all_pcs = xr.open_mfdataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_{period}_nonstd/troposphere*.nc", 
                             combine = 'nested', concat_dim = 'member')
-mean = all_pcs.pc.mean()
-std = all_pcs.pc.std()
+
+#%%
+mean = all_pcs.pc.mean(dim = ('time','member'))
+std = all_pcs.pc.std(dim = ('time','member'))
 # %%
 # standardize every member and save to a new folder with same name
 from_folder = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_{period}_nonstd/"
