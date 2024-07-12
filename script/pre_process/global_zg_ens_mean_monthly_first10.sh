@@ -26,4 +26,4 @@ done
 # printf "%s\n" "${file_list[@]}" > file_list.txt
 
 # Use the list with cdo ensmean
-cdo -ensmean -apply,"-selyear,1850/1859 -selmonth,5,6,7,8,9" [ "${file_list[@]}" ] /work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_season_global/zg_month_ensmean_1850_1859.nc
+cdo -O -selmonth,5/9 -ensmean -apply,-selyear,1850/1859 [ "${file_list[@]}" ] /work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_season_global/zg_month_ensmean_1850_1859.nc
