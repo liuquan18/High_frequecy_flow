@@ -1,7 +1,7 @@
 #%%
 import pandas as pd
 # %%
-def threshold(df):
+def threshold(df, type = 'pos'):
     """
     extract the 1.5 standard deviation as the threshold
     """
@@ -21,14 +21,15 @@ def threshold(df):
     # groupby dayofyear 
     G = df.groupby('adjusted_dayofyear')
     # 1.5 standard deviation as the threshold, suppose the mean is already zero (anomaly data)
-    pos_threshold = 1.5 * G['pc'].std()
-    neg_threshold = -1.5 * G['pc'].std()
-    pos_threshold = pos_threshold.reset_index()
-    neg_threshold = neg_threshold.reset_index()
-    pos_threshold.columns = ['dayofyear','threshold']
-    neg_threshold.columns = ['dayofyear','threshold']
 
-    return pos_threshold, neg_threshold
+    if type == 'pos':
+        threshold = 1.5 * G['pc'].std()
+    elif type == 'neg':
+        threshold = -1.5 * G['pc'].std()
+    threshold = threshold.reset_index()
+    threshold.columns = ['dayofyear','threshold']
+
+    return threshold
 #%%
 def construct_window(df, window = 7):
     """
