@@ -1,5 +1,6 @@
 #!/bin/bash
 # subtract the ensemble mean of the monthly data from the daily data using cdo monsub
+# by doing which a long-term trend and seasonal cycle are removed
 module load cdo
 module load parallel
 
