@@ -17,7 +17,7 @@ std = all_pcs.pc.std(dim = ('time','member'))
 from_folder = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_{period}_nonstd/"
 to_folder = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/projected_pc/projected_pc_{period}/"
 
-for file in glob.glob(from_folder + "*.nc"):
+for file in glob.glob(from_folder + "troposphere_pc_MJJAS_ano_*.nc"):
     member = file.split("_")[-2]
     pc = xr.open_dataset(file).pc
     pc = (pc - mean) / std
