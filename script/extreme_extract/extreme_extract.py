@@ -60,8 +60,8 @@ for i, member in enumerate(members_single):
 
 
     pos_extremes = pos_residues.groupby('plev')[['time','pc']].apply(extract_pos_extremes)
-
-    pos_extremes.to_csv(f"{pos_extreme_save_path}/troposphere_pos_extreme_events_{tag}_r{member}.csv", index = False)
+    pos_extremes = pos_extremes.reset_index()[['plev','start_time','end_time','duration','sum','mean','max','min']]
+    pos_extremes.to_csv(f"{pos_extreme_save_path}/troposphere_pos_extreme_events_{tag}_r{member}.csv", index=False)
 
 
     # negative extremes
@@ -71,4 +71,5 @@ for i, member in enumerate(members_single):
     )
     neg_residues = calculate_residue(pc, neg_threshold)
     neg_extremes = neg_residues.groupby('plev')[['time','pc']].apply(extract_neg_extremes)
-    neg_extremes.to_csv(f"{neg_extreme_save_path}/troposphere_neg_extreme_events_{tag}_r{member}.csv", index = False)
+    neg_extremes = neg_extremes.reset_index()[['plev','start_time','end_time','duration','sum','mean','max','min']]
+    neg_extremes.to_csv(f"{neg_extreme_save_path}/troposphere_neg_extreme_events_{tag}_r{member}.csv")
