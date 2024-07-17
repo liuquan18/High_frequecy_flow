@@ -167,22 +167,22 @@ for plev in [100000,85000,70000,50000,25000]:
 
 
     first10_pos_extremes = first10_pos[first10_pos['note'] == 'above_7'][['mean','count']]                                                                   
-    first10_pos_extremes['plev'] = plev
+    first10_pos_extremes['plev'] =  int(plev/100)
     first10_pos_extremes['period'] = 'first10'
 
     last10_pos_extremes = last10_pos[last10_pos['note'] == 'above_7'][['mean','count']]
-    last10_pos_extremes['plev'] = plev
+    last10_pos_extremes['plev'] =  int(plev/100)
     last10_pos_extremes['period'] = 'last10'
 
     pos_extrems.append(first10_pos_extremes)
     pos_extrems.append(last10_pos_extremes)
 
     first10_neg_extremes = first10_neg[first10_neg['note'] == 'above_7'][['mean','count']]
-    first10_neg_extremes['plev'] = plev
+    first10_neg_extremes['plev'] = int(plev/100)
     first10_neg_extremes['period'] = 'first10'
 
     last10_neg_extremes = last10_neg[last10_neg['note'] == 'above_7'][['mean','count']]
-    last10_neg_extremes['plev'] = plev
+    last10_neg_extremes['plev'] = int(plev/100)
     last10_neg_extremes['period'] = 'last10'
 
     neg_extrems.append(first10_neg_extremes)
@@ -200,6 +200,8 @@ sns.barplot(data=pos_extrems, y='plev', x='count', hue='period',orient='h', ax =
 _neg_extremes = neg_extrems.copy()
 _neg_extremes['count'] = -_neg_extremes['count']
 sns.barplot(data=_neg_extremes, y='plev', x='count', hue='period',hue_order = ['first10','last10'], orient='h', ax = ax, alpha = 0.5)
+ax.set_ylabel('Pressure Level (hPa)')
+
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_all.pdf")
 # %%
 # plot for mean
@@ -209,5 +211,6 @@ sns.barplot(data=pos_extrems, y='plev', x='mean', hue='period',orient='h', ax = 
 
 # neg as negative side of y-axis
 sns.barplot(data=neg_extrems, y='plev', x='mean', hue='period',hue_order = ['first10','last10'], orient='h', ax = ax, alpha = 0.5)
+ax.set_ylabel('Pressure Level (hPa)')
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/mean_distribution_all.pdf")
 # %%
