@@ -76,6 +76,12 @@ def sel_pc_duration(events, pc):
 
 # %%
 def read_extremes(period, start_duration = 5, plev =  50000):
+    """
+    parameters:
+    period: str, 'first10' or 'last10'
+    start_duration: int, above which duration the events are selected
+    plev: int, pressure level in Pa
+    """
     pos_extreme_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pos_extreme_events/'
     neg_extreme_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/neg_extreme_events/'
 
