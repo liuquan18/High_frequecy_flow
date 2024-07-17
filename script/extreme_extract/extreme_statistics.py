@@ -4,11 +4,8 @@ import numpy as np
 import seaborn as sns
 from src.extremes.extreme_statistics import sel_event_above_duration
 import matplotlib.pyplot as plt
-# %%
-period = 'first10'
-duration = 5
 #%%
-def sel_event_allens(period, duration = 5):
+def sel_event_allens(period, start_duration = 5, plev =  50000):
     pos_extreme_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pos_extreme_events/'
     neg_extreme_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/neg_extreme_events/'
 
@@ -20,11 +17,20 @@ def sel_event_allens(period, duration = 5):
 
 
     for i in range(50):
-        pos_extreme = pd.read_csv(f'{pos_extreme_path}pos_extreme_events_{period}/pos_extreme_events_{tag}_r{i+1}.csv')
-        neg_extreme = pd.read_csv(f'{neg_extreme_path}neg_extreme_events_{period}/neg_extreme_events_{tag}_r{i+1}.csv')
+        pos_extreme = pd.read_csv(f'{pos_extreme_path}pos_extreme_events_{period}/troposphere_pos_extreme_events_{tag}_r{i+1}.csv')
+        neg_extreme = pd.read_csv(f'{neg_extreme_path}neg_extreme_events_{period}/troposphere_neg_extreme_events_{tag}_r{i+1}.csv')
 
-        pos_extreme = sel_event_above_duration(pos_extreme, duration=duration)
-        neg_extreme = sel_event_above_duration(neg_extreme, duration=duration)
+        # select plev and delete the 'plev' column
+        pos_extreme = pos_extreme[pos_extreme["plev"] == plev][
+            ["start_time", "end_time", "duration", "mean", "sum", "max", "min"]
+        ]
+
+        neg_extreme = neg_extreme[neg_extreme["plev"] == plev][
+            ["start_time", "end_time", "duration", "mean", "sum", "max", "min"]
+        ]
+
+        pos_extreme = sel_event_above_duration(pos_extreme, duration=start_duration)
+        neg_extreme = sel_event_above_duration(neg_extreme, duration=start_duration)
 
 
         pos_extremes.append(pos_extreme)
@@ -58,27 +64,31 @@ def combine_events(df, duration = 13):
 
 
 # %%
-first10_pos_extremes, first10_neg_extremes = sel_event_allens(period, duration=duration)
-last10_pos_extremes, last10_neg_extremes = sel_event_allens('last10', duration=duration)
+def extreme_stat_allens(start_duration = 5,duration_lim = 7, plev = 50000):
+    first10_pos_extremes, first10_neg_extremes = sel_event_allens('first10', start_duration=start_duration, plev = plev)
+    last10_pos_extremes, last10_neg_extremes = sel_event_allens('last10', start_duration=start_duration, plev = plev)
+
+    # statistics across ensemble members
+    first10_pos = first10_pos_extremes.groupby('duration')['mean'].agg(['mean','count'])
+    first10_neg = first10_neg_extremes.groupby('duration')['mean'].agg(['mean','count'])
+
+    last10_pos = last10_pos_extremes.groupby('duration')['mean'].agg(['mean','count'])
+    last10_neg = last10_neg_extremes.groupby('duration')['mean'].agg(['mean','count'])
+
+
+    first10_pos = combine_events(first10_pos, duration = duration_lim)
+    first10_neg = combine_events(first10_neg, duration = duration_lim)
+    last10_pos = combine_events(last10_pos, duration = duration_lim)
+    last10_neg = combine_events(last10_neg, duration = duration_lim)
+    return first10_pos,first10_neg,last10_pos,last10_neg
+
+
 
 # %%
-first10_pos = first10_pos_extremes.groupby('duration')['mean'].agg(['mean','count'])
-first10_neg = first10_neg_extremes.groupby('duration')['mean'].agg(['mean','count'])
-# %%
-last10_pos = last10_pos_extremes.groupby('duration')['mean'].agg(['mean','count'])
-last10_neg = last10_neg_extremes.groupby('duration')['mean'].agg(['mean','count'])
-
-#%%
-first10_pos = combine_events(first10_pos, duration = 7)
-first10_neg = combine_events(first10_neg, duration = 7)
-last10_pos = combine_events(last10_pos, duration = 7)
-last10_neg = combine_events(last10_neg, duration = 7)
-
-
-# %%
-def plot_extreme_stat(first10_pos, first10_neg, last10_pos, last10_neg, stat = 'count', duration_lim = 7):
+def plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'count', duration_lim = 7):
+    print(f'Plotting extreme statistics for {stat}')
+   
     # Get the union of all durations
-
     all_durations = sorted(set(first10_pos.index) | set(last10_pos.index) | 
                        set(first10_neg.index) | set(last10_neg.index))
 
@@ -131,11 +141,73 @@ def plot_extreme_stat(first10_pos, first10_neg, last10_pos, last10_neg, stat = '
     # Adjust layout and display the plot
     plt.tight_layout()
     return fig, ax
+# %%
+def increase_by_percentage(first,last):
+    first_count = first.loc[first['note'] == 'above_7']['count'].values[0]
+    last_count = last.loc[last['note'] == 'above_7']['count'].values[0]
+    increase = (last_count - first_count) / first_count * 100
+    return increase
+# %%
+increase_bys_pos = {}
+increase_bys_neg = {}
+pos_extrems = []
+neg_extrems = []
 
+for plev in [100000,85000,70000,50000,25000]:
+    first10_pos,first10_neg,last10_pos,last10_neg = extreme_stat_allens(start_duration = 5,duration_lim = 7, plev = plev)
+
+    # fig, ax = plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'count')
+    # plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_{plev}.png")
+
+    # fig, ax = plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'mean')
+    # plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/mean_distribution_{plev}.png")
+
+    # increase_bys_pos[plev] = increase_by_percentage(first10_pos, last10_pos)
+    # increase_bys_neg[plev] = increase_by_percentage(first10_neg, last10_neg)
+
+
+    first10_pos_extremes = first10_pos[first10_pos['note'] == 'above_7'][['mean','count']]                                                                   
+    first10_pos_extremes['plev'] = plev
+    first10_pos_extremes['period'] = 'first10'
+
+    last10_pos_extremes = last10_pos[last10_pos['note'] == 'above_7'][['mean','count']]
+    last10_pos_extremes['plev'] = plev
+    last10_pos_extremes['period'] = 'last10'
+
+    pos_extrems.append(first10_pos_extremes)
+    pos_extrems.append(last10_pos_extremes)
+
+    first10_neg_extremes = first10_neg[first10_neg['note'] == 'above_7'][['mean','count']]
+    first10_neg_extremes['plev'] = plev
+    first10_neg_extremes['period'] = 'first10'
+
+    last10_neg_extremes = last10_neg[last10_neg['note'] == 'above_7'][['mean','count']]
+    last10_neg_extremes['plev'] = plev
+    last10_neg_extremes['period'] = 'last10'
+
+    neg_extrems.append(first10_neg_extremes)
+    neg_extrems.append(last10_neg_extremes)
+
+pos_extrems = pd.concat(pos_extrems)
+neg_extrems = pd.concat(neg_extrems)
+    
 # %%
-fig, ax = plot_extreme_stat(first10_pos, first10_neg, last10_pos, last10_neg, stat='count')
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution.png")
+fig, ax = plt.subplots(figsize=(15, 8))
+# pos as positive side of y-axis
+sns.barplot(data=pos_extrems, y='plev', x='count', hue='period',orient='h', ax = ax,hue_order = ['first10','last10'])
+
+# neg as negative side of y-axis
+_neg_extremes = neg_extrems.copy()
+_neg_extremes['count'] = -_neg_extremes['count']
+sns.barplot(data=_neg_extremes, y='plev', x='count', hue='period',hue_order = ['first10','last10'], orient='h', ax = ax, alpha = 0.5)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_all.pdf")
 # %%
-fig, ax = plot_extreme_stat(first10_pos, first10_neg, last10_pos, last10_neg, stat='mean')
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/mean_distribution.png")
+# plot for mean
+fig, ax = plt.subplots(figsize=(15, 8))
+# pos as positive side of y-axis
+sns.barplot(data=pos_extrems, y='plev', x='mean', hue='period',orient='h', ax = ax,hue_order = ['first10','last10'])
+
+# neg as negative side of y-axis
+sns.barplot(data=neg_extrems, y='plev', x='mean', hue='period',hue_order = ['first10','last10'], orient='h', ax = ax, alpha = 0.5)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/mean_distribution_all.pdf")
 # %%
