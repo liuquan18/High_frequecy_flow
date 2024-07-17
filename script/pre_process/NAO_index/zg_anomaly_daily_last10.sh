@@ -14,7 +14,7 @@ Anomaly() {
 
     # anomaly
     cdo -monsub /scratch/m/m300883/MPI_GE_CMIP6/daily_ssp585/zg_day_MPI-ESM1-2-LR_ssp585_r${member}i1p1f1_gn_20750101-21001231.nc\
-        -selyear,2091/2100 /work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/zg_MJJAS_ensmean/zg_Amon_MPI-ESM1-2-LR_HIST_ssp585_ensmean_MJJAS.nc /work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/zg_JJA_ano_last10/zg_day_MPI-ESM1-2-LR_ssp585_r${member}i1p1f1_gn_20910601-21000831_ano.nc
+        -selyear,2091/2100 /work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/zg_MJJAS_ensmean/zg_Amon_MPI-ESM1-2-LR_HIST_ssp585_ensmean_MJJAS.nc /work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/zg_MJJAS_ano_last10/zg_day_MPI-ESM1-2-LR_ssp585_r${member}i1p1f1_gn_20910601-21000831_ano.nc
 }
 
 export -f Anomaly
