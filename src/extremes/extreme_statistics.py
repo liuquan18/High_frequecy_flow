@@ -75,3 +75,37 @@ def sel_pc_duration(events, pc):
     return sel_pcs
 
 # %%
+def read_extremes(period, start_duration = 5, plev =  50000):
+    pos_extreme_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pos_extreme_events/'
+    neg_extreme_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/neg_extreme_events/'
+
+    tags = {'first10': '1850_1859', 'last10': '2091_2100'}
+    tag = tags[period]
+
+    pos_extremes = []
+    neg_extremes = []
+
+
+    for i in range(50):
+        pos_extreme = pd.read_csv(f'{pos_extreme_path}pos_extreme_events_{period}/troposphere_pos_extreme_events_{tag}_r{i+1}.csv')
+        neg_extreme = pd.read_csv(f'{neg_extreme_path}neg_extreme_events_{period}/troposphere_neg_extreme_events_{tag}_r{i+1}.csv')
+
+        # select plev and delete the 'plev' column
+        pos_extreme = pos_extreme[pos_extreme["plev"] == plev][
+            ["start_time", "end_time", "duration", "mean", "sum", "max", "min"]
+        ]
+
+        neg_extreme = neg_extreme[neg_extreme["plev"] == plev][
+            ["start_time", "end_time", "duration", "mean", "sum", "max", "min"]
+        ]
+
+        pos_extreme = sel_event_above_duration(pos_extreme, duration=start_duration)
+        neg_extreme = sel_event_above_duration(neg_extreme, duration=start_duration)
+
+
+        pos_extremes.append(pos_extreme)
+        neg_extremes.append(neg_extreme)
+
+    pos_extremes = pd.concat(pos_extremes, axis=0)
+    neg_extremes = pd.concat(neg_extremes, axis=0)
+    return pos_extremes, neg_extremes
