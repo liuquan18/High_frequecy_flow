@@ -127,7 +127,7 @@ def plot_concurrent_bar(first10_df, last10_df, ax, vmin = 15, vmax = 85):
         elif value > vmax:
             return cmap(1.0)
         else:
-            return cmap(value  / (vmax-vmin))
+            return cmap((value - vmin)  / (vmax-vmin))
 
     # Get the pressure levels and lag days
     pressure_levels = first10_df.index
@@ -171,8 +171,8 @@ def plot_concurrent_bar(first10_df, last10_df, ax, vmin = 15, vmax = 85):
 
 #%%
 fig, (ax1, ax2) = plt.subplots(2,1, figsize=(10, 10))
-plot_concurrent_bar(first10_pos_events_container, last10_pos_events_container, ax1, vmin = 10, vmax = 50)
-plot_concurrent_bar(first10_neg_events_container, last10_neg_events_container, ax2, vmin = 10, vmax = 50)
+plot_concurrent_bar(first10_pos_events_container, last10_pos_events_container, ax1, vmin = 5, vmax = 35)
+plot_concurrent_bar(first10_neg_events_container, last10_neg_events_container, ax2, vmin = 5, vmax = 35)
 
 # Add a legend
 legend_elements = [Patch(facecolor=plt.cm.Blues(0.7), edgecolor='white', label='First 10 Years'),
@@ -180,7 +180,7 @@ legend_elements = [Patch(facecolor=plt.cm.Blues(0.7), edgecolor='white', label='
 plt.legend(handles=legend_elements, loc='upper right')
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/events_evolution_cross_plev.pdf")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/events_evolution_cross_plev.pdf")
 
 
 # %%
