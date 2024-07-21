@@ -121,7 +121,7 @@ def plot_concurrent_bar(first10_df, last10_df, ax, vmin = 15, vmax = 85):
 
     # set the color as 'none' between [0-0.2]
     # Define a function to map values to colors
-    def value_to_color(value, cmap):
+    def value_to_color(value, cmap, vmin = 15, vmax = 85):
         if value < vmin:
             return 'none'
         elif value > vmax:
@@ -139,14 +139,14 @@ def plot_concurrent_bar(first10_df, last10_df, ax, vmin = 15, vmax = 85):
             # Plot first10 years data (upper bar)
                     # Plot first10 years data (upper bar)
             first10_value = first10_df.loc[level, lag]
-            first10_color = value_to_color(first10_value, blue_cmap)
+            first10_color = value_to_color(first10_value, blue_cmap, vmin, vmax)
 
             ax.bar(j, 0.4, bottom=i+0.3, width=1.,
                     color=first10_color, edgecolor='grey', linewidth=0.3)           
              
             # Plot last10 years data (lower bar)
             last10_value = last10_df.loc[level, lag]
-            last10_color = value_to_color(last10_value, orange_cmap)
+            last10_color = value_to_color(last10_value, orange_cmap, vmin, vmax)
             ax.bar(j, 0.4, bottom=i-0.1, width=1., 
                 color=last10_color, edgecolor='grey', linewidth=0.3)
 
