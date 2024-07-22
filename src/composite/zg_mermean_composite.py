@@ -81,13 +81,15 @@ def composite_zg_mermean(zg, date_range):
         duration = end_time - start_time
         sel_zg = zg.sel(time=slice(start_time, end_time )) # note that xarray slice is inclusive on both sides
         sel_zg['time'] = np.arange(-30, 31,1)
-        if duration.days != len(sel_zg.time):
-            logging.warning(f"Duration of the extreme event is {duration.days}, not equal to 60 days")
+        if duration.days != (len(sel_zg.time) -1):
+            logging.warning(f"Duration of the extreme event is {duration.days + 1}, not equal to 61 days")
             continue
         composite.append(
             sel_zg
         )
-
-    composite = xr.concat(composite, dim="event")
+    try:
+        composite = xr.concat(composite, dim="event")
+    except ValueError:
+        pass
     return composite
 
