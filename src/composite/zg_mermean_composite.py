@@ -85,7 +85,10 @@ def composite_zg_mermean(zg, date_range):
                 logging.info("start_time is before May 1st, filling the missing days with zeros")
                 missing_days = 61 - sel_zg.time.size 
                 add_data = sel_zg.isel(time = slice(None, missing_days)).copy()
-                add_data['time'] = pd.date_range(end = f"{start_time.year}-05-01", periods=missing_days, freq='D')
+                try:
+                    add_data['time'] = pd.date_range(end = f"{start_time.year}-05-01", periods=missing_days, freq='D')
+                except OverflowError:
+                    add_data['time'] = [start_time]
                 # change values of add_data to 0
                 add_data = xr.zeros_like(add_data)
                 sel_zg = xr.concat([add_data, sel_zg], dim='time')
@@ -93,7 +96,10 @@ def composite_zg_mermean(zg, date_range):
                 logging.info("end_time is after September 30th, filling the missing days with zeros")
                 missing_days = sel_zg.time.size - 61
                 add_data = sel_zg.isel(time = slice(missing_days, None)).copy()
-                add_data['time'] = pd.date_range(f"{end_time.year}-10-01", periods=missing_days, freq='D')
+                try:
+                    add_data['time'] = pd.date_range(f"{end_time.year}-10-01", periods=missing_days, freq='D')
+                except OverflowError:
+                    add_data['time'] = [end_time]
                 add_data = xr.zeros_like(add_data)
                 sel_zg = xr.concat([sel_zg, add_data], dim='time')
                 
