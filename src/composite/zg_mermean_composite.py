@@ -94,8 +94,8 @@ def composite_zg_mermean(zg, date_range):
                 sel_zg = xr.concat([add_data, sel_zg], dim='time')
             elif end_time > pd.Timestamp(f"{end_time.year}-09-30"):
                 logging.info("end_time is after September 30th, filling the missing days with zeros")
-                missing_days = sel_zg.time.size - 61
-                add_data = sel_zg.isel(time = slice(missing_days, None)).copy()
+                missing_days = 61 - sel_zg.time.size
+                add_data = sel_zg.isel(time = slice(-1 * missing_days, None)).copy()
                 try:
                     add_data['time'] = pd.date_range(f"{end_time.year}-10-01", periods=missing_days, freq='D')
                 except OverflowError:
