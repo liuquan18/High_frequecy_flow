@@ -78,12 +78,27 @@ def composite_zg_mermean(zg, date_range):
     """
     composite = []
     for start_time, end_time in date_range.itertuples(index=False):
-        duration = end_time - start_time
+
         sel_zg = zg.sel(time=slice(start_time, end_time )) # note that xarray slice is inclusive on both sides
+        if sel_zg.time.size < 61:
+            if start_time < pd.Timestamp(f"{start_time.year}-05-01"):
+                logging.info("start_time is before May 1st, filling the missing days with zeros")
+                add_data = sel_zg.isel(time = 0).copy()
+                add_data['time'] = start_time
+                # change values of add_data to 0
+                add_data = xr.zeros_like(add_data)
+                sel_zg = xr.concat([add_data, sel_zg], dim='time')
+            elif end_time > pd.Timestamp(f"{end_time.year}-09-30"):
+                logging.info("end_time is after September 30th, filling the missing days with zeros")
+                add_data = sel_zg.isel(time = -1).copy()
+                add_data['time'] = end_time
+                add_data = xr.zeros_like(add_data)
+                sel_zg = xr.concat([sel_zg, add_data], dim='time')
+                
+        # now change the time coordinate as lag-days            
         sel_zg['time'] = np.arange(-30, 31,1)
-        if duration.days != (len(sel_zg.time) -1):
-            logging.warning(f"Duration of the extreme event is {duration.days + 1}, not equal to 61 days")
-            continue
+
+        # put them together
         composite.append(
             sel_zg
         )
@@ -93,3 +108,5 @@ def composite_zg_mermean(zg, date_range):
         pass
     return composite
 
+
+# %%[]
