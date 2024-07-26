@@ -67,8 +67,8 @@ def composite_lag_longitude_allens(period="first10", base_plev=25000, cross_plev
     neg_zg = xr.concat(neg_zg, dim="event")
 
     if stat == "mean":
-        pos_zg = pos_zg.mean(dim="event")
-        neg_zg = neg_zg.mean(dim="event")
+        pos_zg_composite = pos_zg.mean(dim="event")
+        neg_zg_composite = neg_zg.mean(dim="event")
     elif stat == "sum":
         pos_zg_composite = pos_zg.sum(dim="event")
         neg_zg_composite = neg_zg.sum(dim="event")
