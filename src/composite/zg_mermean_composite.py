@@ -3,9 +3,9 @@ import xarray as xr
 import numpy as np
 import pandas as pd
 import logging
-logging.basicConfig(level=logging.INFO)
 
 from src.extremes.extreme_statistics import sel_event_above_duration
+logging.basicConfig(level=logging.INFO)
 
 
 # %%
