@@ -5,7 +5,7 @@ import numpy as np
 import logging
 import matplotlib.pyplot as plt
 # %%
-import src.composite.zg_mermean_composite as zg_comp
+import src.composite.lag_height_composite as zg_comp
 
 # %%
 import importlib
