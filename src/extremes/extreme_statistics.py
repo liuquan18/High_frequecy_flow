@@ -7,6 +7,36 @@ import pandas as pd
 
 # %%
 
+def read_extremes(period: str, start_duration: int, ens: int):
+    """
+    parameters:
+    period: str
+        period of the extremes, first10 or last10
+    start_duration: int
+        >= which duration the extremes are selected
+    """
+    pos_extreme_path = (
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pos_extreme_events/"
+    )
+    neg_extreme_path = (
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/neg_extreme_events/"
+    )
+
+    tags = {"first10": "1850_1859", "last10": "2091_2100"}
+    tag = tags[period]
+
+    pos_extreme = pd.read_csv(
+        f"{pos_extreme_path}pos_extreme_events_{period}/troposphere_pos_extreme_events_{tag}_r{ens}.csv"
+    )
+    neg_extreme = pd.read_csv(
+        f"{neg_extreme_path}neg_extreme_events_{period}/troposphere_neg_extreme_events_{tag}_r{ens}.csv"
+    )
+
+    # select the extremes with durations longer than or equal to start_duration
+    pos_extreme = sel_event_above_duration(pos_extreme, duration=start_duration)
+    neg_extreme = sel_event_above_duration(neg_extreme, duration=start_duration)
+    return pos_extreme, neg_extreme
+#%%
 
 def sel_event_above_duration(df, duration=5):
     """
@@ -84,49 +114,27 @@ def sel_pc_duration(events, pc):
 
 
 # %%
-def read_extremes_allens(period, start_duration=5, plev=50000):
+def read_extremes_allens(period, start_duration=5):
     """
     parameters:
     period: str, 'first10' or 'last10'
     start_duration: int, above which (>=) duration the events are selected
     plev: int, pressure level in Pa
     """
-    pos_extreme_path = (
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pos_extreme_events/"
-    )
-    neg_extreme_path = (
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/neg_extreme_events/"
-    )
-
-    tags = {"first10": "1850_1859", "last10": "2091_2100"}
-    tag = tags[period]
-
     pos_extremes = []
     neg_extremes = []
 
-    for i in range(50):
-        pos_extreme = pd.read_csv(
-            f"{pos_extreme_path}pos_extreme_events_{period}/troposphere_pos_extreme_events_{tag}_r{i+1}.csv"
-        )
-        neg_extreme = pd.read_csv(
-            f"{neg_extreme_path}neg_extreme_events_{period}/troposphere_neg_extreme_events_{tag}_r{i+1}.csv"
-        )
+    for i in range(1, 51):
+        pos_extreme,neg_extreme = read_extremes(period, start_duration=start_duration, ens=i)
 
-        # select plev and delete the 'plev' column
-        pos_extreme = pos_extreme[pos_extreme["plev"] == plev][
-            ["start_time", "end_time", "duration", "mean", "sum", "max", "min"]
-        ]
-
-        neg_extreme = neg_extreme[neg_extreme["plev"] == plev][
-            ["start_time", "end_time", "duration", "mean", "sum", "max", "min"]
-        ]
-
-        pos_extreme = sel_event_above_duration(pos_extreme, duration=start_duration)
-        neg_extreme = sel_event_above_duration(neg_extreme, duration=start_duration)
+        pos_extreme['ens'] = i
+        neg_extreme['ens'] = i
 
         pos_extremes.append(pos_extreme)
         neg_extremes.append(neg_extreme)
 
-    pos_extremes = pd.concat(pos_extremes, axis=0)
-    neg_extremes = pd.concat(neg_extremes, axis=0)
+    pos_extremes = pd.concat(pos_extremes, axis=0, ignore_index=True)
+    neg_extremes = pd.concat(neg_extremes, axis=0, ignore_index=True)
     return pos_extremes, neg_extremes
+
+# %%
