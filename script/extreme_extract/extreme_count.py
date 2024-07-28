@@ -5,8 +5,6 @@ import seaborn as sns
 from src.extremes.extreme_statistics import read_extremes_allens
 import matplotlib.pyplot as plt
 
-# %%
-
 
 # %%
 def combine_events(df, duration=13):
@@ -39,13 +37,19 @@ def combine_events(df, duration=13):
 
 
 # %%
-def extreme_stat_allens(start_duration=5, duration_lim=7, plev=50000):
+def extreme_stat_allens(start_duration=5, duration_lim=8, plev=50000):
     first10_pos_extremes, first10_neg_extremes = read_extremes_allens(
-        "first10", start_duration=start_duration, plev=plev
+        "first10", start_duration=start_duration
     )
     last10_pos_extremes, last10_neg_extremes = read_extremes_allens(
-        "last10", start_duration=start_duration, plev=plev
+        "last10", start_duration=start_duration
     )
+
+    # select the events with plev
+    first10_pos_extremes = first10_pos_extremes[first10_pos_extremes["plev"] == plev]
+    first10_neg_extremes = first10_neg_extremes[first10_neg_extremes["plev"] == plev]
+    last10_pos_extremes = last10_pos_extremes[last10_pos_extremes["plev"] == plev]
+    last10_neg_extremes = last10_neg_extremes[last10_neg_extremes["plev"] == plev]
 
     # statistics across ensemble members
     first10_pos = first10_pos_extremes.groupby("duration")["mean"].agg(
