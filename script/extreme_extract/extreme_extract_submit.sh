@@ -10,5 +10,5 @@
 #SBATCH --output=extreme.%j.out
 
 
-mpirun -n 20 python -u extreme_extract.py $1
+mpirun -n 20 python -u extreme_extract.py $1 # 0,1
 # python -u hello0index_generator.py $1 $2 $3
