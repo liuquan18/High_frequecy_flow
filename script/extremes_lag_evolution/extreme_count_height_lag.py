@@ -3,40 +3,9 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
-from src.extremes.extreme_statistics import sel_event_above_duration
-
+from src.extremes.extreme_statistics import sel_event_above_duration, read_extremes
 #%%
 from matplotlib.patches import Patch
-# %%
-def read_extremes(period: str, start_duration: int, ens: int):
-    """
-    parameters:
-    period: str
-        period of the extremes, first10 or last10
-    start_duration: int
-        >= which duration the extremes are selected
-    """
-    pos_extreme_path = (
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pos_extreme_events/"
-    )
-    neg_extreme_path = (
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/neg_extreme_events/"
-    )
-
-    tags = {"first10": "1850_1859", "last10": "2091_2100"}
-    tag = tags[period]
-
-    pos_extreme = pd.read_csv(
-        f"{pos_extreme_path}pos_extreme_events_{period}/troposphere_pos_extreme_events_{tag}_r{ens}.csv"
-    )
-    neg_extreme = pd.read_csv(
-        f"{neg_extreme_path}neg_extreme_events_{period}/troposphere_neg_extreme_events_{tag}_r{ens}.csv"
-    )
-
-    # select the extremes with durations longer than or equal to start_duration
-    pos_extreme = sel_event_above_duration(pos_extreme, duration=start_duration)
-    neg_extreme = sel_event_above_duration(neg_extreme, duration=start_duration)
-    return pos_extreme, neg_extreme
 
 
 # %%
