@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import seaborn as sns
-from src.extremes.extreme_statistics import read_extremes_allens
+from src.extremes.extreme_read import read_extremes_allens
 import matplotlib.pyplot as plt
 
 

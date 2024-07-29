@@ -3,7 +3,7 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
-from src.extremes.extreme_statistics import sel_event_above_duration, read_extremes
+from src.extremes.extreme_read import sel_event_above_duration, read_extremes
 #%%
 from matplotlib.patches import Patch
 

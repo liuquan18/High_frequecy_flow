@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import logging
 
-from src.extremes.extreme_statistics import sel_event_above_duration
+from src.extremes.extreme_read import sel_event_above_duration
 
 logging.basicConfig(level=logging.INFO)
 

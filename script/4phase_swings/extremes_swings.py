@@ -1,12 +1,11 @@
 # %%
 import pandas as pd
-import numpy
 import matplotlib.pyplot as plt
 import seaborn as sns
 import logging
 
 # %%
-from src.extremes.extreme_statistics import read_extremes_allens
+from src.extremes.extreme_read import read_extremes_allens
 
 # %%
 first10_pos_extremes, first10_neg_extremes = read_extremes_allens(
@@ -153,3 +152,4 @@ last_swings = last_swings.reset_index().drop(columns="level_4").rename(columns={
 first_noswings = collect_noswing(first_extremes)
 last_no_swings = collect_noswing(last_extremes)
 # %%
+#### statistics of swings (variability) ######

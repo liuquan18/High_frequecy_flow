@@ -2,16 +2,16 @@
 import xarray as xr
 import pandas as pd
 import numpy as np
-from src.extremes import extreme_statistics
+from src.extremes import extreme_read
 import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Reload the module
 import importlib
 
-importlib.reload(extreme_statistics)
+importlib.reload(extreme_read)
 # %%
-from src.extremes.extreme_statistics import sel_event_duration, sel_pc_duration
+from src.extremes.extreme_read import sel_event_duration, sel_pc_duration
 
 
 # %%
