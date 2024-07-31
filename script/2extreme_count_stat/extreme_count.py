@@ -194,14 +194,14 @@ for plev in [100000, 85000, 70000, 50000, 25000]:
         start_duration=5, duration_lim=7, plev=plev
     )
 
-    # fig, ax = plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'count')
-    # plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_{plev}.png")
+    fig, ax = plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'count')
+    plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_{plev}.png")
 
-    # fig, ax = plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'mean')
-    # plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/mean_distribution_{plev}.png")
+    fig, ax = plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'mean')
+    plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/mean_distribution_{plev}.png")
 
-    # increase_bys_pos[plev] = increase_by_percentage(first10_pos, last10_pos)
-    # increase_bys_neg[plev] = increase_by_percentage(first10_neg, last10_neg)
+    increase_bys_pos[plev] = increase_by_percentage(first10_pos, last10_pos)
+    increase_bys_neg[plev] = increase_by_percentage(first10_neg, last10_neg)
 
     first10_pos_extremes = first10_pos[first10_pos["note"] == "above_7"][
         ["mean", "count"]
