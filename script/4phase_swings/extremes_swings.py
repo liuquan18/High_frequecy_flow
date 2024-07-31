@@ -119,7 +119,7 @@ last_swings_stat_perc = count_swints(last_swings[last_swings.plev == 50000], per
 # %%
 # Set up the plot
 
-def plot_swings(swings, swings_perc):
+def plot_swings(swings, swings_perc,vmin,vmax):
     fig, ax = plt.subplots(figsize=(20, 5))
 
     # Define color maps
@@ -146,7 +146,7 @@ def plot_swings(swings, swings_perc):
         for j, lag in enumerate(lag_days):
             value = swings.loc[row, lag]
             perc = swings_perc.loc[row, lag]
-            color = value2color(perc, blue_cmap) if perc < 0 else value2color(perc, orange_cmap)
+            color = value2color(perc, blue_cmap,vmin,vmax) if perc < 0 else value2color(perc, orange_cmap, vmin,vmax)
             if lag in range(-14, 70, 1):
                 ax.bar(lag, 0.4, bottom=i+0.3, width=1., color=color, edgecolor='black')
                 ax.text(lag, i+0.5, str(int(value)), ha='center', va='center', fontsize=8)
@@ -181,9 +181,9 @@ def plot_swings(swings, swings_perc):
 
 
 # %%
-plot_swings(first_swings_stat, first_swings_stat)
+plot_swings(first_swings_stat, first_swings_stat, 1,15)
 plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/first10_swings_500hPa.pdf')
 # %%
-plot_swings(last_swings_stat, last_swings_stat)
+plot_swings(last_swings_stat, last_swings_stat, 1,15)
 plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/last10_swings_500hPa.pdf')
 # %%
