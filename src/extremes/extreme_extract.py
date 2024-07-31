@@ -38,13 +38,13 @@ def extract_pos_extremes(df):
     # Get the statistics of the group
     Events = G.agg(
         start_time = pd.NamedAgg(column = 'time',aggfunc='min'),
-        duration = pd.NamedAgg(column = 'time',aggfunc = 'size'),
+        end_time = pd.NamedAgg(column = 'time',aggfunc='max'),
         sum = pd.NamedAgg(column = 'pc',aggfunc = 'sum'),
         mean = pd.NamedAgg(column = 'pc',aggfunc = 'mean'),
         max = pd.NamedAgg(column = 'pc',aggfunc = 'max'),
         min = pd.NamedAgg(column = 'pc',aggfunc = 'min'),# add mean to make sure the data are all positive
         ).reset_index()    
-    Events['end_time'] = Events['start_time'] + pd.to_timedelta(Events['duration']-1, unit='D')
+    Events['duration'] = (Events['end_time'] - Events['stat_time']).dt.days + 1
 
     Events = Events[['start_time','end_time','duration','sum','mean','max', 'min']]
     return Events
@@ -55,7 +55,7 @@ def extract_neg_extremes(df):
     """
     # apply ndimage.median_filter to remove the single day anomaly data (with one day tolerance)
     df['pc'] = ndimage.median_filter(df['pc'], size=3)
-    
+
     # A grouper that increaments every time a non-positive value is encountered
     Grouper_neg = df.groupby(df.time.dt.year)['pc'].transform(lambda x: x.gt(0).cumsum())
 
@@ -65,13 +65,13 @@ def extract_neg_extremes(df):
     # Get the statistics of the group
     Events = G.agg(
         start_time = pd.NamedAgg(column = 'time',aggfunc='min'),
-        duration = pd.NamedAgg(column = 'time',aggfunc = 'size'),
+        end_time = pd.NamedAgg(column = 'time',aggfunc='max'),
         sum = pd.NamedAgg(column = 'pc',aggfunc = 'sum'),
         mean = pd.NamedAgg(column = 'pc',aggfunc = 'mean'),
         max = pd.NamedAgg(column = 'pc',aggfunc = 'max'),
-        min = pd.NamedAgg(column = 'pc',aggfunc = 'min'),
-        ).reset_index()
-    Events['end_time'] = Events['start_time'] + pd.to_timedelta(Events['duration']-1, unit='D')
+        min = pd.NamedAgg(column = 'pc',aggfunc = 'min'),# add mean to make sure the data are all positive
+        ).reset_index()    
+    Events['duration'] = (Events['end_time'] - Events['stat_time']).dt.days + 1
 
     Events = Events[['start_time','end_time','duration','sum','mean','max', 'min']]
     return Events
