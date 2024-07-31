@@ -18,11 +18,11 @@ import logging
 logging.basicConfig(level=logging.INFO)
 # %%
 first10_pos_extremes, first10_neg_extremes = read_extremes_allens(
-    "first10", start_duration=8
+    "first10", start_duration=5
 )  # start from 5 days to have more events
 
 last10_pos_extremes, last10_neg_extremes = read_extremes_allens(
-    "last10", start_duration=8
+    "last10", start_duration=5
 )
 
 
@@ -110,12 +110,12 @@ def count_swints(swings, percentage = True):
 
     return swings_stat
 # %%
-first_swings_stat = count_swints(first_swings, percentage=False)
-first_swings_stat_perc = count_swints(first_swings, percentage=True)
+first_swings_stat = count_swints(first_swings[first_swings.plev == 50000], percentage=False)
+first_swings_stat_perc = count_swints(first_swings[first_swings.plev == 50000], percentage=True)
 
 #%%
-last_swings_stat = count_swints(last_swings, percentage=False)
-last_swings_stat_perc = count_swints(last_swings, percentage=True)
+last_swings_stat = count_swints(last_swings[last_swings.plev == 50000], percentage=False)
+last_swings_stat_perc = count_swints(last_swings[last_swings.plev == 50000], percentage=True)
 # %%
 # Set up the plot
 
@@ -127,12 +127,12 @@ def plot_swings(swings, swings_perc):
     orange_cmap = plt.cm.Oranges
 
 
-    def value2color(value, cmap, vmin=10, vmax=100):
+    def value2color(value, cmap, vmin=5, vmax=30):
         abs_value = abs(value)
         if abs_value < vmin:
             return 'none'
-        elif abs_value > vmax:
-            return cmap(1)
+        # elif abs_value > vmax:
+        #     return cmap(1)
         else:
             normalized_value = (abs_value - vmin) / (vmax - vmin)
         return cmap(normalized_value)
@@ -181,9 +181,9 @@ def plot_swings(swings, swings_perc):
 
 
 # %%
-plot_swings(first_swings_stat, first_swings_stat_perc)
-plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/first10_swings.pdf')
+plot_swings(first_swings_stat, first_swings_stat)
+plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/first10_swings_500hPa.pdf')
 # %%
-plot_swings(last_swings_stat, last_swings_stat_perc)
-plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/last10_swings.pdf')
+plot_swings(last_swings_stat, last_swings_stat)
+plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/last10_swings_500hPa.pdf')
 # %%
