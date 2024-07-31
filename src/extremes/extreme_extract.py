@@ -1,7 +1,6 @@
 #%%
-import xarray as xr
 import pandas as pd
-
+from scipy import ndimage
 
 #%%
 def subtract_threshold(pc, threshold):
@@ -28,6 +27,8 @@ def extract_pos_extremes(df):
     """
     extract exsecutively above zero events
     """
+    # apply ndimage.median_filter to remove the single day anomaly data (with one day tolerance)
+    df['pc'] = ndimage.median_filter(df['pc'], size=3)
     # A grouper that increaments every time a non-positive value is encountered
     Grouper_pos = df.groupby(df.time.dt.year)['pc'].transform(lambda x: x.lt(0).cumsum())
 
@@ -52,6 +53,9 @@ def extract_neg_extremes(df):
     """
     extract exsecutively below zero events
     """
+    # apply ndimage.median_filter to remove the single day anomaly data (with one day tolerance)
+    df['pc'] = ndimage.median_filter(df['pc'], size=3)
+    
     # A grouper that increaments every time a non-positive value is encountered
     Grouper_neg = df.groupby(df.time.dt.year)['pc'].transform(lambda x: x.gt(0).cumsum())
 
