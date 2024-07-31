@@ -149,7 +149,7 @@ legend_elements = [Patch(facecolor=plt.cm.Blues(0.7), edgecolor='white', label='
 plt.legend(handles=legend_elements, loc='upper right')
 
 plt.tight_layout()
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/events_evolution_cross_plev.pdf")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/events_evolution_cross_plev.pdf")
 
 
 # %%
