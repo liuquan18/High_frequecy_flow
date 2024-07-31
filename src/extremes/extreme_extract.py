@@ -44,7 +44,7 @@ def extract_pos_extremes(df):
         max = pd.NamedAgg(column = 'pc',aggfunc = 'max'),
         min = pd.NamedAgg(column = 'pc',aggfunc = 'min'),# add mean to make sure the data are all positive
         ).reset_index()    
-    Events['duration'] = (Events['end_time'] - Events['stat_time']).dt.days + 1
+    Events['duration'] = (Events['end_time'] - Events['start_time']).dt.days + 1
 
     Events = Events[['start_time','end_time','duration','sum','mean','max', 'min']]
     return Events
@@ -71,7 +71,7 @@ def extract_neg_extremes(df):
         max = pd.NamedAgg(column = 'pc',aggfunc = 'max'),
         min = pd.NamedAgg(column = 'pc',aggfunc = 'min'),# add mean to make sure the data are all positive
         ).reset_index()    
-    Events['duration'] = (Events['end_time'] - Events['stat_time']).dt.days + 1
+    Events['duration'] = (Events['end_time'] - Events['start_time']).dt.days + 1
 
     Events = Events[['start_time','end_time','duration','sum','mean','max', 'min']]
     return Events
