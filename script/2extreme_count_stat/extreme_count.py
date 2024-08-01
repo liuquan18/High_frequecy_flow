@@ -194,11 +194,11 @@ for plev in [100000, 85000, 70000, 50000, 25000]:
         start_duration=5, duration_lim=7, plev=plev
     )
 
-    fig, ax = plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'count')
-    plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_{plev}.png")
+    # fig, ax = plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'count')
+    # plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_{plev}.png")
 
-    fig, ax = plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'mean')
-    plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/mean_distribution_{plev}.png")
+    # fig, ax = plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'mean')
+    # plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/mean_distribution_{plev}.png")
 
     increase_bys_pos[plev] = increase_by_percentage(first10_pos, last10_pos)
     increase_bys_neg[plev] = increase_by_percentage(first10_neg, last10_neg)
@@ -231,7 +231,9 @@ for plev in [100000, 85000, 70000, 50000, 25000]:
 
 pos_extrems = pd.concat(pos_extrems)
 neg_extrems = pd.concat(neg_extrems)
-
+#%%
+pos_extrems = pos_extrems.sort_values(by='period',ascending=True)
+neg_extrems = neg_extrems.sort_values(by='period',ascending=True)
 # %%
 fig, ax = plt.subplots(figsize=(15, 8))
 # pos as positive side of y-axis
@@ -242,7 +244,8 @@ sns.barplot(
     hue="period",
     orient="h",
     ax=ax,
-    hue_order=["first10", "last10"],
+    hue_order=["last10", "first10"],
+    palette = ['C1','C0']
 )
 
 # neg as negative side of y-axis
@@ -253,7 +256,8 @@ sns.barplot(
     y="plev",
     x="count",
     hue="period",
-    hue_order=["first10", "last10"],
+    hue_order=["last10", "first10"],
+    palette = ['C1','C0'],
     orient="h",
     ax=ax,
     alpha=0.5,
@@ -263,6 +267,8 @@ ax.set_ylabel("Pressure Level (hPa)")
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_all.pdf"
 )
+
+
 # %%
 # plot for mean
 fig, ax = plt.subplots(figsize=(15, 8))
@@ -274,8 +280,9 @@ sns.barplot(
     hue="period",
     orient="h",
     ax=ax,
-    hue_order=["first10", "last10"],
-)
+    hue_order=["last10", "first10"],
+    palette = ['C1','C0']
+    )
 
 # neg as negative side of y-axis
 sns.barplot(
@@ -283,7 +290,8 @@ sns.barplot(
     y="plev",
     x="mean",
     hue="period",
-    hue_order=["first10", "last10"],
+    hue_order=["last10", "first10"],
+    palette = ['C1','C0'],
     orient="h",
     ax=ax,
     alpha=0.5,
