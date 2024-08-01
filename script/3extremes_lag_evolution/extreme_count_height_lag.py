@@ -60,7 +60,7 @@ first10_pos_events, first10_neg_events = read_extremes_allens("first10", 8)
 last10_pos_events, last10_neg_events = read_extremes_allens("last10", 8)
 
 #%%
-cross_plev = 4
+cross_plev = 1
 # %%
 first10_pos_events_container = first10_pos_events.groupby("ens")[
     ["plev", "start_time", "end_time", "duration"]
@@ -85,10 +85,10 @@ last10_neg_events_container = last10_neg_events_container.groupby(level=1).sum()
 # %%
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10))
 plot_stacked_events(
-    first10_pos_events_container, last10_pos_events_container, ax1, vmin=5, vmax=20
+    first10_pos_events_container, last10_pos_events_container, ax1, vmin=5, vmax=40
 )
 plot_stacked_events(
-    first10_neg_events_container, last10_neg_events_container, ax2, vmin=5, vmax=20
+    first10_neg_events_container, last10_neg_events_container, ax2, vmin=5, vmax=40
 )
 
 # Add a legend

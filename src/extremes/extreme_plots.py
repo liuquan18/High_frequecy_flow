@@ -18,6 +18,10 @@ def plot_stacked_events(first10_df, last10_df, ax, vmin=15, vmax=85,xmin = 25, x
         else:
             return cmap((value - vmin) / (vmax - vmin))
 
+    # order the df by pressure levels
+    first10_df = first10_df.sort_index(ascending=False)
+    last10_df = last10_df.sort_index(ascending=False)
+
     # Get the pressure levels and lag days
     pressure_levels = first10_df.index
     lag_days = first10_df.columns
@@ -25,8 +29,7 @@ def plot_stacked_events(first10_df, last10_df, ax, vmin=15, vmax=85,xmin = 25, x
     # Plot the data
     for i, level in enumerate(pressure_levels):
         for j, lag in enumerate(lag_days):
-            
-            # Add text annotations
+            # only plot the data between xmin and xmax
             if j in range(xmin+1, xmax, 1):
                 first10_value = first10_df.loc[level, lag]
                 first10_color = value_to_color(first10_value, blue_cmap, vmin, vmax)
