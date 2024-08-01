@@ -25,47 +25,50 @@ def plot_stacked_events(first10_df, last10_df, ax, vmin=15, vmax=85,xmin = 25, x
     # Plot the data
     for i, level in enumerate(pressure_levels):
         for j, lag in enumerate(lag_days):
-            # Plot first10 years data (upper bar)
-            # Plot first10 years data (upper bar)
+            
             # Add text annotations
             if j in range(xmin+1, xmax, 1):
                 first10_value = first10_df.loc[level, lag]
                 first10_color = value_to_color(first10_value, blue_cmap, vmin, vmax)
-
+                
+                # Plot first10 years data (lower bar)
                 ax.bar(
                     j,
                     0.4,
-                    bottom=i + 0.3,
+                    bottom=i - 0.1,
                     width=1.0,
                     color=first10_color,
                     edgecolor="grey",
                     linewidth=0.3,
                 )
 
-                # Plot last10 years data (lower bar)
+                # Plot last10 years data (upper bar)
                 last10_value = last10_df.loc[level, lag]
                 last10_color = value_to_color(last10_value, orange_cmap, vmin, vmax)
                 ax.bar(
                     j,
                     0.4,
-                    bottom=i - 0.1,
+                    bottom=i + 0.3,
                     width=1.0,
                     color=last10_color,
                     edgecolor="grey",
                     linewidth=0.3,
                 )
 
+                # Add text annotations (first10 lower)
                 ax.text(
                     j,
-                    i + 0.5,
+                    i + 0.1,
                     str(first10_df.loc[level, lag]),
                     ha="center",
                     va="center",
                     fontsize=8,
                 )
+
+                # Add text annotations (last10 upper)
                 ax.text(
                     j,
-                    i + 0.1,
+                    i + 0.5,
                     str(last10_df.loc[level, lag]),
                     ha="center",
                     va="center",
@@ -84,3 +87,4 @@ def plot_stacked_events(first10_df, last10_df, ax, vmin=15, vmax=85,xmin = 25, x
     # reverse the y-axis
     if pressure_levels[0] < pressure_levels[-1]:
         ax.invert_yaxis()
+
