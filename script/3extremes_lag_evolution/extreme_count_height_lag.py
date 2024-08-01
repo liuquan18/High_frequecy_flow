@@ -3,14 +3,14 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
-from src.extremes.extreme_read import sel_event_above_duration, read_extremes
+from src.extremes.extreme_read import read_extremes_allens
 #%%
 from matplotlib.patches import Patch
 
 
 # %%
 
-def concurrent_events(events, events_container, base_plev = 25000, start_point = 'end_time', cross_plev = 1):
+def concurrent_events(events, base_plev = 25000, start_point = 'end_time', cross_plev = 1):
 
     """
     parameters:
@@ -20,72 +20,49 @@ def concurrent_events(events, events_container, base_plev = 25000, start_point =
         start_point: the point to set referent time, start_time or end_time
         cross_plev: how many plevs must cross
     """
+    events_container = pd.DataFrame(
+        columns=list(range(-30, 31)),
+        index=[25000, 50000, 70000, 85000, 100000],
+        data=0,
+    )
+
     ref_index = events[events["plev"] == base_plev].columns.get_loc(start_point)
     # loop over all the events in the base_plev
     
     for base_event in events[events["plev"] == base_plev].itertuples(index=False):
         ref_time = base_event[ref_index]
 
-        count_startime = ref_time - pd.Timedelta(days=30)
-        count_endtime = ref_time + pd.Timedelta(days=30)
+        base_startime = ref_time - pd.Timedelta(days=30)
 
-        # select the rows where the time between "start_time" and "end_time" has an overlap with the time between "count_startime" and "count_endtime"
-        overlapped_events = events[
-            (events.start_time <= count_endtime)
-            & (events.end_time >= count_startime)
-        ]
+        # select the events that happens after the base_startime
+        after_events = events[events[start_point] >= base_startime]
+        
 
         # if there is no overlap with events in other plevs, continue
-        if len(overlapped_events.plev.unique()) <= cross_plev:
+        if len(after_events.plev.unique()) <= cross_plev:
             continue
 
         # loop over all the events in the overlapped_events and update the count in container
-        for event in overlapped_events.itertuples():
+        for event in after_events.itertuples():
             event_startday = np.max([(event.start_time - ref_time).days, -30])
-            event_endday = np.min([(event.end_time - ref_time).days, 30])
+            event_endday = np.min([(event.end_time - ref_time).days, 30])+1
             events_container.loc[event.plev, event_startday:event_endday] += 1
+
+    return events_container
 
 
 # %%
-first10_pos_events_container = pd.DataFrame(
-    columns=list(range(-30, 31)),
-    index=[25000, 50000, 70000, 85000, 100000],
-    data=0,
-)
-
-last10_pos_events_container = pd.DataFrame(
-    columns=list(range(-30, 31)),
-    index=[25000, 50000, 70000, 85000, 100000],
-    data=0,
-)
-
-
-first10_neg_events_container = pd.DataFrame(
-    columns=list(range(-30, 31)),
-    index=[25000, 50000, 70000, 85000, 100000],
-    data=0,
-)
-
-last10_neg_events_container = pd.DataFrame(
-    columns=list(range(-30, 31)),
-    index=[25000, 50000, 70000, 85000, 100000],
-    data=0,
-)
-
-
 # first10
+first10_pos_events, first10_neg_events = read_extremes_allens("first10", 8)
+last10_pos_events, last10_neg_events = read_extremes_allens("last10", 8)
 
-for ens in range(1, 51):
-    pos_extreme, neg_extreme = read_extremes("first10", 8, ens)
-    concurrent_events(pos_extreme, first10_pos_events_container, cross_plev=4, base_plev=100000, start_point='start_time')
-    concurrent_events(neg_extreme, first10_neg_events_container, cross_plev=4, base_plev=100000, start_point='start_time')
+#%%
+first10_pos_events_container = concurrent_events(first10_pos_events, cross_plev=4, base_plev=100000, start_point='start_time')
+first10_neg_events_container = concurrent_events(first10_neg_events, cross_plev=4, base_plev=100000, start_point='start_time')
 
-# last10
-for ens in range(1, 51):
-    pos_extreme, neg_extreme = read_extremes("last10", 8, ens)
-    concurrent_events(pos_extreme, last10_pos_events_container, cross_plev=4, base_plev=100000, start_point='start_time')
-    concurrent_events(neg_extreme, last10_neg_events_container, cross_plev=4, base_plev=100000, start_point='start_time')
-                     
+last10_pos_events_container = concurrent_events(last10_pos_events, cross_plev=4, base_plev=100000, start_point='start_time')
+last10_neg_events_container = concurrent_events(last10_neg_events, cross_plev=4, base_plev=100000, start_point='start_time')
+
 # %%
 def plot_concurrent_bar(first10_df, last10_df, ax, vmin = 15, vmax = 85):
 
