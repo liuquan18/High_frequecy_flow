@@ -10,16 +10,21 @@ from matplotlib.patches import Patch
 
 # %%
 
-def concurrent_events(events, events_container, base_plev = 25000, cross_plev = 1):
+def concurrent_events(events, events_container, base_plev = 25000, start_point = 'end_time', cross_plev = 1):
+
     """
     parameters:
         events: events dataframe
         events_container: a zero container for count of concurrent events
         base_plev: the plev to set referent time
+        start_point: the point to set referent time, start_time or end_time
         cross_plev: how many plevs must cross
     """
-    for base_event in events[events["plev"] == base_plev].itertuples():
-        ref_time = base_event.end_time
+    ref_index = events[events["plev"] == base_plev].columns.get_loc(start_point)
+    # loop over all the events in the base_plev
+    
+    for base_event in events[events["plev"] == base_plev].itertuples(index=False):
+        ref_time = base_event[ref_index]
 
         count_startime = ref_time - pd.Timedelta(days=30)
         count_endtime = ref_time + pd.Timedelta(days=30)
@@ -54,7 +59,7 @@ last10_pos_events_container = pd.DataFrame(
     data=0,
 )
 
-#%%
+
 first10_neg_events_container = pd.DataFrame(
     columns=list(range(-30, 31)),
     index=[25000, 50000, 70000, 85000, 100000],
@@ -67,18 +72,19 @@ last10_neg_events_container = pd.DataFrame(
     data=0,
 )
 
-# %%
+
 # first10
 
 for ens in range(1, 51):
     pos_extreme, neg_extreme = read_extremes("first10", 8, ens)
-    concurrent_events(pos_extreme, first10_pos_events_container, cross_plev=3)
-    concurrent_events(neg_extreme, first10_neg_events_container, cross_plev=3)
-# %%
+    concurrent_events(pos_extreme, first10_pos_events_container, cross_plev=4, base_plev=100000, start_point='start_time')
+    concurrent_events(neg_extreme, first10_neg_events_container, cross_plev=4, base_plev=100000, start_point='start_time')
+
+# last10
 for ens in range(1, 51):
     pos_extreme, neg_extreme = read_extremes("last10", 8, ens)
-    concurrent_events(pos_extreme, last10_pos_events_container, cross_plev=3)
-    concurrent_events(neg_extreme, last10_neg_events_container, cross_plev=3)
+    concurrent_events(pos_extreme, last10_pos_events_container, cross_plev=4, base_plev=100000, start_point='start_time')
+    concurrent_events(neg_extreme, last10_neg_events_container, cross_plev=4, base_plev=100000, start_point='start_time')
                      
 # %%
 def plot_concurrent_bar(first10_df, last10_df, ax, vmin = 15, vmax = 85):
@@ -107,21 +113,20 @@ def plot_concurrent_bar(first10_df, last10_df, ax, vmin = 15, vmax = 85):
         for j, lag in enumerate(lag_days):
             # Plot first10 years data (upper bar)
                     # Plot first10 years data (upper bar)
-            first10_value = first10_df.loc[level, lag]
-            first10_color = value_to_color(first10_value, blue_cmap, vmin, vmax)
-
-            ax.bar(j, 0.4, bottom=i+0.3, width=1.,
-                    color=first10_color, edgecolor='grey', linewidth=0.3)           
-             
-            # Plot last10 years data (lower bar)
-            last10_value = last10_df.loc[level, lag]
-            last10_color = value_to_color(last10_value, orange_cmap, vmin, vmax)
-            ax.bar(j, 0.4, bottom=i-0.1, width=1., 
-                color=last10_color, edgecolor='grey', linewidth=0.3)
-
-            
             # Add text annotations
-            if j in range(11, 40, 1):
+            if j in range(26, 50, 1):
+                first10_value = first10_df.loc[level, lag]
+                first10_color = value_to_color(first10_value, blue_cmap, vmin, vmax)
+
+                ax.bar(j, 0.4, bottom=i+0.3, width=1.,
+                        color=first10_color, edgecolor='grey', linewidth=0.3)           
+                
+                # Plot last10 years data (lower bar)
+                last10_value = last10_df.loc[level, lag]
+                last10_color = value_to_color(last10_value, orange_cmap, vmin, vmax)
+                ax.bar(j, 0.4, bottom=i-0.1, width=1., 
+                    color=last10_color, edgecolor='grey', linewidth=0.3)
+
                 ax.text(j, i+0.5, str(first10_df.loc[level, lag]), ha='center', va='center', fontsize=8)
                 ax.text(j, i+0.1, str(last10_df.loc[level, lag]), ha='center', va='center', fontsize=8)
 
@@ -133,20 +138,20 @@ def plot_concurrent_bar(first10_df, last10_df, ax, vmin = 15, vmax = 85):
     ax.set_xticklabels(lag_days, rotation=45, ha='right')
     ax.set_yticks(np.arange(len(pressure_levels))+0.3)
     ax.set_yticklabels((pressure_levels.values/100).astype(int))
-    ax.set_xlim(10,40)
+    ax.set_xlim(25,50)
     # reverse the y-axis
     ax.invert_yaxis()
 
 
 #%%
 fig, (ax1, ax2) = plt.subplots(2,1, figsize=(10, 10))
-plot_concurrent_bar(first10_pos_events_container, last10_pos_events_container, ax1, vmin = 5, vmax = 35)
-plot_concurrent_bar(first10_neg_events_container, last10_neg_events_container, ax2, vmin = 5, vmax = 35)
+plot_concurrent_bar(first10_pos_events_container, last10_pos_events_container, ax1, vmin = 5, vmax = 20)
+plot_concurrent_bar(first10_neg_events_container, last10_neg_events_container, ax2, vmin = 5, vmax = 20)
 
 # Add a legend
 legend_elements = [Patch(facecolor=plt.cm.Blues(0.7), edgecolor='white', label='First 10 Years'),
                 Patch(facecolor=plt.cm.Oranges(0.7), edgecolor='white', label='Last 10 Years')]
-plt.legend(handles=legend_elements, loc='upper right')
+plt.legend(handles=legend_elements, loc='lower right')
 
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/events_evolution_cross_plev.pdf")
