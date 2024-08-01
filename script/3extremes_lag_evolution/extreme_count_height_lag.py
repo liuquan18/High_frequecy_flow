@@ -55,7 +55,7 @@ def after_events(events, base_plev=25000, start_point="end_time", cross_plev=1):
 
 
 # %%
-def plot_concurrent_bar(first10_df, last10_df, ax, vmin=15, vmax=85):
+def plot_stacked_events(first10_df, last10_df, ax, vmin=15, vmax=85,xmin = 25, xmax = 50):
 
     # Define color maps
     # Custom normalization class
@@ -82,7 +82,7 @@ def plot_concurrent_bar(first10_df, last10_df, ax, vmin=15, vmax=85):
             # Plot first10 years data (upper bar)
             # Plot first10 years data (upper bar)
             # Add text annotations
-            if j in range(26, 50, 1):
+            if j in range(xmin+1, xmax, 1):
                 first10_value = first10_df.loc[level, lag]
                 first10_color = value_to_color(first10_value, blue_cmap, vmin, vmax)
 
@@ -134,7 +134,7 @@ def plot_concurrent_bar(first10_df, last10_df, ax, vmin=15, vmax=85):
     ax.set_xticklabels(lag_days, rotation=45, ha="right")
     ax.set_yticks(np.arange(len(pressure_levels)) + 0.3)
     ax.set_yticklabels((pressure_levels.values / 100).astype(int))
-    ax.set_xlim(25, 50)
+    ax.set_xlim(xmin, xmax)
     # reverse the y-axis
     ax.invert_yaxis()
 
@@ -168,10 +168,10 @@ last10_neg_events_container = last10_neg_events_container.groupby(level=1).sum()
 
 # %%
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10))
-plot_concurrent_bar(
+plot_stacked_events(
     first10_pos_events_container, last10_pos_events_container, ax1, vmin=5, vmax=20
 )
-plot_concurrent_bar(
+plot_stacked_events(
     first10_neg_events_container, last10_neg_events_container, ax2, vmin=5, vmax=20
 )
 
