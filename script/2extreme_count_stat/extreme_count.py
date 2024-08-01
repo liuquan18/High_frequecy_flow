@@ -2,10 +2,8 @@
 import pandas as pd
 import numpy as np
 import seaborn as sns
-from src.extremes.extreme_statistics import read_extremes_allens
+from src.extremes.extreme_read import read_extremes_allens
 import matplotlib.pyplot as plt
-
-# %%
 
 
 # %%
@@ -39,13 +37,19 @@ def combine_events(df, duration=13):
 
 
 # %%
-def extreme_stat_allens(start_duration=5, duration_lim=7, plev=50000):
+def extreme_stat_allens(start_duration=5, duration_lim=8, plev=50000):
     first10_pos_extremes, first10_neg_extremes = read_extremes_allens(
-        "first10", start_duration=start_duration, plev=plev
+        "first10", start_duration=start_duration
     )
     last10_pos_extremes, last10_neg_extremes = read_extremes_allens(
-        "last10", start_duration=start_duration, plev=plev
+        "last10", start_duration=start_duration
     )
+
+    # select the events with plev
+    first10_pos_extremes = first10_pos_extremes[first10_pos_extremes["plev"] == plev]
+    first10_neg_extremes = first10_neg_extremes[first10_neg_extremes["plev"] == plev]
+    last10_pos_extremes = last10_pos_extremes[last10_pos_extremes["plev"] == plev]
+    last10_neg_extremes = last10_neg_extremes[last10_neg_extremes["plev"] == plev]
 
     # statistics across ensemble members
     first10_pos = first10_pos_extremes.groupby("duration")["mean"].agg(
@@ -196,8 +200,8 @@ for plev in [100000, 85000, 70000, 50000, 25000]:
     # fig, ax = plot_extreme_stat(first10_pos,first10_neg,last10_pos,last10_neg, stat = 'mean')
     # plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/mean_distribution_{plev}.png")
 
-    # increase_bys_pos[plev] = increase_by_percentage(first10_pos, last10_pos)
-    # increase_bys_neg[plev] = increase_by_percentage(first10_neg, last10_neg)
+    increase_bys_pos[plev] = increase_by_percentage(first10_pos, last10_pos)
+    increase_bys_neg[plev] = increase_by_percentage(first10_neg, last10_neg)
 
     first10_pos_extremes = first10_pos[first10_pos["note"] == "above_7"][
         ["mean", "count"]
@@ -227,7 +231,9 @@ for plev in [100000, 85000, 70000, 50000, 25000]:
 
 pos_extrems = pd.concat(pos_extrems)
 neg_extrems = pd.concat(neg_extrems)
-
+#%%
+pos_extrems = pos_extrems.sort_values(by='period',ascending=True)
+neg_extrems = neg_extrems.sort_values(by='period',ascending=True)
 # %%
 fig, ax = plt.subplots(figsize=(15, 8))
 # pos as positive side of y-axis
@@ -238,7 +244,8 @@ sns.barplot(
     hue="period",
     orient="h",
     ax=ax,
-    hue_order=["first10", "last10"],
+    hue_order=["last10", "first10"],
+    palette = ['C1','C0']
 )
 
 # neg as negative side of y-axis
@@ -249,7 +256,8 @@ sns.barplot(
     y="plev",
     x="count",
     hue="period",
-    hue_order=["first10", "last10"],
+    hue_order=["last10", "first10"],
+    palette = ['C1','C0'],
     orient="h",
     ax=ax,
     alpha=0.5,
@@ -259,6 +267,8 @@ ax.set_ylabel("Pressure Level (hPa)")
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_all.pdf"
 )
+
+
 # %%
 # plot for mean
 fig, ax = plt.subplots(figsize=(15, 8))
@@ -270,8 +280,9 @@ sns.barplot(
     hue="period",
     orient="h",
     ax=ax,
-    hue_order=["first10", "last10"],
-)
+    hue_order=["last10", "first10"],
+    palette = ['C1','C0']
+    )
 
 # neg as negative side of y-axis
 sns.barplot(
@@ -279,7 +290,8 @@ sns.barplot(
     y="plev",
     x="mean",
     hue="period",
-    hue_order=["first10", "last10"],
+    hue_order=["last10", "first10"],
+    palette = ['C1','C0'],
     orient="h",
     ax=ax,
     alpha=0.5,
