@@ -82,4 +82,5 @@ def plot_stacked_events(first10_df, last10_df, ax, vmin=15, vmax=85,xmin = 25, x
     ax.set_yticklabels((pressure_levels.values / 100).astype(int))
     ax.set_xlim(xmin, xmax)
     # reverse the y-axis
-    ax.invert_yaxis()
+    if pressure_levels[0] < pressure_levels[-1]:
+        ax.invert_yaxis()
