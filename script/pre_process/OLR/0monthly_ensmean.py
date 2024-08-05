@@ -106,8 +106,8 @@ os.system(
 
 
 #%%
-# merge the two ensemble mean files
-os.system(
-    f"cdo -selyear,2091/2100 -mergetime {data_cache_path}OLR_monthly_ensmean_207505-209409.nc {data_cache_path}OLR_monthly_ensmean_209505-210009.nc {save_path}OLR_monthly_ensmean_209105-210009.nc"
-)
+# # merge the two ensemble mean files
+# os.system(
+#     f"cdo -selyear,2091/2100 -mergetime {save_path}OLR_monthly_ensmean_207505-209409.nc {save_path}OLR_monthly_ensmean_209505-210009.nc {save_path}OLR_monthly_ensmean_209105-210009.nc"
+# )
 # %%
