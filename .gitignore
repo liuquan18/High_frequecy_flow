@@ -167,6 +167,7 @@ data/*
 
 # all nc data
 *.nc
+*.csv
 
 # all log files
 *.out
