@@ -72,6 +72,7 @@ month_files = get_from_cat(cat_hist_olr_monthly, "path")
 # only select path with name ending with  "185001-186912.nc"
 first10_month_files = month_files.loc[month_files.path.str.contains("185001-186912.nc")]
 
+#%%
 # use cdo to calculate the ensemble mean, and save the result to
 os.system(
     f"cdo -selyear,1850/1859 -selmon,5/9 -ensmean {first10_month_files.path.str.cat(sep=' ')} {save_path}OLR_monthly_ensmean_185005-185909.nc"

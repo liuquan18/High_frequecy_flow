@@ -47,6 +47,17 @@ cat_MPI_GE_CMIP6 = cat.search(
         "r30i1p1f1",
         "r3i1p1f1",
         "r4i1p1f1",
+        "r40i1p1f1",
+        "r41i1p1f1",
+        "r42i1p1f1",
+        "r43i1p1f1",
+        "r44i1p1f1",
+        "r45i1p1f1",
+        "r46i1p1f1",
+        "r47i1p1f1",
+        "r48i1p1f1",
+        "r49i1p1f1",
+        "r50i1p1f1",
         "r5i1p1f1",
         "r6i1p1f1",
         "r7i1p1f1",
@@ -67,7 +78,7 @@ cat_hist_olr_daily = cat_MPI_GE_CMIP6.search(
     variable_id="rlut",
     experiment_id="historical",
 )
-
+#%%
 daily_files = get_from_cat(cat_hist_olr_daily, "path")
 
 
@@ -94,7 +105,7 @@ day_files = get_from_cat(cat_ssp585_olr_daily, "path")
 last10_month_files1 = day_files.loc[day_files.path.str.contains("20750101-20941231.nc")]
 last10_month_files2 = day_files.loc[day_files.path.str.contains("20950101-21001231.nc")]
 # %%
-last10_month_files1.to_csv("/work/mh0033/m300883/High_frequecy_flow/script/pre_process/OLR/last10_month_files1.csv", index=False)
-last10_month_files2.to_csv("/work/mh0033/m300883/High_frequecy_flow/script/pre_process/OLR/last10_month_files2.csv", index=False)
+last10_month_files1.to_csv("/work/mh0033/m300883/High_frequecy_flow/script/pre_process/OLR/last10_month_files1.csv", index=False, header=False)
+last10_month_files2.to_csv("/work/mh0033/m300883/High_frequecy_flow/script/pre_process/OLR/last10_month_files2.csv", index=False, header=False)
 
 # %%
