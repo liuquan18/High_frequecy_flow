@@ -30,5 +30,5 @@ done
 file_list1=$(echo $file_list1 | sed 's/ $//')
 file_list2=$(echo $file_list2 | sed 's/ $//')
 
-cdo -selyear,2091/2094 -selmon,5/9 -ensmean $file_list1 ${to_path}"rlut_Amon_MPI-ESM1-2-LR_HIST_ensmean_207505-209409.nc"
-cdo -selyear,2095/2100 -selmon,5/9 -ensmean $file_list2 ${to_path}"rlut_Amon_MPI-ESM1-2-LR_HIST_ensmean_209505-210009.nc"
+cdo -selmon,5/9 -ensmean $file_list1 ${to_path}"rlut_Amon_MPI-ESM1-2-LR_HIST_ensmean_207505-209409.nc"
+cdo -selmon,5/9 -ensmean $file_list2 ${to_path}"rlut_Amon_MPI-ESM1-2-LR_HIST_ensmean_209505-210009.nc"
