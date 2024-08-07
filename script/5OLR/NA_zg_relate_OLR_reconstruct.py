@@ -37,7 +37,16 @@ NA_zg_single = np.array_split(NA_zg_files, size)[rank]
 TP_OLR_single = np.array_split(TP_OLR_files, size)[rank]
 
 # %%
-def reconstruct(NA_zg,TP_OLR):
+def reconstruct(NA_zg,TP_OLR, lag = 6):
+    """
+    lag: int, default 6, the lag days between the two fields, NA_zg leads
+    """
+    # shift the NA_zg field by -lag days
+    NA_zg = NA_zg.shift(time = -lag)
+    NA_zg = NA_zg.dropna(dim = 'time', how = 'all')
+
+    # Ensure the time coordinates match
+    NA_zg, TP_OLR = xr.align(NA_zg, TP_OLR, join='inner', exclude=['lat', 'lon'])
     mca = xMCA(NA_zg,TP_OLR)
     mca.normalize()
     mca.apply_coslat()
@@ -48,8 +57,6 @@ def reconstruct(NA_zg,TP_OLR):
     return NA_zg_reconstructed,TP_OLR_reconstructed
 # %%
 def reconstruct_yearly(NA_zg, TP_OLR):
-    # Ensure the time coordinates match
-    NA_zg, TP_OLR = xr.align(NA_zg, TP_OLR, join='outer', exclude=['lat', 'lon'])
 
     # Create a dataset with both variables
     ds = xr.Dataset({'NA_zg': NA_zg, 'TP_OLR': TP_OLR})
