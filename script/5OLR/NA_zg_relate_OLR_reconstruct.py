@@ -95,8 +95,7 @@ for i, (NA_zg_file, TP_OLR_file) in enumerate(zip(NA_zg_single, TP_OLR_single)):
     TP_OLR = xr.open_dataset(TP_OLR_dir + TP_OLR_file).rlut
     reconstructed_NA_zg, reconstructed_TP_OLR = reconstruct_yearly(NA_zg, TP_OLR)
 
-    # get basename of the file to save
-
+    # save the reconstructed
     reconstructed_NA_zg.to_netcdf(reconstruct_ZG_dir + NA_zg_file)
     reconstructed_TP_OLR.to_netcdf(reconstruct_OLR_dir + TP_OLR_file)
 
