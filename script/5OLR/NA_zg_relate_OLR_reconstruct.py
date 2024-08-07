@@ -94,9 +94,8 @@ def reconstruct_yearly(NA_zg, TP_OLR):
 
 #%%
 for i, (NA_zg_file, TP_OLR_file) in enumerate(zip(NA_zg_single, TP_OLR_single)):
-    print(f"Rank {rank}, file {i}/{len(NA_zg_single)-1}")
-    print(NA_zg_file)
-    print(NA_zg_file)
+    print(f"{period} Rank {rank}, file {i}/{len(NA_zg_single)-1}")
+
     NA_zg = xr.open_dataset(NA_zg_dir + NA_zg_file).zg
     NA_zg = NA_zg.sel(plev = 50000)
     TP_OLR = xr.open_dataset(TP_OLR_dir + TP_OLR_file).rlut
