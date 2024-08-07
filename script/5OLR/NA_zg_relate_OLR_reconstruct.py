@@ -32,6 +32,10 @@ TP_OLR_files = os.listdir(TP_OLR_dir)
 NA_zg_files = [f for f in NA_zg_files if f.endswith('.nc')]
 TP_OLR_files = [f for f in TP_OLR_files if f.endswith('.nc')]
 
+# order lists to make ensemble members match
+NA_zg_files.sort()
+TP_OLR_files.sort()
+
 # files to be processed on this core
 NA_zg_single = np.array_split(NA_zg_files, size)[rank]
 TP_OLR_single = np.array_split(TP_OLR_files, size)[rank]
@@ -91,6 +95,8 @@ def reconstruct_yearly(NA_zg, TP_OLR):
 #%%
 for i, (NA_zg_file, TP_OLR_file) in enumerate(zip(NA_zg_single, TP_OLR_single)):
     print(f"Rank {rank}, file {i}/{len(NA_zg_single)-1}")
+    print(NA_zg_file)
+    print(NA_zg_file)
     NA_zg = xr.open_dataset(NA_zg_dir + NA_zg_file).zg
     NA_zg = NA_zg.sel(plev = 50000)
     TP_OLR = xr.open_dataset(TP_OLR_dir + TP_OLR_file).rlut
