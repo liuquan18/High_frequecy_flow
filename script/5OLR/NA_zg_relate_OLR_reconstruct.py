@@ -37,9 +37,10 @@ NA_zg_single = np.array_split(NA_zg_files, size)[rank]
 TP_OLR_single = np.array_split(TP_OLR_files, size)[rank]
 
 # %%
-def reconstruct(NA_zg,TP_OLR, lag = 6):
+def reconstruct(NA_zg,TP_OLR, lag = 6, nmodes = 50):
     """
     lag: int, default 6, the lag days between the two fields, NA_zg leads
+    nmodes: int, default 50, the number of modes to be reconstructed
     """
     # remove the nan values on spatial dimensions
     NA_zg = NA_zg.dropna(dim = ('lon'), how = 'all').dropna(dim = 'lat', how = 'all')
@@ -57,7 +58,7 @@ def reconstruct(NA_zg,TP_OLR, lag = 6):
     mca.normalize()
     mca.apply_coslat()
     mca.solve()
-    reconstructed = mca.reconstructed_fields(mode = slice (1,50))
+    reconstructed = mca.reconstructed_fields(mode = slice (1,nmodes))
     NA_zg_reconstructed = reconstructed['left']
     TP_OLR_reconstructed = reconstructed['right']
     return NA_zg_reconstructed,TP_OLR_reconstructed
