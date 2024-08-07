@@ -41,12 +41,18 @@ def reconstruct(NA_zg,TP_OLR, lag = 6):
     """
     lag: int, default 6, the lag days between the two fields, NA_zg leads
     """
+    # remove the nan values on spatial dimensions
+    NA_zg = NA_zg.dropna(dim = ('lon'), how = 'all').dropna(dim = 'lat', how = 'all')
+    TP_OLR = TP_OLR.dropna(dim = ('lon'), how = 'all').dropna(dim = 'lat', how = 'all')
+
     # shift the NA_zg field by -lag days
     NA_zg = NA_zg.shift(time = -lag)
     NA_zg = NA_zg.dropna(dim = 'time', how = 'all')
 
     # Ensure the time coordinates match
     NA_zg, TP_OLR = xr.align(NA_zg, TP_OLR, join='inner', exclude=['lat', 'lon'])
+
+    # Perform MCA
     mca = xMCA(NA_zg,TP_OLR)
     mca.normalize()
     mca.apply_coslat()
@@ -66,8 +72,8 @@ def reconstruct_yearly(NA_zg, TP_OLR):
 
     # Define a function to apply to each year's data
     def apply_reconstruct(group):
-        NA_zg_year = group.NA_zg.dropna(dim = ('lon'), how = 'all').dropna(dim = 'lat', how = 'all')
-        TP_OLR_year = group.TP_OLR.dropna(dim = ('lon'), how = 'all').dropna(dim = 'lat', how = 'all')
+        NA_zg_year = group.NA_zg
+        TP_OLR_year = group.TP_OLR
         NA_zg_reconstructed, TP_OLR_reconstructed = reconstruct(NA_zg_year, TP_OLR_year)
         return xr.Dataset({
             'NA_zg_reconstructed': NA_zg_reconstructed,
