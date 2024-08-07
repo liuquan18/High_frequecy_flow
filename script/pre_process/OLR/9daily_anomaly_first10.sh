@@ -16,7 +16,7 @@ Anomaly() {
     outfile=${to_dir}$(basename ${infile} | sed 's/18500101-18691231.nc/18500501-18590930_ano.nc/')
 
     # include month Mayb and september for later rolling window
-    cdo -monsub -selyear,1850/1859 -selmon,5/9 -sellonlatbox,-180,80,-30,30 ${infile} -sellonlatbox,-180,80,-30,30 ${month_ens} ${outfile}
+    cdo -monsub -selyear,1850/1859 -selmon,5/9 -sellonlatbox,-180,180,-30,30 ${infile} -sellonlatbox,-180,180,-30,30 ${month_ens} ${outfile}
 }
 
 

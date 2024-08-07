@@ -19,7 +19,7 @@ Anomaly() {
     savedir=$3
     outfile=${savedir}$(basename ${infile})
     # include month Mayb and september for later rolling window
-    cdo -monsub -selmon,5/9 -sellonlatbox,-180,80,-30,30 ${infile} -sellonlatbox,-180,80,-30,30 ${monthfile} ${outfile}
+    cdo -monsub -selmon,5/9 -sellonlatbox,-180,180,-30,30 ${infile} -sellonlatbox,-180,180,-30,30 ${monthfile} ${outfile}
 }
 
 export -f Anomaly
