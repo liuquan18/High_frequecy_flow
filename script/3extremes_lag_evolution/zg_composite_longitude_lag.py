@@ -81,35 +81,41 @@ def composite_lag_longitude_allens(
 
 # %%
 pos_zg_composite_first10, neg_zg_composite_first10 = composite_lag_longitude_allens(
-    period="first10", cross_plev=1, base_plev=25000, stat="sum"
+    period="first10", cross_plev=1, base_plev=25000, stat="mean"
 )
 
 # %%
 pos_zg_composite_last10, neg_zg_composite_last10 = composite_lag_longitude_allens(
-    period="last10", cross_plev=1, base_plev=25000, stat="sum"
+    period="last10", cross_plev=1, base_plev=25000, stat="mean"
 )
+#%%
+def std_time(arr):
+    return (arr - arr.mean(dim='time')) / arr.std(dim='time')
 
 # %%
 fig, axes = plt.subplots(2, 2, figsize=(15, 10))
 
-levels = np.arange(-5000, 5500, 500)
-# levels = np.arange(-100, 110, 10)
+# levels = np.arange(-5000, 5500, 500)
+# levels = np.arange(-80, 90, 10)
+levels = np.arange(-3,3.1,0.5)
 plev = 50000
-pos_zg_composite_first10.sel(plev=plev, lat=0).plot.contourf(
+std_time(pos_zg_composite_first10).sel(plev=plev, lat=0).plot.contourf(
     levels=levels, extend="both", ax=axes[0, 0]
 )
 
-neg_zg_composite_first10.sel(plev=plev, lat=0).plot.contourf(
+std_time(neg_zg_composite_first10).sel(plev=plev, lat=0).plot.contourf(
     levels=levels, extend="both", ax=axes[0, 1]
 )
 
-pos_zg_composite_last10.sel(plev=plev, lat=0).plot.contourf(
+std_time(pos_zg_composite_last10).sel(plev=plev, lat=0).plot.contourf(
     levels=levels, extend="both", ax=axes[1, 0]
 )
 
-neg_zg_composite_last10.sel(plev=plev, lat=0).plot.contourf(
+std_time(neg_zg_composite_last10).sel(plev=plev, lat=0).plot.contourf(
     levels=levels, extend="both", ax=axes[1, 1]
 )
+for ax in axes.flat:
+    ax.set_ylim(-20,0)
 plt.savefig(
     f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/composite/zg{plev}_composite_lag_longitude_250hPa_sum.png"
 )
