@@ -8,6 +8,7 @@ import os
 import mpi4py.MPI as MPI
 # %%
 period = str(sys.argv[1]) # first10 or last10
+bandfilter = str(sys.argv[2]) # bandfilter or nobandfilter
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
@@ -18,11 +19,30 @@ if period == "first10":
     reconstruct_OLR_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_reconstructed/first10_OLR_reconstructed/"
     reconstruct_ZG_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_zg_daily_reconstructed/first10_NA_zg_reconstructed/"
 
+
 elif period == "last10":
     NA_zg_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/zg_MJJAS_ano_last10/"
     TP_OLR_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_anomaly/last10_OLR_daily_ano/"
     reconstruct_OLR_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_reconstructed/last10_OLR_reconstructed/"
     reconstruct_ZG_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_zg_daily_reconstructed/last10_NA_zg_reconstructed/"
+
+#%%
+if bandfilter == "bandfilter":
+    NA_zg_dir = NA_zg_dir + "bandfilter/"
+    TP_OLR_dir = TP_OLR_dir + "bandfilter/"
+    reconstruct_OLR_dir = reconstruct_OLR_dir + "bandfilter/"
+    reconstruct_ZG_dir = reconstruct_ZG_dir + "bandfilter/"
+else:
+    pass
+
+#%%
+# mkdir if reconstruct_OLR_dir and reconstruct_ZG_dir do not exist
+if not os.path.exists(reconstruct_OLR_dir):
+    os.makedirs(reconstruct_OLR_dir)
+if not os.path.exists(reconstruct_ZG_dir):
+    os.makedirs(reconstruct_ZG_dir)
+
+
 
 #%%
 # all files to be processed
