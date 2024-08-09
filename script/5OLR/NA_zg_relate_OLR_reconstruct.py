@@ -28,19 +28,20 @@ elif period == "last10":
 
 #%%
 if bandfilter == "bandfilter":
-    NA_zg_dir = NA_zg_dir + "bandfilter/"
-    TP_OLR_dir = TP_OLR_dir + "bandfilter/"
-    reconstruct_OLR_dir = reconstruct_OLR_dir + "bandfilter/"
-    reconstruct_ZG_dir = reconstruct_ZG_dir + "bandfilter/"
+    NA_zg_dir = NA_zg_dir[:-1] + "_bandfilter/"
+    TP_OLR_dir = TP_OLR_dir[:-1] + "_bandfilter/"
+    reconstruct_OLR_dir = reconstruct_OLR_dir[:-1] + "_bandfilter/"
+    reconstruct_ZG_dir = reconstruct_ZG_dir[:-1] + "_bandfilter/"
 else:
     pass
 
 #%%
-# mkdir if reconstruct_OLR_dir and reconstruct_ZG_dir do not exist
-if not os.path.exists(reconstruct_OLR_dir):
-    os.makedirs(reconstruct_OLR_dir)
-if not os.path.exists(reconstruct_ZG_dir):
-    os.makedirs(reconstruct_ZG_dir)
+if rank == 0:
+    # mkdir if reconstruct_OLR_dir and reconstruct_ZG_dir do not exist
+    if not os.path.exists(reconstruct_OLR_dir):
+        os.makedirs(reconstruct_OLR_dir)
+    if not os.path.exists(reconstruct_ZG_dir):
+        os.makedirs(reconstruct_ZG_dir)
 
 
 
