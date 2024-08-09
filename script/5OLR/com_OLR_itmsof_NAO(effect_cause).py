@@ -24,13 +24,7 @@ extremes_all = {
     ("last10", "pos"): last10_pos_events,
     ("last10", "neg"): last10_neg_events,
 }
-# %%
-first10_pos_ens2 = first10_pos_events[first10_pos_events["ens"] == 2]
-# %%
-OLR_ens2 = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_reconstructed/first10_OLR_reconstructed/rlut_day_MPI-ESM1-2-LR_historical_r2i1p1f1_gn_18500501-18590930_ano.nc"
-)
-OLR_ens2 = OLR_ens2.TP_OLR_reconstructed
+
 
 # %%
 def composite_times(events, lag_days = 6):
@@ -108,7 +102,7 @@ last_neg_OLR_lags["lag"] = np.arange(15)
 #%%
 
 fig = plt.figure(figsize=(20, 10))
-gs = gridspec.GridSpec(6, 2, height_ratios=[1, 1, 1, 1, 1, 0.3], hspace=0.3, wspace=0.1)
+gs = gridspec.GridSpec(6, 2, height_ratios=[1, 1, 1, 1, 1, 0.3], hspace=0.3, wspace=0.01)
 
 lag_labels = ['-10 days', '-9 days', '-8 days', '-7 days', '-6 days']
 
@@ -131,14 +125,14 @@ fig.colorbar(p, cax=cax, orientation="horizontal")
 cax.set_title("OLR anomaly (W/m^2)")
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/OLR_composite_pos.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/OLR_composite_pos.png",dpi = 300)
 
 
 
 # %%
 # same for negative events
 fig = plt.figure(figsize=(20, 10))
-gs = gridspec.GridSpec(6, 2, height_ratios=[1, 1, 1, 1, 1, 0.3], hspace=0.3, wspace=0.1)
+gs = gridspec.GridSpec(6, 2, height_ratios=[1, 1, 1, 1, 1, 0.3], hspace=0.3, wspace=0.01)
 
 lag_labels = ['-10 days', '-9 days', '-8 days', '-7 days', '-6 days']
 
@@ -161,5 +155,5 @@ fig.colorbar(p, cax=cax, orientation="horizontal")
 cax.set_title("OLR anomaly (W/m^2)")
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/OLR_composite_neg.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/OLR_composite_neg.png",dpi = 300)
 # %%
