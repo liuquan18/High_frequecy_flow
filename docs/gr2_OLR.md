@@ -5,11 +5,12 @@
 
 
 ## 1.1 composite of OLR against positive NAO extreme events
-[positive NAO extreme events](plots/OLR_composite_e2c/OLR_composite_pos.pdf)
+
+<img src="plots/OLR_composite_e2c/OLR_composite_pos.png" alt="count_distribution_50000" style="zoom:72%;" />
 
 ## 1.2 composite of OLR against negative NAO extreme events
-[negative NAO extreme events](plots/OLR_composite_e2c/OLR_composite_neg.pdf)
 
+<img src="plots/OLR_composite_e2c/OLR_composite_neg.png" alt="count_distribution_50000" style="zoom:72%;" />
 
 ## 2. bandfilter 2-8 days
 2-8 days of bandpass filter before the MCA to get the synoptic scale OLR.

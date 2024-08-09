@@ -7,6 +7,8 @@ import sys
 import mpi4py.MPI as MPI
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+
 import glob
 # %%
 from src.extremes.extreme_read import read_extremes_allens
@@ -76,7 +78,9 @@ def plot_composite(field, ax):
         levels = np.arange(-10,11,1),
         transform=ccrs.PlateCarree(),
         add_colorbar = False,
-        ax = ax
+        ax = ax,
+        add_labels = False,
+        extend = 'both',
     )
     ax.coastlines()
     return p
@@ -102,65 +106,60 @@ last_pos_OLR_lags["lag"] = np.arange(15)
 last_neg_OLR_lags["lag"] = np.arange(15)
 
 #%%
-# plot composite with lags ranging from 10 days to 6 days as rows, different periods as columns
-fig, axes = plt.subplots(5,2, figsize = (20,10),
-        subplot_kw=dict(projection=ccrs.PlateCarree(
-            central_longitude= 180
-        ),facecolor='grey'))
-lag_lables = ['-10 days', '-9 days', '-8 days', '-7 days', '-6 days']
+
+fig = plt.figure(figsize=(20, 10))
+gs = gridspec.GridSpec(6, 2, height_ratios=[1, 1, 1, 1, 1, 0.3], hspace=0.3, wspace=0.1)
+
+lag_labels = ['-10 days', '-9 days', '-8 days', '-7 days', '-6 days']
 
 # first columns
-for i, ax in enumerate(axes[:,0]):
-    plot_composite(first_pos_OLR_lags.sel(lag = 10 - i), ax)
-    ax.set_title(lag_lables[i], loc = "left")
+for i in range(5):
+    ax = fig.add_subplot(gs[i, 0], projection=ccrs.PlateCarree(central_longitude=180))
+    plot_composite(first_pos_OLR_lags.sel(lag=10 - i), ax)
+    ax.set_title(lag_labels[i], loc="left")
 
 # second columns
-for j, ax in enumerate(axes[:,1]):
-    plot_composite(last_pos_OLR_lags.sel(lag = 10 - j), ax)
+for j in range(5):
+    ax = fig.add_subplot(gs[j, 1], projection=ccrs.PlateCarree(central_longitude=180))
+    p = plot_composite(last_pos_OLR_lags.sel(lag=10 - j), ax)
     ax.set_title(None)
 
-# title for the first column as "First 10 years"
-axes[0,0].set_title("First 10 years")
-# title for the second column as "Last 10 years"
-axes[0,1].set_title("Last 10 years")
 
-# title at the middle between two column as [10, 9, 8, 7, 6]
-# Add custom y-labels to the second column
+# add colorbar at the bottom
+cax = fig.add_subplot(gs[5, :])
+fig.colorbar(p, cax=cax, orientation="horizontal")
+cax.set_title("OLR anomaly (W/m^2)")
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/OLR_composite_pos.pdf")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/OLR_composite_pos.png")
+
+
 
 # %%
-# same for the negative events
-fig, axes = plt.subplots(5,2, figsize = (20,10),
-        subplot_kw=dict(projection=ccrs.PlateCarree(
-            central_longitude= 180
-        ),facecolor='grey'))
+# same for negative events
+fig = plt.figure(figsize=(20, 10))
+gs = gridspec.GridSpec(6, 2, height_ratios=[1, 1, 1, 1, 1, 0.3], hspace=0.3, wspace=0.1)
 
-lag_lables = ['-10 days', '-9 days', '-8 days', '-7 days', '-6 days']
+lag_labels = ['-10 days', '-9 days', '-8 days', '-7 days', '-6 days']
+
 # first columns
-for i, ax in enumerate(axes[:,0]):
-    plot_composite(first_neg_OLR_lags.sel(lag = 10 - i), ax)
-    ax.set_title(lag_lables[i], loc = "left")
+for i in range(5):
+    ax = fig.add_subplot(gs[i, 0], projection=ccrs.PlateCarree(central_longitude=180))
+    plot_composite(first_neg_OLR_lags.sel(lag=10 - i), ax)
+    ax.set_title(lag_labels[i], loc="left")
 
 # second columns
-for j, ax in enumerate(axes[:,1]):
-    plot_composite(last_neg_OLR_lags.sel(lag = 10 - j), ax)
+for j in range(5):
+    ax = fig.add_subplot(gs[j, 1], projection=ccrs.PlateCarree(central_longitude=180))
+    p = plot_composite(last_neg_OLR_lags.sel(lag=10 - j), ax)
     ax.set_title(None)
 
-# title for the first column as "First 10 years"
-axes[0,0].set_title("First 10 years")
-# title for the second column as "Last 10 years"
-axes[0,1].set_title("Last 10 years")
 
-# title at the middle between two column as [10, 9, 8, 7, 6]
-# Add custom y-labels to the second column
-y_labels = ['10 days', '9 days', '8 days', '7 days', '6 days']
-for idx, label in enumerate(y_labels):
-    axes[idx, 1].text(-0.1, 0.5, label, va='center', ha='right', rotation=90,
-                      transform=axes[idx, 1].transAxes, fontsize=12)
+# add colorbar at the bottom
+cax = fig.add_subplot(gs[5, :])
+fig.colorbar(p, cax=cax, orientation="horizontal")
+cax.set_title("OLR anomaly (W/m^2)")
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/OLR_composite_neg.pdf")
-
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/OLR_composite_neg.png")
 # %%
