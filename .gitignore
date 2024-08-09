@@ -174,3 +174,6 @@ data/*
 
 *.png
 *.pdf
+
+# markdown files under docs
+docs/*.md
