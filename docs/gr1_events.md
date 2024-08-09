@@ -36,7 +36,7 @@ The strengthening of the extreme positive NAO and the extreme negative NAO under
 
 ### 3. Count of extreme events (lasting for more than 7 days) at all altitudes
 
-![count_distribution_all]("plots/extremes_statistics/count_distribution_all.pdf") 
+[count_distribution_all]("plots/extremes_statistics/count_distribution_all.pdf") 
 
 
 
