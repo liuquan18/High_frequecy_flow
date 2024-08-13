@@ -56,8 +56,8 @@ def sel_event_above_duration(df, duration=5, by = 'event_duraion'):
 
         # Filter rows where there are at least 5 days in June to August
         result = df[df["days_in_JJA"] >= duration]
+
     elif by == 'sign_duration':
-        df["sign_duration"] = df["sign_end_time"] - df["sign_start_time"]
         result = df[df["sign_duration"] >= duration]
     return result
 
