@@ -15,6 +15,7 @@ def calculate_residue(pc, threshold):
             ].values,
         )
     )
+    pc = pc.droplevel(level=[0,1])
     return pc
 
 # %%
