@@ -12,7 +12,7 @@ import cartopy.feature as cfeature
 import matplotlib.gridspec as gridspec
 import logging
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.warning)
 import glob
 
 # %%
@@ -55,7 +55,6 @@ def composite_OLR_events(period, extreme_type, lag_days=6, bandfilter=False):
     if bandfilter:
         base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_reconstructed/{period}_OLR_reconstructed_bandfilter/"
     for ens in range(1, 51):
-
         # read OLR data
         file = f"{base_dir}rlut_day_MPI-ESM1-2-LR_*_r{ens}i1p1f1_gn_*_ano.nc"
         try:
@@ -72,6 +71,8 @@ def composite_OLR_events(period, extreme_type, lag_days=6, bandfilter=False):
 
         # composite the OLR
         sel_times = composite_times(extreme_single, lag_days=lag_days)
+        if sel_times.size == 0:
+            continue
         OLR_mean_single = composite_mean(OLR, sel_times)
         OLR_events_lag_concur.append(OLR_mean_single)
 
@@ -98,21 +99,27 @@ def plot_composite(field, ax, levels=np.arange(-10, 11, 1)):
 bandpass = False
 # %%
 # composite analysis with lag ranging from 15 days to 0
+print("first10 positive")
 first_pos_OLR_lags = [
     composite_OLR_events("first10", "pos", lag_days=i, bandfilter=bandpass)
-    for i in range(15)
+    for i in range(60)
 ]
+print("first10 negative")
 first_neg_OLR_lags = [
     composite_OLR_events("first10", "neg", lag_days=i, bandfilter=bandpass)
-    for i in range(15)
+    for i in range(60)
 ]
+
+print("last10 positive")
 last_pos_OLR_lags = [
     composite_OLR_events("last10", "pos", lag_days=i, bandfilter=bandpass)
-    for i in range(15)
+    for i in range(60)
 ]
+
+print("last10 negative")
 last_neg_OLR_lags = [
     composite_OLR_events("last10", "neg", lag_days=i, bandfilter=bandpass)
-    for i in range(15)
+    for i in range(60)
 ]
 
 # %%
@@ -123,10 +130,10 @@ last_neg_OLR_lags = xr.concat(last_neg_OLR_lags, dim="lag")
 
 # %%
 # coordinate for the lags
-first_pos_OLR_lags["lag"] = np.arange(15)
-first_neg_OLR_lags["lag"] = np.arange(15)
-last_pos_OLR_lags["lag"] = np.arange(15)
-last_neg_OLR_lags["lag"] = np.arange(15)
+first_pos_OLR_lags["lag"] = np.arange(60)
+first_neg_OLR_lags["lag"] = np.arange(60)
+last_pos_OLR_lags["lag"] = np.arange(60)
+last_neg_OLR_lags["lag"] = np.arange(60)
 
 # %%
 
@@ -207,9 +214,19 @@ first_neg_OLR_lags_meridional = first_neg_OLR_lags.mean(dim="lat")
 last_neg_OLR_lags_meridional = last_neg_OLR_lags.mean(dim="lat")
 # %%
 # use the
-container = first_pos_OLR_lags.copy()
-container = container.isel(lat=slice(0, 15), lag=0).drop_vars("lag")
-container["lat"] = np.arange(0, 15)
+container1 = first_pos_OLR_lags.copy()
+container2 = last_pos_OLR_lags.copy()
+
+#%%
+container1 = container1.isel(lag=0).drop_vars("lag")
+container1["lat"] = np.arange(0,32,1)
+
+container2 = container2.isel(lag=0).drop_vars("lag")
+container2["lat"] = np.arange(32,64,1)
+
+container = xr.concat([container1,container2],dim = "lat")
+container = container.sel(lat = slice (0,59))
+
 # %%
 # create a container for the composite to align the x-axis
 first_pos_OLR_lags_meridional_cont = container.copy(
@@ -236,10 +253,18 @@ ax1 = fig.add_subplot(gs[0, 0], projection=ccrs.PlateCarree(central_longitude=18
 ax1.set_extent([0, 360, -30, 30], crs=ccrs.PlateCarree())
 ax1.coastlines()
 # brown land color, grey ocean color
-ax1.add_feature(
-    cfeature.NaturalEarthFeature(
-        "physical", "land", "110m", edgecolor="black", facecolor="Cornsilk"
-    )
+# ax1.add_feature(
+#     cfeature.NaturalEarthFeature(
+#         "physical", "land", "110m", edgecolor="black", facecolor="Cornsilk"
+#     )
+# )
+first_neg_OLR_lags.sel(lag = 6).plot(
+    ax=ax1,
+    levels=levels*3,
+    add_colorbar=False,
+    extend = 'both',
+    add_labels=False,
+    transform=ccrs.PlateCarree(),
 )
 
 
@@ -295,12 +320,12 @@ last_neg_OLR_lags_meridional.plot.contourf(
 for ax in [ax2, ax3, ax4, ax5]:
 
     ax.set_aspect("auto")
-    ax.set_ylim(6, 14)
+    ax.set_ylim(6, 30)
 
 # set yticks and labels as [6..14],and times -1
 for ax in [ax2, ax4]:
-    ax.set_yticks(range(6, 15, 1), crs=ccrs.PlateCarree())
-    ax.set_yticklabels([f"-{lat}" for lat in range(6, 15, 1)])
+    ax.set_yticks(range(10, 30, 5), crs=ccrs.PlateCarree())
+    ax.set_yticklabels([f"-{lat}" for lat in range(10, 30, 5)])
 
 # add x-axis labels
 for ax in [ax4, ax5]:
