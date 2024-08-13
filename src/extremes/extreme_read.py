@@ -38,7 +38,7 @@ def read_extremes(period: str, start_duration: int, ens: int):
     return pos_extreme, neg_extreme
 #%%
 
-def sel_event_above_duration(df, duration=5):
+def sel_event_above_duration(df, duration=5, by = 'event_duraion'):
     """
     select the extreme events, which durates 5 days or more in June to August
     """
@@ -46,13 +46,19 @@ def sel_event_above_duration(df, duration=5):
     # Convert start_time and end_time to datetime if they aren't already
     df["start_time"] = pd.to_datetime(df["start_time"])
     df["end_time"] = pd.to_datetime(df["end_time"])
-    # Apply the function to each row
-    df["days_in_JJA"] = df.apply(
-        lambda row: days_in_june_to_aug(row["start_time"], row["end_time"]), axis=1
-    )
 
-    # Filter rows where there are at least 5 days in June to August
-    result = df[df["days_in_JJA"] >= duration]
+
+    if by == 'event_duraion':
+        # Apply the function to each row
+        df["days_in_JJA"] = df.apply(
+            lambda row: days_in_june_to_aug(row["start_time"], row["end_time"]), axis=1
+        )
+
+        # Filter rows where there are at least 5 days in June to August
+        result = df[df["days_in_JJA"] >= duration]
+    elif by == 'sign_duration':
+        df["sign_duration"] = df["sign_end_time"] - df["sign_start_time"]
+        result = df[df["sign_duration"] >= duration]
     return result
 
 
