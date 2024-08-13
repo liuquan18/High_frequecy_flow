@@ -20,29 +20,29 @@ def calculate_residue(pc, threshold):
 
 
 # %%
-def extract_pos_extremes(df):
+def extract_pos_extremes(df, column = 'residual'):
     """
     extract exsecutively above zero events
     """
     # apply ndimage.median_filter to remove the single day anomaly data (with one day tolerance)
-    df.loc[:, "residual"] = ndimage.median_filter(df["residual"], size=3)
+    df.loc[:, column] = ndimage.median_filter(df[column], size=3)
     # A grouper that increaments every time a non-positive value is encountered
-    Grouper_pos = df.groupby(df.time.dt.year)["residual"].transform(
+    Grouper_pos = df.groupby(df.time.dt.year)[column].transform(
         lambda x: x.lt(0).cumsum()
     )
 
     # groupby the year and the grouper
-    G = df[df["residual"] > 0].groupby([df.time.dt.year, Grouper_pos])
+    G = df[df[column] > 0].groupby([df.time.dt.year, Grouper_pos])
 
     # Get the statistics of the group
     Events = G.agg(
         start_time=pd.NamedAgg(column="time", aggfunc="min"),
         end_time=pd.NamedAgg(column="time", aggfunc="max"),
-        sum=pd.NamedAgg(column="residual", aggfunc="sum"),
-        mean=pd.NamedAgg(column="residual", aggfunc="mean"),
-        max=pd.NamedAgg(column="residual", aggfunc="max"),
+        sum=pd.NamedAgg(column=column, aggfunc="sum"),
+        mean=pd.NamedAgg(column=column, aggfunc="mean"),
+        max=pd.NamedAgg(column=column, aggfunc="max"),
         min=pd.NamedAgg(
-            column="residual", aggfunc="min"
+            column=column, aggfunc="min"
         ),  # add mean to make sure the data are all positive
     ).reset_index()
     Events["duration"] = (Events["end_time"] - Events["start_time"]).dt.days + 1
@@ -107,30 +107,30 @@ def add_pos_sign_times(df: pd.DataFrame, events: pd.DataFrame) -> pd.DataFrame:
 
 
 # %%
-def extract_neg_extremes(df):
+def extract_neg_extremes(df,column='residual'):
     """
     extract exsecutively below zero events
     """
     # apply ndimage.median_filter to remove the single day anomaly data (with one day tolerance)
-    df["residual"] = ndimage.median_filter(df["residual"], size=3)
+    df[column] = ndimage.median_filter(df[column], size=3)
 
     # A grouper that increaments every time a non-positive value is encountered
-    Grouper_neg = df.groupby(df.time.dt.year)["residual"].transform(
+    Grouper_neg = df.groupby(df.time.dt.year)[column].transform(
         lambda x: x.gt(0).cumsum()
     )
 
     # groupby the year and the grouper
-    G = df[df["residual"] < 0].groupby([df.time.dt.year, Grouper_neg])
+    G = df[df[column] < 0].groupby([df.time.dt.year, Grouper_neg])
 
     # Get the statistics of the group
     Events = G.agg(
         start_time=pd.NamedAgg(column="time", aggfunc="min"),
         end_time=pd.NamedAgg(column="time", aggfunc="max"),
-        sum=pd.NamedAgg(column="residual", aggfunc="sum"),
-        mean=pd.NamedAgg(column="residual", aggfunc="mean"),
-        max=pd.NamedAgg(column="residual", aggfunc="max"),
+        sum=pd.NamedAgg(column=column, aggfunc="sum"),
+        mean=pd.NamedAgg(column=column, aggfunc="mean"),
+        max=pd.NamedAgg(column=column, aggfunc="max"),
         min=pd.NamedAgg(
-            column="residual", aggfunc="min"
+            column=column, aggfunc="min"
         ),  # add mean to make sure the data are all positive
     ).reset_index()
     Events["duration"] = (Events["end_time"] - Events["start_time"]).dt.days + 1
