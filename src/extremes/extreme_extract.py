@@ -20,7 +20,7 @@ def calculate_residue(pc, threshold):
 
 
 # %%
-def extract_pos_extremes(df, column = 'residual'):
+def extract_pos_extremes(df, column="residual"):
     """
     extract exsecutively above zero events
     """
@@ -52,62 +52,7 @@ def extract_pos_extremes(df, column = 'residual'):
 
 
 # %%
-def add_pos_sign_times(df: pd.DataFrame, events: pd.DataFrame) -> pd.DataFrame:
-    """
-    Add sign_start_time and sign_end_time to the events DataFrame.
-
-    Parameters:
-    df (pd.DataFrame): The original DataFrame with 'time' and 'pc' columns.
-    events (pd.DataFrame): The DataFrame of extreme events with 'start_time' and 'end_time' columns.
-
-    Returns:
-    pd.DataFrame: The events DataFrame with added 'sign_start_time' and 'sign_end_time' columns.
-    """
-    # apply median_filter
-    df["pc"] = ndimage.median_filter(df["pc"], size=3)
-
-    # Create a column for positive values
-    df["positive"] = df["pc"] > 0
-
-    # Create a grouper that increments every time the sign changes
-    sign_grouper = df.groupby(df.time.dt.year)["pc"].transform(
-        lambda x: x.lt(0).cumsum()
-    )
-
-    # Grouby by year and the sign_grouper
-    G = df[df["pc"] > 0].groupby([df.time.dt.year, sign_grouper])
-
-    # get the sign_start_time and sign_end_time
-    sign_times = G.agg(
-        sign_start_time=pd.NamedAgg(column="time", aggfunc="min"),
-        sign_end_time=pd.NamedAgg(column="time", aggfunc="max"),
-    ).reset_index()
-
-    # functions to find corresponding sign_start_time and sign_end_time
-
-    def find_sign_times(row):
-        mask = (sign_times["sign_start_time"] <= row["start_time"]) & (
-            sign_times["sign_end_time"] >= row["end_time"]
-        )
-        if mask.any():
-            return sign_times.loc[mask.idxmax(), ["sign_start_time", "sign_end_time"]]
-        return pd.Series({"sign_start_time": pd.NaT, "sign_end_time": pd.NaT})
-
-    # Apply the function to each row in events
-    sign_times_for_events = events.apply(find_sign_times, axis=1)
-
-    # Add the new columns to the events DataFrame
-    events["sign_start_time"] = sign_times_for_events["sign_start_time"]
-    events["sign_end_time"] = sign_times_for_events["sign_end_time"]
-    events["sign_duration"] = (
-        events["sign_end_time"] - events["sign_start_time"]
-    ).dt.days + 1
-
-    return events
-
-
-# %%
-def extract_neg_extremes(df,column='residual'):
+def extract_neg_extremes(df, column="residual"):
     """
     extract exsecutively below zero events
     """
@@ -137,3 +82,32 @@ def extract_neg_extremes(df,column='residual'):
 
     Events = Events[["start_time", "end_time", "duration", "sum", "mean", "max", "min"]]
     return Events
+
+
+# %%
+def find_sign_times(extremes, signs):
+    """
+    Find the sign_start_time and sign_end_time for each extreme event.
+
+    Parameters:
+    extremes (pd.DataFrame): The DataFrame containing the extreme events.
+    signs (pd.DataFrame): The DataFrame containing the sign events.
+
+    Returns:
+    pd.DataFrame: The DataFrame containing the extreme events with sign_start_time and sign_end_time.
+    """
+    # select rows of signs, where the sign event is within the extreme event
+    new_extremes = []
+    for i, row in extremes.iterrows():
+        sign_i = signs[
+            (signs["plev"] == row["plev"])
+            & (signs["start_time"] <= row["start_time"])
+            & (signs["end_time"] >= row["end_time"])
+        ]
+        row["sign_start_time"] = sign_i["start_time"].values[0]
+        row["sign_end_time"] = sign_i["end_time"].values[0]
+        row["sign_duration"] = sign_i["duration"].values[0]
+        new_extremes.append(row)
+    new_extremes = pd.DataFrame(new_extremes)
+
+    return new_extremes
