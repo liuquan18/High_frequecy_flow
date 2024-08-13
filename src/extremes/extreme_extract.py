@@ -2,6 +2,20 @@
 import pandas as pd
 from scipy import ndimage
 
+#%%
+def calculate_residue(pc, threshold):
+    # add a new column in pc called 'threshold'
+    pc = pc.groupby(["plev", pc["time"].dt.year])[["plev", "time", "pc"]].apply(
+        lambda x: x.assign(
+            threshold=threshold[threshold["plev"] == x["plev"].values[0]][
+                "threshold"
+            ].values,
+            residual = x["pc"] - threshold[threshold["plev"] == x["plev"].values[0]][
+                "threshold"
+            ].values,
+        )
+    )
+    return pc
 
 # %%
 def extract_pos_extremes(df):
