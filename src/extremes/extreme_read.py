@@ -38,7 +38,7 @@ def read_extremes(period: str, start_duration: int, ens: int):
     return pos_extreme, neg_extreme
 #%%
 
-def sel_event_above_duration(df, duration=5, by = 'event_duraion'):
+def sel_event_above_duration(df, duration=5, by = 'event_duration'):
     """
     select the extreme events, which durates 5 days or more in June to August
     """
