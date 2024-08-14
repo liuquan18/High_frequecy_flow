@@ -44,8 +44,8 @@ def sel_event_above_duration(df, duration=5, by = 'event_duraion'):
     """
 
     # Convert start_time and end_time to datetime if they aren't already
-    df["start_time"] = pd.to_datetime(df["start_time"])
-    df["end_time"] = pd.to_datetime(df["end_time"])
+    df.loc[:, "start_time"] = pd.to_datetime(df["start_time"])
+    df.loc[:, "end_time"] = pd.to_datetime(df["end_time"])
 
 
     if by == 'event_duration':
