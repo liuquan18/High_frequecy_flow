@@ -21,7 +21,6 @@ CCFs_first10_pos_indo, CCFs_first10_pos_natl = ens_ccf("first10", "pos")
 
 # last 10 years
 CCFs_last10_pos_indo, CCFs_last10_pos_natl = ens_ccf("last10", "pos")
-#%%
 
 # %%
 fig, axes = plt.subplots(2, 2, figsize=(20, 10))
@@ -48,7 +47,7 @@ legend_elements = [
 
 axes[0, 0].legend(handles=legend_elements, loc="upper right")
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/Indo_natlon_OLR_NAO_pos_ccf.png"
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/Indo_natl_OLR_NAO_pos_ccf.png"
 )
 
 
@@ -140,18 +139,22 @@ levels = np.arange(-12, 13, 2)
 
 ax1 = fig.add_subplot(gs[0, 0], projection=ccrs.PlateCarree(central_longitude=180))
 plot_composite(first10_pos_indo_comp, ax1, levels=levels)
+ax1.set_title("First 10 years Indo-Pacific")
 ax1.set_aspect("auto")
 
 ax2 = fig.add_subplot(gs[0, 1], projection=ccrs.PlateCarree(central_longitude=180))
 plot_composite(last10_pos_indo_comp, ax2, levels=levels)
+ax2.set_title("Last 10 years Indo-Pacific")
 ax2.set_aspect("auto")
 
 ax3 = fig.add_subplot(gs[1, 0], projection=ccrs.PlateCarree(central_longitude=180))
 plot_composite(first10_pos_natl_comp, ax3, levels=levels)
+ax3.set_title("First 10 years North Atlantic")
 ax3.set_aspect("auto")
 
 ax4 = fig.add_subplot(gs[1, 1], projection=ccrs.PlateCarree(central_longitude=180))
 plot_composite(last10_pos_natl_comp, ax4, levels=levels)
+ax4.set_title("Last 10 years North Atlantic")
 ax4.set_aspect("auto")
 
 # Adjust layout to make space for colorbar
@@ -166,4 +169,4 @@ cax.set_title("OLR anomaly (W/m^2)")
 
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/loc_min_composite_OLR.png")
-# %%
+# %%# %%
