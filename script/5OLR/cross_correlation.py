@@ -17,10 +17,10 @@ from matplotlib.lines import Line2D
 # %%
 ######################### cross correlation #########################
 # first 10 years
-CCFs_first10_pos_indo, CCFs_first10_pos_amaz = ens_ccf("first10", "pos")
+CCFs_first10_pos_indo, CCFs_first10_pos_natl = ens_ccf("first10", "pos")
 
 # last 10 years
-CCFs_last10_pos_indo, CCFs_last10_pos_amaz = ens_ccf("last10", "pos")
+CCFs_last10_pos_indo, CCFs_last10_pos_natl = ens_ccf("last10", "pos")
 #%%
 
 # %%
@@ -29,14 +29,14 @@ fig, axes = plt.subplots(2, 2, figsize=(20, 10))
 
 plot_ccf(CCFs_first10_pos_indo, axes[0, 0])
 plot_ccf(CCFs_last10_pos_indo, axes[0, 1])
-plot_ccf(CCFs_first10_pos_amaz, axes[1, 0])
-plot_ccf(CCFs_last10_pos_amaz, axes[1, 1])
+plot_ccf(CCFs_first10_pos_natl, axes[1, 0])
+plot_ccf(CCFs_last10_pos_natl, axes[1, 1])
 
 axes[0, 0].set_title("First 10 years Indo-Pacific")
 axes[0, 1].set_title("Last 10 years Indo-Pacific")
 
-axes[1, 0].set_title("First 10 years Amazon")
-axes[1, 1].set_title("Last 10 years Amazon")
+axes[1, 0].set_title("First 10 years natlon")
+axes[1, 1].set_title("Last 10 years natlon")
 
 # add legend
 # black line for 'median'
@@ -48,7 +48,7 @@ legend_elements = [
 
 axes[0, 0].legend(handles=legend_elements, loc="upper right")
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/Indo_amazon_OLR_NAO_pos_ccf.png"
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/Indo_natlon_OLR_NAO_pos_ccf.png"
 )
 
 
@@ -89,19 +89,19 @@ plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2
 first_indo = locmimum_index_inbin(CCFs_first10_pos_indo)
 last_indo = locmimum_index_inbin(CCFs_last10_pos_indo)
 
-first_amaz = locmimum_index_inbin(CCFs_first10_pos_amaz)
-last_amaz = locmimum_index_inbin(CCFs_last10_pos_amaz)
+first_natl = locmimum_index_inbin(CCFs_first10_pos_natl)
+last_natl = locmimum_index_inbin(CCFs_last10_pos_natl)
 
 # %%
 
 # construct dataframe for bar plot
-ds_count = pd.DataFrame(data = {'count':[first_indo.size, last_indo.size, first_amaz.size, last_amaz.size],
+ds_count = pd.DataFrame(data = {'count':[first_indo.size, last_indo.size, first_natl.size, last_natl.size],
                                 'peirod':['first','last','first','last'],
-                                'region':['indo','indo','amazon','amazon']})
+                                'region':['indo','indo','natlon','natlon']})
 
 
 # %%
-# bar plot, x for Indo and Amazon, differnet colors for first and last 10 years
+# bar plot, x for Indo and natlon, differnet colors for first and last 10 years
 sns.barplot(x = 'region', y = 'count', hue = 'peirod', data = ds_count)
 plt.title('Count of local minimum in lag (-16,-6]')
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/loc_min_count.png")
@@ -113,11 +113,11 @@ plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2
 # %%
 first10_pos_indo_comp = composite_mean_OLR(first_indo, "first10")
 
-first10_pos_amaz_comp = composite_mean_OLR(first_amaz, "first10")
+first10_pos_natl_comp = composite_mean_OLR(first_natl, "first10")
 
 last10_pos_indo_comp = composite_mean_OLR(last_indo, "last10")
 
-last10_pos_amaz_comp = composite_mean_OLR(last_amaz, "last10")
+last10_pos_natl_comp = composite_mean_OLR(last_natl, "last10")
 # %%
 
 def plot_composite(field, ax, levels=np.arange(-10, 11, 1)):
@@ -147,11 +147,11 @@ plot_composite(last10_pos_indo_comp, ax2, levels=levels)
 ax2.set_aspect("auto")
 
 ax3 = fig.add_subplot(gs[1, 0], projection=ccrs.PlateCarree(central_longitude=180))
-plot_composite(first10_pos_amaz_comp, ax3, levels=levels)
+plot_composite(first10_pos_natl_comp, ax3, levels=levels)
 ax3.set_aspect("auto")
 
 ax4 = fig.add_subplot(gs[1, 1], projection=ccrs.PlateCarree(central_longitude=180))
-plot_composite(last10_pos_amaz_comp, ax4, levels=levels)
+plot_composite(last10_pos_natl_comp, ax4, levels=levels)
 ax4.set_aspect("auto")
 
 # Adjust layout to make space for colorbar

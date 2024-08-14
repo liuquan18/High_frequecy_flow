@@ -11,6 +11,7 @@ from src.extremes.extreme_read import sel_event_above_duration
 from matplotlib.lines import Line2D
 from scipy.signal import argrelmin
 
+
 # %%
 def read_data(period, ens, plev=25000):
 
@@ -20,7 +21,7 @@ def read_data(period, ens, plev=25000):
     OLR = xr.open_dataset(OLR_file).rlut
 
     OLR_indo = OLR.sel(lon=slice(50, 100)).mean(dim=["lat", "lon"])
-    OLR_amaz = OLR.sel(lon=slice(-60,0)).mean(dim=["lat", "lon"])
+    OLR_natl = OLR.sel(lon=slice(-60, 0)).mean(dim=["lat", "lon"])
 
     # NAO
     NAO_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/projected_pc/projected_pc_{period}/"
@@ -29,12 +30,15 @@ def read_data(period, ens, plev=25000):
 
     # to dataframe
     OLR_indo = OLR_indo.to_dataframe().reset_index()[["time", "rlut"]].set_index("time")
-    OLR_amaz = OLR_amaz.to_dataframe().reset_index()[["time", "rlut"]].set_index("time")
+    OLR_natl = OLR_natl.to_dataframe().reset_index()[["time", "rlut"]].set_index("time")
     NAO = NAO.to_dataframe().reset_index()[["time", "pc"]].set_index("time")
 
-    return OLR_indo, OLR_amaz, NAO
+    return OLR_indo, OLR_natl, NAO
 
-def read_extremes(period: str, ens:int, duration_lim =30, extreme_type="pos", plev=25000):
+
+def read_extremes(
+    period: str, ens: int, duration_lim=30, extreme_type="pos", plev=25000
+):
     extreme_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{extreme_type}_extreme_events/{extreme_type}_extreme_events_{period}/"
     extreme_file = glob.glob(extreme_dir + f"*r{ens}.csv")[0]
     extreme = pd.read_csv(extreme_file)
@@ -45,26 +49,22 @@ def read_extremes(period: str, ens:int, duration_lim =30, extreme_type="pos", pl
         extreme, duration=duration_lim, by="sign_duration"
     )
 
-    
     if not extreme.empty:
         # select again with events at least 8 days in JJA
-        extreme = sel_event_above_duration(
-            extreme, duration=8, by="event_duration"
-        )
+        extreme = sel_event_above_duration(extreme, duration=8, by="event_duration")
 
         # select the events where sign_start_time is after June 1st (at least 30 days after the OLR data starts)
         extreme = extreme[pd.to_datetime(extreme["sign_start_time"]).dt.month >= 6]
 
-
         # drop duplicates rows where the sign_start_time and sign_end_time are the same (two extreme events belong to a same sign event, with a break below the threshold)
-        extreme = extreme.drop_duplicates(subset=('sign_start_time','sign_end_time'))
+        extreme = extreme.drop_duplicates(subset=("sign_start_time", "sign_end_time"))
 
         # give event_id to each event
-        extreme ['ens'] = ens
-        extreme ['csv_ind'] = extreme.index 
-
+        extreme["ens"] = ens
+        extreme["csv_ind"] = extreme.index
 
     return extreme
+
 
 # %%
 def cross_corr(OLR, NAO, extremes, OLR_roll=3, lag_lim=40):
@@ -120,24 +120,24 @@ def cross_corr(OLR, NAO, extremes, OLR_roll=3, lag_lim=40):
 # %%
 def ens_ccf(period, extreme_type="pos"):
     CCFs_indo = []
-    CCFs_amaz = []
+    CCFs_natl = []
     for ens in range(1, 51):
-        OLR_indo, OLR_amaz, NAO = read_data(period, ens, 25000)
+        OLR_indo, OLR_natl, NAO = read_data(period, ens, 25000)
         pos_extremes = read_extremes(period, ens, 30, extreme_type)
         if pos_extremes.empty:
             continue
         CCF_indo = cross_corr(OLR_indo, NAO, pos_extremes, OLR_roll=3)
-        CCF_amaz = cross_corr(OLR_amaz, NAO, pos_extremes, OLR_roll=3)
+        CCF_natl = cross_corr(OLR_natl, NAO, pos_extremes, OLR_roll=3)
 
         CCFs_indo.append(CCF_indo)
-        CCFs_amaz.append(CCF_amaz)
+        CCFs_natl.append(CCF_natl)
     CCFs_indo = [CCF for CCF in CCFs_indo if CCF is not None]
-    CCFs_amaz = [CCF for CCF in CCFs_amaz if CCF is not None]
+    CCFs_natl = [CCF for CCF in CCFs_natl if CCF is not None]
 
     CCFs_indo = pd.concat(CCFs_indo, axis=1)
-    CCFs_amaz = pd.concat(CCFs_amaz, axis=1)
+    CCFs_natl = pd.concat(CCFs_natl, axis=1)
 
-    return CCFs_indo, CCFs_amaz
+    return CCFs_indo, CCFs_natl
 
 
 def plot_ccf(CCFs_first10_pos_indo, ax):
@@ -212,23 +212,28 @@ def locmimum_index_inbin(ccfs, bin=[-15, -6]):
 
     return min_inds_bin
 
+
 def composite_mean_OLR(local_minind, period):
     OLRs = []
     for minind in local_minind.index:
-        event_ens, event_csv_ind = eval(minind) # [ens, csv_ind]
+        event_ens, event_csv_ind = eval(minind)  # [ens, csv_ind]
         event = read_extremes(period, event_ens, 30, "pos")
-        event = event[event['csv_ind'] == event_csv_ind]
-        event_start = event['sign_start_time'].values[0]
+        event = event[event["csv_ind"] == event_csv_ind]
+        event_start = event["sign_start_time"].values[0]
 
-        #(-16,-6] days before the event_start
+        # (-16,-6] days before the event_start
         OLR_start = pd.to_datetime(event_start) - pd.Timedelta(days=15)
         OLR_end = pd.to_datetime(event_start) - pd.Timedelta(days=5)
 
         # read OLR data
-        OLR = xr.open_dataset(glob.glob(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_anomaly/{period}_OLR_daily_ano/*r{event_ens}i1p1f1*.nc")[0]).rlut
-        OLR_before_event = OLR.sel(time=slice(OLR_start, OLR_end)).mean(dim = 'time')
+        OLR = xr.open_dataset(
+            glob.glob(
+                f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_anomaly/{period}_OLR_daily_ano/*r{event_ens}i1p1f1*.nc"
+            )[0]
+        ).rlut
+        OLR_before_event = OLR.sel(time=slice(OLR_start, OLR_end)).mean(dim="time")
         OLRs.append(OLR_before_event)
 
-    OLRs = xr.concat(OLRs, dim = 'event')
-    OLR_comp = OLRs.mean(dim = 'event')
+    OLRs = xr.concat(OLRs, dim="event")
+    OLR_comp = OLRs.mean(dim="event")
     return OLR_comp
