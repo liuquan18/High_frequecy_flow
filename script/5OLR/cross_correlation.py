@@ -37,50 +37,55 @@ def read_extremes(period: str, ens:int, duration_lim: int=30, extreme_type="pos"
     extreme = pd.read_csv(extreme_file)
     extreme = extreme[extreme["plev"] == plev]
 
-    # select the extremes with durations longer than or equal to start_duration
+    # select the extremes with durations longer than or equal to duration_lim
     extreme = sel_event_above_duration(
         extreme, duration=duration_lim, by="sign_duration"
     )
 
-    # drop duplicates rows where the sign_start_time and sign_end_time are the same (two extreme events belong to a same sign event, with a break below the threshold)
-    extreme = extreme.drop_duplicates(subset=('sign_start_time','sign_end_time'))
+    # select again with events at least 8 days in JJA
+    if not extreme.empty:
+        extreme = sel_event_above_duration(
+            extreme, duration=8, by="event_duration"
+        )
+
+        # drop duplicates rows where the sign_start_time and sign_end_time are the same (two extreme events belong to a same sign event, with a break below the threshold)
+        extreme = extreme.drop_duplicates(subset=('sign_start_time','sign_end_time'))
+
+
     return extreme
 
 
 # %%
 def cross_corr(OLR, NAO, extremes, OLR_roll=3, lag_lim=40):
 
-    if not extremes.empty:
-        CCFs = []
+    CCFs = []
+
+    for i, extreme in extremes.iterrows():
         CCF = pd.DataFrame(data=np.nan, index=np.arange(-150, 0, 1), columns=["corr"])
 
-        for i, extreme in extremes.iterrows():
-            start = extreme["sign_start_time"]
-            end = extreme["sign_end_time"]
-            extreme_NAO = NAO.loc[start:end]
+        start = extreme["sign_start_time"]
+        end = extreme["sign_end_time"]
+        extreme_NAO = NAO.loc[start:end]
 
-            year = pd.to_datetime(start).year
-            year_OLR = OLR.loc[str(year)]
-            if OLR_roll is not None:
-                year_OLR = year_OLR.rolling(OLR_roll).median()
-            ccf = (
-                year_OLR.loc[:end]
-                .rolling(window=extreme_NAO.size, center=False)["rlut"]
-                .apply(lambda x: np.corrcoef(x.values, extreme_NAO["pc"].values)[0, 1])
-            )
-            lags = (ccf.index - pd.to_datetime(end)).days - 1
-            # create a series with lags as index, and ccf.values as data
+        year = pd.to_datetime(start).year
+        year_OLR = OLR.loc[str(year)]
+        if OLR_roll is not None:
+            year_OLR = year_OLR.rolling(OLR_roll).median()
+        ccf = (
+            year_OLR.loc[:end]
+            .rolling(window=extreme_NAO.size, center=False)["rlut"]
+            .apply(lambda x: np.corrcoef(x.values, extreme_NAO["pc"].values)[0, 1])
+        )
+        lags = (ccf.index - pd.to_datetime(end)).days - 1
+        # create a series with lags as index, and ccf.values as data
 
-            # length of lags should be above lag_lim
-            if len(lags) < lag_lim:
-                continue
+        # length of lags should be above lag_lim
+        if len(lags) < lag_lim:
+            continue
 
-            CCF.loc[lags, "corr"] = ccf.values
-            CCFs.append(CCF)
-        CCFs = pd.concat(CCFs, axis=1, join="outer")
-
-    else:
-        CCFs = None
+        CCF.loc[lags, "corr"] = ccf.values
+        CCFs.append(CCF)
+    CCFs = pd.concat(CCFs, axis=1)
 
     return CCFs
 #%%
@@ -90,6 +95,8 @@ def event_ccf(period, extreme_type = 'pos'):
     for ens in range(1, 51):
         OLR_indo, OLR_amaz, NAO = read_data(period, ens, 25000, extreme_type)
         pos_extremes = read_extremes(period, ens, 30, extreme_type)
+        if pos_extremes.empty:
+            continue
         CCF_indo = cross_corr(OLR_indo, NAO, pos_extremes, OLR_roll=3)
         CCF_amaz = cross_corr(OLR_amaz, NAO, pos_extremes, OLR_roll=3)
         CCFs_indo.append(CCF_indo)
@@ -127,9 +134,9 @@ def plot_ccf(CCFs_first10_pos_indo, ax):
 
     ax_twin = ax.twinx()
     ax_twin.set_ylim(-0.2,0.21)
-    ax_twin.bar(
+    ax.bar(
     CCFs_first10_pos_indo.index,
-    ((CCFs_first10_pos_indo < -0.5).sum(axis=1)) / len(CCFs_first10_pos_indo.columns) * -1,
+    ((CCFs_first10_pos_indo < 0).sum(axis=1)) / len(CCFs_first10_pos_indo.columns) * -1,
     color="red",
     alpha=0.3,
     label="negative",
@@ -161,9 +168,61 @@ axes[0, 1].set_title("Last 10 years Indo-Pacific")
 axes[1, 0].set_title("First 10 years Amazon")
 axes[1, 1].set_title("Last 10 years Amazon")
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/Indo_amazon_OLR_NAO_pos_ccf.png"
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/Indo_amazon_OLR_NAO_pos_ccf.png"
+# )
+
+
+#%%
+def plot_ccf_exp(CCFs_first10_pos_indo, ax, ind):
+    for column in CCFs_first10_pos_indo.columns[[ind]]:
+        ax.plot(
+        CCFs_first10_pos_indo.index, CCFs_first10_pos_indo[column], color="grey", alpha=0.3
+    )
+    ax.plot(
+    CCFs_first10_pos_indo.index,
+    CCFs_first10_pos_indo.median(axis=1),
+    color="black",
+    linewidth=2,
+    label="median",
 )
 
+    ax_twin = ax.twinx()
+    ax_twin.set_ylim(-0.2,0.21)
+    ax_twin.bar(
+    CCFs_first10_pos_indo.index,
+    ((CCFs_first10_pos_indo < -0.5).sum(axis=1)) / len(CCFs_first10_pos_indo.columns) * -1,
+    color="red",
+    alpha=0.3,
+    label="negative",
+)
+
+# hline at y = 0
+    ax.hlines(y=0, xmin=-50, xmax=0, linestyles="--")
+    ax.hlines(y=-0.5, xmin=-50, xmax=0, linestyles="--")
+
+    ax.set_xlabel("Lags")
+    ax.set_ylabel("Correlation")
+
+    ax.set_xlim(-40, 0)
+    ax.set_ylim(-0.85, 0.86)
+
+
+
+# %%
+for column_ind in range(0,10):
+    fig, axes = plt.subplots(2, 2, figsize=(20, 10))
+
+
+    plot_ccf_exp(CCFs_first10_pos_indo, axes[0, 0],column_ind)
+    plot_ccf_exp(CCFs_last10_pos_indo, axes[0, 1],column_ind)
+    # plot_ccf_exp(CCFs_first10_pos_amaz, axes[1, 0],column_ind)
+    # plot_ccf_exp(CCFs_last10_pos_amaz, axes[1, 1],column_ind)
+
+    axes[0, 0].set_title("First 10 years Indo-Pacific")
+    axes[0, 1].set_title("Last 10 years Indo-Pacific")
+
+    axes[1, 0].set_title("First 10 years Amazon")
+    axes[1, 1].set_title("Last 10 years Amazon")
 
 # %%
