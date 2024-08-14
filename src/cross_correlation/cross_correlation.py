@@ -190,7 +190,7 @@ def locmimum_index(ccf, roll_window=3):
     min_index = ccf.index[loc_min]
 
     # values on min_index must below -0.2, or drop
-    min_index = min_index[ccf.loc[min_index] < -0.2]
+    min_index = min_index[ccf.loc[min_index] < -0.3]
 
     return min_index.values
 

@@ -5,9 +5,10 @@ import matplotlib.pyplot as plt
 import glob
 import pandas as pd
 import seaborn as sns
-
+import cartopy.crs as ccrs
 from src.cross_correlation.cross_correlation import ens_ccf, plot_ccf, locmimum_index_inbin, composite_mean_OLR
 
+import matplotlib.gridspec as gridspec
 
 from matplotlib.lines import Line2D
 
@@ -117,4 +118,52 @@ first10_pos_amaz_comp = composite_mean_OLR(first_amaz, "first10")
 last10_pos_indo_comp = composite_mean_OLR(last_indo, "last10")
 
 last10_pos_amaz_comp = composite_mean_OLR(last_amaz, "last10")
+# %%
+
+def plot_composite(field, ax, levels=np.arange(-10, 11, 1)):
+    p = field.plot(
+        levels=levels,
+        transform=ccrs.PlateCarree(),
+        add_colorbar=False,
+        ax=ax,
+        add_labels=False,
+        extend="both",
+    )
+    ax.coastlines()
+    return p
+
+
+# %%
+fig = plt.figure(figsize=(20, 10))
+gs = gridspec.GridSpec(2, 2, wspace = 0.1, hspace = 0.1)
+levels = np.arange(-12, 13, 2)
+
+ax1 = fig.add_subplot(gs[0, 0], projection=ccrs.PlateCarree(central_longitude=180))
+plot_composite(first10_pos_indo_comp, ax1, levels=levels)
+ax1.set_aspect("auto")
+
+ax2 = fig.add_subplot(gs[0, 1], projection=ccrs.PlateCarree(central_longitude=180))
+plot_composite(last10_pos_indo_comp, ax2, levels=levels)
+ax2.set_aspect("auto")
+
+ax3 = fig.add_subplot(gs[1, 0], projection=ccrs.PlateCarree(central_longitude=180))
+plot_composite(first10_pos_amaz_comp, ax3, levels=levels)
+ax3.set_aspect("auto")
+
+ax4 = fig.add_subplot(gs[1, 1], projection=ccrs.PlateCarree(central_longitude=180))
+plot_composite(last10_pos_amaz_comp, ax4, levels=levels)
+ax4.set_aspect("auto")
+
+# Adjust layout to make space for colorbar
+fig.subplots_adjust(bottom=0.15)
+
+# Add cax at the bottom of the plot
+cax = fig.add_axes([0.1, 0.05, 0.8, 0.02])
+
+# Add colorbar after layout adjustments
+fig.colorbar(ax1.collections[0], cax=cax, orientation="horizontal", aspect=50)
+cax.set_title("OLR anomaly (W/m^2)")
+
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/loc_min_composite_OLR.png")
 # %%
