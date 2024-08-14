@@ -1,13 +1,9 @@
 # %%
 import xarray as xr
 import numpy as np
-from scipy import signal
 import matplotlib.pyplot as plt
-import statsmodels.api as sm
 import glob
-import seaborn as sns
 import pandas as pd
-import glob
 
 from src.extremes.extreme_read import sel_event_above_duration
 
@@ -45,6 +41,9 @@ def read_extremes(period: str, ens:int, duration_lim: int=30, extreme_type="pos"
     extreme = sel_event_above_duration(
         extreme, duration=duration_lim, by="sign_duration"
     )
+
+    # drop duplicates rows where the sign_start_time and sign_end_time are the same (two extreme events belong to a same sign event, with a break below the threshold)
+    extreme = extreme.drop_duplicates(subset=('sign_start_time','sign_end_time'))
     return extreme
 
 
@@ -106,6 +105,12 @@ def event_ccf(period, extreme_type = 'pos'):
 
     return CCFs_indo, CCFs_amaz
 
+# %%
+# first 10 years
+CCFs_first10_pos_indo, CCFs_first10_pos_amaz = event_ccf("first10", "pos")
+
+# last 10 years
+CCFs_last10_pos_indo, CCFs_last10_pos_amaz = event_ccf("last10", "pos")
 #%%
 def plot_ccf(CCFs_first10_pos_indo, ax):
     for column in CCFs_first10_pos_indo.columns:
@@ -120,13 +125,11 @@ def plot_ccf(CCFs_first10_pos_indo, ax):
     label="median",
 )
 
-# count how many columns are below 0 and plot as bar * -1 use a twin y axis
     ax_twin = ax.twinx()
-    ax_twin.set_ylim(-0.6, 0.61)
-    ax.set_ylim(-0.85, 0.86)
-    ax.bar(
+    ax_twin.set_ylim(-0.2,0.21)
+    ax_twin.bar(
     CCFs_first10_pos_indo.index,
-    ((CCFs_first10_pos_indo < 0).sum(axis=1)) / len(CCFs_first10_pos_indo.columns) * -1,
+    ((CCFs_first10_pos_indo < -0.5).sum(axis=1)) / len(CCFs_first10_pos_indo.columns) * -1,
     color="red",
     alpha=0.3,
     label="negative",
@@ -140,12 +143,8 @@ def plot_ccf(CCFs_first10_pos_indo, ax):
     ax.set_ylabel("Correlation")
 
     ax.set_xlim(-40, 0)
-# %%
-# first 10 years
-CCFs_first10_pos_indo, CCFs_first10_pos_amaz = event_ccf("first10", "pos")
+    ax.set_ylim(-0.85, 0.86)
 
-# last 10 years
-CCFs_last10_pos_indo, CCFs_last10_pos_amaz = event_ccf("last10", "pos")
 
 # %%
 fig, axes = plt.subplots(2, 2, figsize=(20, 10))
@@ -155,8 +154,16 @@ plot_ccf(CCFs_first10_pos_indo, axes[0, 0])
 plot_ccf(CCFs_last10_pos_indo, axes[0, 1])
 plot_ccf(CCFs_first10_pos_amaz, axes[1, 0])
 plot_ccf(CCFs_last10_pos_amaz, axes[1, 1])
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/Indo_pacific_OLR_NAO_pos_ccf.png"
-# )
+
+axes[0, 0].set_title("First 10 years Indo-Pacific")
+axes[0, 1].set_title("Last 10 years Indo-Pacific")
+
+axes[1, 0].set_title("First 10 years Amazon")
+axes[1, 1].set_title("Last 10 years Amazon")
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/Indo_amazon_OLR_NAO_pos_ccf.png"
+)
+
 
 # %%
