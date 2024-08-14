@@ -48,7 +48,7 @@ def sel_event_above_duration(df, duration=5, by = 'event_duraion'):
     df["end_time"] = pd.to_datetime(df["end_time"])
 
 
-    if by == 'event_duraion':
+    if by == 'event_duration':
         # Apply the function to each row
         df["days_in_JJA"] = df.apply(
             lambda row: days_in_june_to_aug(row["start_time"], row["end_time"]), axis=1
