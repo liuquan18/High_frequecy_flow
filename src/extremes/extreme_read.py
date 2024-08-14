@@ -59,6 +59,9 @@ def sel_event_above_duration(df, duration=5, by = 'event_duraion'):
 
     elif by == 'sign_duration':
         result = df[df["sign_duration"] >= duration]
+
+    else:
+        raise ValueError('by should be either "event_duration" or "sign_duration"')
     return result
 
 
