@@ -167,6 +167,15 @@ cax = fig.add_axes([0.1, 0.05, 0.8, 0.02])
 fig.colorbar(ax1.collections[0], cax=cax, orientation="horizontal", aspect=50)
 cax.set_title("OLR anomaly (W/m^2)")
 
+# add y-axis labels
+for ax in [ax1, ax3]:
+    ax.set_yticks(range(-30, 31, 30), crs=ccrs.PlateCarree())
+    ax.set_yticklabels([f"{lat}°" for lat in range(-30, 31, 30)])
+
+# add x-axis labels
+for ax in [ax3, ax4]:
+    ax.set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
+    ax.set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/loc_min_composite_OLR.png")
 # %%# %%
