@@ -180,7 +180,7 @@ def plot_ccf(CCFs_first10_pos_indo, ax):
 
 
 ########################## count of local minimum in lag (-16,-6] ##########################
-def locmimum_index(ccf, roll_window=3):
+def locmimum_index(ccf, roll_window=3, control = -0.3):
 
     # smooth the ccf
     ccf = ccf.rolling(roll_window).mean()
@@ -190,7 +190,7 @@ def locmimum_index(ccf, roll_window=3):
     min_index = ccf.index[loc_min]
 
     # values on min_index must below -0.2, or drop
-    min_index = min_index[ccf.loc[min_index] < -0.3]
+    min_index = min_index[ccf.loc[min_index] < control]
 
     return min_index.values
 
