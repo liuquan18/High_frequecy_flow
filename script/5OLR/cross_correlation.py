@@ -4,12 +4,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import glob
 import pandas as pd
+import seaborn as sns
 
 from src.extremes.extreme_read import sel_event_above_duration
 
+from matplotlib.lines import Line2D
+from scipy.signal import argrelmin
 
 # %%
-def read_data(period, ens, plev=25000, extreme_type="pos", duration_lim=30):
+def read_data(period, ens, plev=25000):
 
     # OLR
     OLR_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_anomaly/{period}_OLR_daily_ano/"
@@ -31,7 +34,7 @@ def read_data(period, ens, plev=25000, extreme_type="pos", duration_lim=30):
 
     return OLR_indo, OLR_amaz, NAO
 
-def read_extremes(period: str, ens:int, duration_lim: int=30, extreme_type="pos", plev=25000):
+def read_extremes(period: str, ens:int, duration_lim =30, extreme_type="pos", plev=25000):
     extreme_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{extreme_type}_extreme_events/{extreme_type}_extreme_events_{period}/"
     extreme_file = glob.glob(extreme_dir + f"*r{ens}.csv")[0]
     extreme = pd.read_csv(extreme_file)
@@ -42,14 +45,23 @@ def read_extremes(period: str, ens:int, duration_lim: int=30, extreme_type="pos"
         extreme, duration=duration_lim, by="sign_duration"
     )
 
-    # select again with events at least 8 days in JJA
+    
     if not extreme.empty:
+        # select again with events at least 8 days in JJA
         extreme = sel_event_above_duration(
             extreme, duration=8, by="event_duration"
         )
 
+        # select the events where sign_start_time is after June 1st (at least 30 days after the OLR data starts)
+        extreme = extreme[pd.to_datetime(extreme["sign_start_time"]).dt.month >= 6]
+
+
         # drop duplicates rows where the sign_start_time and sign_end_time are the same (two extreme events belong to a same sign event, with a break below the threshold)
         extreme = extreme.drop_duplicates(subset=('sign_start_time','sign_end_time'))
+
+        # give event_id to each event
+        extreme ['ens'] = ens
+        extreme ['csv_ind'] = extreme.index 
 
 
     return extreme
@@ -58,10 +70,25 @@ def read_extremes(period: str, ens:int, duration_lim: int=30, extreme_type="pos"
 # %%
 def cross_corr(OLR, NAO, extremes, OLR_roll=3, lag_lim=40):
 
+    """
+    parameters:
+    OLR: pd.DataFrame
+        OLR data
+    NAO: pd.DataFrame
+        NAO data
+    extremes: pd.DataFrame
+        extreme events
+    OLR_roll: int
+        rolling window for OLR
+    lag_lim: int
+        minimum length of lags between 
+
+    
+    """
+
     CCFs = []
 
     for i, extreme in extremes.iterrows():
-        CCF = pd.DataFrame(data=np.nan, index=np.arange(-150, 0, 1), columns=["corr"])
 
         start = extreme["sign_start_time"]
         end = extreme["sign_end_time"]
@@ -82,7 +109,7 @@ def cross_corr(OLR, NAO, extremes, OLR_roll=3, lag_lim=40):
         # length of lags should be above lag_lim
         if len(lags) < lag_lim:
             continue
-
+        CCF = pd.DataFrame(data=np.nan, index=np.arange(-150, 0, 1), columns=["corr"])
         CCF.loc[lags, "corr"] = ccf.values
         CCFs.append(CCF)
     CCFs = pd.concat(CCFs, axis=1)
@@ -93,7 +120,7 @@ def event_ccf(period, extreme_type = 'pos'):
     CCFs_indo = []
     CCFs_amaz = []
     for ens in range(1, 51):
-        OLR_indo, OLR_amaz, NAO = read_data(period, ens, 25000, extreme_type)
+        OLR_indo, OLR_amaz, NAO = read_data(period, ens, 25000)
         pos_extremes = read_extremes(period, ens, 30, extreme_type)
         if pos_extremes.empty:
             continue
@@ -134,9 +161,9 @@ def plot_ccf(CCFs_first10_pos_indo, ax):
 
     ax_twin = ax.twinx()
     ax_twin.set_ylim(-0.2,0.21)
-    ax.bar(
+    ax_twin.bar(
     CCFs_first10_pos_indo.index,
-    ((CCFs_first10_pos_indo < 0).sum(axis=1)) / len(CCFs_first10_pos_indo.columns) * -1,
+    ((CCFs_first10_pos_indo < -0.5).sum(axis=1)) / len(CCFs_first10_pos_indo.columns) * -1,
     color="red",
     alpha=0.3,
     label="negative",
@@ -168,38 +195,36 @@ axes[0, 1].set_title("Last 10 years Indo-Pacific")
 axes[1, 0].set_title("First 10 years Amazon")
 axes[1, 1].set_title("Last 10 years Amazon")
 
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/Indo_amazon_OLR_NAO_pos_ccf.png"
-# )
+# add legend
+# black line for 'median'
+# red bar for "% of corr < -0.5"
+legend_elements = [
+    Line2D([0], [0], color="black", lw=1, label="median"),
+    Line2D([0], [0], color="red", lw=5, label="% of corr < -0.5", alpha = 0.3),
+]
+
+axes[0, 0].legend(handles=legend_elements, loc="upper right")
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/Indo_amazon_OLR_NAO_pos_ccf.png"
+)
 
 
 #%%
 def plot_ccf_exp(CCFs_first10_pos_indo, ax, ind):
     for column in CCFs_first10_pos_indo.columns[[ind]]:
         ax.plot(
-        CCFs_first10_pos_indo.index, CCFs_first10_pos_indo[column], color="grey", alpha=0.3
+        CCFs_first10_pos_indo.index, CCFs_first10_pos_indo[column], color="black"
     )
-    ax.plot(
-    CCFs_first10_pos_indo.index,
-    CCFs_first10_pos_indo.median(axis=1),
-    color="black",
-    linewidth=2,
-    label="median",
-)
 
-    ax_twin = ax.twinx()
-    ax_twin.set_ylim(-0.2,0.21)
-    ax_twin.bar(
-    CCFs_first10_pos_indo.index,
-    ((CCFs_first10_pos_indo < -0.5).sum(axis=1)) / len(CCFs_first10_pos_indo.columns) * -1,
-    color="red",
-    alpha=0.3,
-    label="negative",
-)
 
-# hline at y = 0
-    ax.hlines(y=0, xmin=-50, xmax=0, linestyles="--")
-    ax.hlines(y=-0.5, xmin=-50, xmax=0, linestyles="--")
+
+    # hline at y = 0
+    ax.hlines(y=0, xmin=-50, xmax=0, linestyles="dotted", color = 'black')
+    ax.hlines(y=-0.5, xmin=-50, xmax=0, linestyles="dotted", color = 'black')
+
+    # vline at x = -16, -6
+    ax.vlines(x=-16, ymin=-0.85, ymax=0.86, linestyles="--")
+    ax.vlines(x=-6, ymin=-0.85, ymax=0.86, linestyles="--")
 
     ax.set_xlabel("Lags")
     ax.set_ylabel("Correlation")
@@ -210,19 +235,63 @@ def plot_ccf_exp(CCFs_first10_pos_indo, ax, ind):
 
 
 # %%
-for column_ind in range(0,10):
-    fig, axes = plt.subplots(2, 2, figsize=(20, 10))
+# example ccf plot
+fig, axes = plt.subplots()
 
 
-    plot_ccf_exp(CCFs_first10_pos_indo, axes[0, 0],column_ind)
-    plot_ccf_exp(CCFs_last10_pos_indo, axes[0, 1],column_ind)
-    # plot_ccf_exp(CCFs_first10_pos_amaz, axes[1, 0],column_ind)
-    # plot_ccf_exp(CCFs_last10_pos_amaz, axes[1, 1],column_ind)
+plot_ccf_exp(CCFs_first10_pos_indo, axes,9)
+plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/ccf_example.png')
 
-    axes[0, 0].set_title("First 10 years Indo-Pacific")
-    axes[0, 1].set_title("Last 10 years Indo-Pacific")
+# %%
+def locmimum_index(ccf,  roll_window = 3):
 
-    axes[1, 0].set_title("First 10 years Amazon")
-    axes[1, 1].set_title("Last 10 years Amazon")
+    # smooth the ccf
+    ccf = ccf.rolling(roll_window).mean()
+
+    # identify the local minimum index
+    loc_min = argrelmin(ccf.values)
+    min_index = ccf.index[loc_min]
+
+    # values on min_index must below -0.2, or drop
+    min_index = min_index[ccf.loc[min_index] < -0.2]
+
+    return min_index.values
+
+# %%
+# apply the function to each column
+def count_minind_bin(ccfs, bin = [-16,-6]):
+
+    min_inds = ccfs.apply(lambda x: locmimum_index(x, roll_window = 3), axis=0)
+
+    # drop empty values
+    min_inds = min_inds[min_inds.apply(len) > 0]
+
+    # flat the column values
+    min_inds = min_inds.explode().values
+
+    # count values in bin = [-16,-6]
+    min_inds_bin = min_inds[(min_inds > -16) & (min_inds < -6)]
+    count = min_inds_bin.size
+
+    return count
+
+# %%
+first_indo = count_minind_bin(CCFs_first10_pos_indo)
+last_indo = count_minind_bin(CCFs_last10_pos_indo)
+
+first_amaz = count_minind_bin(CCFs_first10_pos_amaz)
+last_amaz = count_minind_bin(CCFs_last10_pos_amaz)
+# %%
+first_indo, last_indo, first_amaz, last_amaz
+
+# construct dataframe for bar plot
+ds_count = pd.DataFrame(data = {'count':[first_indo, last_indo, first_amaz, last_amaz],
+                                'peirod':['first','last','first','last'],
+                                'region':['indo','indo','amazon','amazon']})
+
+
+# %%
+# bar plot, x for Indo and Amazon, differnet colors for first and last 10 years
+sns.barplot(x = 'region', y = 'count', hue = 'peirod', data = ds_count)
 
 # %%
