@@ -117,6 +117,6 @@ std_time(neg_zg_composite_last10).sel(plev=plev, lat=0).plot.contourf(
 for ax in axes.flat:
     ax.set_ylim(-20,0)
 plt.savefig(
-    f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/composite/zg{plev}_composite_lag_longitude_250hPa_sum.png"
+    f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg{plev}_composite_lag_longitude_250hPa_sum.png"
 )
 # %%
