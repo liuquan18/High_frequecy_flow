@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 # %%
 # select ens and plev, where there are more than one extreme event in one year
 def events_above_once(events):
@@ -12,15 +13,14 @@ def events_above_once(events):
 
 
 # %%
-def collect_swing(events, include_all = False):
-    events = events.sort_values("start_time")
+def collect_swing(events, include_all=False):
+    events = events.sort_values("event_start_time")
 
-    all = [] # all cases
+    all = []  # all cases
     pp = []  # positive + positive
     nn = []  # negative + negative
     pn = []  # positive + negative
     np = []  # negative + positive
-
 
     # more than one extreme event
     for i in range(len(events) - 1):
@@ -62,8 +62,12 @@ def collect_swing(events, include_all = False):
     nn = pd.concat(nn, axis=0)
     pn = pd.concat(pn, axis=0)
     np = pd.concat(np, axis=0)
-    
-    swing = pd.concat([all, pp, nn, pn, np], axis=0, keys = ["all", "pos_pos", "neg_neg", "pos_neg", "neg_pos"])
+
+    swing = pd.concat(
+        [all, pp, nn, pn, np],
+        axis=0,
+        keys=["all", "pos_pos", "neg_neg", "pos_neg", "neg_pos"],
+    )
 
     return swing
 
@@ -75,7 +79,7 @@ def update_swing(swing, first, second):
             "first_start_time": first.start_time,
             "first_end_time": first.end_time,
             "first_duration": first.duration,
-            "second_start_time": second.start_time, 
+            "second_start_time": second.start_time,
             "second_end_time": second.end_time,
             "second_duration": second.duration,
             "gap_duration": (second.start_time - first.end_time).days,

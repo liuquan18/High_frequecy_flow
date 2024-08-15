@@ -15,7 +15,7 @@ def combine_events(df, duration=13):
     df_up_to_13 = df[df.index <= duration]
     df_above_13 = df[df.index > duration]
 
-    # Step 2: Sum the "duration" for rows > 13
+    # Step 2: Sum the "event_duration" for rows > 13
     count_above_13 = df_above_13["count"].sum()
     mean_above_13 = np.average(
         df_above_13["mean"], weights=df_above_13.index
@@ -52,15 +52,19 @@ def extreme_stat_allens(start_duration=5, duration_lim=8, plev=50000):
     last10_neg_extremes = last10_neg_extremes[last10_neg_extremes["plev"] == plev]
 
     # statistics across ensemble members
-    first10_pos = first10_pos_extremes.groupby("duration")["mean"].agg(
+    first10_pos = first10_pos_extremes.groupby("event_duration")["mean"].agg(
         ["mean", "count"]
     )
-    first10_neg = first10_neg_extremes.groupby("duration")["mean"].agg(
+    first10_neg = first10_neg_extremes.groupby("event_duration")["mean"].agg(
         ["mean", "count"]
     )
 
-    last10_pos = last10_pos_extremes.groupby("duration")["mean"].agg(["mean", "count"])
-    last10_neg = last10_neg_extremes.groupby("duration")["mean"].agg(["mean", "count"])
+    last10_pos = last10_pos_extremes.groupby("event_duration")["mean"].agg(
+        ["mean", "count"]
+    )
+    last10_neg = last10_neg_extremes.groupby("event_duration")["mean"].agg(
+        ["mean", "count"]
+    )
 
     first10_pos = combine_events(first10_pos, duration=duration_lim)
     first10_neg = combine_events(first10_neg, duration=duration_lim)
@@ -151,7 +155,7 @@ def plot_extreme_stat(
         )
 
     # Set labels and title
-    ax.set_xlabel("Duration")
+    ax.set_xlabel("event_duration")
     ax.set_ylabel(stat)
     ax.set_title("Count Distribution by Duration")
 
@@ -231,9 +235,9 @@ for plev in [100000, 85000, 70000, 50000, 25000]:
 
 pos_extrems = pd.concat(pos_extrems)
 neg_extrems = pd.concat(neg_extrems)
-#%%
-pos_extrems = pos_extrems.sort_values(by='period',ascending=True)
-neg_extrems = neg_extrems.sort_values(by='period',ascending=True)
+# %%
+pos_extrems = pos_extrems.sort_values(by="period", ascending=True)
+neg_extrems = neg_extrems.sort_values(by="period", ascending=True)
 # %%
 fig, ax = plt.subplots(figsize=(15, 8))
 # pos as positive side of y-axis
@@ -245,7 +249,7 @@ sns.barplot(
     orient="h",
     ax=ax,
     hue_order=["last10", "first10"],
-    palette = ['C1','C0']
+    palette=["C1", "C0"],
 )
 
 # neg as negative side of y-axis
@@ -257,7 +261,7 @@ sns.barplot(
     x="count",
     hue="period",
     hue_order=["last10", "first10"],
-    palette = ['C1','C0'],
+    palette=["C1", "C0"],
     orient="h",
     ax=ax,
     alpha=0.5,
@@ -281,8 +285,8 @@ sns.barplot(
     orient="h",
     ax=ax,
     hue_order=["last10", "first10"],
-    palette = ['C1','C0']
-    )
+    palette=["C1", "C0"],
+)
 
 # neg as negative side of y-axis
 sns.barplot(
@@ -291,7 +295,7 @@ sns.barplot(
     x="mean",
     hue="period",
     hue_order=["last10", "first10"],
-    palette = ['C1','C0'],
+    palette=["C1", "C0"],
     orient="h",
     ax=ax,
     alpha=0.5,

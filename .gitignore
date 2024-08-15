@@ -167,9 +167,13 @@ data/*
 
 # all nc data
 *.nc
+*.csv
 
 # all log files
 *.out
 
 *.png
 *.pdf
+
+# markdown files under docs
+docs/*.md

@@ -7,6 +7,7 @@ import pandas as pd
 
 # %%
 
+
 def read_extremes(period: str, start_duration: int, ens: int):
     """
     parameters:
@@ -36,23 +37,37 @@ def read_extremes(period: str, start_duration: int, ens: int):
     pos_extreme = sel_event_above_duration(pos_extreme, duration=start_duration)
     neg_extreme = sel_event_above_duration(neg_extreme, duration=start_duration)
     return pos_extreme, neg_extreme
-#%%
 
-def sel_event_above_duration(df, duration=5):
+
+# %%
+
+
+def sel_event_above_duration(df, duration=5, by="event_duration"):
     """
     select the extreme events, which durates 5 days or more in June to August
     """
 
     # Convert start_time and end_time to datetime if they aren't already
-    df["start_time"] = pd.to_datetime(df["start_time"])
-    df["end_time"] = pd.to_datetime(df["end_time"])
-    # Apply the function to each row
-    df["days_in_JJA"] = df.apply(
-        lambda row: days_in_june_to_aug(row["start_time"], row["end_time"]), axis=1
-    )
+    df.loc[:, "event_start_time"] = pd.to_datetime(df["event_start_time"])
+    df.loc[:, "event_end_time"] = pd.to_datetime(df["event_end_time"])
 
-    # Filter rows where there are at least 5 days in June to August
-    result = df[df["days_in_JJA"] >= duration]
+    if by == "event_duration":
+        # Apply the function to each row
+        df.loc[:, "days_in_JJA"] = df.apply(
+            lambda row: days_in_june_to_aug(
+                row["event_start_time"], row["event_end_time"]
+            ),
+            axis=1,
+        )
+
+        # Filter rows where there are at least 5 days in June to August
+        result = df[df["days_in_JJA"] >= duration]
+
+    elif by == "sign_duration":
+        result = df[df["sign_duration"] >= duration]
+
+    else:
+        raise ValueError('by should be either "event_duration" or "sign_duration"')
     return result
 
 
@@ -62,11 +77,12 @@ def sel_event_duration(df, duration=5):
     """
 
     # Convert start_time and end_time to datetime if they aren't already
-    df["start_time"] = pd.to_datetime(df["start_time"])
-    df["end_time"] = pd.to_datetime(df["end_time"])
+    df["event_start_time"] = pd.to_datetime(df["event_start_time"])
+    df["event_end_time"] = pd.to_datetime(df["event_end_time"])
     # Apply the function to each row
     df["days_in_JJA"] = df.apply(
-        lambda row: days_in_june_to_aug(row["start_time"], row["end_time"]), axis=1
+        lambda row: days_in_june_to_aug(row["event_start_time"], row["event_end_time"]),
+        axis=1,
     )
 
     # Filter rows where there are at least 5 days in June to August
@@ -90,8 +106,6 @@ def days_in_june_to_aug(start, end):
     return 0
 
 
-
-
 # %%
 def read_extremes_allens(period, start_duration=5):
     """
@@ -104,10 +118,12 @@ def read_extremes_allens(period, start_duration=5):
     neg_extremes = []
 
     for i in range(1, 51):
-        pos_extreme,neg_extreme = read_extremes(period, start_duration=start_duration, ens=i)
+        pos_extreme, neg_extreme = read_extremes(
+            period, start_duration=start_duration, ens=i
+        )
 
-        pos_extreme['ens'] = i
-        neg_extreme['ens'] = i
+        pos_extreme["ens"] = i
+        neg_extreme["ens"] = i
 
         pos_extremes.append(pos_extreme)
         neg_extremes.append(neg_extreme)
@@ -115,5 +131,6 @@ def read_extremes_allens(period, start_duration=5):
     pos_extremes = pd.concat(pos_extremes, axis=0, ignore_index=True)
     neg_extremes = pd.concat(neg_extremes, axis=0, ignore_index=True)
     return pos_extremes, neg_extremes
+
 
 # %%

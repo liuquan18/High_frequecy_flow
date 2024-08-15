@@ -29,12 +29,13 @@ def sel_pc_duration(events, pc):
                 duration_index=("time", np.arange(1, sel_pc.sizes["time"] + 1))
             )
             sel_pc_df = sel_pc.to_dataframe().reset_index()[["duration_index", "pc"]]
-            sel_pc_df["duration"] = events.duration.iloc[i]
-            sel_pc_df = sel_pc_df.set_index(["duration", "duration_index"])
+            sel_pc_df["event_duration"] = events.duration.iloc[i]
+            sel_pc_df = sel_pc_df.set_index(["event_duration", "duration_index"])
             sel_pcs.append(sel_pc_df)
 
         sel_pcs = pd.concat(sel_pcs, axis=1).sort_index()
     return sel_pcs
+
 
 # %%
 def event_pc(period, duration, plev=50000):
@@ -69,11 +70,27 @@ def event_pc(period, duration, plev=50000):
 
         # select plev and delete the 'plev' column
         pos_extreme = pos_extreme[pos_extreme["plev"] == plev][
-            ["start_time", "end_time", "duration", "mean", "sum", "max", "min"]
+            [
+                "event_start_time",
+                "event_end_time",
+                "event_duration",
+                "mean",
+                "sum",
+                "max",
+                "min",
+            ]
         ]
 
         neg_extreme = neg_extreme[neg_extreme["plev"] == plev][
-            ["start_time", "end_time", "duration", "mean", "sum", "max", "min"]
+            [
+                "event_start_time",
+                "event_end_time",
+                "event_duration",
+                "mean",
+                "sum",
+                "max",
+                "min",
+            ]
         ]
 
         pos_extreme = sel_event_duration(pos_extreme, duration=duration)
