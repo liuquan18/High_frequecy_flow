@@ -10,6 +10,22 @@ import sys
 import logging
 
 logging.basicConfig(level=logging.INFO)
+#%%
+import src.extremes.extreme_extract as ee
+import importlib
+importlib.reload(ee)
+
+import src.extremes.extreme_threshold as et
+importlib.reload(et)
+
+#%%
+
+calculate_residue = ee.calculate_residue
+extract_pos_extremes = ee.extract_pos_extremes
+extract_neg_extremes = ee.extract_neg_extremes
+find_sign_times = ee.find_sign_times
+subtract_threshold = et.subtract_threshold
+
 
 # %%
 try:
@@ -70,7 +86,7 @@ def to_dataframe(pc):
 for i, member in enumerate(members_single):
     print(f"Period {period}: Rank {rank}, member {member}/{members_single[-1]}")
     # read pc index
-
+#%%
     pc = xr.open_dataset(
         f"{projected_pc_path}/troposphere_pc_MJJAS_ano_{tag}_r{member}.nc"
     ).pc
@@ -83,7 +99,16 @@ for i, member in enumerate(members_single):
         "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/pos_threshold_first10_allens.csv"
     )
 
-    pos_pc = calculate_residue(pc, pos_threshold)
+    # subtract the threshold from the pc index
+    pos_pc = pc.groupby("plev")[['plev','time','pc']].apply(
+        subtract_threshold,
+        column_name="pc",
+        threshold=pos_threshold,
+    )
+
+    
+    pos_pc = pos_pc.reset_index(drop=True)
+
 
     pos_extremes = pos_pc.groupby("plev")[["time", "residual"]].apply(
         extract_pos_extremes, column="residual"
