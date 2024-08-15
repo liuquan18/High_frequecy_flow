@@ -17,7 +17,7 @@ new_extremes.duplicated(subset = ['sign_start_time', 'sign_end_time'])
 
 # %%
     new_extremes.loc[:, "event_start_time"] = pd.to_datetime(new_extremes["event_start_time"])
-    new_extremes.loc[:, "end_time"] = pd.to_datetime(new_extremes["end_time"])
+    new_extremes.loc[:, "event_end_time"] = pd.to_datetime(new_extremes["event_end_time"])
     new_extremes.loc[:, 'sign_start_time'] = pd.to_datetime(new_extremes['sign_start_time'])
     new_extremes.loc[:, 'sign_end_time'] = pd.to_datetime(new_extremes['sign_end_time'])
 # %%
@@ -25,8 +25,8 @@ new_extremes.duplicated(subset = ['sign_start_time', 'sign_end_time'])
     new_extremes = new_extremes.groupby(["sign_start_time", "sign_end_time"])[new_extremes.columns].apply(
         lambda x: x.assign(
             start_time=x["event_start_time"].min(),
-            end_time=x["end_time"].max(),
-            duration=(x["end_time"].max() - x["event_start_time"].min()).days + 1,
+            end_time=x["event_end_time"].max(),
+            duration=(x["event_end_time"].max() - x["event_start_time"].min()).days + 1,
         )
     )
 

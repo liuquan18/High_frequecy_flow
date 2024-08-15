@@ -49,12 +49,14 @@ def sel_event_above_duration(df, duration=5, by="event_duration"):
 
     # Convert start_time and end_time to datetime if they aren't already
     df.loc[:, "event_start_time"] = pd.to_datetime(df["event_start_time"])
-    df.loc[:, "end_time"] = pd.to_datetime(df["end_time"])
+    df.loc[:, "event_end_time"] = pd.to_datetime(df["event_end_time"])
 
     if by == "event_duration":
         # Apply the function to each row
         df.loc[:, "days_in_JJA"] = df.apply(
-            lambda row: days_in_june_to_aug(row["event_start_time"], row["end_time"]),
+            lambda row: days_in_june_to_aug(
+                row["event_start_time"], row["event_end_time"]
+            ),
             axis=1,
         )
 
@@ -76,10 +78,10 @@ def sel_event_duration(df, duration=5):
 
     # Convert start_time and end_time to datetime if they aren't already
     df["event_start_time"] = pd.to_datetime(df["event_start_time"])
-    df["end_time"] = pd.to_datetime(df["end_time"])
+    df["event_end_time"] = pd.to_datetime(df["event_end_time"])
     # Apply the function to each row
     df["days_in_JJA"] = df.apply(
-        lambda row: days_in_june_to_aug(row["event_start_time"], row["end_time"]),
+        lambda row: days_in_june_to_aug(row["event_start_time"], row["event_end_time"]),
         axis=1,
     )
 

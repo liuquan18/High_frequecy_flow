@@ -45,10 +45,12 @@ def extract_pos_extremes(df, column="residual"):
             column=column, aggfunc="min"
         ),  # add mean to make sure the data are all positive
     ).reset_index()
-    Events["duration"] = (Events["end_time"] - Events["event_start_time"]).dt.days + 1
+    Events["duration"] = (
+        Events["event_end_time"] - Events["event_start_time"]
+    ).dt.days + 1
 
     Events = Events[
-        ["event_start_time", "end_time", "duration", "sum", "mean", "max", "min"]
+        ["event_start_time", "event_end_time", "duration", "sum", "mean", "max", "min"]
     ]
     return Events
 
@@ -80,10 +82,12 @@ def extract_neg_extremes(df, column="residual"):
             column=column, aggfunc="min"
         ),  # add mean to make sure the data are all positive
     ).reset_index()
-    Events["duration"] = (Events["end_time"] - Events["event_start_time"]).dt.days + 1
+    Events["duration"] = (
+        Events["event_end_time"] - Events["event_start_time"]
+    ).dt.days + 1
 
     Events = Events[
-        ["event_start_time", "end_time", "duration", "sum", "mean", "max", "min"]
+        ["event_start_time", "event_end_time", "duration", "sum", "mean", "max", "min"]
     ]
     return Events
 
@@ -107,10 +111,10 @@ def find_sign_times(extremes, signs):
         sign_i = signs[
             (signs["plev"] == row["plev"])
             & (signs["event_start_time"] <= row["event_start_time"])
-            & (signs["end_time"] >= row["end_time"])
+            & (signs["event_end_time"] >= row["event_end_time"])
         ]
         row["sign_start_time"] = sign_i["event_start_time"].values[0]
-        row["sign_end_time"] = sign_i["end_time"].values[0]
+        row["sign_end_time"] = sign_i["event_end_time"].values[0]
         row["sign_duration"] = sign_i["duration"].values[0]
         new_extremes.append(row)
     new_extremes = pd.DataFrame(new_extremes)
@@ -118,7 +122,9 @@ def find_sign_times(extremes, signs):
     new_extremes.loc[:, "event_start_time"] = pd.to_datetime(
         new_extremes["event_start_time"]
     )
-    new_extremes.loc[:, "end_time"] = pd.to_datetime(new_extremes["end_time"])
+    new_extremes.loc[:, "event_end_time"] = pd.to_datetime(
+        new_extremes["event_end_time"]
+    )
     new_extremes.loc[:, "sign_start_time"] = pd.to_datetime(
         new_extremes["sign_start_time"]
     )
@@ -133,8 +139,8 @@ def find_sign_times(extremes, signs):
     ].apply(
         lambda x: x.assign(
             start_time=x["event_start_time"].min(),
-            end_time=x["end_time"].max(),
-            duration=(x["end_time"].max() - x["event_start_time"].min()).days + 1,
+            end_time=x["event_end_time"].max(),
+            duration=(x["event_end_time"].max() - x["event_start_time"].min()).days + 1,
         )
     )
 

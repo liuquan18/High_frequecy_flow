@@ -70,11 +70,27 @@ def event_pc(period, duration, plev=50000):
 
         # select plev and delete the 'plev' column
         pos_extreme = pos_extreme[pos_extreme["plev"] == plev][
-            ["event_start_time", "end_time", "duration", "mean", "sum", "max", "min"]
+            [
+                "event_start_time",
+                "event_end_time",
+                "duration",
+                "mean",
+                "sum",
+                "max",
+                "min",
+            ]
         ]
 
         neg_extreme = neg_extreme[neg_extreme["plev"] == plev][
-            ["event_start_time", "end_time", "duration", "mean", "sum", "max", "min"]
+            [
+                "event_start_time",
+                "event_end_time",
+                "duration",
+                "mean",
+                "sum",
+                "max",
+                "min",
+            ]
         ]
 
         pos_extreme = sel_event_duration(pos_extreme, duration=duration)
