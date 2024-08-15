@@ -12,6 +12,7 @@ import cartopy.feature as cfeature
 import matplotlib.gridspec as gridspec
 import logging
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+
 logging.basicConfig(level=logging.warning)
 import glob
 
@@ -33,7 +34,7 @@ extremes_all = {
 
 # %%
 def composite_times(events, lag_days=6):
-    event_start_times = events["start_time"]
+    event_start_times = events["event_start_time"]
     field_sel_times = event_start_times - pd.Timedelta(f"{lag_days}D")
     # if the field_sel_times contains value before May 1st, or After September 30th, remove it
     field_sel_times = field_sel_times[
@@ -217,15 +218,15 @@ last_neg_OLR_lags_meridional = last_neg_OLR_lags.mean(dim="lat")
 container1 = first_pos_OLR_lags.copy()
 container2 = last_pos_OLR_lags.copy()
 
-#%%
+# %%
 container1 = container1.isel(lag=0).drop_vars("lag")
-container1["lat"] = np.arange(0,32,1)
+container1["lat"] = np.arange(0, 32, 1)
 
 container2 = container2.isel(lag=0).drop_vars("lag")
-container2["lat"] = np.arange(32,64,1)
+container2["lat"] = np.arange(32, 64, 1)
 
-container = xr.concat([container1,container2],dim = "lat")
-container = container.sel(lat = slice (0,59))
+container = xr.concat([container1, container2], dim="lat")
+container = container.sel(lat=slice(0, 59))
 
 # %%
 # create a container for the composite to align the x-axis
@@ -258,11 +259,11 @@ ax1.coastlines()
 #         "physical", "land", "110m", edgecolor="black", facecolor="Cornsilk"
 #     )
 # )
-first_neg_OLR_lags.sel(lag = 6).plot(
+first_neg_OLR_lags.sel(lag=6).plot(
     ax=ax1,
-    levels=levels*3,
+    levels=levels * 3,
     add_colorbar=False,
-    extend = 'both',
+    extend="both",
     add_labels=False,
     transform=ccrs.PlateCarree(),
 )
@@ -281,7 +282,7 @@ first_pos_OLR_lags_meridional.plot.contourf(
     ax=ax2,
     levels=levels,
     add_colorbar=False,
-    extend = 'both',
+    extend="both",
     add_labels=False,
     transform=ccrs.PlateCarree(),
 )
@@ -292,7 +293,7 @@ last_pos_OLR_lags_meridional.plot.contourf(
     ax=ax3,
     levels=levels,
     add_colorbar=False,
-    extend = 'both',
+    extend="both",
     add_labels=False,
     transform=ccrs.PlateCarree(),
 )
@@ -303,7 +304,7 @@ first_neg_OLR_lags_meridional.plot.contourf(
     ax=ax4,
     levels=levels,
     add_colorbar=False,
-    extend = 'both',
+    extend="both",
     add_labels=False,
     transform=ccrs.PlateCarree(),
 )
@@ -313,7 +314,7 @@ last_neg_OLR_lags_meridional.plot.contourf(
     ax=ax5,
     levels=levels,
     add_colorbar=False,
-    extend = 'both',
+    extend="both",
     add_labels=False,
     transform=ccrs.PlateCarree(),
 )
@@ -333,11 +334,17 @@ for ax in [ax4, ax5]:
     ax.set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
 
 # make the cax width along y-axis 1/50 of the figure width
-cax = fig.add_axes([ax3.get_position().x0+0.01,ax3.get_position().y1+0.1,ax3.get_position().width,0.02])
+cax = fig.add_axes(
+    [
+        ax3.get_position().x0 + 0.01,
+        ax3.get_position().y1 + 0.1,
+        ax3.get_position().width,
+        0.02,
+    ]
+)
 
 
-fig.colorbar(ax2.collections[0], cax=cax, orientation="horizontal", 
-              aspect = 50)
+fig.colorbar(ax2.collections[0], cax=cax, orientation="horizontal", aspect=50)
 cax.set_title("OLR anomaly (W/m^2)")
 fig.tight_layout()
 plt.savefig(

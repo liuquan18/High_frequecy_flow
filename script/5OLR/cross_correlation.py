@@ -96,7 +96,7 @@ last_natl = locmimum_index_inbin(CCFs_last10_pos_natl)
 # construct dataframe for bar plot
 ds_count = pd.DataFrame(data = {'count':[first_indo.size, last_indo.size, first_natl.size, last_natl.size],
                                 'peirod':['first','last','first','last'],
-                                'region':['indo','indo','natlon','natlon']})
+                                'region':['Indo-Pacific','Indo-Pacific','North-Atlantic','North-Atlantic']})
 
 
 # %%
@@ -133,29 +133,25 @@ def plot_composite(field, ax, levels=np.arange(-10, 11, 1)):
 
 
 # %%
-fig = plt.figure(figsize=(20, 10))
+fig = plt.figure(figsize=(20, 5))
 gs = gridspec.GridSpec(2, 2, wspace = 0.1, hspace = 0.1)
 levels = np.arange(-12, 13, 2)
 
 ax1 = fig.add_subplot(gs[0, 0], projection=ccrs.PlateCarree(central_longitude=180))
 plot_composite(first10_pos_indo_comp, ax1, levels=levels)
 ax1.set_title("First 10 years Indo-Pacific")
-ax1.set_aspect("auto")
 
 ax2 = fig.add_subplot(gs[0, 1], projection=ccrs.PlateCarree(central_longitude=180))
 plot_composite(last10_pos_indo_comp, ax2, levels=levels)
 ax2.set_title("Last 10 years Indo-Pacific")
-ax2.set_aspect("auto")
 
 ax3 = fig.add_subplot(gs[1, 0], projection=ccrs.PlateCarree(central_longitude=180))
 plot_composite(first10_pos_natl_comp, ax3, levels=levels)
 ax3.set_title("First 10 years North Atlantic")
-ax3.set_aspect("auto")
 
 ax4 = fig.add_subplot(gs[1, 1], projection=ccrs.PlateCarree(central_longitude=180))
 plot_composite(last10_pos_natl_comp, ax4, levels=levels)
 ax4.set_title("Last 10 years North Atlantic")
-ax4.set_aspect("auto")
 
 # Adjust layout to make space for colorbar
 fig.subplots_adjust(bottom=0.15)
@@ -176,6 +172,13 @@ for ax in [ax1, ax3]:
 for ax in [ax3, ax4]:
     ax.set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
     ax.set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
+
+
+# vlines at x = 50, 120, -70 for axes[0, 0]
+ax1.vlines(x=50, ymin = -28, ymax = 28, linestyles="--", transform=ccrs.PlateCarree(),color = 'black')
+ax1.vlines(x=120, ymin = -28, ymax = 28, linestyles="--", transform=ccrs.PlateCarree(), color = 'black')
+ax1.vlines(x=-80, ymin = -28, ymax = 28, linestyles="--", transform=ccrs.PlateCarree(), color = 'black')
+ax1.vlines(x = -10, ymin = -28, ymax = 28, linestyles="--", transform=ccrs.PlateCarree(), color = 'black')
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_composite_e2c/loc_min_composite_OLR.png")
 # %%# %%

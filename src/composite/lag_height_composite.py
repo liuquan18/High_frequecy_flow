@@ -6,6 +6,7 @@ import logging
 
 from src.extremes.extreme_read import sel_event_above_duration
 from src.extremes.extreme_read import read_extremes
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -21,7 +22,7 @@ def lead_lag_30days(events, base_plev=25000, cross_plev=1):
         count_startime = ref_time - pd.Timedelta(days=30)
         count_endtime = ref_time + pd.Timedelta(days=30)
 
-        # select the rows where the time between "start_time" and "end_time" has an overlap with the time between "count_startime" and "count_endtime"
+        # select the rows where the time between "event_start_time" and "end_time" has an overlap with the time between "count_startime" and "count_endtime"
         overlapped_events_across_height = events[
             (events.start_time <= count_endtime) & (events.end_time >= count_startime)
         ]
@@ -32,7 +33,7 @@ def lead_lag_30days(events, base_plev=25000, cross_plev=1):
         start_times.append(count_startime)
         end_times.append(count_endtime)
 
-    date_range = pd.DataFrame({"start_time": start_times, "end_time": end_times})
+    date_range = pd.DataFrame({"event_start_time": start_times, "end_time": end_times})
 
     return date_range
 
