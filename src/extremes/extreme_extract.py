@@ -96,6 +96,9 @@ def find_sign_times(extremes, signs):
     Returns:
     pd.DataFrame: The DataFrame containing the extreme events with sign_start_time and sign_end_time.
     """
+
+
+
     # select rows of signs, where the sign event is within the extreme event
     new_extremes = []
     for i, row in extremes.iterrows():
@@ -109,5 +112,27 @@ def find_sign_times(extremes, signs):
         row["sign_duration"] = sign_i["duration"].values[0]
         new_extremes.append(row)
     new_extremes = pd.DataFrame(new_extremes)
+
+    new_extremes.loc[:, "start_time"] = pd.to_datetime(new_extremes["start_time"])
+    new_extremes.loc[:, "end_time"] = pd.to_datetime(new_extremes["end_time"])
+    new_extremes.loc[:, 'sign_start_time'] = pd.to_datetime(new_extremes['sign_start_time'])
+    new_extremes.loc[:, 'sign_end_time'] = pd.to_datetime(new_extremes['sign_end_time'])
+
+    # find duplicated rows on 'sign_start_time' and 'sign_end_time', delete first one, and replace the 'start_time' with
+    # smallest 'start_time' and 'end_time' with largest 'end_time'
+
+    # group by 'sign_start_time' and 'sign_end_time'
+    new_extremes = new_extremes.groupby(["sign_start_time", "sign_end_time"])[[...]].apply(
+        lambda x: x.assign(
+            start_time=x["start_time"].min(),
+            end_time=x["end_time"].max(),
+            duration=(x["end_time"].max() - x["start_time"].min()).days + 1,
+        )
+    )
+
+    new_extremes = new_extremes.reset_index(drop=True)
+
+    # now drop the duplicated rows on 'sign_start_time' and 'sign_end_time'
+    new_extremes = new_extremes.drop_duplicates(subset=["sign_start_time", "sign_end_time"], ignore_index=True)
 
     return new_extremes
