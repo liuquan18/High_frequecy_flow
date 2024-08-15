@@ -29,8 +29,8 @@ def sel_pc_duration(events, pc):
                 duration_index=("time", np.arange(1, sel_pc.sizes["time"] + 1))
             )
             sel_pc_df = sel_pc.to_dataframe().reset_index()[["duration_index", "pc"]]
-            sel_pc_df["duration"] = events.duration.iloc[i]
-            sel_pc_df = sel_pc_df.set_index(["duration", "duration_index"])
+            sel_pc_df["event_duration"] = events.duration.iloc[i]
+            sel_pc_df = sel_pc_df.set_index(["event_duration", "duration_index"])
             sel_pcs.append(sel_pc_df)
 
         sel_pcs = pd.concat(sel_pcs, axis=1).sort_index()
@@ -73,7 +73,7 @@ def event_pc(period, duration, plev=50000):
             [
                 "event_start_time",
                 "event_end_time",
-                "duration",
+                "event_duration",
                 "mean",
                 "sum",
                 "max",
@@ -85,7 +85,7 @@ def event_pc(period, duration, plev=50000):
             [
                 "event_start_time",
                 "event_end_time",
-                "duration",
+                "event_duration",
                 "mean",
                 "sum",
                 "max",

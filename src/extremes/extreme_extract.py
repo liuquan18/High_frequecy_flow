@@ -45,12 +45,20 @@ def extract_pos_extremes(df, column="residual"):
             column=column, aggfunc="min"
         ),  # add mean to make sure the data are all positive
     ).reset_index()
-    Events["duration"] = (
+    Events["event_duration"] = (
         Events["event_end_time"] - Events["event_start_time"]
     ).dt.days + 1
 
     Events = Events[
-        ["event_start_time", "event_end_time", "duration", "sum", "mean", "max", "min"]
+        [
+            "event_start_time",
+            "event_end_time",
+            "event_duration",
+            "sum",
+            "mean",
+            "max",
+            "min",
+        ]
     ]
     return Events
 
@@ -82,12 +90,20 @@ def extract_neg_extremes(df, column="residual"):
             column=column, aggfunc="min"
         ),  # add mean to make sure the data are all positive
     ).reset_index()
-    Events["duration"] = (
+    Events["event_duration"] = (
         Events["event_end_time"] - Events["event_start_time"]
     ).dt.days + 1
 
     Events = Events[
-        ["event_start_time", "event_end_time", "duration", "sum", "mean", "max", "min"]
+        [
+            "event_start_time",
+            "event_end_time",
+            "event_duration",
+            "sum",
+            "mean",
+            "max",
+            "min",
+        ]
     ]
     return Events
 
@@ -115,7 +131,7 @@ def find_sign_times(extremes, signs):
         ]
         row["sign_start_time"] = sign_i["event_start_time"].values[0]
         row["sign_end_time"] = sign_i["event_end_time"].values[0]
-        row["sign_duration"] = sign_i["duration"].values[0]
+        row["sign_duration"] = sign_i["event_duration"].values[0]
         new_extremes.append(row)
     new_extremes = pd.DataFrame(new_extremes)
 

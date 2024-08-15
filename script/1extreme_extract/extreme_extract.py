@@ -93,7 +93,7 @@ for i, member in enumerate(members_single):
             "plev",
             "event_start_time",
             "event_end_time",
-            "duration",
+            "event_duration",
             "sum",
             "mean",
             "max",
@@ -105,7 +105,7 @@ for i, member in enumerate(members_single):
         extract_pos_extremes, column="pc"
     )
     pos_sign = pos_sign.reset_index()[
-        ["plev", "event_start_time", "event_end_time", "duration"]
+        ["plev", "event_start_time", "event_end_time", "event_duration"]
     ]
     pos_extremes = find_sign_times(pos_extremes, pos_sign)
 
@@ -130,7 +130,7 @@ for i, member in enumerate(members_single):
             "plev",
             "event_start_time",
             "event_end_time",
-            "duration",
+            "event_duration",
             "sum",
             "mean",
             "max",
@@ -143,7 +143,7 @@ for i, member in enumerate(members_single):
     )
 
     neg_sign = neg_sign.reset_index()[
-        ["plev", "event_start_time", "event_end_time", "duration"]
+        ["plev", "event_start_time", "event_end_time", "event_duration"]
     ]
 
     neg_extremes = find_sign_times(neg_extremes, neg_sign)
