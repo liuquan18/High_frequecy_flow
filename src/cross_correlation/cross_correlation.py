@@ -20,8 +20,8 @@ def read_data(period, ens, plev=25000):
     OLR_file = glob.glob(OLR_dir + f"*r{ens}i1p1f1*.nc")[0]
     OLR = xr.open_dataset(OLR_file).rlut
 
-    OLR_indo = OLR.sel(lon=slice(50, 100)).mean(dim=["lat", "lon"])
-    OLR_natl = OLR.sel(lon=slice(-60, 0)).mean(dim=["lat", "lon"])
+    OLR_indo = OLR.sel(lon=slice(50, 120)).mean(dim=["lat", "lon"])
+    OLR_natl = OLR.sel(lon=slice(-70, 0)).mean(dim=["lat", "lon"])
 
     # NAO
     NAO_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/projected_pc/projected_pc_{period}/"
