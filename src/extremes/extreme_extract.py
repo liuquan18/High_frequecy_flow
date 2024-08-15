@@ -36,8 +36,8 @@ def extract_pos_extremes(df, column="residual"):
 
     # Get the statistics of the group
     Events = G.agg(
-        start_time=pd.NamedAgg(column="time", aggfunc="min"),
-        end_time=pd.NamedAgg(column="time", aggfunc="max"),
+        event_start_time=pd.NamedAgg(column="time", aggfunc="min"),
+        event_end_time=pd.NamedAgg(column="time", aggfunc="max"),
         sum=pd.NamedAgg(column=column, aggfunc="sum"),
         mean=pd.NamedAgg(column=column, aggfunc="mean"),
         max=pd.NamedAgg(column=column, aggfunc="max"),
@@ -81,8 +81,8 @@ def extract_neg_extremes(df, column="residual"):
 
     # Get the statistics of the group
     Events = G.agg(
-        start_time=pd.NamedAgg(column="time", aggfunc="min"),
-        end_time=pd.NamedAgg(column="time", aggfunc="max"),
+        event_start_time=pd.NamedAgg(column="time", aggfunc="min"),
+        event_end_time=pd.NamedAgg(column="time", aggfunc="max"),
         sum=pd.NamedAgg(column=column, aggfunc="sum"),
         mean=pd.NamedAgg(column=column, aggfunc="mean"),
         max=pd.NamedAgg(column=column, aggfunc="max"),
