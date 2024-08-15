@@ -51,7 +51,7 @@ def read_extremes(
 
     if not extreme.empty:
         # select again with events at least 8 days in JJA
-        extreme = sel_event_above_duration(extreme, duration=8, by="event_duration")
+        extreme = sel_event_above_duration(extreme, duration=8, by="extreme_duration")
 
         # select the events where sign_start_time is after June 1st (at least 30 days after the OLR data starts)
         extreme = extreme[pd.to_datetime(extreme["sign_start_time"]).dt.month >= 6]
@@ -180,7 +180,7 @@ def plot_ccf(CCFs_first10_pos_indo, ax):
 
 
 ########################## count of local minimum in lag (-16,-6] ##########################
-def locmimum_index(ccf, roll_window=3, control = -0.3):
+def locmimum_index(ccf, roll_window=3, control=-0.3):
 
     # smooth the ccf
     ccf = ccf.rolling(roll_window).mean()

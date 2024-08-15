@@ -15,7 +15,7 @@ def combine_events(df, duration=13):
     df_up_to_13 = df[df.index <= duration]
     df_above_13 = df[df.index > duration]
 
-    # Step 2: Sum the "event_duration" for rows > 13
+    # Step 2: Sum the "extreme_duration" for rows > 13
     count_above_13 = df_above_13["count"].sum()
     mean_above_13 = np.average(
         df_above_13["mean"], weights=df_above_13.index
@@ -52,17 +52,17 @@ def extreme_stat_allens(start_duration=5, duration_lim=8, plev=50000):
     last10_neg_extremes = last10_neg_extremes[last10_neg_extremes["plev"] == plev]
 
     # statistics across ensemble members
-    first10_pos = first10_pos_extremes.groupby("event_duration")["mean"].agg(
+    first10_pos = first10_pos_extremes.groupby("extreme_duration")["mean"].agg(
         ["mean", "count"]
     )
-    first10_neg = first10_neg_extremes.groupby("event_duration")["mean"].agg(
+    first10_neg = first10_neg_extremes.groupby("extreme_duration")["mean"].agg(
         ["mean", "count"]
     )
 
-    last10_pos = last10_pos_extremes.groupby("event_duration")["mean"].agg(
+    last10_pos = last10_pos_extremes.groupby("extreme_duration")["mean"].agg(
         ["mean", "count"]
     )
-    last10_neg = last10_neg_extremes.groupby("event_duration")["mean"].agg(
+    last10_neg = last10_neg_extremes.groupby("extreme_duration")["mean"].agg(
         ["mean", "count"]
     )
 
@@ -155,7 +155,7 @@ def plot_extreme_stat(
         )
 
     # Set labels and title
-    ax.set_xlabel("event_duration")
+    ax.set_xlabel("extreme_duration")
     ax.set_ylabel(stat)
     ax.set_title("Count Distribution by Duration")
 

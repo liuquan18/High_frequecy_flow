@@ -34,8 +34,8 @@ extremes_all = {
 
 # %%
 def composite_times(events, lag_days=6):
-    event_start_times = events["event_start_time"]
-    field_sel_times = event_start_times - pd.Timedelta(f"{lag_days}D")
+    extreme_start_times = events["extreme_start_time"]
+    field_sel_times = extreme_start_times - pd.Timedelta(f"{lag_days}D")
     # if the field_sel_times contains value before May 1st, or After September 30th, remove it
     field_sel_times = field_sel_times[
         (field_sel_times.dt.month >= 5) & (field_sel_times.dt.month <= 9)

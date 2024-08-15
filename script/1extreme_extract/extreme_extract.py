@@ -10,15 +10,17 @@ import sys
 import logging
 
 logging.basicConfig(level=logging.INFO)
-#%%
+# %%
 import src.extremes.extreme_extract as ee
 import importlib
+
 importlib.reload(ee)
 
 import src.extremes.extreme_threshold as et
+
 importlib.reload(et)
 
-#%%
+# %%
 
 calculate_residue = ee.calculate_residue
 extract_pos_extremes = ee.extract_pos_extremes
@@ -86,13 +88,13 @@ def to_dataframe(pc):
 for i, member in enumerate(members_single):
     print(f"Period {period}: Rank {rank}, member {member}/{members_single[-1]}")
     # read pc index
-#%%
+    # %%
     pc = xr.open_dataset(
         f"{projected_pc_path}/troposphere_pc_MJJAS_ano_{tag}_r{member}.nc"
     ).pc
 
     pc = to_dataframe(pc)
-
+    # %%
     # positive extremes
     # use the threshold from the first 10  all members
     pos_threshold = pd.read_csv(
@@ -100,15 +102,13 @@ for i, member in enumerate(members_single):
     )
 
     # subtract the threshold from the pc index
-    pos_pc = pc.groupby("plev")[['plev','time','pc']].apply(
+    pos_pc = pc.groupby("plev")[["plev", "time", "pc"]].apply(
         subtract_threshold,
         column_name="pc",
         threshold=pos_threshold,
     )
 
-    
     pos_pc = pos_pc.reset_index(drop=True)
-
 
     pos_extremes = pos_pc.groupby("plev")[["time", "residual"]].apply(
         extract_pos_extremes, column="residual"
@@ -116,9 +116,9 @@ for i, member in enumerate(members_single):
     pos_extremes = pos_extremes.reset_index()[
         [
             "plev",
-            "event_start_time",
-            "event_end_time",
-            "event_duration",
+            "extreme_start_time",
+            "extreme_end_time",
+            "extreme_duration",
             "sum",
             "mean",
             "max",
@@ -130,7 +130,7 @@ for i, member in enumerate(members_single):
         extract_pos_extremes, column="pc"
     )
     pos_sign = pos_sign.reset_index()[
-        ["plev", "event_start_time", "event_end_time", "event_duration"]
+        ["plev", "extreme_start_time", "extreme_end_time", "extreme_duration"]
     ]
     pos_extremes = find_sign_times(pos_extremes, pos_sign)
 
@@ -153,9 +153,9 @@ for i, member in enumerate(members_single):
     neg_extremes = neg_extremes.reset_index()[
         [
             "plev",
-            "event_start_time",
-            "event_end_time",
-            "event_duration",
+            "extreme_start_time",
+            "extreme_end_time",
+            "extreme_duration",
             "sum",
             "mean",
             "max",
@@ -168,7 +168,7 @@ for i, member in enumerate(members_single):
     )
 
     neg_sign = neg_sign.reset_index()[
-        ["plev", "event_start_time", "event_end_time", "event_duration"]
+        ["plev", "extreme_start_time", "extreme_end_time", "extreme_duration"]
     ]
 
     neg_extremes = find_sign_times(neg_extremes, neg_sign)

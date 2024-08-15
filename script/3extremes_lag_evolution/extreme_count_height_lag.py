@@ -13,7 +13,7 @@ from matplotlib.patches import Patch
 # %%
 
 
-def after_events(events, base_plev=25000, start_point="event_end_time", cross_plev=1):
+def after_events(events, base_plev=25000, start_point="extreme_end_time", cross_plev=1):
     """
     parameters:
         events: events dataframe
@@ -35,7 +35,7 @@ def after_events(events, base_plev=25000, start_point="event_end_time", cross_pl
         ref_time = base_event[ref_index]
 
         # select the events that happens after the base_startime
-        if start_point == "event_start_time":
+        if start_point == "extreme_start_time":
             after_events = events[events[start_point] >= ref_time]
             concurrent_events = after_events
         else:
@@ -64,41 +64,41 @@ last10_pos_events, last10_neg_events = read_extremes_allens("last10", 8)
 cross_plev = 1
 # %%
 first10_pos_events_container = first10_pos_events.groupby("ens")[
-    ["plev", "event_start_time", "event_end_time", "event_duration"]
+    ["plev", "extreme_start_time", "extreme_end_time", "extreme_duration"]
 ].apply(
     after_events,
     base_plev=100000,
-    start_point="event_start_time",
+    start_point="extreme_start_time",
     cross_plev=cross_plev,
 )
 first10_pos_events_container = first10_pos_events_container.groupby(level=1).sum()
 # %%
 first10_neg_events_container = first10_neg_events.groupby("ens")[
-    ["plev", "event_start_time", "event_end_time", "event_duration"]
+    ["plev", "extreme_start_time", "extreme_end_time", "extreme_duration"]
 ].apply(
     after_events,
     base_plev=100000,
-    start_point="event_start_time",
+    start_point="extreme_start_time",
     cross_plev=cross_plev,
 )
 first10_neg_events_container = first10_neg_events_container.groupby(level=1).sum()
 # %%
 last10_pos_events_container = last10_pos_events.groupby("ens")[
-    ["plev", "event_start_time", "event_end_time", "event_duration"]
+    ["plev", "extreme_start_time", "extreme_end_time", "extreme_duration"]
 ].apply(
     after_events,
     base_plev=100000,
-    start_point="event_start_time",
+    start_point="extreme_start_time",
     cross_plev=cross_plev,
 )
 last10_pos_events_container = last10_pos_events_container.groupby(level=1).sum()
 # %%
 last10_neg_events_container = last10_neg_events.groupby("ens")[
-    ["plev", "event_start_time", "event_end_time", "event_duration"]
+    ["plev", "extreme_start_time", "extreme_end_time", "extreme_duration"]
 ].apply(
     after_events,
     base_plev=100000,
-    start_point="event_start_time",
+    start_point="extreme_start_time",
     cross_plev=cross_plev,
 )
 last10_neg_events_container = last10_neg_events_container.groupby(level=1).sum()

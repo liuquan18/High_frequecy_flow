@@ -42,20 +42,20 @@ def read_extremes(period: str, start_duration: int, ens: int):
 # %%
 
 
-def sel_event_above_duration(df, duration=5, by="event_duration"):
+def sel_event_above_duration(df, duration=5, by="extreme_duration"):
     """
     select the extreme events, which durates 5 days or more in June to August
     """
 
     # Convert start_time and end_time to datetime if they aren't already
-    df.loc[:, "event_start_time"] = pd.to_datetime(df["event_start_time"])
-    df.loc[:, "event_end_time"] = pd.to_datetime(df["event_end_time"])
+    df.loc[:, "extreme_start_time"] = pd.to_datetime(df["extreme_start_time"])
+    df.loc[:, "extreme_end_time"] = pd.to_datetime(df["extreme_end_time"])
 
-    if by == "event_duration":
+    if by == "extreme_duration":
         # Apply the function to each row
         df.loc[:, "days_in_JJA"] = df.apply(
             lambda row: days_in_june_to_aug(
-                row["event_start_time"], row["event_end_time"]
+                row["extreme_start_time"], row["extreme_end_time"]
             ),
             axis=1,
         )
@@ -67,21 +67,23 @@ def sel_event_above_duration(df, duration=5, by="event_duration"):
         result = df[df["sign_duration"] >= duration]
 
     else:
-        raise ValueError('by should be either "event_duration" or "sign_duration"')
+        raise ValueError('by should be either "extreme_duration" or "sign_duration"')
     return result
 
 
-def sel_event_duration(df, duration=5):
+def sel_extreme_duration(df, duration=5):
     """
     select the extreme events, which durates 5 days or more in June to August
     """
 
     # Convert start_time and end_time to datetime if they aren't already
-    df["event_start_time"] = pd.to_datetime(df["event_start_time"])
-    df["event_end_time"] = pd.to_datetime(df["event_end_time"])
+    df["extreme_start_time"] = pd.to_datetime(df["extreme_start_time"])
+    df["extreme_end_time"] = pd.to_datetime(df["extreme_end_time"])
     # Apply the function to each row
     df["days_in_JJA"] = df.apply(
-        lambda row: days_in_june_to_aug(row["event_start_time"], row["event_end_time"]),
+        lambda row: days_in_june_to_aug(
+            row["extreme_start_time"], row["extreme_end_time"]
+        ),
         axis=1,
     )
 

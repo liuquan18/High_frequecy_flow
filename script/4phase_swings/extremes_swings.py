@@ -56,9 +56,9 @@ first_swings = first_above_once.groupby(
 )[
     [
         "extreme_type",
-        "event_start_time",
-        "event_end_time",
-        "event_duration",
+        "extreme_start_time",
+        "extreme_end_time",
+        "extreme_duration",
     ]
 ].apply(
     collect_swing
@@ -78,9 +78,9 @@ last_swings = last_above_once.groupby(
 )[
     [
         "extreme_type",
-        "event_start_time",
-        "event_end_time",
-        "event_duration",
+        "extreme_start_time",
+        "extreme_end_time",
+        "extreme_duration",
     ]
 ].apply(
     collect_swing
