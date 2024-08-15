@@ -122,7 +122,7 @@ def find_sign_times(extremes, signs):
     # smallest 'start_time' and 'end_time' with largest 'end_time'
 
     # group by 'sign_start_time' and 'sign_end_time'
-    new_extremes = new_extremes.groupby(["sign_start_time", "sign_end_time"])[[...]].apply(
+    new_extremes = new_extremes.groupby(["sign_start_time", "sign_end_time"])[new_extremes.columns].apply(
         lambda x: x.assign(
             start_time=x["start_time"].min(),
             end_time=x["end_time"].max(),
@@ -131,8 +131,7 @@ def find_sign_times(extremes, signs):
     )
 
     new_extremes = new_extremes.reset_index(drop=True)
-
-    # now drop the duplicated rows on 'sign_start_time' and 'sign_end_time'
     new_extremes = new_extremes.drop_duplicates(subset=["sign_start_time", "sign_end_time"], ignore_index=True)
+
 
     return new_extremes
