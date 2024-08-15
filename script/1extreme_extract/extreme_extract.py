@@ -27,7 +27,7 @@ try:
     rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
     size = comm.Get_size()  # 10
 except:
-    print("::: Warning: Proceeding without mpi4py! :::")
+    logging.info("::: Warning: Proceeding without mpi4py! :::")
     rank = 0
     size = 1
 
