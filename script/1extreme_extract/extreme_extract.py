@@ -1,32 +1,13 @@
 # %%
 import xarray as xr
 import pandas as pd
-from src.extremes.extreme_extract import calculate_residue
-from src.extremes.extreme_extract import extract_pos_extremes
-from src.extremes.extreme_extract import extract_neg_extremes
-from src.extremes.extreme_extract import find_sign_times
 import numpy as np
+
+import eventextreme.eventextreme as ee
 import sys
 import logging
 
 logging.basicConfig(level=logging.INFO)
-# %%
-import src.extremes.extreme_extract as ee
-import importlib
-
-importlib.reload(ee)
-
-import src.extremes.extreme_threshold as et
-
-importlib.reload(et)
-
-# %%
-
-calculate_residue = ee.calculate_residue
-extract_pos_extremes = ee.extract_pos_extremes
-extract_neg_extremes = ee.extract_neg_extremes
-find_sign_times = ee.find_sign_times
-subtract_threshold = et.subtract_threshold
 
 
 # %%
@@ -87,6 +68,8 @@ def to_dataframe(pc):
 # %%
 for i, member in enumerate(members_single):
     print(f"Period {period}: Rank {rank}, member {member}/{members_single[-1]}")
+    
+    
     # read pc index
     # %%
     pc = xr.open_dataset(
@@ -94,12 +77,40 @@ for i, member in enumerate(members_single):
     ).pc
 
     pc = to_dataframe(pc)
-    # %%
-    # positive extremes
-    # use the threshold from the first 10  all members
+#%%
+    # read thresholds 
+    ## positive extremes
     pos_threshold = pd.read_csv(
         "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/pos_threshold_first10_allens.csv"
     )
+
+    ## negative extremes
+    neg_threshold = pd.read_csv(
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/neg_threshold_first10_allens.csv"
+    )
+
+#%%
+    # extract extremes
+    extremes = ee.EventExtreme(pc, 'pc', independent_dim='plev')
+#%%
+    # set thresholds
+    extremes.set_positive_threshold(pos_threshold)
+    extremes.set_negative_threshold(neg_threshold)
+
+
+#%%
+    # extract extremes
+    positive_extremes = extremes.extract_positive_extremes
+    negative_extremes = extremes.extract_negative_extremes
+
+#%%
+
+
+
+    # %%
+    # positive extremes
+    # use the threshold from the first 10  all members
+
 
     # subtract the threshold from the pc index
     pos_pc = pc.groupby("plev")[["plev", "time", "pc"]].apply(
@@ -139,10 +150,6 @@ for i, member in enumerate(members_single):
         index=False,
     )
 
-    # negative extremes
-    neg_threshold = pd.read_csv(
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/neg_threshold_first10_allens.csv"
-    )
 
     neg_pc = calculate_residue(pc, neg_threshold)
 
