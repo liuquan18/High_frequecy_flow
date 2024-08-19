@@ -117,7 +117,10 @@ for i, member in enumerate(members_single):
     pos_extremes.to_csv(
         f"{pos_extreme_save_path}OLR_extremes_pos_{tag}_r{member}.csv", index=False
     )
+
+    print("positive extremes saved")
     neg_extremes.to_csv(
         f"{neg_extreme_save_path}OLR_extremes_neg_{tag}_r{member}.csv", index=False
     )
+    print("negative extremes saved")
 # %%

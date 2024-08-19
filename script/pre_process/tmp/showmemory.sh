@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check memory usage of node l20021
-node_info=$(scontrol show node l20021)
+node_info=$(scontrol show node l30046)
 real_memory=$(echo "$node_info" | grep -oP 'RealMemory=\K\d+')
 alloc_memory=$(echo "$node_info" | grep -oP 'AllocMem=\K\d+')
 free_memory=$(echo "$node_info" | grep -oP 'FreeMem=\K\d+')
