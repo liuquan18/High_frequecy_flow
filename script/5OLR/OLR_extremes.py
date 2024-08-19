@@ -46,7 +46,7 @@ pos_extreme_save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CM
 neg_extreme_save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_extremes_neg/OLR_extremes_neg_{period}/"
 # %%
 threshold = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/tmp/rlut_threshold_first10_r2.nc"
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_threshold/OLR_threshold_allens/threshold_allens.nc"
 )
 
 # %%
