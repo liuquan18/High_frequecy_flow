@@ -6,6 +6,7 @@ import sys
 import glob
 import eventextreme.eventextreme as ee
 import logging
+import src.compute.slurm_cluster as scluster
 
 logging.basicConfig(level=logging.WARNING)
 # %%
@@ -85,13 +86,17 @@ def to_dataframe(pc):
 
 
 # %%
+client, cluster = scluster.init_dask_slurm_cluster(scale = 2, processes=20, walltime="08:00:00", memory="200GB")
+
+print("rank {rank} client {client} cluster {cluster}")
+
 for i, member in enumerate(members_single):
     print(f"period {period} Processing member {member} on node {node}...")
-
+#%%
     # read OLR nc file
     olr_file = glob.glob(f"{OLR_ano_path}rlut*r{member}i1p1f1*ano.nc")[0]
     OLR_ano = xr.open_dataset(olr_file).rlut
-
+#%%
     OLR_df = to_dataframe(OLR_ano)
 
     df = OLR_df[["time", "spatial", "rlut"]]

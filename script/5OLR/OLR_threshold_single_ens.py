@@ -10,7 +10,6 @@ logging.basicConfig(level=logging.WARNING)
 
 import eventextreme.extreme_threshold as et
 
-import src.compute.slurm_cluster as scluster
 # %%
 
 
@@ -100,7 +99,6 @@ def get_threshold(arr):
 
 
 # %%
-client, cluster = scluster.init_dask_slurm_cluster(scale = 2, processes=20, walltime="03:30:00", memory="128GB")
 
 for i, member in enumerate(members_single):
 
