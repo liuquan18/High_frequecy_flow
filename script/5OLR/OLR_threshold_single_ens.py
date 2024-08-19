@@ -114,6 +114,7 @@ for i, member in enumerate(members_single):
     olr_spatial = olr.stack(spatial=("lat", "lon"))
 
     thr_dayofyear = olr_spatial.groupby("spatial", squeeze=True).apply(get_threshold)
+    thr_dayofyear = thr_dayofyear.unstack()
 
     thr_dayofyear.to_netcdf(
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_threshold/rlut_threshold_first10_r{member}.nc"
