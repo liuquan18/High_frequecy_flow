@@ -10,35 +10,26 @@ import src.compute.slurm_cluster as scluster
 
 logging.basicConfig(level=logging.WARNING)
 # %%
+
+all_missing_members = [3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 33, 34, 35, 36, 37, 38, 39, 40, 43, 44, 45, 46, 47, 48]
+# split the members into 10 groups
+members_groups = np.array_split(all_missing_members, 8)
+
 # %%
 try:
-    node = int(sys.argv[1])
+    node = int(sys.argv[1]) # 0,1,2,3,4,5,6,7
 except ValueError:
     logging.warning("no node number provided, using default node 0")
     node = 0
 
-# %%
-# nodes and cores
-try:
-    from mpi4py import MPI
-
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
-    size = comm.Get_size()  # 10
-except:
-    logging.warning("::: Warning: Proceeding without mpi4py! :::")
-    rank = 0
-    size = 1
-
-print(f"node {node}, rank {rank}, size {size}")
-
+p_ind = int(sys.argv[2]) # 0,1 for first10, last10
 
 # %%
 periods = ["first10", "last10"]
-period = periods[node]
+period = periods[p_ind]
 
 tags = ["1850_1859", "2091_2100"]
-tag = tags[node]
+tag = tags[p_ind]
 
 # %%
 OLR_ano_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_anomaly/{period}_OLR_daily_ano/"
@@ -61,10 +52,6 @@ neg_threshold = neg_threshold.to_dataframe(name="threshold").reset_index()
 # add spatial dimension
 pos_threshold["spatial"] = pos_threshold.groupby(["lat", "lon"]).ngroup()
 neg_threshold["spatial"] = neg_threshold.groupby(["lat", "lon"]).ngroup()
-# %%
-members_all = list(range(1, 51))  # all members
-members_single = np.array_split(members_all, size)[rank]  # members on this core
-
 
 # %%
 def to_dataframe(pc):
@@ -85,18 +72,15 @@ def to_dataframe(pc):
     return pc
 
 
-# %%
-client, cluster = scluster.init_dask_slurm_cluster(scale = 2, processes=20, walltime="08:00:00", memory="200GB")
 
-print("rank {rank} client {client} cluster {cluster}")
+for i, member in enumerate(members_groups[node]):
+    print(f"node {node}, period {period}, {i+1}/{len(members_groups[node])}, member {member}")
 
-for i, member in enumerate(members_single):
-    print(f"period {period} Processing member {member} on node {node}...")
-#%%
+
     # read OLR nc file
     olr_file = glob.glob(f"{OLR_ano_path}rlut*r{member}i1p1f1*ano.nc")[0]
     OLR_ano = xr.open_dataset(olr_file).rlut
-#%%
+
     OLR_df = to_dataframe(OLR_ano)
 
     df = OLR_df[["time", "spatial", "rlut"]]
