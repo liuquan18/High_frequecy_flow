@@ -80,12 +80,12 @@ for i, member in enumerate(members_single):
     # read thresholds 
     ## positive extremes
     pos_threshold = pd.read_csv(
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/pos_threshold_first10_allens.csv"
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_threshold/pos_threshold_first10_allens.csv"
     )
 
     ## negative extremes
     neg_threshold = pd.read_csv(
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/neg_threshold_first10_allens.csv"
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_threshold/neg_threshold_first10_allens.csv"
     )
 
 
