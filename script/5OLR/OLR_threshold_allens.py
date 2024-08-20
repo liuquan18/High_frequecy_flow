@@ -16,6 +16,7 @@ thresholds = xr.open_mfdataset(files, combine = 'nested', concat_dim = 'ens')
 #%%
 threshold_allens = thresholds.mean(dim = 'ens')
 
+
 #%%
 threshold_allens.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_threshold/OLR_threshold_allens/threshold_allens.nc")
 # %%
