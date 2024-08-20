@@ -18,11 +18,12 @@ members_groups = np.array_split(all_missing_members, 8)
 # %%
 try:
     node = int(sys.argv[1]) # 0,1,2,3,4,5,6,7
+    p_ind = int(sys.argv[2]) # 0,1 for first10, last10
+
 except ValueError:
     logging.warning("no node number provided, using default node 0")
     node = 0
-
-p_ind = int(sys.argv[2]) # 0,1 for first10, last10
+    p_ind = 0
 
 # %%
 periods = ["first10", "last10"]
