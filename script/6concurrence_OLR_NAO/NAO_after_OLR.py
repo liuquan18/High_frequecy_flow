@@ -138,6 +138,10 @@ ax2.set_title("Last 10 years")
 
 plt.suptitle("Occurrence of extreme OLR 16 days before NAO extremes")
 plt.tight_layout()
+for ax in [ax1, ax2]:
+    ax.set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
+    ax.set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
+    
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/NAO_after_OLR_concurrence.png")
 
 # %%
