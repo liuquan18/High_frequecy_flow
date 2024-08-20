@@ -43,7 +43,7 @@ def read_extremes(period, member, extreme_type="pos", dur_lim=8):
     # select extremes based on minimum duration but not limited in JJA
     OLR = OLR[OLR["extreme_duration"] >= dur_lim]
     # select columns
-    OLR = OLR[["sign_start_time", "extreme_duration", "lat", "lon"]]
+    OLR = OLR[["sign_start_time", "extreme_duration", "spatial","lat", "lon"]]
 
     return NAO_pos, OLR
 
@@ -93,9 +93,12 @@ def OLR_before_NAO_all(period, dur_lim=8, extreme_type="pos", lag=-16):
         NAO_pos, OLR = read_extremes(
             period, member, extreme_type=extreme_type, dur_lim=dur_lim
         )
-        concurrence = OLR_before_NAO(OLR, NAO_pos, lag=lag)
-        if concurrence.empty:
-            continue
+        concurrence = OLR.groupby("spatial")[['sign_start_time','lat','lon', 'extreme_duration']].apply(
+            OLR_before_NAO, NAO_pos, lag=lag
+        )
+        
+        
+        concurrence = concurrence.reset_index(drop = True)
 
         concurrence = concurrence[["sign_start_time", "extreme_duration", "lat", "lon"]]
         concurrence = concurrence.set_index(["sign_start_time", "lat", "lon"])
