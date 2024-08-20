@@ -48,8 +48,8 @@ def sel_event_above_duration(df, duration=5, by="extreme_duration"):
     """
 
     # Convert start_time and end_time to datetime if they aren't already
-    df.loc[:, "extreme_start_time"] = pd.to_datetime(df["extreme_start_time"])
-    df.loc[:, "extreme_end_time"] = pd.to_datetime(df["extreme_end_time"])
+    df["extreme_start_time"] = pd.to_datetime(df["extreme_start_time"])
+    df["extreme_end_time"] = pd.to_datetime(df["extreme_end_time"])
 
     if by == "extreme_duration":
         # Apply the function to each row
