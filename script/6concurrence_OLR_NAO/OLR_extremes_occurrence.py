@@ -16,13 +16,11 @@ import src.extremes.extreme_read as er
 
 
 # %%
-def extreme_stat(extreme, stat="duration", dur_min=10):
+def extreme_stat(extreme, stat="duration", dur_min=8):
     """
     Calculate the duration of the extreme events
     """
-    extreme_sel = er.sel_event_above_duration(
-        extreme, duration=dur_min, by="extreme_duration"
-    )
+    extreme_sel = extreme[extreme["extreme_duration"] >= dur_min]
     extreme_sel = extreme_sel[["sign_start_time", "extreme_duration", "lat", "lon"]]
     extreme_sel = extreme_sel.set_index(["sign_start_time", "lat", "lon"])
 
@@ -107,9 +105,9 @@ plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/OLR
 first_count = extreme_stat_all_members("first10", "pos", stat="count")
 last10_count = extreme_stat_all_members("last10", "pos", stat="count")
 # %%
-fig = plt.figure(figsize=(20, 5))
+fig = plt.figure(figsize=(12, 5))
 gs = gridspec.GridSpec(2, 1, wspace=0.1, hspace=0.1)
-levels = np.arange(10, 100, 10)
+levels = np.arange(20, 150, 20)
 
 ax1 = fig.add_subplot(gs[0, 0], projection=ccrs.PlateCarree(central_longitude=180))
 plot_duration(first_count, ax1, levels=levels)

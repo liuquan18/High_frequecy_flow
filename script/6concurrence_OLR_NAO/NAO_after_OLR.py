@@ -5,6 +5,7 @@ import xarray as xr
 import logging
 import matplotlib.pyplot as plt
 import glob
+import cartopy.crs as ccrs
 
 # %%
 import src.extremes.extreme_read as er
@@ -19,7 +20,7 @@ def read_extremes(period, member, extreme_type="pos", dur_lim=8):
     """
     Read the NAO and OLR extremes
     """
-    NAO_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{extreme_type}_extreme_events/{extreme_type}_extreme_events_first10/"
+    NAO_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{extreme_type}_extreme_events/{extreme_type}_extreme_events_{period}/"
     OLR_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_extremes_pos/OLR_extremes_pos_{period}/"  # no extreme_type in the OLR_extremes
 
     # read NAO positive extremes
@@ -63,11 +64,17 @@ def NAO_after_OLR(OLR, NAO, lag=-16):
             (OLR["sign_start_time"] < lag_time)
             & (OLR["sign_start_time"].dt.year == lag_time.year)
         ]
+
         OLR_befores.append(OLR_sel)
+    
+    if OLR_befores:
+        OLR_before = pd.concat(OLR_befores)
+        # drop duplicates
+        OLR_before = OLR_before.drop_duplicates(subset=["sign_start_time", "lat", "lon"])
 
-    OLR_before = pd.concat(OLR_befores)
-
-    return OLR_before.reset_index(drop=True)
+        return OLR_before.reset_index(drop=True)
+    else:
+        return pd.DataFrame()
 
 
 # %%
@@ -91,6 +98,7 @@ def NAO_after_OLR_all(period, dur_lim=8, extreme_type="pos", lag=-16):
         con_x = concurrence.to_xarray()
 
         con_xs.append(con_x)
+    # if con_xs is empty, return None
     con_xs = xr.concat(con_xs, dim="member")
 
     return con_xs
@@ -103,3 +111,33 @@ first10_pos = NAO_after_OLR_all("first10")
 last10_pos = NAO_after_OLR_all("last10")
 # %%
 # 
+def plot_concurrence(
+    extreme_duration, ax, custom_cmap="Blues", levels=np.arange(5, 31, 5)
+):
+    p = extreme_duration.plot(
+        ax=ax,
+        # cmap='Blues',
+        transform=ccrs.PlateCarree(),
+        levels=levels,
+        extend="max",
+    )
+    p.axes.coastlines()
+    return p
+
+
+#%%
+fig = plt.figure(figsize=(12,5))
+ax1 = plt.subplot(211, projection=ccrs.PlateCarree(180))
+
+plot_concurrence(first10_pos.count(dim = ('member','sign_start_time')).extreme_duration, ax1)
+ax1.set_title("First 10 years")
+
+ax2 = plt.subplot(212, projection=ccrs.PlateCarree(180))
+plot_concurrence(last10_pos.count(dim = ('member','sign_start_time')).extreme_duration, ax2)
+ax2.set_title("Last 10 years")
+
+plt.suptitle("Occurrence of extreme OLR 16 days before NAO extremes")
+plt.tight_layout()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/NAO_after_OLR_concurrence.png")
+
+# %%
