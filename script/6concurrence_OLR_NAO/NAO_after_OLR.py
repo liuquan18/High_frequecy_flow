@@ -49,20 +49,23 @@ def read_extremes(period, member, extreme_type="pos", dur_lim=8):
 
 
 # %%
-def NAO_after_OLR(OLR, NAO, lag=-16):
+def NAO_after_OLR(OLR, NAO, lag=[-16,-6]):
 
     # -16 days lag of NAO time
     NAO["sign_start_time"] = pd.to_datetime(NAO["sign_start_time"])
-    NAO["lag_time"] = NAO["sign_start_time"] + pd.DateOffset(days=lag)
+    NAO["lag_start_time"] = NAO["sign_start_time"] + pd.DateOffset(days=lag[0])
+    NAO["lag_end_time"] = NAO["sign_start_time"] + pd.DateOffset(days=lag[1])
 
     # for each row of NAO, find the rows in OLR whose sign_start_time is before the lag_time
     OLR_befores = []
     OLR["sign_start_time"] = pd.to_datetime(OLR["sign_start_time"])
     for i, row in NAO.iterrows():
-        lag_time = row["lag_time"]
+        lag_start_time = row["lag_start_time"]
+        lag_end_time = row["lag_end_time"]
         OLR_sel = OLR[
-            (OLR["sign_start_time"] < lag_time)
-            & (OLR["sign_start_time"].dt.year == lag_time.year)
+            (OLR["sign_start_time"] >= lag_start_time)
+            &(OLR["sign_start_time"] <= lag_end_time)
+            & (OLR["sign_start_time"].dt.year == lag_start_time.year)
         ]
 
         OLR_befores.append(OLR_sel)
@@ -78,7 +81,7 @@ def NAO_after_OLR(OLR, NAO, lag=-16):
 
 
 # %%
-def NAO_after_OLR_all(period, dur_lim=8, extreme_type="pos", lag=-16):
+def NAO_after_OLR_all(period, dur_lim=8, extreme_type="pos", lag=[-16,-6]):
     """
     select OLR extremes that are before the NAO extremes by lag days for all members
     """
@@ -105,14 +108,14 @@ def NAO_after_OLR_all(period, dur_lim=8, extreme_type="pos", lag=-16):
 
 
 # %%
-first10_pos = NAO_after_OLR_all("first10")
+first10_pos = NAO_after_OLR_all("first10", lag = [-20,-6])
 
 #%%
-last10_pos = NAO_after_OLR_all("last10")
+last10_pos = NAO_after_OLR_all("last10", lag = [-20,-6])
 # %%
 # 
 def plot_concurrence(
-    extreme_duration, ax, custom_cmap="Blues", levels=np.arange(5, 31, 5)
+    extreme_duration, ax, custom_cmap="Blues", levels=np.arange(2, 13, 2)
 ):
     p = extreme_duration.plot(
         ax=ax,
@@ -142,6 +145,6 @@ for ax in [ax1, ax2]:
     ax.set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
     ax.set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
     
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/NAO_after_OLR_concurrence.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/NAO_pos_after_OLR_concurrence.png")
 
 # %%
