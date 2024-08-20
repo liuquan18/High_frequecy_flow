@@ -13,11 +13,11 @@ import matplotlib.colors as mcolors
 #%%
 import src.extremes.extreme_read as er
 # %%
-def duration_of_extreme(extreme):
+def extreme_stat(extreme,stat = 'duration',dur_min = 8):
     """
     Calculate the duration of the extreme events
     """
-    extreme_sel = er.sel_event_above_duration(extreme, duration=8, by="extreme_duration")
+    extreme_sel = er.sel_event_above_duration(extreme, duration=dur_min, by="extreme_duration")
     extreme_sel = extreme_sel[['sign_start_time','extreme_duration','lat','lon']]
     extreme_sel = extreme_sel.set_index(["sign_start_time", "lat","lon"])
 
@@ -25,32 +25,39 @@ def duration_of_extreme(extreme):
     ext_x = extreme_sel.to_xarray()
 
     # calculate the sum duration of the extreme events
-    extreme_duration = ext_x.extreme_duration.sum(dim = 'sign_start_time')
+    if stat == 'duration':
+        extreme_statistics = ext_x.extreme_duration.sum(dim = 'sign_start_time')
+    elif stat == 'count':
+        extreme_statistics = ext_x.extreme_duration.count(dim = 'sign_start_time')
 
-    return extreme_duration
+    return extreme_statistics
 # %%
 
-def extreme_duration_all_members(period, extreme_type):
+def extreme_stat_all_members(period, extreme_type, stat = 'duration'):
     base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_extremes_{extreme_type}/OLR_extremes_{extreme_type}_{period}/"
-    extreme_durations = []
+    extreme_statistics = []
     for member in range(1,51):
         logging.info(f"member {member}")
         file = glob.glob(f"{base_dir}OLR_extremes*r{member}.csv")[0]
 
         extreme = pd.read_csv(file)
-        extreme_duration = duration_of_extreme(extreme)    
-        extreme_durations.append(extreme_duration)
+        statistics = extreme_stat(extreme, stat)    
+        extreme_statistics.append(statistics)
 
-    extreme_durations = xr.concat(extreme_durations, dim = 'member')
-    extreme_mean_dur = extreme_durations.mean(dim = 'member')
+    extreme_statistics = xr.concat(extreme_statistics, dim = 'member')
 
-    return extreme_mean_dur
+    if stat == 'duration':
+        # average duration
+        extreme_stat_all = extreme_statistics.mean(dim = 'member')
+    elif stat == 'count':
+        # sum of the count
+        extreme_stat_all = extreme_statistics.sum(dim = 'member')
+
+    return extreme_stat_all
 #%%
 
-first10_pos = extreme_duration_all_members('first10', 'pos')
-first10_neg = extreme_duration_all_members('first10', 'neg')
-last10_pos = extreme_duration_all_members('last10', 'pos')
-last10_neg = extreme_duration_all_members('last10', 'neg')
+first10_pos = extreme_stat_all_members('first10', 'pos')
+last10_pos = extreme_stat_all_members('last10', 'pos')
 
 #%%
 
@@ -95,4 +102,9 @@ ax2.set_title("Last 10 years positive")
 plt.suptitle("Average summer duration of OLR extremes")
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/OLR_extremes_duration.png")
     
+# %%
+
+# count
+first10_pos_count = extreme_stat_all_members('first10', 'pos', stat = 'count')
+last10_pos_count = extreme_stat_all_members('last10', 'pos', stat = 'count')
 # %%
