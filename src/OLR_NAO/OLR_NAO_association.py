@@ -11,7 +11,7 @@ def read_extremes(
     Read the NAO and OLR extremes
     """
     NAO_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{extreme_type}_extreme_events/{extreme_type}_extreme_events_{period}/"
-    OLR_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_extremes_pos/OLR_extremes_pos_{period}/"  # no extreme_type in the OLR_extremes
+    OLR_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_extremes_neg/OLR_extremes_neg_{period}/"  # no extreme_type in the OLR_extremes
 
     # read NAO positive extremes
     NAO_file = glob.glob(

@@ -80,14 +80,14 @@ def plot_duration(
 
 # %%
 
-first10_dur = extreme_stat_all_members("first10", "pos")
-last10_dur = extreme_stat_all_members("last10", "pos")
+first10_dur = extreme_stat_all_members("first10", "neg")
+last10_dur = extreme_stat_all_members("last10", "neg")
 
 
 # %%
 fig = plt.figure(figsize=(20, 5))
 gs = gridspec.GridSpec(2, 1, wspace=0.1, hspace=0.1)
-levels = np.arange(10, 40, 1)
+levels = np.arange(30, 90, 10)
 
 ax1 = fig.add_subplot(gs[0, 0], projection=ccrs.PlateCarree(central_longitude=180))
 plot_duration(first10_dur, ax1, levels=levels)
@@ -97,17 +97,17 @@ ax2 = fig.add_subplot(gs[1, 0], projection=ccrs.PlateCarree(central_longitude=18
 plot_duration(last10_dur, ax2, levels=levels)
 ax2.set_title("Last 10 years positive")
 plt.suptitle("Average summer duration of OLR extremes")
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/OLR_extremes_duration.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/OLR_extremes_duration.png")
 
 # %%
 
 # count
-first_count = extreme_stat_all_members("first10", "pos", stat="count")
-last10_count = extreme_stat_all_members("last10", "pos", stat="count")
+first_count = extreme_stat_all_members("first10", "neg", stat="count")
+last10_count = extreme_stat_all_members("last10", "neg", stat="count")
 # %%
 fig = plt.figure(figsize=(12, 5))
 gs = gridspec.GridSpec(2, 1, wspace=0.1, hspace=0.1)
-levels = np.arange(20, 150, 20)
+levels = np.arange(100, 300, 50)
 
 ax1 = fig.add_subplot(gs[0, 0], projection=ccrs.PlateCarree(central_longitude=180))
 plot_duration(first_count, ax1, levels=levels)
@@ -117,6 +117,6 @@ ax2 = fig.add_subplot(gs[1, 0], projection=ccrs.PlateCarree(central_longitude=18
 plot_duration(last10_count, ax2, levels=levels)
 ax2.set_title("Last 10 years positive")
 plt.suptitle("Count of summer OLR extremes")
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/OLR_extremes_count.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/OLR_extremes_count.png")
 
 # %%
