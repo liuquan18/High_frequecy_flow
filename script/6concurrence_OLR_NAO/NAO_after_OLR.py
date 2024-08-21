@@ -115,7 +115,7 @@ last10_pos = NAO_after_OLR_all("last10", lag = [-16,-6])
 # %%
 # 
 def plot_concurrence(
-    extreme_duration, ax, custom_cmap="Blues", levels=np.arange(2, 13, 2)
+    extreme_duration, ax, custom_cmap="Blues", levels=np.arange(3, 13, 1)
 ):
     p = extreme_duration.plot(
         ax=ax,
@@ -123,8 +123,10 @@ def plot_concurrence(
         transform=ccrs.PlateCarree(),
         levels=levels,
         extend="max",
+        add_colorbar=False,
     )
     p.axes.coastlines()
+    p.figure.colorbar(p,label = "count")
     return p
 
 
