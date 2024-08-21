@@ -11,7 +11,7 @@ import src.compute.slurm_cluster as scluster
 logging.basicConfig(level=logging.WARNING)
 # %%
 
-all_missing_members = [3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 33, 34, 35, 36, 37, 38, 39, 40, 43, 44, 45, 46, 47, 48]
+all_missing_members = np.arange(1, 51)
 # split the members into 10 groups
 members_groups = np.array_split(all_missing_members, 8)
 
