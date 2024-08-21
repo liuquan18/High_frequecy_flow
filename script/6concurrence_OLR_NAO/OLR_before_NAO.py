@@ -97,7 +97,8 @@ def OLR_before_NAO_all(period, dur_lim=8, extreme_type="pos", lag=-16):
             OLR_before_NAO, NAO_pos, lag=lag
         )
         
-        
+        if concurrence.empty:
+            continue
         concurrence = concurrence.reset_index(drop = True)
 
         concurrence = concurrence[["sign_start_time", "extreme_duration", "lat", "lon"]]
@@ -155,5 +156,5 @@ for ax in [ax1, ax2]:
 
 plt.suptitle("Occurrence of extreme OLR 16 days before NAO extremes")
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/OLR_before_NAO_concurrence.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/OLR_before_NAO_concurrence.png")
 # %%
