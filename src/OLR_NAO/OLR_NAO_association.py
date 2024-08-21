@@ -4,7 +4,9 @@ import src.extremes.extreme_read as er
 
 
 # %%
-def read_extremes(period, member, extreme_type="pos", limit=True, dur_lim=8):
+def read_extremes(
+    period, member, extreme_type="pos", limit_dur=True, lim_NAO=8, lim_OLR=20
+):
     """
     Read the NAO and OLR extremes
     """
@@ -18,18 +20,17 @@ def read_extremes(period, member, extreme_type="pos", limit=True, dur_lim=8):
     NAO_pos = pd.read_csv(NAO_file)
     NAO_pos = NAO_pos[NAO_pos["plev"] == 25000]
 
-
     # read OLR extremes
     OLR_file = glob.glob(f"{OLR_dir}OLR_extremes*r{member}.csv")[0]
     OLR = pd.read_csv(OLR_file)
 
-    if limit:
+    if limit_dur:
         # select extremes based on minimum duration but limited in JJA
         NAO_pos = er.sel_event_above_duration(
-            NAO_pos, duration=dur_lim, by="extreme_duration"
+            NAO_pos, duration=lim_NAO, by="extreme_duration"
         )
         # select extremes based on minimum duration but not limited in JJA
-        OLR = OLR[OLR["extreme_duration"] >= dur_lim]
+        OLR = OLR[OLR["extreme_duration"] >= lim_OLR]
 
     # select columns
     NAO_pos = NAO_pos[["sign_start_time", "extreme_duration"]]
