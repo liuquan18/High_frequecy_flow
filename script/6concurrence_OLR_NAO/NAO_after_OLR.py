@@ -108,10 +108,10 @@ def NAO_after_OLR_all(period, dur_lim=8, extreme_type="pos", lag=[-16,-6]):
 
 
 # %%
-first10_pos = NAO_after_OLR_all("first10", lag = [-20,-6])
+first10_pos = NAO_after_OLR_all("first10", lag = [-16,-6])
 
 #%%
-last10_pos = NAO_after_OLR_all("last10", lag = [-20,-6])
+last10_pos = NAO_after_OLR_all("last10", lag = [-16,-6])
 # %%
 # 
 def plot_concurrence(
@@ -146,5 +146,31 @@ for ax in [ax1, ax2]:
     ax.set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
     
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/NAO_pos_after_OLR_concurrence.png")
+
+# %%
+
+
+# %%
+first10_neg = NAO_after_OLR_all("first10", extreme_type="neg", lag = [-16,-6])
+last10_neg = NAO_after_OLR_all("last10", extreme_type="neg", lag = [-16,-6])
+
+# %%
+fig = plt.figure(figsize=(12,5))
+ax1 = plt.subplot(211, projection=ccrs.PlateCarree(180))
+
+plot_concurrence(first10_neg.count(dim = ('member','sign_start_time')).extreme_duration, ax1)
+ax1.set_title("First 10 years")
+
+ax2 = plt.subplot(212, projection=ccrs.PlateCarree(180))
+plot_concurrence(last10_neg.count(dim = ('member','sign_start_time')).extreme_duration, ax2)
+ax2.set_title("Last 10 years")
+
+plt.suptitle("Occurrence of extreme OLR 16 days before NAO extremes")
+plt.tight_layout()
+for ax in [ax1, ax2]:
+    ax.set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
+    ax.set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
+    
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/NAO_neg_after_OLR_concurrence.png")
 
 # %%
