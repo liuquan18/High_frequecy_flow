@@ -24,7 +24,7 @@ def lead_lag_30days(events, base_plev=25000, cross_plev=1):
 
         # select the rows where the time between "extreme_start_time" and "extreme_end_time" has an overlap with the time between "count_startime" and "count_endtime"
         overlapped_events_across_height = events[
-            (events.start_time <= count_endtime) & (events.extreme_end_time >= count_startime)
+            (events.extreme_start_time <= count_endtime) & (events.extreme_end_time >= count_startime)
         ]
 
         if len(overlapped_events_across_height.plev.unique()) < cross_plev:
