@@ -8,11 +8,6 @@ savedir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_anom
 
 export savedir
 
-# last 10 years
-# daily_list=$(cat /work/mh0033/m300883/High_frequecy_flow/script/pre_process/OLR/last10_daily_files.csv)
-# month_ens=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_season_global/OLR_monthly_ensmean_209105-210009.nc
-# savedir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_anomaly/last10_OLR_daily_ano/
-
 # define the function
 Anomaly() {
 
