@@ -75,7 +75,7 @@ file_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily
 
 # %%
 # members_all = list(range(1, 51))  # all members
-members_all = [6, 7, 8, 9, 10, 16, 17, 18, 19, 20, 26, 27, 28, 29, 30, 36, 37, 38, 39, 40, 46, 47, 48, 49, 50]
+members_all = range(1, 51)  # all members
 members_single = np.array_split(members_all, size)[rank]  # members on this core
 
 
