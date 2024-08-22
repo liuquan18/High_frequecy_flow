@@ -84,8 +84,11 @@ def composite_lag_longitude_allens(
 
     return pos_zg_composite, neg_zg_composite
 
-
+#%%
+def std_time(arr):
+    return (arr - arr.mean(dim='time')) / arr.std(dim='time')
 # %%
+################# for meridional mean of zg ############################
 pos_zg_composite_first10, neg_zg_composite_first10 = composite_lag_longitude_allens(
     period="first10", cross_plev=1, base_plev=25000, stat="mean"
 )
@@ -94,9 +97,7 @@ pos_zg_composite_first10, neg_zg_composite_first10 = composite_lag_longitude_all
 pos_zg_composite_last10, neg_zg_composite_last10 = composite_lag_longitude_allens(
     period="last10", cross_plev=1, base_plev=25000, stat="mean"
 )
-#%%
-def std_time(arr):
-    return (arr - arr.mean(dim='time')) / arr.std(dim='time')
+
 
 # %%
 fig, axes = plt.subplots(2, 2, figsize=(15, 10),
@@ -145,4 +146,44 @@ for ax in axes[-1, :]:
 plt.savefig(
     f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg{plev}_composite_lag_longitude_250hPa_sum.png"
 )
+# %%
+################### for zg maps ############################
+
+os_zg_composite_first10, neg_zg_composite_first10 = composite_lag_longitude_allens(
+    period="first10", cross_plev=1, base_plev=25000, stat="mean", zg = 'zg_MJJAS_ano'
+)
+
+# %%
+pos_zg_composite_last10, neg_zg_composite_last10 = composite_lag_longitude_allens(
+    period="last10", cross_plev=1, base_plev=25000, stat="mean", zg = 'zg_MJJAS_ano'
+)
+
+# %%
+def plot_zg_composite(zg_composite, ax, plev = 50000, levels = np.arange(-10,11,1)):
+    p = zg_composite.sel(plev=plev,
+    lat = slice(-10, None)
+    ).plot.contour(
+        levels=levels, extend="both", ax=ax, add_colorbar=False,
+        transform=ccrs.PlateCarree()
+    )
+    p.axes.coastlines()
+    return p
+
+# %%
+fig, axes = plt.subplots(6, 2, figsize=(15, 15),
+                         subplot_kw={"projection": ccrs.PlateCarree(180)})
+
+levels = np.arange(-14, 15, 2)
+plev = 50000
+
+extreme_type = 'pos'
+lag_days = [-7,-6,-5,-4,-3,-2]
+periods  = ['first10', 'last10']
+data = [pos_zg_composite_first10, pos_zg_composite_last10]
+
+
+for i, period in enumerate(periods):
+    for j, lag in enumerate(lag_days):
+        plot_zg_composite(data[i].sel(time = lag), axes[j,i], plev = plev, levels = levels)
+        axes[j,i].set_title(f"{period} {extreme_type} lag {lag}")
 # %%
