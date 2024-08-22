@@ -1,15 +1,14 @@
 # %%
 import xarray as xr
 import pandas as pd
-from src.extremes.extreme_extract import calculate_residue
-from src.extremes.extreme_extract import extract_pos_extremes
-from src.extremes.extreme_extract import extract_neg_extremes
-from src.extremes.extreme_extract import find_sign_times
 import numpy as np
+
+import eventextreme.eventextreme as ee
 import sys
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
+
 
 # %%
 try:
@@ -69,88 +68,52 @@ def to_dataframe(pc):
 # %%
 for i, member in enumerate(members_single):
     print(f"Period {period}: Rank {rank}, member {member}/{members_single[-1]}")
+    
+    
     # read pc index
-
     pc = xr.open_dataset(
         f"{projected_pc_path}/troposphere_pc_MJJAS_ano_{tag}_r{member}.nc"
     ).pc
 
     pc = to_dataframe(pc)
 
-    # positive extremes
-    # use the threshold from the first 10  all members
+    # read thresholds 
+    ## positive extremes
     pos_threshold = pd.read_csv(
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/pos_threshold_first10_allens.csv"
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_threshold/pos_threshold_first10_allens.csv"
     )
 
-    pos_pc = calculate_residue(pc, pos_threshold)
-
-    pos_extremes = pos_pc.groupby("plev")[["time", "residual"]].apply(
-        extract_pos_extremes, column="residual"
+    ## negative extremes
+    neg_threshold = pd.read_csv(
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_threshold/neg_threshold_first10_allens.csv"
     )
-    pos_extremes = pos_extremes.reset_index()[
-        [
-            "plev",
-            "event_start_time",
-            "event_end_time",
-            "event_duration",
-            "sum",
-            "mean",
-            "max",
-            "min",
-        ]
-    ]
 
-    pos_sign = pos_pc.groupby("plev")[["time", "pc"]].apply(
-        extract_pos_extremes, column="pc"
-    )
-    pos_sign = pos_sign.reset_index()[
-        ["plev", "event_start_time", "event_end_time", "event_duration"]
-    ]
-    pos_extremes = find_sign_times(pos_extremes, pos_sign)
 
-    pos_extremes.to_csv(
+    # extract extremes
+    extremes = ee.EventExtreme(pc, 'pc', independent_dim='plev')
+
+    # set thresholds
+    extremes.set_positive_threshold(pos_threshold)
+    extremes.set_negative_threshold(neg_threshold)
+
+
+
+    # extract extremes
+    positive_extremes = extremes.extract_positive_extremes
+    negative_extremes = extremes.extract_negative_extremes
+
+
+
+
+    positive_extremes.to_csv(
         f"{pos_extreme_save_path}troposphere_pos_extreme_events_{tag}_r{member}.csv",
         index=False,
     )
 
-    # negative extremes
-    neg_threshold = pd.read_csv(
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/threshold/neg_threshold_first10_allens.csv"
-    )
-
-    neg_pc = calculate_residue(pc, neg_threshold)
-
-    neg_extremes = neg_pc.groupby("plev")[["time", "residual"]].apply(
-        extract_neg_extremes, column="residual"
-    )
-
-    neg_extremes = neg_extremes.reset_index()[
-        [
-            "plev",
-            "event_start_time",
-            "event_end_time",
-            "event_duration",
-            "sum",
-            "mean",
-            "max",
-            "min",
-        ]
-    ]
-
-    neg_sign = neg_pc.groupby("plev")[["time", "pc"]].apply(
-        extract_neg_extremes, column="pc"
-    )
-
-    neg_sign = neg_sign.reset_index()[
-        ["plev", "event_start_time", "event_end_time", "event_duration"]
-    ]
-
-    neg_extremes = find_sign_times(neg_extremes, neg_sign)
-
-    neg_extremes.to_csv(
+    negative_extremes.to_csv(
         f"{neg_extreme_save_path}troposphere_neg_extreme_events_{tag}_r{member}.csv",
         index=False,
     )
+
 
 # %%

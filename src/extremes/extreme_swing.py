@@ -14,7 +14,7 @@ def events_above_once(events):
 
 # %%
 def collect_swing(events, include_all=False):
-    events = events.sort_values("event_start_time")
+    events = events.sort_values("extreme_start_time")
 
     all = []  # all cases
     pp = []  # positive + positive

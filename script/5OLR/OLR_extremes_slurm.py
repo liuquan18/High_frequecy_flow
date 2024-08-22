@@ -10,30 +10,38 @@ import src.compute.slurm_cluster as scluster
 
 logging.basicConfig(level=logging.WARNING)
 # %%
-
-all_missing_members = np.arange(1, 51)
-# split the members into 10 groups
-members_groups = np.array_split(all_missing_members, 8)
-
 # %%
 try:
-    node = int(sys.argv[1]) # 0,1,2,3,4,5,6,7
-    p_ind = int(sys.argv[2]) # 0,1 for first10, last10
-
+    node = int(sys.argv[1])
 except ValueError:
     logging.warning("no node number provided, using default node 0")
     node = 0
-    p_ind = 0
+
+# %%
+# nodes and cores
+try:
+    from mpi4py import MPI
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
+    size = comm.Get_size()  # 10
+except:
+    logging.warning("::: Warning: Proceeding without mpi4py! :::")
+    rank = 0
+    size = 1
+
+print(f"node {node}, rank {rank}, size {size}")
+
 
 # %%
 periods = ["first10", "last10"]
-period = periods[p_ind]
+period = periods[node]
 
 tags = ["1850_1859", "2091_2100"]
-tag = tags[p_ind]
+tag = tags[node]
 
 # %%
-OLR_ano_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_anomaly/{period}_OLR_daily_ano_subzonalmean/"
+OLR_ano_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_anomaly/{period}_OLR_daily_ano/"
 
 pos_extreme_save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_extremes_pos/OLR_extremes_pos_{period}/"
 neg_extreme_save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_extremes_neg/OLR_extremes_neg_{period}/"
@@ -53,6 +61,10 @@ neg_threshold = neg_threshold.to_dataframe(name="threshold").reset_index()
 # add spatial dimension
 pos_threshold["spatial"] = pos_threshold.groupby(["lat", "lon"]).ngroup()
 neg_threshold["spatial"] = neg_threshold.groupby(["lat", "lon"]).ngroup()
+# %%
+members_all = list(range(1, 51))  # all members
+members_single = np.array_split(members_all, size)[rank]  # members on this core
+
 
 # %%
 def to_dataframe(pc):
@@ -73,10 +85,12 @@ def to_dataframe(pc):
     return pc
 
 
+# %%
+# client, cluster = scluster.init_dask_slurm_cluster(scale = 2, processes=20, walltime="08:00:00", memory="200GB")
 
-for i, member in enumerate(members_groups[node]):
-    print(f"node {node}, period {period}, {i+1}/{len(members_groups[node])}, member {member}")
+print("rank {rank} client {client} cluster {cluster}")
 
+for  member in [1,2,31,32,49,50]:
 
     # read OLR nc file
     olr_file = glob.glob(f"{OLR_ano_path}rlut*r{member}i1p1f1*ano.nc")[0]
