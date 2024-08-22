@@ -71,7 +71,7 @@ size = comm.Get_size()
 print(f"Rank {rank} out of {size} on node {MPI.Get_processor_name()}")
 
 # %%
-file_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_anomaly/first10_OLR_daily_ano/"
+file_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/OLR_daily_anomaly/first10_OLR_daily_ano_subzonalmean/"
 
 # %%
 # members_all = list(range(1, 51))  # all members
@@ -104,7 +104,7 @@ for i, member in enumerate(members_single):
 
     print(f"Rank {rank} processing member {member}")
     olr = xr.open_dataset(
-        f"{file_path}rlut_day_MPI-ESM1-2-LR_historical_r{member}i1p1f1_gn_18500501-18590930_ano.nc",
+        f"{file_path}rlut_day_MPI-ESM1-2-LR_historical_r{member}i1p1f1_gn_18500501-18590930_ano_subzonalmean.nc",
         chunks="auto",
     )
 
@@ -112,7 +112,7 @@ for i, member in enumerate(members_single):
 
     olr_spatial = olr.stack(spatial=("lat", "lon"))
 
-    thr_dayofyear = olr_spatial.groupby("spatial", squeeze=True).apply(get_threshold)
+    thr_dayofyear = olr_spatial.groupby("spatial").apply(get_threshold)
     thr_dayofyear = thr_dayofyear.unstack()
 
     thr_dayofyear.to_netcdf(
