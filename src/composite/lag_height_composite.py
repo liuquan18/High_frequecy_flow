@@ -58,7 +58,7 @@ def composite_zg_mermean(zg, date_range):
         if sel_zg.time.size < 61:
             if start_time < pd.Timestamp(f"{start_time.year}-05-01"):
                 logging.info(
-                    "start_time is before May 1st, filling the missing days with zeros"
+                    "start_time is before May 1st, filling the missing days with Nan"
                 )
                 missing_days = 61 - sel_zg.time.size
                 add_data = sel_zg.isel(time=slice(None, missing_days)).copy()
@@ -76,7 +76,7 @@ def composite_zg_mermean(zg, date_range):
                 sel_zg = xr.concat([add_data, sel_zg], dim="time")
             elif end_time > pd.Timestamp(f"{end_time.year}-09-30"):
                 logging.info(
-                    "end_time is after September 30th, filling the missing days with zeros"
+                    "end_time is after September 30th, filling the missing days with Nan"
                 )
                 missing_days = 61 - sel_zg.time.size
                 add_data = sel_zg.isel(time=slice(-1 * missing_days, None)).copy()
