@@ -17,14 +17,14 @@ def lead_lag_30days(events, base_plev=25000, cross_plev=1):
     end_times = []
 
     for base_event in events[events["plev"] == base_plev].itertuples():
-        ref_time = base_event.end_time
+        ref_time = base_event.extreme_end_time
 
         count_startime = ref_time - pd.Timedelta(days=30)
         count_endtime = ref_time + pd.Timedelta(days=30)
 
         # select the rows where the time between "extreme_start_time" and "extreme_end_time" has an overlap with the time between "count_startime" and "count_endtime"
         overlapped_events_across_height = events[
-            (events.start_time <= count_endtime) & (events.end_time >= count_startime)
+            (events.start_time <= count_endtime) & (events.extreme_end_time >= count_startime)
         ]
 
         if len(overlapped_events_across_height.plev.unique()) < cross_plev:
@@ -70,6 +70,9 @@ def composite_zg_mermean(zg, date_range):
                     add_data["time"] = [start_time]
                 # change values of add_data to 0
                 add_data = xr.zeros_like(add_data)
+                # change zeros to np.nan
+                add_data = add_data.where(add_data != 0)
+
                 sel_zg = xr.concat([add_data, sel_zg], dim="time")
             elif end_time > pd.Timestamp(f"{end_time.year}-09-30"):
                 logging.info(
@@ -84,6 +87,7 @@ def composite_zg_mermean(zg, date_range):
                 except OverflowError:
                     add_data["time"] = [end_time]
                 add_data = xr.zeros_like(add_data)
+                add_data = add_data.where(add_data != 0)
                 sel_zg = xr.concat([sel_zg, add_data], dim="time")
 
         # now change the time coordinate as lag-days
