@@ -149,7 +149,7 @@ plt.savefig(
 # %%
 ################### for zg maps ############################
 
-os_zg_composite_first10, neg_zg_composite_first10 = composite_lag_longitude_allens(
+pos_zg_composite_first10, neg_zg_composite_first10 = composite_lag_longitude_allens(
     period="first10", cross_plev=1, base_plev=25000, stat="mean", zg = 'zg_MJJAS_ano'
 )
 
@@ -163,21 +163,24 @@ def plot_zg_composite(zg_composite, ax, plev = 50000, levels = np.arange(-10,11,
     p = zg_composite.sel(plev=plev,
     lat = slice(-10, None)
     ).plot.contour(
-        levels=levels, extend="both", ax=ax, add_colorbar=False,
+        levels=levels, extend="both", ax=ax, add_colorbar=False, colors='k',
         transform=ccrs.PlateCarree()
     )
-    p.axes.coastlines()
+        
+    # Add coastlines
+    p.axes.coastlines(alpha=0.5)
     return p
 
 # %%
 fig, axes = plt.subplots(6, 2, figsize=(15, 15),
                          subplot_kw={"projection": ccrs.PlateCarree(180)})
 
-levels = np.arange(-14, 15, 2)
+levels = np.arange(-60, 61, 5)
 plev = 50000
 
 extreme_type = 'pos'
-lag_days = [-7,-6,-5,-4,-3,-2]
+start_lag = -8
+lag_days = np.arange(start_lag, stop = start_lag + 6)
 periods  = ['first10', 'last10']
 data = [pos_zg_composite_first10, pos_zg_composite_last10]
 
@@ -186,4 +189,47 @@ for i, period in enumerate(periods):
     for j, lag in enumerate(lag_days):
         plot_zg_composite(data[i].sel(time = lag), axes[j,i], plev = plev, levels = levels)
         axes[j,i].set_title(f"{period} {extreme_type} lag {lag}")
+
+# add x-axis labels for the last row
+for ax in axes[-1, :]:
+    ax.set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
+    ax.set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
+
+# add y-axis labels for the first column
+for ax in axes[:, 0]:
+    ax.set_yticks(range(0, 90, 30), crs=ccrs.PlateCarree())
+    ax.set_yticklabels([f"{lat}°" for lat in range(0, 90, 30)])
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg500_composite_mean_lag_pos.png"
+)
+# %%
+# negative
+fig, axes = plt.subplots(6, 2, figsize=(15, 15),
+                         subplot_kw={"projection": ccrs.PlateCarree(180)})
+
+levels = np.arange(-60, 61, 5)
+start_lag = -8
+lag_days = np.arange(start_lag, stop = start_lag + 6)
+periods  = ['first10', 'last10']
+extreme_type = 'neg'
+data = [neg_zg_composite_first10, neg_zg_composite_last10]
+
+for i, period in enumerate(periods):
+    for j, lag in enumerate(lag_days):
+        plot_zg_composite(data[i].sel(time = lag), axes[j,i], plev = plev, levels = levels)
+        axes[j,i].set_title(f"{period} {extreme_type} lag {lag}")
+
+# add x-axis labels for the last row
+for ax in axes[-1, :]:
+    ax.set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
+    ax.set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
+
+# add y-axis labels for the first column
+for ax in axes[:, 0]:
+    ax.set_yticks(range(0, 90, 30), crs=ccrs.PlateCarree())
+    ax.set_yticklabels([f"{lat}°" for lat in range(0, 90, 30)])
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg500_composite_mean_lag_neg.png"
+)
 # %%
