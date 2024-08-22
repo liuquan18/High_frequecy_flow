@@ -38,13 +38,19 @@ def composite_single_ens(zg, pos_extreme, neg_extreme, base_plev=25000, cross_pl
 
 # %%
 def composite_lag_longitude_allens(
-    period="first10", base_plev=25000, cross_plev=1, stat="mean"
+    period="first10", base_plev=25000, cross_plev=1, stat="mean", zg = 'zg_mermean'
 ):
+    """
+    parameters:
+        period: str
+        zg: str # zg_mermean or zg_MJJAS_ano
+
+    """
     tags = {"first10": "18500501-18590930", "last10": "20910501-21000930"}
     scenario = {"first10": "historical", "last10": "ssp585"}
     scenario_tag = scenario[period]
     tag = tags[period]
-    zg_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_daily_global/zg_mermean_{period}/"
+    zg_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_daily_global/{zg}_{period}/"
     pos_zg = []
     neg_zg = []
     for i in range(1, 51):
