@@ -85,8 +85,12 @@ def composite_lag_longitude_allens(
     return pos_zg_composite, neg_zg_composite
 
 #%%
-def std_time(arr):
-    return (arr - arr.mean(dim='time')) / arr.std(dim='time')
+def remove_zonalmean(zg):
+    """
+    remove zonal mean from the data
+    """
+    zg = zg - zg.mean(dim="lon")
+    return zg
 
 # %%
 ################### for zg maps ############################
@@ -102,7 +106,7 @@ pos_zg_composite_last10, neg_zg_composite_last10 = composite_lag_longitude_allen
 
 # %%
 def plot_zg_composite(zg_composite, ax, plev = 50000, levels = np.arange(-10,11,1)):
-    p = zg_composite.sel(plev=plev,
+    p = remove_zonalmean(zg_composite).sel(plev=plev,
     lat = slice(-10, None)
     ).plot.contour(
         levels=levels, extend="both", ax=ax, add_colorbar=False, colors='k',
@@ -117,12 +121,17 @@ def plot_zg_composite(zg_composite, ax, plev = 50000, levels = np.arange(-10,11,
 fig, axes = plt.subplots(6, 2, figsize=(15, 15),
                          subplot_kw={"projection": ccrs.PlateCarree(180)})
 
-levels = np.arange(-60, 61, 5)
+levels = np.arange(-40, 41, 5)
 plev = 50000
 
 extreme_type = 'pos'
-start_lag = -8
-lag_days = np.arange(start_lag, stop = start_lag + 6)
+start_lag = -17
+step_lag = 3
+
+length = 6
+end_lag = start_lag + length*step_lag
+
+lag_days = np.arange(start_lag, stop = end_lag, step = step_lag)
 periods  = ['first10', 'last10']
 data = [pos_zg_composite_first10, pos_zg_composite_last10]
 
@@ -142,7 +151,7 @@ for ax in axes[:, 0]:
     ax.set_yticks(range(0, 90, 30), crs=ccrs.PlateCarree())
     ax.set_yticklabels([f"{lat}°" for lat in range(0, 90, 30)])
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg500_composite_mean_lag_pos.png"
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg500_composite_mean_lag_pos_subzonal.png"
 )
 # %%
 # negative
@@ -150,8 +159,13 @@ fig, axes = plt.subplots(6, 2, figsize=(15, 15),
                          subplot_kw={"projection": ccrs.PlateCarree(180)})
 
 levels = np.arange(-60, 61, 5)
-start_lag = -8
-lag_days = np.arange(start_lag, stop = start_lag + 6)
+start_lag = -17
+step_lag = 3
+
+length = 6
+end_lag = start_lag + length*step_lag
+lag_days = np.arange(start_lag, stop = end_lag, step = step_lag)
+
 periods  = ['first10', 'last10']
 extreme_type = 'neg'
 data = [neg_zg_composite_first10, neg_zg_composite_last10]
@@ -172,6 +186,6 @@ for ax in axes[:, 0]:
     ax.set_yticklabels([f"{lat}°" for lat in range(0, 90, 30)])
 
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg500_composite_mean_lag_neg.png"
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg500_composite_mean_lag_neg_subzonal.png"
 )
 # %%
