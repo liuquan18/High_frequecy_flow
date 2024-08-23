@@ -79,7 +79,7 @@ for i, member in enumerate(members_groups[node]):
 
 
     # read OLR nc file
-    olr_file = glob.glob(f"{OLR_ano_path}rlut*r{member}i1p1f1*ano.nc")[0]
+    olr_file = glob.glob(f"{OLR_ano_path}rlut*r{member}i1p1f1*ano_subzonalmean.nc")[0]
     OLR_ano = xr.open_dataset(olr_file).rlut
 
     OLR_df = to_dataframe(OLR_ano)
