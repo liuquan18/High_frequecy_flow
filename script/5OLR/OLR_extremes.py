@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.WARNING)
 
 all_missing_members = np.arange(1, 51)
 # split the members into 10 groups
-members_groups = np.array_split(all_missing_members, 8)
+members_groups = np.array_split(all_missing_members, 5)
 
 # %%
 try:
