@@ -37,7 +37,7 @@ Anomaly() {
     # calculate the anomaly
     dailyfile=${tmp_path}${var}_day_MPI-ESM1-2-LR_ssp585_r${member}i1p1f1_gn_20910101-21001231.nc
     monthlyfile=$(find /work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_season_global/ -name ${var}_*_209105-210009.nc)
-    anomalyfile=${to_path}${var}_day_MPI-ESM1-2-LR_historical_r${member}i1p1f1_gn_20910501-21000931_ano.nc
+    anomalyfile=${to_path}$(basename ${dailyfile%.nc})_ano.nc
     # include month Mayb and september for later rolling window
     cdo -monsub -sellevel,100000,85000,70000,50000,25000 -selmonth,5/9 -selyear,2091/2100 $dailyfile \
         -sellevel,100000,85000,70000,50000,25000 $monthlyfile \
