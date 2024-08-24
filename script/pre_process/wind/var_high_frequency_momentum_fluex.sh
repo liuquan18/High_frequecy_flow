@@ -21,10 +21,9 @@ export uprime_path vprime_path to_path
 Momentum(){
     member=$1
     ufile=$(find ${uprime_path} -name ua_*r${member}i1p1f1_gn_*.nc)
-    vifle=$(find ${vprime_path} -name va_*r${member}i1p1f1_gn_*.nc)
+    vfile=$(find ${vprime_path} -name va_*r${member}i1p1f1_gn_*.nc)
     # basename without .nc
     ufname=$(basename ${ufile%.nc})
-    vfname=$(basename ${vfile%.nc})
     outfile=${to_path}momentum_fluxes_${ufname:3}.nc
 
     cdo -O -P 10 -mul ${ufile} ${vfile} ${outfile}
