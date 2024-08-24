@@ -19,8 +19,9 @@ export uprime_path vprime_path to_path
 
 # function to calculate high frequency momentum fluxes
 Momentum(){
-    ufile=$1
-    vfile=$2
+    member=$1
+    ufile=$(find ${uprime_path} -name ua_*r${member}i1p1f1_gn_*.nc)
+    vifle=$(find ${vprime_path} -name va_*r${member}i1p1f1_gn_*.nc)
     # basename without .nc
     ufname=$(basename ${ufile%.nc})
     vfname=$(basename ${vfile%.nc})
@@ -33,4 +34,4 @@ export -f Momentum
 
 # parallel Momentum for all members
 
-parallel --dry-run --jobs 10 Momentum ::: ${uprime_path}*.nc ::: ${vprime_path}*.nc
+parallel --jobs 10 Momentum ::: {1..50}
