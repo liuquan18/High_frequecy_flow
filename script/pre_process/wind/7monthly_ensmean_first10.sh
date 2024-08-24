@@ -17,7 +17,7 @@ export to_path
 # Create file lists with ensemble members ranging from 1 to 50
 for member in {1..50}; do
     # Use find to resolve the wildcard into real paths
-    files=$(find ${base_path}r${member}i1p1f1/Amon/${var}/gn/ -name '${var}_Amon_MPI-ESM1-2-LR_historical_r'${member}'i1p1f1_gn_185001-186912.nc')
+    files=$(find ${base_path}r${member}i1p1f1/Amon/${var}/gn/ -name ${var}_Amon_MPI-ESM1-2-LR_historical_r${member}i1p1f1_gn_185001-186912.nc)
     for file in $files; do
         file_list+="$file "
     done
@@ -26,4 +26,4 @@ done
 # Remove the trailing space
 file_list=$(echo $file_list | sed 's/ $//')
 
-cdo -selyear,1850/1859 -selmon,5/9 -ensmean $file_list ${to_path}"${var}_Amon_MPI-ESM1-2-LR_HIST_ensmean_185005-185909.nc"
+cdo -selmon,5/9 -ensmean -apply,-selyear,1850/1859 [ "${file_list[@]}" ] ${to_path}"${var}_Amon_MPI-ESM1-2-LR_HIST_ensmean_185005-185909.nc"
