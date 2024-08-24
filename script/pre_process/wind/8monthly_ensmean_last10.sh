@@ -33,3 +33,6 @@ file_list2=$(echo $file_list2 | sed 's/ $//')
 
 cdo -selmon,5/9 -ensmean -apply,-selyear,2091/2094 [ "${file_list1[@]}" ] ${to_path}"${var}_Amon_MPI-ESM1-2-LR_HIST_ensmean_209105-209409.nc"
 cdo -selmon,5/9 -ensmean -apply,-selyear,2095/2100 [ "${file_list2[@]}" ] ${to_path}"${var}_Amon_MPI-ESM1-2-LR_HIST_ensmean_209505-210009.nc"
+
+# merge the two ensemble means
+cdo mergetime ${to_path}"${var}_Amon_MPI-ESM1-2-LR_HIST_ensmean_209105-209409.nc" ${to_path}"${var}_Amon_MPI-ESM1-2-LR_HIST_ensmean_209505-210009.nc" ${to_path}"${var}_Amon_MPI-ESM1-2-LR_HIST_ensmean_209105-210009.nc"
