@@ -18,7 +18,7 @@ Merge(){
     member=$1
 
     dailyfile1=$(find ${from_path}r${member}i1p1f1/day/ -name ${var}'_day_MPI-ESM1-2-LR_ssp585_r'${member}'i1p1f1_gn_20750101-20941231.nc')
-    dailyfile2=$(find ${base_dir}r${member}i1p1f1/day/ -name ${var}'_day_MPI-ESM1-2-LR_ssp585_r'${member}'i1p1f1_gn_20950101-21001231.nc')
+    dailyfile2=$(find ${from_path}r${member}i1p1f1/day/ -name ${var}'_day_MPI-ESM1-2-LR_ssp585_r'${member}'i1p1f1_gn_20950101-21001231.nc')
 
     # merge the two daily files
     cdo -O -mergetime -selyear,2091/2094 $dailyfile1 -selyear,2095/2100 $dailyfile2 ${tmp_path}${var}_day_MPI-ESM1-2-LR_ssp585_r${member}i1p1f1_gn_20910101-21001231.nc
@@ -31,6 +31,10 @@ Anomaly() {
     member=$1
     echo $member
 
+    # merge the daily data
+    Merge $member
+
+    # calculate the anomaly
     dailyfile=${tmp_path}${var}_day_MPI-ESM1-2-LR_ssp585_r${member}i1p1f1_gn_20910101-21001231.nc
     monthlyfile=$(find /work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_season_global/ -name ${var}_*_209105-210009.nc)
     anomalyfile=${to_path}${var}_day_MPI-ESM1-2-LR_historical_r${member}i1p1f1_gn_20910501-21000931_ano.nc
@@ -40,6 +44,6 @@ Anomaly() {
         ${anomalyfile}
 }
 
-export -f Anomaly Merge
-parallel --jobs 20 Merge ::: {1..50}
+export -f Merge Anomaly
+# parallel --jobs 20 Merge ::: {1..50}
 parallel --jobs 20 Anomaly ::: {1..50}
