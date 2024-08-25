@@ -24,6 +24,7 @@ def plot_map(zg_composite, ax, fill =False, levels=np.arange(-10, 11, 1)):
             ax=ax,
             add_colorbar=False,
             colors="k",
+            alpha = 0.5,
             transform=ccrs.PlateCarree(),
         )
 
