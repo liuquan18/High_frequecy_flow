@@ -5,6 +5,7 @@ import numpy as np
 import logging
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
+
 # %%
 import src.composite.lag_height_composite as zg_comp
 
@@ -24,21 +25,21 @@ def composite_single_ens(zg, pos_extreme, neg_extreme, base_plev=25000, cross_pl
     neg_composite = None
 
     if not pos_date_range.empty:
-        pos_composite = zg_comp.composite_zg_mermean(zg, pos_date_range)
+        pos_composite = zg_comp.event_composite(zg, pos_date_range)
 
     neg_date_range = zg_comp.lead_lag_30days(
         neg_extreme, base_plev=25000, cross_plev=cross_plev
     )
 
     if not neg_date_range.empty:
-        neg_composite = zg_comp.composite_zg_mermean(zg, neg_date_range)
+        neg_composite = zg_comp.event_composite(zg, neg_date_range)
 
     return pos_composite, neg_composite
 
 
 # %%
 def composite_lag_longitude_allens(
-    period="first10", base_plev=25000, cross_plev=1, stat="mean", zg = 'zg_mermean'
+    period="first10", base_plev=25000, cross_plev=1, stat="mean", zg="zg_mermean"
 ):
     """
     parameters:
@@ -84,7 +85,8 @@ def composite_lag_longitude_allens(
 
     return pos_zg_composite, neg_zg_composite
 
-#%%
+
+# %%
 def remove_zonalmean(zg):
     """
     remove zonal mean from the data
@@ -92,55 +94,65 @@ def remove_zonalmean(zg):
     zg = zg - zg.mean(dim="lon")
     return zg
 
+
 # %%
 ################### for zg maps ############################
 
 pos_zg_composite_first10, neg_zg_composite_first10 = composite_lag_longitude_allens(
-    period="first10", cross_plev=1, base_plev=25000, stat="mean", zg = 'zg_MJJAS_ano'
+    period="first10", cross_plev=1, base_plev=25000, stat="mean", zg="zg_MJJAS_ano"
 )
 
 # %%
 pos_zg_composite_last10, neg_zg_composite_last10 = composite_lag_longitude_allens(
-    period="last10", cross_plev=1, base_plev=25000, stat="mean", zg = 'zg_MJJAS_ano'
+    period="last10", cross_plev=1, base_plev=25000, stat="mean", zg="zg_MJJAS_ano"
 )
 
+
 # %%
-def plot_zg_composite(zg_composite, ax, plev = 50000, levels = np.arange(-10,11,1)):
+def plot_zg_composite(zg_composite, ax, plev=50000, levels=np.arange(-10, 11, 1)):
     levels = levels[levels != 0]
-    p = remove_zonalmean(zg_composite).sel(plev=plev,
-    lat = slice(-10, None)
-    ).plot.contour(
-        levels=levels, extend="both", ax=ax, add_colorbar=False, colors='k',
-        transform=ccrs.PlateCarree()
+    p = (
+        remove_zonalmean(zg_composite)
+        .sel(plev=plev, lat=slice(-10, None))
+        .plot.contour(
+            levels=levels,
+            extend="both",
+            ax=ax,
+            add_colorbar=False,
+            colors="k",
+            transform=ccrs.PlateCarree(),
+        )
     )
-        
+
     # Add coastlines
     p.axes.coastlines(alpha=0.5)
     return p
 
+
 # %%
-fig, axes = plt.subplots(6, 2, figsize=(15, 15),
-                         subplot_kw={"projection": ccrs.PlateCarree(180)})
+fig, axes = plt.subplots(
+    6, 2, figsize=(15, 15), subplot_kw={"projection": ccrs.PlateCarree(180)}
+)
 
 levels = np.arange(-40, 41, 5)
 plev = 50000
 
-extreme_type = 'pos'
+extreme_type = "pos"
 start_lag = -24
 step_lag = 5
 
 length = 6
-end_lag = start_lag + length*step_lag
+end_lag = start_lag + length * step_lag
 
-lag_days = np.arange(start_lag, stop = end_lag, step = step_lag)
-periods  = ['first10', 'last10']
+lag_days = np.arange(start_lag, stop=end_lag, step=step_lag)
+periods = ["first10", "last10"]
 data = [pos_zg_composite_first10, pos_zg_composite_last10]
 
 
 for i, period in enumerate(periods):
     for j, lag in enumerate(lag_days):
-        plot_zg_composite(data[i].sel(time = lag), axes[j,i], plev = plev, levels = levels)
-        axes[j,i].set_title(f"{period} {extreme_type} lag {lag}")
+        plot_zg_composite(data[i].sel(time=lag), axes[j, i], plev=plev, levels=levels)
+        axes[j, i].set_title(f"{period} {extreme_type} lag {lag}")
 
 # add x-axis labels for the last row
 for ax in axes[-1, :]:
@@ -158,25 +170,26 @@ plt.tight_layout()
 # )
 # %%
 # negative
-fig, axes = plt.subplots(6, 2, figsize=(15, 15),
-                         subplot_kw={"projection": ccrs.PlateCarree(180)})
+fig, axes = plt.subplots(
+    6, 2, figsize=(15, 15), subplot_kw={"projection": ccrs.PlateCarree(180)}
+)
 
 levels = np.arange(-40, 41, 5)
 start_lag = -27
 step_lag = 5
 
 length = 6
-end_lag = start_lag + length*step_lag
-lag_days = np.arange(start_lag, stop = end_lag, step = step_lag)
+end_lag = start_lag + length * step_lag
+lag_days = np.arange(start_lag, stop=end_lag, step=step_lag)
 
-periods  = ['first10', 'last10']
-extreme_type = 'neg'
+periods = ["first10", "last10"]
+extreme_type = "neg"
 data = [neg_zg_composite_first10, neg_zg_composite_last10]
 
 for i, period in enumerate(periods):
     for j, lag in enumerate(lag_days):
-        plot_zg_composite(data[i].sel(time = lag), axes[j,i], plev = plev, levels = levels)
-        axes[j,i].set_title(f"{period} {extreme_type} lag {lag}")
+        plot_zg_composite(data[i].sel(time=lag), axes[j, i], plev=plev, levels=levels)
+        axes[j, i].set_title(f"{period} {extreme_type} lag {lag}")
 
 # add x-axis labels for the last row
 for ax in axes[-1, :]:
