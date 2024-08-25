@@ -38,7 +38,10 @@ def read_variable(variable: str, period: str, ens: int,  plev: int = None, freq_
 
     file = glob.glob(f"{base_path}{variable}_day_*r{ens}i1p1f1_gn_*.nc")[0]
 
-    ds = xr.open_dataset(file)[variable]
+    try:
+        ds = xr.open_dataset(file)[variable]
+    except KeyError:
+        ds = xr.open_dataset(file)['ua'] # case for momentum fluxes
     if plev is not None:
         ds = ds.sel(plev=plev)
     
