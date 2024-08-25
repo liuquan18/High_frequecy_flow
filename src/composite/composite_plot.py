@@ -57,7 +57,7 @@ def plot_composite(
 
     for i, period in enumerate(periods):
         for j, lag in enumerate(lag_days):
-            plot_map(data[i].sel(time=lag), axes[j, i], fill = fill, levels=levels)
+            p = plot_map(data[i].sel(time=lag), axes[j, i], fill = fill, levels=levels)
             axes[j, i].set_title(f"{period} {extreme_type} lag {lag}")
 
     # add x-axis labels for the last row
@@ -69,4 +69,4 @@ def plot_composite(
     for ax in axes[:, 0]:
         ax.set_yticks(range(0, 90, 30), crs=ccrs.PlateCarree())
         ax.set_yticklabels([f"{lat}°" for lat in range(0, 90, 30)])
-    return axes
+    return axes, p
