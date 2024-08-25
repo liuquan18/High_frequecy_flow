@@ -46,12 +46,12 @@ def plot_composite(
 
 
     extreme_type = extreme_type
-    start_lag = -8
+    start_lag = start_lag
     length_lag = 6
-    interval_lag = 1
+    interval_lag = interval_lag
     stop_lag = start_lag + length_lag * interval_lag
 
-    lag_days = np.arange(start_lag, stop=stop_lag, step=interval_lag)
+    lag_days = np.arange(start_lag, stop=stop_lag + 1, step=interval_lag)
     periods = ["first10", "last10"]
     data = [composite_first10, composite_last10]
 
