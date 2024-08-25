@@ -44,12 +44,15 @@ def read_variable(variable: str, period: str, ens: int,  plev: int = None, freq_
     return ds
 
 # %%
-def lead_lag_30days(events, base_plev=25000, cross_plev=1):
+def lead_lag_30days(events, base_plev=None, cross_plev=1):
 
     start_times = []
     end_times = []
 
-    for base_event in events[events["plev"] == base_plev].itertuples():
+    if base_plev is not None:
+        events = events[events["plev"] == base_plev]
+
+    for base_event in events.itertuples():
         ref_time = base_event.extreme_end_time
 
         count_startime = ref_time - pd.Timedelta(days=30)
@@ -135,6 +138,8 @@ def date_range_composite(zg, date_range):
         pass
     return composite
 
+#%%
+def _event_composite(extremes, variable):
 
 # %%[]
 def event_composite(variable, pos_extremes, neg_extremes, base_plev=25000, cross_plev=1):
