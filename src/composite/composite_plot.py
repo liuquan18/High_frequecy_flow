@@ -33,7 +33,7 @@ def plot_map(zg_composite, ax, fill =False, levels=np.arange(-10, 11, 1)):
     return p
 
 # %%
-def remove_zonalmean(zg):
+def sub_zonalmean(zg):
     """
     remove zonal mean from the data
     """
@@ -62,8 +62,8 @@ def plot_composite(
     lag_days = np.arange(start_lag, stop=stop_lag, step=interval_lag)
     periods = ["first10", "last10"]
     if remove_zonalmean:
-        composite_first10 = remove_zonalmean(composite_first10)
-        composite_last10 = remove_zonalmean(composite_last10)
+        composite_first10 = sub_zonalmean(composite_first10)
+        composite_last10 = sub_zonalmean(composite_last10)
     data = [composite_first10, composite_last10]
 
     for i, period in enumerate(periods):
