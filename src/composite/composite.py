@@ -104,3 +104,18 @@ def date_range_composite(zg, date_range):
 
 
 # %%[]
+def event_composite(variable, pos_extremes, neg_extremes, base_plev=25000, cross_plev=1):
+
+    pos_date_range = lead_lag_30days(pos_extremes, base_plev, cross_plev)
+    neg_date_range = lead_lag_30days(neg_extremes, base_plev, cross_plev)
+
+    pos_composite = None
+    neg_composite = None   
+
+    if not pos_date_range.empty:
+        pos_composite = date_range_composite(variable, pos_date_range)
+
+    if not neg_date_range.empty:
+        neg_composite = date_range_composite(variable, neg_date_range)
+
+    return pos_composite, neg_composite
