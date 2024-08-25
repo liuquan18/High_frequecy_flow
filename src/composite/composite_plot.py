@@ -8,6 +8,7 @@ import numpy as np
 # %%
 # %%
 def plot_map(zg_composite, ax, levels=np.arange(-10, 11, 1)):
+    levels = levels[levels != 0] # remove 0 from the levels
     p = zg_composite.sel(lat=slice(-10, None)).plot.contour(
         levels=levels,
         extend="both",
