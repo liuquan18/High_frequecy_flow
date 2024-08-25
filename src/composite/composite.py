@@ -42,7 +42,7 @@ def lead_lag_30days(events, base_plev=25000, cross_plev=1):
 
 
 # %%
-def event_composite(zg, date_range):
+def date_range_composite(zg, date_range):
     """
     parameters:
     zg: xarray dataset

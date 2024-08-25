@@ -25,14 +25,14 @@ def composite_single_ens(zg, pos_extreme, neg_extreme, base_plev=25000, cross_pl
     neg_composite = None
 
     if not pos_date_range.empty:
-        pos_composite = zg_comp.event_composite(zg, pos_date_range)
+        pos_composite = zg_comp.date_range_composite(zg, pos_date_range)
 
     neg_date_range = zg_comp.lead_lag_30days(
         neg_extreme, base_plev=25000, cross_plev=cross_plev
     )
 
     if not neg_date_range.empty:
-        neg_composite = zg_comp.event_composite(zg, neg_date_range)
+        neg_composite = zg_comp.date_range_composite(zg, neg_date_range)
 
     return pos_composite, neg_composite
 
