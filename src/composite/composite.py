@@ -41,6 +41,9 @@ def read_variable(variable: str, period: str, ens: int,  plev: int = None, freq_
     ds = xr.open_dataset(file)[variable]
     if plev is not None:
         ds = ds.sel(plev=plev)
+    
+    # convert datetime to pandas datetime
+    ds["time"] = pd.to_datetime(ds.time.values)
     return ds
 
 # %%
