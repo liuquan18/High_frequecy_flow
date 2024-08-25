@@ -3,12 +3,45 @@ import xarray as xr
 import numpy as np
 import pandas as pd
 import logging
+import glob
 
 from src.extremes.extreme_read import sel_event_above_duration
 from src.extremes.extreme_read import read_extremes
 
 logging.basicConfig(level=logging.INFO)
 
+#%%
+def read_variable(variable: str, period: str, ens: int,  plev: int = None, freq_label: str=None):
+
+    """
+    Parameters
+    ----------
+    variable : str
+        variable name
+    period : str
+        period name, first10 or last10
+    ens : int
+        ensemble number
+    plev : int
+        pressure level
+    freq : str
+        frequency label, default is None, hat, prime, prime_veryhigh, prime_intermedia
+    """
+    base_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{variable}_daily_global/{variable}_MJJAS_ano_{period}"
+
+    if freq_label is None:
+        freq_label = "/"
+    else:
+        freq_label = f"_{freq_label}/"
+    
+    base_path = f"{base_path}{freq_label}"
+
+    file = glob.glob(f"{base_path}{variable}_day_*r{ens}i1p1f1_gn_*.nc")[0]
+
+    ds = xr.open_dataset(file)[variable]
+    if plev is not None:
+        ds = ds.sel(plev=plev)
+    return ds
 
 # %%
 def lead_lag_30days(events, base_plev=25000, cross_plev=1):
