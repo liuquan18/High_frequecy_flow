@@ -32,7 +32,13 @@ def plot_map(zg_composite, ax, fill =False, levels=np.arange(-10, 11, 1)):
     p.axes.coastlines(alpha=0.5)
     return p
 
-
+# %%
+def remove_zonalmean(zg):
+    """
+    remove zonal mean from the data
+    """
+    zg = zg - zg.mean(dim="lon")
+    return zg
 # %%
 def plot_composite(
     composite_first10,
@@ -42,7 +48,8 @@ def plot_composite(
     start_lag=-8,
     interval_lag=1,
     levels = np.arange(-60, 61, 5),
-    fill = False
+    fill = False,
+    remove_zonalmean = False
 ):
 
 
@@ -54,6 +61,9 @@ def plot_composite(
 
     lag_days = np.arange(start_lag, stop=stop_lag, step=interval_lag)
     periods = ["first10", "last10"]
+    if remove_zonalmean:
+        composite_first10 = remove_zonalmean(composite_first10)
+        composite_last10 = remove_zonalmean(composite_last10)
     data = [composite_first10, composite_last10]
 
     for i, period in enumerate(periods):
