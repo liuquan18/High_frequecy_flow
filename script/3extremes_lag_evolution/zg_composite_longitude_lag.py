@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 
 # %%
-import src.composite.lag_height_composite as zg_comp
+import src.composite.composite as zg_comp
 
 # %%
 import importlib

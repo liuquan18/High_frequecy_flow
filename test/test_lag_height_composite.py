@@ -1,6 +1,6 @@
 #%%
 import pytest
-import src.composite.lag_height_composite as composite
+import src.composite.composite as composite
 import pandas as pd
 # %%
 events = pd.DataFrame({
