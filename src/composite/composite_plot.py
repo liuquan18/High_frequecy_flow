@@ -7,16 +7,25 @@ import numpy as np
 
 # %%
 # %%
-def plot_map(zg_composite, ax, levels=np.arange(-10, 11, 1)):
+def plot_map(zg_composite, ax, fill =False, levels=np.arange(-10, 11, 1)):
     levels = levels[levels != 0] # remove 0 from the levels
-    p = zg_composite.sel(lat=slice(-10, None)).plot.contour(
-        levels=levels,
-        extend="both",
-        ax=ax,
-        add_colorbar=False,
-        colors="k",
-        transform=ccrs.PlateCarree(),
-    )
+    if fill:
+        p = zg_composite.sel(lat=slice(-10, None)).plot.contourf(
+            levels=levels,
+            extend="both",
+            ax=ax,
+            add_colorbar=False,
+            transform=ccrs.PlateCarree(),
+        )
+    else:
+        p = zg_composite.sel(lat=slice(-10, None)).plot.contour(
+            levels=levels,
+            extend="both",
+            ax=ax,
+            add_colorbar=False,
+            colors="k",
+            transform=ccrs.PlateCarree(),
+        )
 
     # Add coastlines
     p.axes.coastlines(alpha=0.5)
@@ -27,14 +36,13 @@ def plot_map(zg_composite, ax, levels=np.arange(-10, 11, 1)):
 def plot_composite(
     composite_first10,
     composite_last10,
+    axes,
     extreme_type="pos",
     start_lag=-8,
     interval_lag=1,
     levels = np.arange(-60, 61, 5),
+    fill = False
 ):
-    fig, axes = plt.subplots(
-        6, 2, figsize=(15, 15), subplot_kw={"projection": ccrs.PlateCarree(180)}
-    )
 
 
     extreme_type = extreme_type
@@ -49,7 +57,7 @@ def plot_composite(
 
     for i, period in enumerate(periods):
         for j, lag in enumerate(lag_days):
-            plot_map(data[i].sel(time=lag), axes[j, i], levels=levels)
+            plot_map(data[i].sel(time=lag), axes[j, i], fill = fill, levels=levels)
             axes[j, i].set_title(f"{period} {extreme_type} lag {lag}")
 
     # add x-axis labels for the last row
@@ -61,4 +69,4 @@ def plot_composite(
     for ax in axes[:, 0]:
         ax.set_yticks(range(0, 90, 30), crs=ccrs.PlateCarree())
         ax.set_yticklabels([f"{lat}°" for lat in range(0, 90, 30)])
-    return fig, axes
+    return axes
