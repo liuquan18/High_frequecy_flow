@@ -43,7 +43,11 @@ def read_variable(variable: str, period: str, ens: int,  plev: int = None, freq_
         ds = ds.sel(plev=plev)
     
     # convert datetime to pandas datetime
-    ds["time"] = pd.to_datetime(ds.time.values)
+    try:
+        ds['time'] = ds.indexes['time'].to_datetimeindex()
+    except AttributeError:
+        pass
+
     return ds
 
 # %%
