@@ -60,14 +60,17 @@ def remove_zonalmean(zg):
     zg = zg - zg.mean(dim="lon")
     return zg
 # %%
-zg_first10_pos, zg_first10_neg = composite_variable("zg", 25000, None, "first10")
-zg_last10_pos, zg_last10_neg = composite_variable("zg", 25000, None, "last10")    
+plev = 50000
+
 #%%
-uhat_first10_pos, uhat_first10_neg = composite_variable("ua", 25000, 'hat', "first10")
-uhat_last10_pos, uhat_last10_neg = composite_variable("ua", 25000, 'hat', "last10")
+zg_first10_pos, zg_first10_neg = composite_variable("zg", plev, None, "first10")
+zg_last10_pos, zg_last10_neg = composite_variable("zg", plev, None, "last10")    
 #%%
-mf_first10_pos, mf_first10_neg = composite_variable("momentum_fluxes", 25000, 'prime', "first10")
-mf_last10_pos, mf_last10_neg = composite_variable("momentum_fluxes", 25000, 'prime', "last10")
+uhat_first10_pos, uhat_first10_neg = composite_variable("ua", plev, 'hat', "first10")
+uhat_last10_pos, uhat_last10_neg = composite_variable("ua", plev, 'hat', "last10")
+#%%
+mf_first10_pos, mf_first10_neg = composite_variable("momentum_fluxes", plev, 'prime', "first10")
+mf_last10_pos, mf_last10_neg = composite_variable("momentum_fluxes", plev, 'prime', "last10")
 
 # %%
 # %%
@@ -75,8 +78,8 @@ mf_last10_pos, mf_last10_neg = composite_variable("momentum_fluxes", 25000, 'pri
 fig, axes = plt.subplots(
     6, 2, figsize=(17, 15), subplot_kw={"projection": ccrs.PlateCarree(-120)}
 )
-start_lag = -6
-interval_lag = 1
+start_lag = -13
+interval_lag = 2
 
 # filled contourf for mf
 axes, p = composite_plot.plot_composite(
@@ -111,7 +114,7 @@ cbar = plt.colorbar(p, cax=cbar_ax, orientation="horizontal")
 plt.suptitle("Composite of positive extremes (contour interval: 15m)")
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/composite_mf_zg_pos.png", dpi=300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/composite_mf_zg_pos.png", dpi=300)
 # %%
 ########## plot only with zg ##########
 fig, axes = plt.subplots(
@@ -148,8 +151,8 @@ plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/composite_z
 fig, axes = plt.subplots(
     6, 2, figsize=(17, 15), subplot_kw={"projection": ccrs.PlateCarree(-120)}
 )
-start_lag = -6
-interval_lag = 1
+start_lag = -13
+interval_lag = 2
 
 # filled contourf for mf
 axes, p = composite_plot.plot_composite(
