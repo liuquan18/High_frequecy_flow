@@ -12,29 +12,29 @@ logging.basicConfig(level=logging.WARNING)
 import src.extremes.extreme_read as er
 
 # %%
-def read_NAO_AWB(period, ens, plev, extreme_type):
+def read_NAO_WB(period, ens, plev, extreme_type):
     NAO_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{extreme_type}_extreme_events/{extreme_type}_extreme_events_{period}/"
     NAO_file = glob.glob(f"{NAO_path}troposphere_{extreme_type}_*_r{ens}.csv")[0]
 
-    AWB_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/AWB_events/AWB_events_{period}/"
-    AWB_file = glob.glob(f"{AWB_path}WB_MPI-ESM1-2-LR*_r{ens}i1p1f1_gn_*.csv")[0]
+    WB_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_events/WB_events_{period}/"
+    WB_file = glob.glob(f"{WB_path}WB_MPI-ESM1-2-LR*_r{ens}i1p1f1_gn_*.csv")[0]
 
     NAO = pd.read_csv(NAO_file)
-    AWB = pd.read_csv(AWB_file)
+    WB = pd.read_csv(WB_file)
 
     #select NAO extremes duration > 7 days
     NAO = NAO[NAO['plev'] == plev]
     NAO = er.sel_event_above_duration(NAO, 7)
 
     # convert "18500501_12" to datetime
-    AWB['Date'] = pd.to_datetime(AWB['Date'], format='%Y%m%d_%H')
-    return NAO,AWB
+    WB['Date'] = pd.to_datetime(WB['Date'], format='%Y%m%d_%H')
+    return NAO,WB
 
 
 #%%
-# Extract year from 'Date' column in AWB
-def select_AWB_before_NAO(NAO, AWB):
-    AWB['Year'] = AWB['Date'].dt.year
+# Extract year from 'Date' column in WB
+def select_WB_before_NAO(NAO, WB):
+    WB['Year'] = WB['Date'].dt.year
 
     # Extract year from 'extreme_end_time' in NAO
     NAO['Year'] = NAO['extreme_end_time'].dt.year
@@ -43,20 +43,20 @@ def select_AWB_before_NAO(NAO, AWB):
     # Create a dictionary to store the max 'extreme_end_time' for each year in NAO
     nao_max_times = NAO.groupby('Year')['extreme_end_time'].max().to_dict()
 
-    # Define a function to filter AWB rows
-    def awb_before_nao(group):
+    # Define a function to filter WB rows
+    def WB_before_nao(group):
         year = group['Year'].iloc[0]
         if year in nao_max_times:
             return group[group['Date'] < nao_max_times[year]]
         return pd.DataFrame()  # Return an empty DataFrame if the year isn't in NAO
 
-    # Apply the filter function to AWB, grouped by 'Flag' and 'Year'
-    filtered_AWB = AWB.groupby(['Flag', 'Year'])[['Flag','Year','Date','Longitude','Latitude','Intensity','Size']].apply(awb_before_nao).reset_index(drop=True)
+    # Apply the filter function to WB, grouped by 'Flag' and 'Year'
+    filtered_WB = WB.groupby(['Flag', 'Year'])[['Flag','Year','Date','Longitude','Latitude','Intensity','Size']].apply(WB_before_nao).reset_index(drop=True)
 
-    if not filtered_AWB.empty:
+    if not filtered_WB.empty:
         # Remove the temporary 'Year' column if you don't need it
-        filtered_AWB = filtered_AWB.drop('Year', axis=1)
-        return filtered_AWB
+        filtered_WB = filtered_WB.drop('Year', axis=1)
+        return filtered_WB
     else:
         return pd.DataFrame()
 #%%
