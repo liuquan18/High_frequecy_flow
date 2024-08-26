@@ -51,5 +51,3 @@ for ax in [ax[0], ax[1]]:
 
 # plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/AWB_before_NAO.png')
 # %%
-last10_pos_AWBs
-# %%
