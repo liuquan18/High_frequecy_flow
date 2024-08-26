@@ -327,3 +327,48 @@ plt.tight_layout(rect=[0, 0.1, 1, 1])
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/composite_mf_zg_neg_zonalmean_removed.png", dpi=300)
 # %%
+############# plot for negative extremes with mf and uhat ############
+uhat_levels = np.arange(-10, 11, 1)
+mf_levels = np.arange(-20, 21, 4)
+
+fig, axes = plt.subplots(
+    6, 2, figsize=(17, 15), subplot_kw={"projection": ccrs.PlateCarree(-120)}
+)
+
+composite_plot.plot_composite(
+    uhat_first10_neg,
+    uhat_last10_neg,
+    axes,
+    extreme_type="neg",
+    start_lag=-13,
+    interval_lag=2,
+    levels=uhat_levels,
+    fill=False,
+    remove_zonalmean=False
+)
+
+
+axes, p = composite_plot.plot_composite(
+    mf_first10_neg,
+    mf_last10_neg,
+    axes,
+    extreme_type="neg",
+    start_lag=-13,
+    interval_lag=2,
+    levels=mf_levels,
+    fill=True,
+    remove_zonalmean=False
+)
+
+# Adjust the layout to make space for the colorbar
+plt.subplots_adjust(bottom=0.1)
+
+# add horizontal colorbar
+cbar_ax = fig.add_axes([0.15, 0.05, 0.7, 0.02])
+cbar = plt.colorbar(p, cax=cbar_ax, orientation="horizontal")
+
+plt.suptitle("Composite of negative extremes (contour interval: 5m/s)")
+plt.tight_layout(rect=[0, 0.1, 1, 1])
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/composite_mf_uhat_neg.png", dpi=300)
+# %%
