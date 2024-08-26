@@ -75,4 +75,4 @@ members_single = np.array_split(members_all, size)[rank]  # members on this core
 #%%
 for ens in members_single:
     print(f"Period {period}: Rank {rank}, member {ens}/{members_single[-1]}")
-    awb_event(period, ens)
+    awb_event(period, ens, persistence=4)
