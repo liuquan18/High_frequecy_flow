@@ -33,7 +33,7 @@ except:
     rank = 0
     size = 1
 # %%
-def awb_event(period: str, ens : int, plev : int = 25000):
+def awb_event(period: str, ens : int, plev : int = 25000, persistence : int = 3):
     WB = ct.contrack()
     base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/momentum_fluxes_daily_global/momentum_fluxes_MJJAS_ano_{period}_prime/"
     file = glob.glob(f"{base_dir}momentum_fluxes_day_*_r{ens}i1p1f1_gn_*.nc")[0]
@@ -52,7 +52,7 @@ def awb_event(period: str, ens : int, plev : int = 25000):
         threshold=50,
         gorl = '>=',
         overlap=0.5,
-        persistence=3,
+        persistence=persistence,
         twosided=True,
     )
 
