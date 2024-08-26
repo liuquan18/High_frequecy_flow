@@ -12,11 +12,11 @@ logging.basicConfig(level=logging.WARNING)
 import src.extremes.extreme_read as er
 
 # %%
-def read_NAO_WB(period, ens, plev, extreme_type):
+def read_NAO_WB(period, ens, plev, extreme_type, wave_type = 'AWB'):
     NAO_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{extreme_type}_extreme_events/{extreme_type}_extreme_events_{period}/"
     NAO_file = glob.glob(f"{NAO_path}troposphere_{extreme_type}_*_r{ens}.csv")[0]
 
-    WB_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_events/WB_events_{period}/"
+    WB_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{wave_type}_events/{wave_type}_events_{period}/"
     WB_file = glob.glob(f"{WB_path}WB_MPI-ESM1-2-LR*_r{ens}i1p1f1_gn_*.csv")[0]
 
     NAO = pd.read_csv(NAO_file)
