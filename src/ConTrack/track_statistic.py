@@ -47,7 +47,9 @@ def select_WB_before_NAO(NAO, WB):
     def WB_before_nao(group):
         year = group['Year'].iloc[0]
         if year in nao_max_times:
-            return group[group['Date'] < nao_max_times[year]]
+            lag_days = group['Date'] - nao_max_times[year]
+            group['lag_days'] = lag_days.dt.days
+            return group[group['lag_days'] < 0]
         return pd.DataFrame()  # Return an empty DataFrame if the year isn't in NAO
 
     # Apply the filter function to WB, grouped by 'Flag' and 'Year'
