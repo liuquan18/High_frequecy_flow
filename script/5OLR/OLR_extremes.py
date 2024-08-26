@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.WARNING)
 
 all_missing_members = np.arange(1, 51)
 # split the members into 10 groups
-members_groups = np.array_split(all_missing_members, 8)
+members_groups = np.array_split(all_missing_members, 5)
 
 # %%
 try:
@@ -79,7 +79,7 @@ for i, member in enumerate(members_groups[node]):
 
 
     # read OLR nc file
-    olr_file = glob.glob(f"{OLR_ano_path}rlut*r{member}i1p1f1*ano.nc")[0]
+    olr_file = glob.glob(f"{OLR_ano_path}rlut*r{member}i1p1f1*ano_subzonalmean.nc")[0]
     OLR_ano = xr.open_dataset(olr_file).rlut
 
     OLR_df = to_dataframe(OLR_ano)

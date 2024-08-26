@@ -87,81 +87,14 @@ def composite_lag_longitude_allens(
 
 
 # %%
-def std_time(arr):
-    return (arr - arr.mean(dim="time")) / arr.std(dim="time")
+def remove_zonalmean(zg):
+    """
+    remove zonal mean from the data
+    """
+    zg = zg - zg.mean(dim="lon")
+    return zg
 
 
-# %%
-################# for meridional mean of zg ############################
-pos_zg_composite_first10, neg_zg_composite_first10 = composite_lag_longitude_allens(
-    period="first10", cross_plev=1, base_plev=25000, stat="mean"
-)
-
-# %%
-pos_zg_composite_last10, neg_zg_composite_last10 = composite_lag_longitude_allens(
-    period="last10", cross_plev=1, base_plev=25000, stat="mean"
-)
-
-
-# %%
-fig, axes = plt.subplots(
-    2, 2, figsize=(15, 10), subplot_kw={"projection": ccrs.PlateCarree(180)}
-)
-
-# levels = np.arange(-5000, 5500, 500)
-# levels = np.arange(-80, 90, 10)
-levels = np.arange(-3, 3.1, 0.5)
-plev = 50000
-std_time(pos_zg_composite_first10).sel(plev=plev, lat=0).plot.contourf(
-    levels=levels,
-    extend="both",
-    ax=axes[0, 0],
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-)
-axes[0, 0].set_title("First 10 years")
-
-std_time(pos_zg_composite_last10).sel(plev=plev, lat=0).plot.contourf(
-    levels=levels,
-    extend="both",
-    ax=axes[0, 1],
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-)
-axes[0, 1].set_title("Last 10 years")
-
-std_time(neg_zg_composite_first10).sel(plev=plev, lat=0).plot.contourf(
-    levels=levels,
-    extend="both",
-    ax=axes[1, 0],
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-)
-
-
-std_time(neg_zg_composite_last10).sel(plev=plev, lat=0).plot.contourf(
-    levels=levels,
-    extend="both",
-    ax=axes[1, 1],
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-)
-for ax in axes.flat:
-    ax.set_ylim(-20, 1)
-    ax.set_aspect("auto")
-
-for ax in axes[:, 0]:
-    ax.set_yticks(range(-20, 1, 5), crs=ccrs.PlateCarree())
-    ax.set_yticklabels(range(-20, 1, 5))
-
-# add x-axis labels
-for ax in axes[-1, :]:
-    ax.set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
-    ax.set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
-
-plt.savefig(
-    f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg{plev}_composite_lag_longitude_250hPa_sum.png"
-)
 # %%
 ################### for zg maps ############################
 
@@ -177,13 +110,18 @@ pos_zg_composite_last10, neg_zg_composite_last10 = composite_lag_longitude_allen
 
 # %%
 def plot_zg_composite(zg_composite, ax, plev=50000, levels=np.arange(-10, 11, 1)):
-    p = zg_composite.sel(plev=plev, lat=slice(-10, None)).plot.contour(
-        levels=levels,
-        extend="both",
-        ax=ax,
-        add_colorbar=False,
-        colors="k",
-        transform=ccrs.PlateCarree(),
+    levels = levels[levels != 0]
+    p = (
+        remove_zonalmean(zg_composite)
+        .sel(plev=plev, lat=slice(-10, None))
+        .plot.contour(
+            levels=levels,
+            extend="both",
+            ax=ax,
+            add_colorbar=False,
+            colors="k",
+            transform=ccrs.PlateCarree(),
+        )
     )
 
     # Add coastlines
@@ -196,12 +134,17 @@ fig, axes = plt.subplots(
     6, 2, figsize=(15, 15), subplot_kw={"projection": ccrs.PlateCarree(180)}
 )
 
-levels = np.arange(-60, 61, 5)
+levels = np.arange(-40, 41, 5)
 plev = 50000
 
 extreme_type = "pos"
-start_lag = -8
-lag_days = np.arange(start_lag, stop=start_lag + 6)
+start_lag = -24
+step_lag = 5
+
+length = 6
+end_lag = start_lag + length * step_lag
+
+lag_days = np.arange(start_lag, stop=end_lag, step=step_lag)
 periods = ["first10", "last10"]
 data = [pos_zg_composite_first10, pos_zg_composite_last10]
 
@@ -220,18 +163,25 @@ for ax in axes[-1, :]:
 for ax in axes[:, 0]:
     ax.set_yticks(range(0, 90, 30), crs=ccrs.PlateCarree())
     ax.set_yticklabels([f"{lat}°" for lat in range(0, 90, 30)])
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg500_composite_mean_lag_pos.png"
-)
+plt.suptitle("zg500 composite mean lag of positive NAO extremes (contour interval 5)")
+plt.tight_layout()
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg500_composite_mean_lag_pos_subzonal.png"
+# )
 # %%
 # negative
 fig, axes = plt.subplots(
     6, 2, figsize=(15, 15), subplot_kw={"projection": ccrs.PlateCarree(180)}
 )
 
-levels = np.arange(-60, 61, 5)
-start_lag = -8
-lag_days = np.arange(start_lag, stop=start_lag + 6)
+levels = np.arange(-40, 41, 5)
+start_lag = -27
+step_lag = 5
+
+length = 6
+end_lag = start_lag + length * step_lag
+lag_days = np.arange(start_lag, stop=end_lag, step=step_lag)
+
 periods = ["first10", "last10"]
 extreme_type = "neg"
 data = [neg_zg_composite_first10, neg_zg_composite_last10]
@@ -250,8 +200,9 @@ for ax in axes[-1, :]:
 for ax in axes[:, 0]:
     ax.set_yticks(range(0, 90, 30), crs=ccrs.PlateCarree())
     ax.set_yticklabels([f"{lat}°" for lat in range(0, 90, 30)])
-
+plt.suptitle("zg500 composite mean lag of negative NAO extremes (contour interval 5)")
+plt.tight_layout()
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg500_composite_mean_lag_neg.png"
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/zg_composite/zg500_composite_mean_lag_neg_subzonal.png"
 )
 # %%

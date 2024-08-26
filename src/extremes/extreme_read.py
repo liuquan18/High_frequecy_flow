@@ -8,7 +8,7 @@ import pandas as pd
 # %%
 
 
-def read_extremes(period: str, start_duration: int, ens: int):
+def read_extremes(period: str, start_duration: int, ens: int, plev: int = None):
     """
     parameters:
     period: str
@@ -36,6 +36,11 @@ def read_extremes(period: str, start_duration: int, ens: int):
     # select the extremes with durations longer than or equal to start_duration
     pos_extreme = sel_event_above_duration(pos_extreme, duration=start_duration)
     neg_extreme = sel_event_above_duration(neg_extreme, duration=start_duration)
+
+    if plev is not None:
+        pos_extreme = pos_extreme[pos_extreme["plev"] == plev]
+        neg_extreme = neg_extreme[neg_extreme["plev"] == plev]
+        
     return pos_extreme, neg_extreme
 
 

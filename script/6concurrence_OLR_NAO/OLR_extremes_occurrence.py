@@ -16,7 +16,7 @@ import src.extremes.extreme_read as er
 
 
 # %%
-def extreme_stat(extreme, stat="duration", dur_min=8):
+def extreme_stat(extreme, stat="duration", dur_min=10):
     """
     Calculate the duration of the extreme events
     """
@@ -107,7 +107,7 @@ last10_count = extreme_stat_all_members("last10", "neg", stat="count")
 # %%
 fig = plt.figure(figsize=(12, 5))
 gs = gridspec.GridSpec(2, 1, wspace=0.1, hspace=0.1)
-levels = np.arange(100, 300, 50)
+levels = np.arange(100, 200, 20)
 
 ax1 = fig.add_subplot(gs[0, 0], projection=ccrs.PlateCarree(central_longitude=180))
 plot_duration(first_count, ax1, levels=levels)
@@ -117,6 +117,6 @@ ax2 = fig.add_subplot(gs[1, 0], projection=ccrs.PlateCarree(central_longitude=18
 plot_duration(last10_count, ax2, levels=levels)
 ax2.set_title("Last 10 years positive")
 plt.suptitle("Count of summer OLR extremes")
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/OLR_extremes_count.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/OLR_extremes/OLR_extremes_count.png")
 
 # %%
