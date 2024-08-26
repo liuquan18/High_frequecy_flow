@@ -64,7 +64,7 @@ def awb_event(period: str, ens : int, plev : int = 25000):
     outname = outname.replace('momentum_fluxes_day_', 'WB_')
     outname = outname + '.csv'
     outname = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/AWB_events/AWB_events_{period}/{outname}"
-    WB_df.to_csv(outname)
+    WB_df.to_csv(outname, index=False)
 # %%
 periods = ["first10", "last10"]
 period = periods[node]
