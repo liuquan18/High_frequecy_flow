@@ -62,7 +62,18 @@ def select_WB_before_NAO(NAO, WB):
     else:
         return pd.DataFrame()
 #%%
-def plot_tracks(WB_df, ax):
+def get_color_map(lag_days):
+    # Normalize the lag_days to a 0-1 range
+    normalized = (lag_days - (-128)) / (0 - (-128))
+    
+    # Create a colormap - you can experiment with different colormaps
+    cmap = plt.cm.get_cmap('RdBu_r')  # Yellow-Orange-Red colormap
+    
+    # Return the RGB color values
+    return cmap(normalized)
+
+#%%
+def plot_tracks(WB_df, ax, lag_tag = True):
     ax.set_extent([-180, 180, 0, 90], crs=ccrs.PlateCarree())
     ax.coastlines()
     ax.coastlines() # add coastlines
@@ -92,4 +103,10 @@ def plot_tracks(WB_df, ax):
             x,y = seg[0],seg[1]
             ax.plot(x ,y,c = 'm',linewidth=1, transform=ccrs.PlateCarree())
         #plot the starting points
-        ax.scatter(lons[0],lats[0],s=11,c='m', zorder=10, edgecolor='black', transform=ccrs.PlateCarree())
+        if not lag_tag:
+            ax.scatter(lons[0],lats[0],s=10,c='m', zorder=10, edgecolor='black', transform=ccrs.PlateCarree())
+
+        else:
+            lag_days = WB_df[WB_df['Flag'] == bid]['lag_days'].iloc[0]
+            color = get_color_map(lag_days)
+            ax.scatter(lons[0],lats[0],s=30,c=color, zorder=10, edgecolor='grey', transform=ccrs.PlateCarree())
