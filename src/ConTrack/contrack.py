@@ -335,7 +335,7 @@ class contrack(object):
                 delta = np.unique((
                     self.ds[dim].to_index()[1:] - 
                     self.ds[dim].to_index()[:-1])
-                    .astype('timedelta64[h]')
+                    # .astype('timedelta64[h]') 
                 )
             except AttributeError:  # dates outside of normal range
                 # we can still move on if the unit is "days since ..."
