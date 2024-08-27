@@ -51,3 +51,6 @@ for ax in [ax[0], ax[1]]:
 
 # plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/AWB_before_NAO.png')
 # %%
+first10_pos_AWBs.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_before_NAO/AWB_before_NAO_first10.csv", index=False)
+last10_pos_AWBs.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_before_NAO/AWB_before_NAO_last10.csv", index=False)
+# %%
