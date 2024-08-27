@@ -19,7 +19,7 @@ def stack_events(events):
                               index = [100000,85000,70000,50000,25000],
                                 data = 0)
     for idx, event in events.iterrows():
-        container.loc[event["plev"], 0: event['duration']+1] += 1
+        container.loc[event["plev"], 0: event['extreme_duration']+1] += 1
     return container
 # %%
 first_10_pos_container = stack_events(first10_pos_events)
@@ -45,6 +45,6 @@ plt.legend(handles=legend_elements, loc="lower right")
 
 plt.tight_layout()
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/events_durations.pdf"
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/events_durations.png"
 )
 # %%

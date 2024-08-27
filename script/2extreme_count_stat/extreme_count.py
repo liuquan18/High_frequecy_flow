@@ -269,7 +269,7 @@ sns.barplot(
 ax.set_ylabel("Pressure Level (hPa)")
 
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_all.pdf"
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_all.png"
 )
 
 
