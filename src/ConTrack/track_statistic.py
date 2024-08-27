@@ -41,16 +41,24 @@ def select_WB_before_NAO(NAO, WB):
 
 
     # Create a dictionary to store the max 'extreme_end_time' for each year in NAO
-    nao_max_times = NAO.groupby('Year')['extreme_end_time'].max().to_dict()
+    nao_years = NAO['Year'].unique()
 
     # Define a function to filter WB rows
     def WB_before_nao(group):
+        
         year = group['Year'].iloc[0]
-        if year in nao_max_times:
-            lag_days = group['Date'] - nao_max_times[year]
-            group['lag_days'] = lag_days.dt.days
-            return group[group['lag_days'] < 0]
-        return pd.DataFrame()  # Return an empty DataFrame if the year isn't in NAO
+        WB_sels = []
+        if year in nao_years:
+            for i, nao in NAO[NAO['Year'] == year].iterrows(): # there may be multiple NAO events in a year
+                lag_days = group['Date'].iloc[0] - nao['extreme_start_time'] # WB start time is before the NAO start time
+                group['lag_days'] = lag_days.days
+                WB_sels.append(group[group['lag_days'] < 0])
+            if WB_sels:
+                return pd.concat(WB_sels)
+            else:
+                return pd.DataFrame()
+        else:
+            return pd.DataFrame()  # Return an empty DataFrame if the year isn't in NAO
 
     # Apply the filter function to WB, grouped by 'Flag' and 'Year'
     filtered_WB = WB.groupby(['Flag', 'Year'])[['Flag','Year','Date','Longitude','Latitude','Intensity','Size']].apply(WB_before_nao).reset_index(drop=True)
