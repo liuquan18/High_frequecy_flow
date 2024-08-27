@@ -84,7 +84,6 @@ def get_color_map(lag_days):
 def plot_tracks(WB_df, ax):
     ax.set_extent([-180, 180, 0, 90], crs=ccrs.PlateCarree())
     ax.coastlines()
-    ax.coastlines() # add coastlines
 
     #need to split each blocking track due to longitude wrapping (jumping at map edge)
     for bid in np.unique(np.asarray(WB_df['Flag'])): #select blocking id
