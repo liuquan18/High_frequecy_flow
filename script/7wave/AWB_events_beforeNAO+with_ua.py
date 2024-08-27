@@ -49,4 +49,25 @@ plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/AWB_b
 
 
 first_CWB= pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_before_NAO/CWB_before_NAO_first10.csv")
+last_CWB = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_before_NAO/CWB_before_NAO_last10.csv")
+# %%
+
+fig, ax = plt.subplots(2, 1, figsize=(10,5), subplot_kw=dict(projection=ccrs.PlateCarree(-120)))
+ts.plot_tracks(first_CWB, ax[0])
+ax[0].set_title('AWB events before NAO+ events in the First 10 years ')
+
+first_eof.plot.contourf(ax=ax[0], transform=ccrs.PlateCarree(),  cmap='RdBu_r', alpha = 0.7, levels = levels)
+
+ts.plot_tracks(last_CWB, ax[1])
+ax[1].set_title('AWB events before NAO+ events in the Last 10 years ')
+ax[1].set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
+last_eof.plot.contourf(ax=ax[1], transform=ccrs.PlateCarree(),  cmap='RdBu_r', alpha = 0.7, levels = levels)
+
+
+ax[1].set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
+for ax in [ax[0], ax[1]]:
+    ax.set_yticks(range(0, 90, 30), crs=ccrs.PlateCarree())
+    ax.set_yticklabels([f"{lat}°" for lat in range(0, 90, 30)])
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/CWB_before_NAO.png")
 # %%
