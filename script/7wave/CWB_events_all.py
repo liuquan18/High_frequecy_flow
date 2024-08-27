@@ -39,10 +39,10 @@ last10_pos_CWBs = pd.concat(last10_pos_CWBs)
 # %%
 fig, ax = plt.subplots(2, 1, figsize=(10,5), subplot_kw=dict(projection=ccrs.PlateCarree(-120)))
 ts.plot_tracks(first10_pos_CWBs, ax[0])
-ax[0].set_title('CWB events before NAO- events in the First 10 years ')
+ax[0].set_title('CWB events in the First 10 years ')
 
 ts.plot_tracks(last10_pos_CWBs, ax[1])
-ax[1].set_title('CWB events before NAO- events in the Last 10 years ')
+ax[1].set_title('CWB events in the Last 10 years ')
 ax[1].set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
 ax[1].set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
 for ax in [ax[0], ax[1]]:
