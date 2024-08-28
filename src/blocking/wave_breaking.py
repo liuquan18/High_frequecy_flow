@@ -5,7 +5,7 @@ import xarray as xr
 # %%
 def wave_breaking_index(Z, lat0_min=30, lat0_max=75, lat_thresh=7.5, lon_thresh=7.5):
     
-    WBI = Z.sel(lat=slice( lat0_max,lat0_min)).copy()
+    WBI = Z.sel(lat=slice( lat0_min, lat0_max)).copy()
     lats = WBI.lat.values
     lons = WBI.lon.values
     
