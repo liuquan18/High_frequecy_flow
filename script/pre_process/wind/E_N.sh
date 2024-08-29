@@ -11,7 +11,7 @@ frequency=$2 # prime, prime_veryhigh, prime_intermedia
 uprime_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_ano_${period}_${frequency}/
 vprime_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_global/va_MJJAS_ano_${period}_${frequency}/
 
-to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/momentum_fluxes_daily_global/momentum_fluxes_MJJAS_ano_${period}_${frequency}/
+to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/E_N_daily_global/E_N_MJJAS_ano_${period}_${frequency}/
 # mf: momentum fluxes
 
 mkdir -p ${to_path}
@@ -25,7 +25,7 @@ Momentum(){
     vfile=$(find ${vprime_path} -name va_*r${member}i1p1f1_gn_*.nc)
     # basename without .nc
     ufname=$(basename ${ufile%.nc})
-    outfile=${to_path}momentum_fluxes_${ufname:3}.nc
+    outfile=${to_path}E_N_${ufname:3}.nc
 
     cdo -O -P 10 -mul ${ufile} ${vfile} ${outfile}
 }
