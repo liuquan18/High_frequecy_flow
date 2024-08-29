@@ -30,3 +30,9 @@ export uprime_path vprime_path to_path
 
     cdo -O -P 10 -sub -mul ${ufile} ${ufile} -mul ${vfile} ${vfile} ${outfile}
  }
+
+export -f M_component
+
+# parallel M_component for all members
+
+parallel --jobs 10 M_component ::: {1..50}
