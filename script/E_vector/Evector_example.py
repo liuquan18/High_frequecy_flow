@@ -22,7 +22,7 @@ N = N.ua.sel(plev=25000)
 #%%
 ## E vector
 # E = (-2M, -N) = (M_2, -N)
-E_M = 2*M
+E_M = -2*M
 E_N = -N
 #%%
 E_S = np.sqrt(E_M**2 + E_N**2)
