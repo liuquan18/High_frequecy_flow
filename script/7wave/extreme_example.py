@@ -5,8 +5,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import matplotlib.gridspec as gridspec
+
+#%%
+ens = 2
 # %%
-pos_extreme = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pos_extreme_events/pos_extreme_events_first10/troposphere_pos_extreme_events_1850_1859_r2.csv")
+pos_extreme = pd.read_csv(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pos_extreme_events/pos_extreme_events_first10/troposphere_pos_extreme_events_1850_1859_r{ens}.csv")
 pos_extreme = pos_extreme[pos_extreme['plev'] == 25000]
 # select the row with the maximum value of the 'extreme_duration'
 pos_extreme = pos_extreme.loc[pos_extreme['extreme_duration'].idxmax()]
@@ -19,7 +22,7 @@ pos_extreme_end_date = pos_extreme['extreme_end_time']
 
 # %%
 # negative extreme
-neg_extreme = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/neg_extreme_events/neg_extreme_events_first10/troposphere_neg_extreme_events_1850_1859_r2.csv")
+neg_extreme = pd.read_csv(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/neg_extreme_events/neg_extreme_events_first10/troposphere_neg_extreme_events_1850_1859_r{ens}.csv")
 neg_extreme = neg_extreme[neg_extreme['plev'] == 25000]
 # select the row with the maximum value of the 'extreme_duration'
 neg_extreme = neg_extreme.loc[neg_extreme['extreme_duration'].idxmax()]
@@ -31,16 +34,16 @@ neg_extreme_start_date = neg_extreme['extreme_start_time']
 neg_extreme_end_date = neg_extreme['extreme_end_time']
 # %%
 # pc
-pc = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/projected_pc/projected_pc_first10/troposphere_pc_MJJAS_ano_1850_1859_r2.nc")
+pc = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/projected_pc/projected_pc_first10/troposphere_pc_MJJAS_ano_1850_1859_r{ens}.nc")
 # %%
 pc = pc.pc.sel(plev=25000)
 # %%
 pos_pc = pc.sel(time=slice(pos_start_date, pos_end_date))
 neg_pc = pc.sel(time=slice(neg_start_date, neg_end_date))
 # %%
-umean = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_season_global/ua_Amon_MPI-ESM1-2-LR_HIST_ensmean_185005-185909.nc").ua.sel(plev=25000)
+umean = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_season_global/ua_Amon_MPI-ESM1-2-LR_HIST_ensmean_185005-185909.nc").ua.sel(plev=25000)
 #%%
-uhat = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_ano_first10_hat/ua_day_MPI-ESM1-2-LR_historical_r2i1p1f1_gn_18500501-18590931_ano.nc")
+uhat = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_ano_first10_hat/ua_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931_ano.nc")
 # %%
 pos_uhat = uhat.ua.sel(plev=25000, time=slice(pos_start_date, pos_end_date))
 pos_umean = umean.sel(time=pos_start_date, method='nearest')
@@ -52,14 +55,14 @@ neg_umean = umean.sel(time=neg_start_date, method='nearest')
 neg_uhat = neg_uhat + neg_umean
 neg_uhat = neg_uhat.sel(lon = slice(240,360)).mean(dim='lon')
 # %%
-mf = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/momentum_fluxes_daily_global/momentum_fluxes_MJJAS_ano_first10_prime/momentum_fluxes_day_MPI-ESM1-2-LR_historical_r2i1p1f1_gn_18500501-18590931_ano.nc")
+mf = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/momentum_fluxes_daily_global/momentum_fluxes_MJJAS_ano_first10_prime/momentum_fluxes_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931_ano.nc")
 #%%
 mf_zonal = mf.ua.sel(plev=25000, lon=slice(240,360)).mean(dim='lon')
 pos_mf_zonal = mf_zonal.sel(time=slice(pos_start_date, pos_end_date))
 neg_mf_zonal = mf_zonal.sel(time=slice(neg_start_date, neg_end_date))
 # %%
-zg_ano = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_daily_global/zg_MJJAS_ano_first10/zg_day_MPI-ESM1-2-LR_historical_r2i1p1f1_gn_18500501-18590930_ano.nc")
-zg_mean = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_season_global/zg_month_ensmean_1850_1859.nc")
+zg_ano = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_daily_global/zg_MJJAS_ano_first10/zg_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590930_ano.nc")
+zg_mean = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_season_global/zg_month_ensmean_1850_1859.nc")
 # %%
 zg_ano = zg_ano.zg.sel(plev=25000)
 zg_mean = zg_mean.zg.sel(plev=25000)
@@ -139,5 +142,5 @@ cbar = plt.colorbar(co_mf_neg, cax=cbar_ax, orientation="horizontal")
 cbar.set_label(r'$m^2/s^2$ (zonal mean scaled by 1/5)', loc = 'center')
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
+# plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
 # %%
