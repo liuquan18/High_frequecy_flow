@@ -28,7 +28,7 @@ export uprime_path vprime_path to_path
     ufname=$(basename ${ufile%.nc})
     outfile=${to_path}E_M_${ufname:3}.nc
 
-    cdo -O -P 10 -sub -mul ${ufile} ${ufile} -mul ${vfile} ${vfile} ${outfile}
+    cdo -O -P 10 -divc,-2 -sub -mul ${ufile} ${ufile} -mul ${vfile} ${vfile} ${outfile}
  }
 
 export -f M_component
