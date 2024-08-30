@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import numpy as np
 import matplotlib.gridspec as gridspec
+import logging
+logging.basicConfig(level=logging.WARNING)
+
+from src.extremes.extreme_read import sel_event_above_duration
 
 # %%
 #%%
@@ -14,8 +18,10 @@ def read_pos(ens):
     # positive extreme
     pos_extreme = pd.read_csv(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pos_extreme_events/pos_extreme_events_first10/troposphere_pos_extreme_events_1850_1859_r{ens}.csv")
     pos_extreme = pos_extreme[pos_extreme['plev'] == 25000]
+    pos_extreme['extreme_end_time'] = pd.to_datetime(pos_extreme['extreme_end_time'])
     
     # select the row with the maximum value of the 'extreme_duration'
+    pos_extreme = pos_extreme.loc[pos_extreme['extreme_end_time'].dt.month <= 8]
     pos_extreme = pos_extreme.loc[pos_extreme['extreme_duration'].idxmax()]
     pos_start_date = pos_extreme['sign_start_time']
     pos_end_date = pos_extreme['sign_end_time']
@@ -41,9 +47,8 @@ def read_pos(ens):
     N['time'] = N.indexes['time'].to_datetimeindex()
     E_M = -2*M
     E_N = -N
-    pos_E_M = E_M.sel(time=pos_extreme_start_date, method='nearest')
-    pos_E_N = E_N.sel(time=pos_extreme_start_date, method='nearest')
-
+    pos_E_M = E_M.sel(time=slice(pos_extreme_start_date, pos_extreme_end_date)).mean(dim = 'time')
+    pos_E_N = E_N.sel(time=slice(pos_extreme_start_date, pos_extreme_end_date)).mean(dim = 'time')
 
     return pos_pc, pos_uhat,pos_E_M,pos_E_N
 
@@ -52,8 +57,10 @@ def read_neg(ens):
     # negative extreme
     neg_extreme = pd.read_csv(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/neg_extreme_events/neg_extreme_events_first10/troposphere_neg_extreme_events_1850_1859_r{ens}.csv")
     neg_extreme = neg_extreme[neg_extreme['plev'] == 25000]
-    
+    neg_extreme['extreme_end_time'] = pd.to_datetime(neg_extreme['extreme_end_time'])
+
     # select the row with the maximum value of the 'extreme_duration'
+    neg_extreme = neg_extreme.loc[neg_extreme['extreme_end_time'].dt.month <= 8]
     neg_extreme = neg_extreme.loc[neg_extreme['extreme_duration'].idxmax()]
     neg_start_date = neg_extreme['sign_start_time']
     neg_end_date = neg_extreme['sign_end_time']
@@ -79,8 +86,8 @@ def read_neg(ens):
     N['time'] = N.indexes['time'].to_datetimeindex()
     E_M = -2*M
     E_N = -N
-    neg_E_M = E_M.sel(time=neg_extreme_start_date, method='nearest')
-    neg_E_N = E_N.sel(time=neg_extreme_start_date, method='nearest')
+    neg_E_M = E_M.sel(time=slice(neg_extreme_start_date, neg_extreme_end_date)).mean(dim='time')
+    neg_E_N = E_N.sel(time=slice(neg_extreme_start_date, neg_extreme_end_date)).mean(dim='time')
 
     return neg_pc, neg_uhat,neg_E_M,neg_E_N
 
@@ -95,9 +102,9 @@ def plot_E(E_M, E_N, u_hat, ax):
     skip = 3
     
     ax.coastlines(color = 'grey', linewidth = 0.5)
-    lines = u_hat.plot.contourf(ax=ax, levels = np.arange(10,30,5),kwargs=dict(inline=True),alpha = 0.5, extend = 'max', add_colorbar = False)
+    lines = u_hat.plot.contourf(ax=ax, levels = np.arange(10,36,5),kwargs=dict(inline=True),alpha = 0.5, extend = 'max', add_colorbar = False)
 
-    arrows = ax.quiver(lon[::skip], lat[::skip], E_M[::skip,::skip], E_N[::skip,::skip], scale = 10000)
+    arrows = ax.quiver(lon[::skip], lat[::skip], E_M[::skip,::skip], E_N[::skip,::skip], scale = 4000)
 
     ax.set_extent([-180, 180, 0, 90], ccrs.PlateCarree())
 
@@ -109,9 +116,9 @@ def plot_E(E_M, E_N, u_hat, ax):
 #%%
 pos_pc, pos_uhat,pos_E_M,pos_E_N = read_pos(2)
 #%%
-neg_pc, neg_uhat,neg_E_M,neg_E_N = read_neg(4)
+neg_pc, neg_uhat,neg_E_M,neg_E_N = read_neg(8)
 # %%
-fig = plt.figure(figsize=(15, 10))
+fig = plt.figure(figsize=(15, 12))
 
 gs = gridspec.GridSpec(3, 2)
 
@@ -129,6 +136,10 @@ ax2.axhline(y=-1.5, color='r', linestyle='--')
 ax3 = fig.add_subplot(gs[1, 0], projection=ccrs.PlateCarree(-120))
 ax4 = fig.add_subplot(gs[1, 1], projection=ccrs.PlateCarree(-120))
 
-plot_E(pos_E_M, pos_E_N, pos_uhat, ax3)
+_,p,_ = plot_E(pos_E_M, pos_E_N, pos_uhat, ax3)
 plot_E(neg_E_M, neg_E_N, neg_uhat, ax4)
+
+# add colorbar at the bottom
+plt.colorbar(p, ax=[ax3, ax4], orientation='horizontal', label='u (m/s)', aspect=50)
+plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/E_vector/extreme_example.png', dpi=300)
 # %%
