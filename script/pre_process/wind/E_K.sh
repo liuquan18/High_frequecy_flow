@@ -30,3 +30,8 @@ K_component(){
 
     cdo -O -P 10 -divc,2 -add -mul ${ufile} ${ufile} -mul ${vfile} ${vfile} ${outfile}
 }
+
+export -f K_component
+
+# parallel K_component for all members
+parallel --jobs 10 K_component ::: {1..50}
