@@ -5,14 +5,15 @@ import pandas as pd
 import logging
 import glob
 
-from src.extremes.extreme_read import sel_event_above_duration
-from src.extremes.extreme_read import read_extremes
+import src.extremes.extreme_read as ext_read
 
 logging.basicConfig(level=logging.INFO)
 
-#%%
-def read_variable(variable: str, period: str, ens: int,  plev: int = None, freq_label: str=None):
 
+# %%
+def read_variable(
+    variable: str, period: str, ens: int, plev: int = None, freq_label: str = None
+):
     """
     Parameters
     ----------
@@ -33,7 +34,7 @@ def read_variable(variable: str, period: str, ens: int,  plev: int = None, freq_
         freq_label = "/"
     else:
         freq_label = f"_{freq_label}/"
-    
+
     base_path = f"{base_path}{freq_label}"
 
     file = glob.glob(f"{base_path}{variable}_day_*r{ens}i1p1f1_gn_*.nc")[0]
@@ -41,17 +42,18 @@ def read_variable(variable: str, period: str, ens: int,  plev: int = None, freq_
     try:
         ds = xr.open_dataset(file)[variable]
     except KeyError:
-        ds = xr.open_dataset(file)['ua'] # case for momentum fluxes
+        ds = xr.open_dataset(file)["ua"]  # case for momentum fluxes
     if plev is not None:
         ds = ds.sel(plev=plev)
-    
+
     # convert datetime to pandas datetime
     try:
-        ds['time'] = ds.indexes['time'].to_datetimeindex()
+        ds["time"] = ds.indexes["time"].to_datetimeindex()
     except AttributeError:
         pass
 
     return ds
+
 
 # %%
 def lead_lag_30days(events, base_plev=None, cross_plev=1):
@@ -156,7 +158,7 @@ def event_composite(variable, pos_extremes, neg_extremes, base_plev=None, cross_
     neg_date_range = lead_lag_30days(neg_extremes, base_plev, cross_plev)
 
     pos_composite = None
-    neg_composite = None   
+    neg_composite = None
 
     if not pos_date_range.empty:
         pos_composite = date_range_composite(variable, pos_date_range)
@@ -165,3 +167,40 @@ def event_composite(variable, pos_extremes, neg_extremes, base_plev=None, cross_
         neg_composite = date_range_composite(variable, neg_date_range)
 
     return pos_composite, neg_composite
+
+
+# %%
+def composite_single_ens(variable, period, ens, plev, freq_label=None):
+    pos_extreme, neg_extreme = ext_read.read_extremes(period, 8, ens, plev=plev)
+    variable_ds = read_variable(variable, period, ens, plev, freq_label)
+
+    pos_comp, neg_comp = event_composite(variable_ds, pos_extreme, neg_extreme)
+    return pos_comp, neg_comp
+
+
+# %%
+def composite_variable(variable, plev, freq_label, period, stat="mean"):
+    pos_comps = []
+    neg_comps = []
+
+    for i in range(1, 51):
+        pos_comp, neg_comp = composite_single_ens(variable, period, i, plev, freq_label)
+
+        pos_comps.append(pos_comp)
+        neg_comps.append(neg_comp)
+
+    # exclude None from the list
+    pos_comps = [x for x in pos_comps if x is not None]
+    neg_comps = [x for x in neg_comps if x is not None]
+
+    pos_comps = xr.concat(pos_comps, dim="event")
+    neg_comps = xr.concat(neg_comps, dim="event")
+
+    if stat == "mean":
+        pos_comps = pos_comps.mean(dim="event")
+        neg_comps = neg_comps.mean(dim="event")
+    elif stat == "count":
+        pos_comps = pos_comps.count(dim="event")
+        neg_comps = neg_comps.count(dim="event")
+
+    return pos_comps, neg_comps
