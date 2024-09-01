@@ -127,7 +127,7 @@ def plot_E(E_M, E_N, u_hat, ax):
 fig, axes = plt.subplots(
     6, 2, figsize=(17, 17), subplot_kw={"projection": ccrs.PlateCarree(-120)}
 )
-start_lag = -11
+start_lag = -10
 interval_lag = 2
 
 
