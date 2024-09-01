@@ -60,6 +60,16 @@ E_M_last10_pos = E_M_last10_pos.metpy.quantify()
 
 E_N_last10_pos = E_N_last10_pos * units("m**2/s**2")
 E_N_last10_pos = E_N_last10_pos.metpy.quantify()
+
+#%%
+# smoothing
+E_M_first10_pos = mpcalc.smooth_gaussian(E_M_first10_pos, 5)
+E_N_first10_pos = mpcalc.smooth_gaussian(E_N_first10_pos, 5)
+
+E_M_last10_pos = mpcalc.smooth_gaussian(E_M_last10_pos, 5)
+E_N_last10_pos = mpcalc.smooth_gaussian(E_N_last10_pos, 5)
+
+
 # %%
 E_div_first10_pos = mpcalc.divergence(E_M_first10_pos, E_N_first10_pos)
 E_div_last10_pos = mpcalc.divergence(E_M_last10_pos, E_N_last10_pos)
