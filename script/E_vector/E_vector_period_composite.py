@@ -81,7 +81,7 @@ def plot_E(E_M, E_N, u_hat, ax):
 fig, axes = plt.subplots(
     6, 2, figsize=(17, 17), subplot_kw={"projection": ccrs.PlateCarree(-120)}
 )
-start_lag = -10
+start_lag = -5
 interval_lag = 2
 
 
@@ -118,10 +118,10 @@ cbar = plt.colorbar(lines, cax=cbar_ax, orientation="horizontal")
 plt.suptitle("Composite of positive extremes")
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/E_vector/E_vector_pos_composite.png",
-    dpi=300,
-)
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/E_vector/E_vector_pos_arrow.png",
+#     dpi=300,
+# )
 
 # %%
 # same for negative extremes
@@ -165,7 +165,7 @@ plt.suptitle("Composite of negative extremes")
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/E_vector/E_vector_neg_composite.png",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/E_vector/E_vector_neg_arrow.png",
     dpi=300,
 )
 
