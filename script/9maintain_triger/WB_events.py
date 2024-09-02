@@ -54,9 +54,10 @@ members_all = list(range(1, 51))  # all members
 members_single = np.array_split(members_all, size)[rank]  # members on this core
 #%%
 # %%
-def wb_event(file: str,  persistence: int = 5):
+def wb_event(ds, persistence: int = 5):
     WB = ct.contrack()
-    WB.read(file)
+    WB.ds = ds
+
 
     # apply median filter to the data along time
     WB.ds = WB.ds.rolling(time=3, center=True).median()
@@ -74,19 +75,18 @@ def wb_event(file: str,  persistence: int = 5):
         persistence=persistence,
         twosided=True,
     )
+    return WB.ds
 
-    WB["flag"].to_netcdf(flag_dir + file.split("/")[-1])
-
+#%%
+def event_cycle(ds):
+    WB = ct.contrack()
+    WB.ds = ds
+    WB.set_up(force=True)
     # life cycle
     WB_df = WB.run_lifecycle(flag="flag", variable="wave_breaking_index")
 
-    # save
-    WB_df.to_csv(
-        event_dir
-        + file.split("/")[-1].replace("wb_", "wb_events_").replace(".nc", ".csv"),
-        index=False,
-    )
-    return WB_df
+    WB_xr = xr.DataArray(WB_df)
+    return WB_xr
 
 
 # %%
@@ -95,6 +95,23 @@ for i, ens in enumerate(members_single):
 
     file = glob.glob(f"{index_dir}wb_*r{ens}i1p1f1*.nc")[0]
 
-    WB_df = wb_event(file, persistence=5)
+    ds = xr.open_dataset(file)
+    ds = ds.groupby("time.year").apply(wb_event, persistence=5)
+
+    # save the flag
+    ds["flag"].to_netcdf(flag_dir + file.split("/")[-1])
+
+    WB_xr = ds.groupby("time.year").apply(event_cycle)
+    WB_df = []
+    for year in WB_xr["year"].values:
+        wb_df = WB_xr.sel(year=year).values
+        wb_df = pd.DataFrame(wb_df, columns= ['Flag','Date','Longitude','Latitude','Intensity','Size'])
+        WB_df.append(wb_df)
+    WB_df = pd.concat(WB_df)
+    # dropna
+    WB_df = WB_df.dropna()
+
+    # save life cycle 
+    WB_df.to_csv(event_dir + file.split("/")[-1].replace("wb_", "wb_events_").replace(".nc", ".csv"))
 
 # %%
