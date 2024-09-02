@@ -92,8 +92,10 @@ def wb_event(file: str, persistence: int = 5):
 
 # %%
 for i, ens in enumerate(members_single):
-    logging.warning(f"Period {period}: Rank {rank}, member {ens}/{members_single[-1]}")
+    logging.warning(f"Period {period}: Rank {rank}, member {i+1}/{len(members_single)}")
 
-    file = glob.glob(f"{index_dir}wb_*r{ens}*.nc")[0]
+    file = glob.glob(f"{index_dir}wb_*r{ens}i1p1f1*.nc")[0]
 
     WB_df = wb_event(file, persistence=5)
+
+# %%
