@@ -9,11 +9,14 @@ wb = wb.wave_breaking_index
 # %%
 # spatial smoothing
 wb = wb.rolling(lat=7, lon=7, center=True).mean()
-#%%
-df = wb.to_dataframe().reset_index()
-#%%
-df = df.drop(columns = 'plev')
-# %%
-df_window = df.groupby(['ens','lat','lon'])[['time','wave_breaking_index']].apply(et.construct_window, window = 7, column_name = 'wave_breaking_index')
 
+#%%
+wb_dayofyear = wb.groupby('time.dayofyear').std('time')
+
+#%%
+wb_dayofyear_ens = wb_dayofyear.mean('ens')
+
+#%%
+# save the result
+wb_dayofyear_ens.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wavebreak_events/wave_break_event_threshold/wb_dayofyear_threshold.nc")
 # %%
