@@ -7,7 +7,9 @@ import numpy as np
 import matplotlib.gridspec as gridspec
 import logging
 logging.basicConfig(level=logging.WARNING)
-
+# Any import of metpy will activate the accessors
+import metpy.calc as mpcalc
+from metpy.units import units
 from src.extremes.extreme_read import sel_event_above_duration
 
 # %%
@@ -117,8 +119,16 @@ def plot_E(E_M, E_N, u_hat, ax):
 pos_pc, pos_uhat,pos_E_M,pos_E_N = read_pos(2)
 #%%
 neg_pc, neg_uhat,neg_E_M,neg_E_N = read_neg(8)
+
+#%%
+# calculate divergence
+div_pos = mpcalc.divergence(pos_E_M, pos_E_N)
+div_neg = mpcalc.divergence(neg_E_M, neg_E_N)
+
+
+
 # %%
-fig = plt.figure(figsize=(15, 12))
+fig = plt.figure(figsize=(15, 15))
 
 gs = gridspec.GridSpec(3, 2)
 
@@ -139,7 +149,22 @@ ax4 = fig.add_subplot(gs[1, 1], projection=ccrs.PlateCarree(-120))
 _,p,_ = plot_E(pos_E_M, pos_E_N, pos_uhat, ax3)
 plot_E(neg_E_M, neg_E_N, neg_uhat, ax4)
 
+
+ax5 = fig.add_subplot(gs[2, 0], projection=ccrs.PlateCarree(-120))
+ax6 = fig.add_subplot(gs[2, 1], projection=ccrs.PlateCarree(-120))
+
+for ax in [ax5, ax6]:
+    ax.coastlines(color = 'grey', linewidth = 0.5)
+    ax.set_extent([-180, 180, 0, 90], ccrs.PlateCarree())
+
+div_pos.plot.contourf(ax=ax5, levels = np.arange(-4e-4, 4.1e-4, 1e-4), 
+extend = 'both', transform=ccrs.PlateCarree(), cmap = 'RdBu_r', add_colorbar = False)
+d = div_neg.plot.contourf(ax=ax6, levels = np.arange(-4e-4, 4.1e-4, 1e-4), extend = 'both', transform=ccrs.PlateCarree(), cmap = 'RdBu_r', add_colorbar = False)
+
+
 # add colorbar at the bottom
 plt.colorbar(p, ax=[ax3, ax4], orientation='horizontal', label='u (m/s)', aspect=50)
+plt.colorbar(d, ax=[ax5, ax6], orientation='horizontal', label='divergence ', aspect=50)
+
 plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/E_vector/extreme_example.png', dpi=300)
 # %%
