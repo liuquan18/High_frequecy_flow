@@ -53,18 +53,8 @@ flag_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wavebreak
 members_all = list(range(1, 51))  # all members
 members_single = np.array_split(members_all, size)[rank]  # members on this core
 #%%
-threshold = threshold = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wavebreak_events/wave_break_event_threshold/wb_index_threshold_cdo.nc")
-threshold = threshold * 1.5 # 1.5 times the standard deviation
-
-# change time to dayofyear
-threshold['time'] = threshold['time.dayofyear']
-#%%
-# rename 'time' to 'dayofyear'
-threshold = threshold.rename({'time':'dayofyear'}).drop('plev')
-#%%
-threshold = threshold.wave_breaking_index
 # %%
-def wb_event(file: str, threshold, persistence: int = 5):
+def wb_event(file: str,  persistence: int = 5):
     WB = ct.contrack()
     WB.read(file)
 
@@ -78,7 +68,7 @@ def wb_event(file: str, threshold, persistence: int = 5):
 
     WB.run_contrack(
         variable="wave_breaking_index",
-        threshold=threshold,
+        threshold=20,
         gorl=">=",
         overlap=0.5,
         persistence=persistence,
@@ -105,6 +95,6 @@ for i, ens in enumerate(members_single):
 
     file = glob.glob(f"{index_dir}wb_*r{ens}i1p1f1*.nc")[0]
 
-    WB_df = wb_event(file, threshold, persistence=5)
+    WB_df = wb_event(file, persistence=5)
 
 # %%
