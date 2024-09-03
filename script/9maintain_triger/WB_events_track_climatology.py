@@ -43,7 +43,7 @@ first10_WBs = read_WB_events("first10")
 last10_WBs = read_WB_events("last10")
 # %%
 fig, ax = plt.subplots(
-    1, 2, figsize=(10, 5), subplot_kw=dict(projection=ccrs.PlateCarree(-120))
+    2, 1, figsize=(10, 10), subplot_kw=dict(projection=ccrs.PlateCarree(-120))
 )
 for ens in first10_WBs["ens"].unique():
     ts.plot_tracks(first10_WBs[first10_WBs["ens"] == ens], ax[0])
@@ -92,27 +92,45 @@ plt.savefig(
 
 
 def sel_pacific(wb):
-    pac_dur = wb.groupby("Flag")[wb.columns].filter(
+    pac_dur = wb.groupby(["Flag", "ens"])[wb.columns].filter(
         lambda x: (x.iloc[0]["Longitude"] > 130)
         & (x.iloc[0]["Longitude"] < 230)
         & (x.iloc[0]["Latitude"] > 35)
         & (x.iloc[0]["Latitude"] < 65)
     )
-    return pac_dur.drop(columns='Unnamed: 0')
+    return pac_dur
 
 
 def sel_atlantic(wb):
-    atl_dur = wb.groupby("Flag")[wb.columns].filter(
+    atl_dur = wb.groupby(["Flag", "ens"])[wb.columns].filter(
         lambda x: ((x.iloc[0]["Longitude"] > 290) | (x.iloc[0]["Longitude"] < 20))
         & (x.iloc[0]["Latitude"] > 35)
         & (x.iloc[0]["Latitude"] < 65)
     )
-    return atl_dur.drop(columns='Unnamed: 0')
+    return atl_dur
 
-#%%
+
+# %%
 def wb_duration(wb):
-    dur = wb.groupby("Flag").size()
+    dur = wb.groupby(["Flag", "ens"])[wb.columns].size()
     return dur
+
+
+# %%
+def delta_lon(wb):
+    wb = wb.groupby(["Flag", "ens"])[["Longitude"]].apply(
+        lambda x: x[x["Longitude"] == x["Longitude"].max()].values.reshape(-1)[0]
+        - x[x["Longitude"] == x["Longitude"].min()].values.reshape(-1)[0]
+    )
+    return wb
+
+def delta_lat(wb):
+    wb = wb.groupby(["Flag", "ens"])[["Latitude"]].apply(
+        lambda x: x[x["Latitude"] == x["Latitude"].max()].values.reshape(-1)[0]
+        - x[x["Latitude"] == x["Latitude"].min()].values.reshape(-1)[0]
+    )
+    return wb
+
 # %%
 
 first10_WBs_pacific = sel_pacific(first10_WBs)
@@ -121,18 +139,22 @@ last10_WBs_pacific = sel_pacific(last10_WBs)
 first10_WBs_atlantic = sel_atlantic(first10_WBs)
 last10_WBs_atlantic = sel_atlantic(last10_WBs)
 
-
 # %%
-first10_WBs_pacific_dur = first10_WBs_pacific.groupby("Flag").size()
-last10_WBs_pacific_dur = last10_WBs_pacific.groupby("Flag").size()
+# use the function to calculate the duration of each WB
+first10_WBs_pacific_dur = wb_duration(first10_WBs_pacific)
+last10_WBs_pacific_dur = wb_duration(last10_WBs_pacific)
 
-first10_WBs_atlantic_dur = first10_WBs_atlantic.groupby("Flag").size()
-last10_WBs_atlantic_dur = last10_WBs_atlantic.groupby("Flag").size()
+first10_WBs_atlantic_dur = wb_duration(first10_WBs_atlantic)
+last10_WBs_atlantic_dur = wb_duration(last10_WBs_atlantic)
+
 # %%
 fig, ax = plt.subplots(1, 2, figsize=(10, 7))
 bins = np.arange(5, 20, 2)
 sns.histplot(first10_WBs_pacific_dur, ax=ax[0], bins=bins, kde=False)
 sns.histplot(last10_WBs_pacific_dur, ax=ax[0], bins=bins, kde=False, alpha=0.5)
+
+# add legend
+ax[0].legend(["First 10 years", "Last 10 years"])
 
 ax[0].set_title("Pacific WBs")
 sns.histplot(first10_WBs_atlantic_dur, ax=ax[1], bins=bins, kde=False)
@@ -142,44 +164,118 @@ ax[0].set_xlabel("Duration (days)")
 ax[1].set_xlabel("Duration (days)")
 
 
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/Scherrer_wave_break_climatology_duration.png"
-# )
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/Scherrer_wave_break_climatology_duration.png"
+)
+
+# %%
+# calculate the elongation of the WBs
+first10_WBs_pacific_elong = delta_lon(first10_WBs_pacific)
+last10_WBs_pacific_elong = delta_lon(last10_WBs_pacific)
+
+first10_WBs_atlantic_elong = delta_lon(first10_WBs_atlantic)
+last10_WBs_atlantic_elong = delta_lon(last10_WBs_atlantic)
+# %%
+fig, ax = plt.subplots(1, 2, figsize=(10, 7))
+bins = np.arange(0, 51, 2)
+sns.histplot(first10_WBs_pacific_elong, ax=ax[0], bins=bins, kde=False)
+sns.histplot(last10_WBs_pacific_elong, ax=ax[0], bins=bins, kde=False, alpha=0.5)
+
+# add legend
+ax[0].legend(["First 10 years", "Last 10 years"])
+
+ax[0].set_title("Pacific WBs")
+sns.histplot(first10_WBs_atlantic_elong, ax=ax[1], bins=bins, kde=False)
+sns.histplot(last10_WBs_atlantic_elong, ax=ax[1], bins=bins, kde=False, alpha=0.5)
+ax[1].set_title("Atlantic WBs")
+ax[0].set_xlabel("delta lon (°)")
+ax[1].set_xlabel("delta lon (°)")
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/Scherrer_wave_break_climatology_delta_lon.png"
+)
+
+#%%
+# delta latitude
+first10_WBs_pacific_lat = delta_lat(first10_WBs_pacific)
+last10_WBs_pacific_lat = delta_lat(last10_WBs_pacific)
+
+first10_WBs_atlantic_lat = delta_lat(first10_WBs_atlantic)
+last10_WBs_atlantic_lat = delta_lat(last10_WBs_atlantic)
+#%%
+fig, ax = plt.subplots(1, 2, figsize=(10, 7))
+bins = np.arange(0, 30, 2)
+sns.histplot(first10_WBs_pacific_lat, ax=ax[0], bins=bins, kde=False)
+sns.histplot(last10_WBs_pacific_lat, ax=ax[0], bins=bins, kde=False, alpha=0.5)
+
+# add legend
+ax[0].legend(["First 10 years", "Last 10 years"])
+
+ax[0].set_title("Pacific WBs")
+sns.histplot(first10_WBs_atlantic_lat, ax=ax[1], bins=bins, kde=False)
+sns.histplot(last10_WBs_atlantic_lat, ax=ax[1], bins=bins, kde=False, alpha=0.5)
+ax[1].set_title("Atlantic WBs")
+ax[0].set_xlabel("delta lat (°)")
+ax[1].set_xlabel("delta lat (°)")
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/Scherrer_wave_break_climatology_delta_lat.png"
+)
+
+
+
 # %%
 ## read NAO positive and negative events
 first10_pos, first10_neg = er.read_extremes_allens("first10", 8)
 last10_pos, last10_neg = er.read_extremes_allens("last10", 8)
 
-#%%
-first10_pos = first10_pos[first10_pos['plev'] == 25000]
-last10_pos = last10_pos[last10_pos['plev'] == 25000]
 # %%
-# pos only
-nao = first10_pos
-wb = first10_WBs
+first10_pos = first10_pos[first10_pos["plev"] == 25000]
+last10_pos = last10_pos[last10_pos["plev"] == 25000]
+
+# %%
+def WB_NAO_concurrence(NAO, WB):
+    WB_before_NAO = []
+    WB_during_NAO = []
+
+    for ens in range(1, 51):
+        nao = NAO[NAO["ens"] == ens]
+
+        wb = WB[WB["ens"] == ens]
+
+        wb_before_nao = ts.select_WB_before_NAO(nao, wb)
+        wb_during_nao = ts.select_WB_during_NAO(nao, wb)
+
+        if not wb_before_nao.empty:
+            wb_before_nao["ens"] = ens
+            WB_before_NAO.append(wb_before_nao)
+
+        if not wb_during_nao.empty:
+            wb_during_nao["ens"] = ens
+            WB_during_NAO.append(wb_during_nao)
+    try:
+        WB_before_NAO = pd.concat(WB_before_NAO)
+    except ValueError:
+        WB_before_NAO = pd.DataFrame()
+        logging.warning("No WB before NAO")
+    
+    try:
+        WB_during_NAO = pd.concat(WB_during_NAO)
+    except ValueError:
+        WB_during_NAO = pd.DataFrame()
+        logging.warning("No WB during NAO")
+
+    return WB_before_NAO, WB_during_NAO
+
+# %%
+first_NAO = first10_pos # AWB corresponds to NAO positive
+last_NAO = last10_pos
+#%%
+first_pacific_AWB_before_NAO, first_pacific_AWB_during_NAO = WB_NAO_concurrence(first_NAO, first10_WBs_pacific)
 
 #%%
-WB_before_NAO = []
-WB_after_NAO = []
-
-for ens in range(1,51):
-    nao = nao[nao['ens'] == ens]
-
-    wb = wb[wb['ens'] == ens]
-
-    wb_before_nao = ts.select_WB_before_NAO(nao, wb)
-    wb_after_nao = ts.select_WB_after_NAO(nao, wb)
-
-    if not wb_before_nao.empty:
-        wb_before_nao['ens'] = ens
-        WB_before_NAO.append(wb_before_nao)
-
-    if not wb_after_nao.empty:
-        wb_after_nao['ens'] = ens
-        WB_after_NAO.append(wb_after_nao)
+last_pacific_AWB_before_NAO, last_pacific_AWB_during_NAO = WB_NAO_concurrence(last_NAO, last10_WBs_pacific)
+#%%
+first_atlantic_AWB_before_NAO, first_atlantic_AWB_during_NAO = WB_NAO_concurrence(first_NAO, first10_WBs_atlantic)
 
 #%%
-WB_before_NAO = pd.concat(WB_before_NAO)
-WB_after_NAO = pd.concat(WB_after_NAO)
-
+last_atlantic_AWB_before_NAO, last_atlantic_AWB_during_NAO = WB_NAO_concurrence(last_NAO, last10_WBs_atlantic)
 # %%
