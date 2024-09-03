@@ -255,7 +255,7 @@ def WB_NAO_concurrence(NAO, WB):
         WB_before_NAO = pd.concat(WB_before_NAO)
     except ValueError:
         WB_before_NAO = pd.DataFrame()
-        logging.warning("No WB before NAO")
+        logging.warning("No WB before NAO+")
     
     try:
         WB_during_NAO = pd.concat(WB_during_NAO)
@@ -278,4 +278,152 @@ first_atlantic_AWB_before_NAO, first_atlantic_AWB_during_NAO = WB_NAO_concurrenc
 
 #%%
 last_atlantic_AWB_before_NAO, last_atlantic_AWB_during_NAO = WB_NAO_concurrence(last_NAO, last10_WBs_atlantic)
+# %%
+# duration for before pacific
+first_pacific_AWB_before_NAO_dur = wb_duration(first_pacific_AWB_before_NAO)
+last_pacific_AWB_before_NAO_dur = wb_duration(last_pacific_AWB_before_NAO)
+
+# duration for during pacific
+first_pacific_AWB_during_NAO_dur = wb_duration(first_pacific_AWB_during_NAO)
+last_pacific_AWB_during_NAO_dur = wb_duration(last_pacific_AWB_during_NAO)
+
+# duration for before atlantic
+first_atlantic_AWB_before_NAO_dur = wb_duration(first_atlantic_AWB_before_NAO)
+last_atlantic_AWB_before_NAO_dur = wb_duration(last_atlantic_AWB_before_NAO)
+
+# duration for during atlantic
+first_atlantic_AWB_during_NAO_dur = wb_duration(first_atlantic_AWB_during_NAO)
+last_atlantic_AWB_during_NAO_dur = wb_duration(last_atlantic_AWB_during_NAO)
+# %%
+fig, ax = plt.subplots(2, 2, figsize=(10, 10))
+bins = np.arange(5, 20, 1)
+
+# before NAO
+sns.histplot(first_pacific_AWB_before_NAO_dur, ax=ax[0, 0], bins=bins, kde=False)
+sns.histplot(last_pacific_AWB_before_NAO_dur, ax=ax[0, 0], bins=bins, kde=False, alpha=0.5)
+
+# add legend
+ax[0, 0].legend(["First 10 years", "Last 10 years"])
+ax[0, 0].set_title("Pacific WBs before NAO+")
+
+sns.histplot(first_atlantic_AWB_before_NAO_dur, ax=ax[0, 1], bins=bins, kde=False)
+sns.histplot(last_atlantic_AWB_before_NAO_dur, ax=ax[0, 1], bins=bins, kde=False, alpha=0.5)
+ax[0, 1].set_title("Atlantic WBs before NAO+")
+
+# during NAO
+sns.histplot(first_pacific_AWB_during_NAO_dur, ax=ax[1, 0], bins=bins, kde=False)
+sns.histplot(last_pacific_AWB_during_NAO_dur, ax=ax[1, 0], bins=bins, kde=False, alpha=0.5)
+
+sns.histplot(first_atlantic_AWB_during_NAO_dur, ax=ax[1, 1], bins=bins, kde=False)
+sns.histplot(last_atlantic_AWB_during_NAO_dur, ax=ax[1, 1], bins=bins, kde=False, alpha=0.5)
+
+ax[1, 0].set_title("Pacific WBs during NAO")
+ax[1, 1].set_title("Atlantic WBs during NAO")
+
+ax[1, 0].set_xlabel("Duration (days)")
+ax[1,1].set_xlabel("Duration (days)")
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/Scherrer_wave_break_climatology_beforeduring_NAO+_duration.png"
+)
+# %%
+# elongation for before pacific
+first_pacific_AWB_before_NAO_elong = delta_lon(first_pacific_AWB_before_NAO)
+last_pacific_AWB_before_NAO_elong = delta_lon(last_pacific_AWB_before_NAO)
+
+# elongation for during pacific
+first_pacific_AWB_during_NAO_elong = delta_lon(first_pacific_AWB_during_NAO)
+last_pacific_AWB_during_NAO_elong = delta_lon(last_pacific_AWB_during_NAO)
+
+# elongation for before atlantic
+first_atlantic_AWB_before_NAO_elong = delta_lon(first_atlantic_AWB_before_NAO)
+last_atlantic_AWB_before_NAO_elong = delta_lon(last_atlantic_AWB_before_NAO)
+
+# elongation for during atlantic
+first_atlantic_AWB_during_NAO_elong = delta_lon(first_atlantic_AWB_during_NAO)
+last_atlantic_AWB_during_NAO_elong = delta_lon(last_atlantic_AWB_during_NAO)
+# %%
+fig, ax = plt.subplots(2, 2, figsize=(10, 10))
+bins = np.arange(0, 51, 2)
+
+# before NAO
+sns.histplot(first_pacific_AWB_before_NAO_elong, ax=ax[0, 0], bins=bins, kde=False)
+sns.histplot(last_pacific_AWB_before_NAO_elong, ax=ax[0, 0], bins=bins, kde=False, alpha=0.5)
+
+
+sns.histplot(first_atlantic_AWB_before_NAO_elong, ax=ax[0, 1], bins=bins, kde=False)
+sns.histplot(last_atlantic_AWB_before_NAO_elong, ax=ax[0, 1], bins=bins, kde=False, alpha=0.5)
+
+# add legend
+ax[0, 0].legend(["First 10 years", "Last 10 years"])
+ax[0, 0].set_title("Pacific WBs before NAO+")
+ax[0, 1].set_title("Atlantic WBs before NAO+")
+
+# during NAO
+sns.histplot(first_pacific_AWB_during_NAO_elong, ax=ax[1, 0], bins=bins, kde=False)
+sns.histplot(last_pacific_AWB_during_NAO_elong, ax=ax[1, 0], bins=bins, kde=False, alpha=0.5)
+
+sns.histplot(first_atlantic_AWB_during_NAO_elong, ax=ax[1, 1], bins=bins, kde=False)
+sns.histplot(last_atlantic_AWB_during_NAO_elong, ax=ax[1, 1], bins=bins, kde=False, alpha=0.5)
+
+ax[1, 0].set_title("Pacific WBs during NAO")
+ax[1, 1].set_title("Atlantic WBs during NAO")
+
+ax[1, 0].set_xlabel("delta lon (°)")
+ax[1,1].set_xlabel("delta lon (°)")
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/Scherrer_wave_break_climatology_beforeduring_NAO+_delta_lon.png"
+)
+# %%
+
+# delta latitude
+# elongation for before pacific
+first_pacific_AWB_before_NAO_lat = delta_lat(first_pacific_AWB_before_NAO)
+last_pacific_AWB_before_NAO_lat = delta_lat(last_pacific_AWB_before_NAO)
+
+# elongation for during pacific
+first_pacific_AWB_during_NAO_lat = delta_lat(first_pacific_AWB_during_NAO)
+last_pacific_AWB_during_NAO_lat = delta_lat(last_pacific_AWB_during_NAO)
+
+# elongation for before atlantic
+first_atlantic_AWB_before_NAO_lat = delta_lat(first_atlantic_AWB_before_NAO)
+last_atlantic_AWB_before_NAO_lat = delta_lat(last_atlantic_AWB_before_NAO)
+
+# elongation for during atlantic
+first_atlantic_AWB_during_NAO_lat = delta_lat(first_atlantic_AWB_during_NAO)
+last_atlantic_AWB_during_NAO_lat = delta_lat(last_atlantic_AWB_during_NAO)
+# %%
+fig, ax = plt.subplots(2, 2, figsize=(10, 10))
+bins = np.arange(0, 30, 2)
+
+# before NAO
+sns.histplot(first_pacific_AWB_before_NAO_lat, ax=ax[0, 0], bins=bins, kde=False)
+sns.histplot(last_pacific_AWB_before_NAO_lat, ax=ax[0, 0], bins=bins, kde=False, alpha=0.5)
+
+sns.histplot(first_atlantic_AWB_before_NAO_lat, ax=ax[0, 1], bins=bins, kde=False)
+sns.histplot(last_atlantic_AWB_before_NAO_lat, ax=ax[0, 1], bins=bins, kde=False, alpha=0.5)
+
+# add legend
+ax[0, 0].legend(["First 10 years", "Last 10 years"])
+ax[0, 0].set_title("Pacific WBs before NAO+")
+ax[0, 1].set_title("Atlantic WBs before NAO+")
+
+# during NAO
+sns.histplot(first_pacific_AWB_during_NAO_lat, ax=ax[1, 0], bins=bins, kde=False)
+sns.histplot(last_pacific_AWB_during_NAO_lat, ax=ax[1, 0], bins=bins, kde=False, alpha=0.5)
+
+
+sns.histplot(first_atlantic_AWB_during_NAO_lat, ax=ax[1, 1], bins=bins, kde=False)
+sns.histplot(last_atlantic_AWB_during_NAO_lat, ax=ax[1, 1], bins=bins, kde=False, alpha=0.5)
+
+ax[1, 0].set_title("Pacific WBs during NAO")
+ax[1, 1].set_title("Atlantic WBs during NAO")
+
+ax[1, 0].set_xlabel("delta lat (°)")
+ax[1,1].set_xlabel("delta lat (°)")
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/Scherrer_wave_break_climatology_beforeduring_NAO+_delta_lat.png"
+)
 # %%
