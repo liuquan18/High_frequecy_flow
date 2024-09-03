@@ -57,7 +57,7 @@ members_all = list(range(1, 51))  # all members
 members_single = np.array_split(members_all, size)[rank]  # members on this core
 #%%
 # %%
-def wb_event(ds, persistence: int = 5, threshold: int = 20, gorl: str = ">="):
+def wb_event(ds, persistence: int = 5, threshold: int = 15, gorl: str = ">="):
     WB = ct.contrack()
     WB.ds = ds
 
