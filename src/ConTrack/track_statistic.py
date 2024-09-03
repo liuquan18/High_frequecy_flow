@@ -61,7 +61,7 @@ def select_WB_before_NAO(NAO, WB):
             return pd.DataFrame()  # Return an empty DataFrame if the year isn't in NAO
 
     # Apply the filter function to WB, grouped by 'Flag' and 'Year'
-    filtered_WB = WB.groupby(['Flag', 'Year'])[WB.columns].apply(WB_before_nao).reset_index(drop=True)
+    filtered_WB = WB.groupby(['Flag', 'Year', 'ens'])[WB.columns].apply(WB_before_nao).reset_index(drop=True)
 
     if not filtered_WB.empty:
         # Remove the temporary 'Year' column if you don't need it
@@ -101,7 +101,7 @@ def select_WB_during_NAO(NAO, WB):
             return pd.DataFrame()  # Return an empty DataFrame if the year isn't in NAO
 
     # Apply the filter function to WB, grouped by 'Flag' and 'Year'
-    filtered_WB = WB.groupby(['Flag', 'Year'])[WB.columns].apply(WB_during_nao).reset_index(drop=True)
+    filtered_WB = WB.groupby(['Flag', 'Year','ens'])[WB.columns].apply(WB_during_nao).reset_index(drop=True)
 
     if not filtered_WB.empty:
         # Remove the temporary 'Year' column if you don't need it
