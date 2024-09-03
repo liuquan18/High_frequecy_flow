@@ -110,12 +110,14 @@ for i, ens in enumerate(members_single):
     for year in WB_xr["year"].values:
         wb_df = WB_xr.sel(year=year).values
         wb_df = pd.DataFrame(wb_df, columns= ['Flag','Date','Longitude','Latitude','Intensity','Size'])
+        # change value of 'Flag' to 'year'+'Flag'
+        wb_df['Flag'] = year * 1000 + wb_df['Flag'] # different year may have the same flag
         WB_df.append(wb_df)
     WB_df = pd.concat(WB_df)
     # dropna
     WB_df = WB_df.dropna()
 
     # save life cycle 
-    WB_df.to_csv(event_dir + file.split("/")[-1].replace("wb_", "wb_events_").replace(".nc", ".csv"))
+    WB_df.to_csv(event_dir + file.split("/")[-1].replace("wb_", "wb_events_").replace(".nc", ".csv"), index=False)
 
 # %%
