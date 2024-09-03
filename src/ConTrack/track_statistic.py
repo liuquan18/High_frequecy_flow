@@ -50,9 +50,9 @@ def select_WB_before_NAO(NAO, WB):
         WB_sels = []
         if year in nao_years:
             for i, nao in NAO[NAO['Year'] == year].iterrows(): # there may be multiple NAO events in a year
-                lag_days = group['Date'].iloc[0] - nao['extreme_start_time'] # WB start time is before the NAO start time
+                lag_days = group['Date'].iloc[-1] - nao['extreme_start_time'] # > 0 if WB end time is before the NAO start time
                 group['lag_days'] = lag_days.days
-                WB_sels.append(group[group['lag_days'] < 0])
+                WB_sels.append(group[group['lag_days'] > 0])
             if WB_sels:
                 return pd.concat(WB_sels)
             else:
@@ -61,7 +61,7 @@ def select_WB_before_NAO(NAO, WB):
             return pd.DataFrame()  # Return an empty DataFrame if the year isn't in NAO
 
     # Apply the filter function to WB, grouped by 'Flag' and 'Year'
-    filtered_WB = WB.groupby(['Flag', 'Year'])[['Flag','Year','Date','Longitude','Latitude','Intensity','Size']].apply(WB_before_nao).reset_index(drop=True)
+    filtered_WB = WB.groupby(['Flag', 'Year'])[WB.columns].apply(WB_before_nao).reset_index(drop=True)
 
     if not filtered_WB.empty:
         # Remove the temporary 'Year' column if you don't need it
@@ -69,6 +69,49 @@ def select_WB_before_NAO(NAO, WB):
         return filtered_WB
     else:
         return pd.DataFrame()
+
+#%%
+def select_WB_during_NAO(NAO, WB):
+    WB['Year'] = WB['Date'].dt.year
+
+    # Extract year from 'extreme_end_time' in NAO
+    NAO['Year'] = NAO['extreme_end_time'].dt.year
+
+    # Create a dictionary to store the max 'extreme_end_time' for each year in NAO
+    nao_years = NAO['Year'].unique()
+
+    # Define a function to filter WB rows
+    def WB_during_nao(group):
+        
+        year = group['Year'].iloc[0]
+        WB_sels = []
+        if year in nao_years:
+            for i, nao in NAO[NAO['Year'] == year].iterrows(): # there may be multiple NAO events in a year
+                WB_lead_days = group['Date'].iloc[0] - nao['extreme_start_time'] # > 0 if WB start time is before the NAO start time
+                WB_lag_days = group['Date'].iloc[-1] - nao['extreme_end_time'] # > 0 if WB end time is before the NAO end time
+                group['lead_days'] = WB_lead_days.days
+                group['lag_days'] = WB_lag_days.days
+
+                WB_sels.append(group[(group['lead_days'] <=0 ) & (group['lag_days'] >= 0)])
+            if WB_sels:
+                return pd.concat(WB_sels)
+            else:
+                return pd.DataFrame()
+        else:
+            return pd.DataFrame()  # Return an empty DataFrame if the year isn't in NAO
+
+    # Apply the filter function to WB, grouped by 'Flag' and 'Year'
+    filtered_WB = WB.groupby(['Flag', 'Year'])[WB.columns].apply(WB_during_nao).reset_index(drop=True)
+
+    if not filtered_WB.empty:
+        # Remove the temporary 'Year' column if you don't need it
+        filtered_WB = filtered_WB.drop('Year', axis=1)
+        return filtered_WB
+    else:
+        return pd.DataFrame()
+
+
+
 #%%
 def get_color_map(lag_days):
     # Normalize the lag_days to a 0-1 range
