@@ -10,4 +10,4 @@
 #SBATCH --output=wb.%j.out
 
 
-mpirun -n 2 python -u WB_events.py $1 # 0,1
+mpirun -n 4 python -u WB_events.py $1 # 0,1
