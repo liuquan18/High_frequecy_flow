@@ -45,16 +45,19 @@ period = periods[node]
 tags = ["1850_1859", "2091_2100"]
 tag = tags[node]
 
+#%%
+break_type = 'AWB'
+
 # %%
 index_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wavebreak_index/wb_{period}/"
-event_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wavebreak_events/wavebreak_events_{period}/"
-flag_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wavebreak_events/wavebreak_flag_{period}/"
+event_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wavebreak_events/{break_type}_events_{period}/"
+flag_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wavebreak_events/{break_type}_flag_{period}/"
 # %%
 members_all = list(range(1, 51))  # all members
 members_single = np.array_split(members_all, size)[rank]  # members on this core
 #%%
 # %%
-def wb_event(ds, persistence: int = 5):
+def wb_event(ds, persistence: int = 5, threshold: int = 20, gorl: str = ">="):
     WB = ct.contrack()
     WB.ds = ds
 
@@ -63,14 +66,14 @@ def wb_event(ds, persistence: int = 5):
     WB.ds = WB.ds.rolling(time=3, center=True).median()
 
     # spatial smoothing
-    WB.ds = WB.ds.rolling(lat=5, lon=5, center=True).mean()
+    WB.ds = WB.ds.rolling(lat=3, lon=3, center=True).mean()
 
     WB.set_up(force=True)
 
     WB.run_contrack(
         variable="wave_breaking_index",
-        threshold=20,
-        gorl=">=",
+        threshold=threshold,
+        gorl=gorl,
         overlap=0.5,
         persistence=persistence,
         twosided=True,
@@ -100,6 +103,7 @@ for i, ens in enumerate(members_single):
 
     # save the flag
     ds["flag"].to_netcdf(flag_dir + file.split("/")[-1])
+    
 
     WB_xr = ds.groupby("time.year").apply(event_cycle)
     WB_df = []
