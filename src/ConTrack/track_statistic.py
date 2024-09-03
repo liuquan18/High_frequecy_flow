@@ -52,7 +52,7 @@ def select_WB_before_NAO(NAO, WB):
             for i, nao in NAO[NAO['Year'] == year].iterrows(): # there may be multiple NAO events in a year
                 lag_days = group['Date'].iloc[-1] - nao['extreme_start_time'] # > 0 if WB end time is before the NAO start time
                 group['lag_days'] = lag_days.days
-                WB_sels.append(group[group['lag_days'] > 0])
+                WB_sels.append(group[group['lag_days'] < 0])
             if WB_sels:
                 return pd.concat(WB_sels)
             else:
@@ -88,11 +88,11 @@ def select_WB_during_NAO(NAO, WB):
         if year in nao_years:
             for i, nao in NAO[NAO['Year'] == year].iterrows(): # there may be multiple NAO events in a year
                 WB_lead_days = group['Date'].iloc[-1] - nao['extreme_start_time'] # > 0 if WB start time is before the NAO start time
-                WB_lag_days = group['Date'].iloc[0] - nao['extreme_end_time'] # > 0 if WB end time is before the NAO end time
+                WB_lag_days = group['Date'].iloc[-1] - nao['extreme_end_time'] # > 0 if WB end time is before the NAO end time
                 group['lead_days'] = WB_lead_days.days
                 group['lag_days'] = WB_lag_days.days
 
-                WB_sels.append(group[(group['lead_days'] <=0 ) & (group['lag_days'] >= 0)])
+                WB_sels.append(group[(group['lead_days'] >=0 ) & (group['lag_days'] <= 0)])
             if WB_sels:
                 return pd.concat(WB_sels)
             else:
