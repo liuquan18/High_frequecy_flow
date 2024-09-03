@@ -29,7 +29,7 @@ except ValueError:
 # %%
 try:
     break_type = sys.argv[2]
-except ValueError:
+except IndexError:
     logging.warning("no break type provided, using default AWB")
     break_type = "AWB"
 
