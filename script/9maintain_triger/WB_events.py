@@ -21,18 +21,17 @@ importlib.reload(ct)
 # %%
 # %%
 try:
-    node = int(sys.argv[0])
+    node = int(sys.argv[1])
 except ValueError:
     logging.warning("no node number provided, using default node 0")
     node = 0
 
 # %%
 try:
-    break_type = str(sys.argv[1])
+    break_type = str(sys.argv[2])
 except IndexError:
     logging.warning("no break type provided, using default AWB")
     break_type = "AWB"
-
 
 # %%
 # nodes and cores
