@@ -63,10 +63,11 @@ flag_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wavebreak
 
 # %%
 # mkdir if not exist
-if not os.path.exists(event_dir):
-    os.makedirs(event_dir)
-if not os.path.exists(flag_dir):
-    os.makedirs(flag_dir)
+if rank == 0:
+    if not os.path.exists(event_dir):
+        os.makedirs(event_dir)
+    if not os.path.exists(flag_dir):
+        os.makedirs(flag_dir)
 
 # %%
 members_all = list(range(1, 51))  # all members
