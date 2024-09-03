@@ -112,7 +112,7 @@ def event_cycle(ds):
 
 
 # %%
-for i, ens in enumerate(members_single, break_type):
+for i, ens in enumerate(members_single):
     logging.warning(f"Period {period}: Rank {rank}, member {i+1}/{len(members_single)}")
 
     threshold = 15 if break_type == "AWB" else -15
