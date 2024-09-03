@@ -87,8 +87,8 @@ def select_WB_during_NAO(NAO, WB):
         WB_sels = []
         if year in nao_years:
             for i, nao in NAO[NAO['Year'] == year].iterrows(): # there may be multiple NAO events in a year
-                WB_lead_days = group['Date'].iloc[0] - nao['extreme_start_time'] # > 0 if WB start time is before the NAO start time
-                WB_lag_days = group['Date'].iloc[-1] - nao['extreme_end_time'] # > 0 if WB end time is before the NAO end time
+                WB_lead_days = group['Date'].iloc[-1] - nao['extreme_start_time'] # > 0 if WB start time is before the NAO start time
+                WB_lag_days = group['Date'].iloc[0] - nao['extreme_end_time'] # > 0 if WB end time is before the NAO end time
                 group['lead_days'] = WB_lead_days.days
                 group['lag_days'] = WB_lag_days.days
 
