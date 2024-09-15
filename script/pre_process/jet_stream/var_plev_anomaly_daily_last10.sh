@@ -43,4 +43,4 @@ Softlink() {
 
 export -f Merge Softlink
 
-parallel --jobs 10 Softlink ::: {1..50}]
+parallel --jobs 10 Softlink ::: {1..50}
