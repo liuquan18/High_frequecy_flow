@@ -22,7 +22,7 @@ Softlink() {
     dailyfile=$(find ${from_path}r${member}i1p1f1/day/${var}/gn/ -name ${var}_day_MPI-ESM1-2-LR_historical_r${member}i1p1f1_gn_18500101-18691231.nc)
     
     # select the first 10 years
-    tofile=${to_path}${var}_day_MPI-ESM1-2-LR_historical_r${member}i1p1f1_gn_18500501-18590931_ano.nc
+    tofile=${to_path}${var}_day_MPI-ESM1-2-LR_historical_r${member}i1p1f1_gn_18500501-18590931.nc
     cdo -sellevel,100000,85000,70000,50000,25000 -selmonth,5/9 -selyear,1850/1859 $dailyfile \
         ${tofile}   
 
