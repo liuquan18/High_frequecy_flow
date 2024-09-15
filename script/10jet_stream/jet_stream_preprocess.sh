@@ -7,6 +7,9 @@
 # neglecting windspoleward of 75 and equatorward of 15 .
 
 # The resulting field is then low-pass filtered to remove variability on time scales shorter than 10 days.
+module load cdo
+module load parallel
+
 
 period=$1
 var=ua #zonal wind
