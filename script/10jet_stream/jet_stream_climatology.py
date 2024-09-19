@@ -4,7 +4,13 @@ import pandas as pd
 import numpy as np
 import glob
 # %%
-period = 'first10'
+from src.compute.slurm_cluster import init_dask_slurm_cluster
+#%%
+client, scluster = init_dask_slurm_cluster(walltime = "04:00:00", memory = "128GB")
+
+#%%
+client
+
 #%%
 def jet_stream_climatology(period):
     jet_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_{period}/'
@@ -13,6 +19,8 @@ def jet_stream_climatology(period):
     # drop lon dim
     jets = jets.isel(lon = 0).ua
 
+    # chunk size
+    jets = jets.chunk({'time': -1, 'lat': 33, 'ens': -1})
 
     # maximum westerly wind speed of the resulting profile is then identified and this is defined as the jet speed.
     jet_speeds = jets.max(dim = 'lat')
