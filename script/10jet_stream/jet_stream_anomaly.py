@@ -5,6 +5,7 @@ import numpy as np
 import glob
 import logging
 logging.basicConfig(level = logging.INFO)
+import seaborn as sns
 
 import matplotlib.pyplot as plt
 # %%
@@ -60,18 +61,11 @@ jet_speed_first10_ano, jet_loc_first10_ano = jet_stream_anomaly('first10')
 #%%
 jet_speed_last10_ano, jet_loc_last10_ano = jet_stream_anomaly('last10')
 # %%
-fig, axes = plt.subplots(1,2)
-
-jet_speed_first10_ano.plot.hist(ax = axes[0], bins = np.arange(-6,7,1))
-jet_speed_last10_ano.plot.hist(ax = axes[0], bins = np.arange(-6,7,1), histtype = 'step')
-
-
-jet_loc_first10_ano.plot.hist(ax = axes[1], bins = np.arange(-30,31,10))
-jet_loc_last10_ano.plot.hist(ax = axes[1], bins = np.arange(-30,31,10), histtype = 'step')
-# %%
-import seaborn as sns
+# jet location anomaly
 sns.histplot(jet_loc_first10_ano.values.flatten(), label = 'first10', color = 'b', bins = np.arange(-30,31,2), stat = 'density')
 sns.histplot(jet_loc_last10_ano.values.flatten(), label = 'last10', color = 'r', bins = np.arange(-30,31,2), stat = 'density', alpha = 0.5)
-
 plt.legend()
+# %%
+sns.histplot(jet_speed_first10_ano.values.flatten(), label = 'first10', color = 'b', bins = np.arange(-5,5.2,0.5), stat = 'density')
+sns.histplot(jet_speed_last10_ano.values.flatten(), label = 'last10', color = 'r', bins = np.arange(-5,5.2,0.5), stat = 'density', alpha = 0.5)
 # %%
