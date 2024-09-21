@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from src.extremes.extreme_read import read_extremes_allens
 
 # %%
-def _jet_stream_anomaly(ens, period, jet_speed_clim, jet_loc_clim):
+def _jet_stream_anomaly(ens, period, climatology, stat = 'loc'):
     # Load data
     jet_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_{period}/"
     jet_file = glob.glob(f"{jet_path}*r{ens}i1p1f1*.nc")[0]
@@ -22,21 +22,28 @@ def _jet_stream_anomaly(ens, period, jet_speed_clim, jet_loc_clim):
     # drop dim lon
     jet = jet.isel(lon=0)
 
-    # maximum westerly wind speed of the resulting profile is then identified and this is defined as the jet speed.
-    jet_speed = jet.max(dim="lat")
-    jet_speed_ano = jet_speed.groupby("time.month") - jet_speed_clim
+    if stat == 'speed':
 
-    # The jet latitude is defined as the latitude at which this maximum is found.
-    jet_loc = jet.lat[jet.argmax(dim="lat")]
+        # maximum westerly wind speed of the resulting profile is then identified and this is defined as the jet speed.
+        jet_speed = jet.max(dim="lat")
+        jet_speed_ano = jet_speed.groupby("time.month") - climatology
 
-    jet_loc_ano = jet_loc.groupby("time.month") - jet_loc_clim
+        return jet_speed_ano
 
-    if jet_loc_ano.min() < -50:
-        logging.warning(
-            f"Jet latitude anomaly is below -40 for ens {ens} in period {period}\n"
-        )
+    elif stat == 'loc':
+            
+        # The jet latitude is defined as the latitude at which this maximum is found.
+        jet_loc = jet.lat[jet.argmax(dim="lat")]
 
-    return jet_speed_ano, jet_loc_ano
+        jet_loc_ano = jet_loc.groupby("time.month") - climatology
+
+        if jet_loc_ano.min() < -50:
+            logging.warning(
+                f"Jet latitude anomaly is below -40 for ens {ens} in period {period}\n"
+            )
+        
+        return jet_loc_ano
+
 
 
 # %%
