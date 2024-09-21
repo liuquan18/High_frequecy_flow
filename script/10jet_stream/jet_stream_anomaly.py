@@ -167,7 +167,13 @@ def jet_loc_extremeNAO(NAO, jet_loc):
 first10_pos_events, first10_neg_events = read_extremes_allens("first10", 8)
 last10_pos_events, last10_neg_events = read_extremes_allens("last10", 8)
 
+# %%
+# select 250 hPa only
+first10_pos_events = first10_pos_events[first10_pos_events["plev"] == 25000]
+first10_neg_events = first10_neg_events[first10_neg_events["plev"] == 25000]
 
+last10_pos_events = last10_pos_events[last10_pos_events["plev"] == 25000]
+last10_neg_events = last10_neg_events[last10_neg_events["plev"] == 25000]
 # %%
 def jet_loc_event(jet_locs, events, average = True):
     # change time to tiemstamp
@@ -264,4 +270,5 @@ sns.histplot(
     ax=axes[2]
 )
 axes[2].set_title("Jet location anomaly negative NAO")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/jet_stream/jet_loc_anomaly.png")
 # %%
