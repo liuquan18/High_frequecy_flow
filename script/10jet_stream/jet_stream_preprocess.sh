@@ -32,7 +32,7 @@ Lowpass(){
 
     # split years
     cdo -P 10 -splityear -del29feb ${infile} ${tmp_dir}${fname}_year
-    # band filter, keep 2-12 days 
+    # band filter, keep above 12 days 
     year_files=$(ls ${tmp_dir}${fname}_year*)
     cdo -O -P 10 -mergetime -apply,lowpass,30.5 [ ${year_files} ] ${outfile}
     # remove temporary files
