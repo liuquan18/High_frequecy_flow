@@ -10,6 +10,7 @@ import seaborn as sns
 
 import matplotlib.pyplot as plt
 
+from src.extremes.extreme_read import read_extremes_allens
 
 # %%
 def _jet_stream_anomaly(ens, period, jet_speed_clim, jet_loc_clim):
@@ -152,5 +153,104 @@ def jet_loc_extremeNAO(NAO, jet_loc):
     return jet_loc_negs, jet_loc_poss
 
 #%%
+first10_pos_events, first10_neg_events = read_extremes_allens("first10", 8)
+last10_pos_events, last10_neg_events = read_extremes_allens("last10", 8)
 
+
+# %%
+def jet_loc_event(jet_locs, events, average = True):
+    # change time to tiemstamp
+    try:
+        jet_locs['time'] = jet_locs.indexes['time'].to_datetimeindex()
+    except AttributeError:
+        pass
+    # iterate over all events
+    jet_locs_event = []
+    for idx, event in events.iterrows():
+        jet_loc = jet_locs.sel(
+            time = slice (event.extreme_start_time, event.extreme_end_time),
+            ens = event.ens
+        )
+
+        if average:
+            jet_loc = jet_loc.mean(dim='time')
+        # to numpy array
+        jet_loc = jet_loc.values
+        jet_locs_event.append(jet_loc)
+    try:
+        jet_locs_event = np.concatenate(jet_locs_event)
+    except ValueError:
+        jet_locs_event = np.array(jet_locs_event)
+    return jet_locs_event
+# %%
+jet_loc_first10_pos = jet_loc_event(jet_loc_first10_ano, first10_pos_events)
+jet_loc_first10_neg = jet_loc_event(jet_loc_first10_ano, first10_neg_events)
+# %%
+jet_loc_last10_pos = jet_loc_event(jet_loc_last10_ano, last10_pos_events)
+jet_loc_last10_neg = jet_loc_event(jet_loc_last10_ano, last10_neg_events)
+# %%
+# plot jet location anomaly
+fig, axes = plt.subplots(3,1, figsize=(10, 10))
+
+# jet location anomaly
+sns.histplot(
+    jet_loc_first10_ano.values.flatten(),
+    label="first10",
+    color="b",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    ax = axes[0]
+)
+sns.histplot(
+    jet_loc_last10_ano.values.flatten(),
+    label="last10",
+    color="r",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    alpha=0.5,
+    ax = axes[0]
+)
+
+axes[0].set_title("Jet location anomaly all")
+
+sns.histplot(
+    jet_loc_first10_pos,
+    label="first10_pos",
+    color="b",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    ax=axes[1]
+)
+
+sns.histplot(
+    jet_loc_last10_pos,
+    label="last10_pos",
+    color="r",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    alpha=0.5,
+    ax=axes[1]
+)
+axes[1].set_title("Jet location anomaly positive NAO")
+
+
+sns.histplot(
+    jet_loc_first10_neg,
+    label="first10",
+    color="b",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    ax=axes[2]
+)
+
+sns.histplot(
+    jet_loc_last10_neg,
+    label="last10",
+    color="r",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    alpha=0.5,
+    ax=axes[2]
+)
+axes[2].set_title("Jet location anomaly negative NAO")
 # %%
