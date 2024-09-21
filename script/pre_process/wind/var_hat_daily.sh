@@ -7,8 +7,8 @@ module load parallel
 var=$1 # zg, ua, va
 period=$2 # first10, last10
 
-from_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_global/${var}_MJJAS_ano_${period}/
-to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_global/${var}_MJJAS_ano_${period}_hat/
+from_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_global/${var}_MJJAS_${period}/
+to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_global/${var}_MJJAS_${period}_hat/
 tmp_dir=/scratch/m/m300883/${var}/bandpass/
 
 
@@ -26,7 +26,7 @@ Low_pass_filter(){
 
     # split years
     cdo -P 10 -splityear -del29feb ${infile} ${tmp_dir}${fname}_year
-    # band filter, keep 2-12 days 
+    # band filter, keep above 12 days 
     year_files=$(ls ${tmp_dir}${fname}_year*)
     cdo -O -P 10 -mergetime -apply,lowpass,30.5 [ ${year_files} ] ${outfile}
     # remove temporary files
