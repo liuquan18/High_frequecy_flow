@@ -61,11 +61,15 @@ def jet_stream_anomaly(period):
     jet_loc_ano = []
 
     for ens in range(1, 51):
-        speed_ano, loc_ano = _jet_stream_anomaly(
-            ens, period, jet_speed_clim, jet_loc_clim
+        loc_ano = _jet_stream_anomaly(
+            ens, period, jet_loc_clim, stat="loc"
+        )
+        loc_ano["ens"] = ens
+
+        speed_ano = _jet_stream_anomaly(
+            ens, period, jet_speed_clim, stat="speed"
         )
         speed_ano["ens"] = ens
-        loc_ano["ens"] = ens
 
         jet_speed_ano.append(speed_ano)
         jet_loc_ano.append(loc_ano)
