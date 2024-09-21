@@ -29,4 +29,4 @@ Softlink() {
 }
 
 export -f Softlink
-parallel --jobs 20 Softlink ::: {1..50}
+parallel --jobs 10 Softlink ::: {1..50}
