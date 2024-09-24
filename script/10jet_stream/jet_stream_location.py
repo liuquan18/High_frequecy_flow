@@ -17,7 +17,7 @@ from src.jet_stream.jet_stream_plotting import plot_uhat
 logging.basicConfig(level=logging.INFO)
 
 # %%
-
+############## jet location hist #####################
 jet_speed_first10_ano, jet_loc_first10_ano = jet_stream_anomaly("first10")
 
 # %%
@@ -43,78 +43,17 @@ jet_loc_first10_neg = jet_event(jet_loc_first10_ano, first10_neg_events)
 jet_loc_last10_pos = jet_event(jet_loc_last10_ano, last10_pos_events)
 jet_loc_last10_neg = jet_event(jet_loc_last10_ano, last10_neg_events)
 
-
+#################### jet composite map ####################
 # %%
-# plot jet location anomaly
-fig, axes = plt.subplots(3, 1, figsize=(10, 10))
-
-# jet location anomaly
-sns.histplot(
-    jet_loc_first10_ano.values.flatten(),
-    label="first10",
-    color="b",
-    bins=np.arange(-30, 31, 2),
-    stat="count",
-    ax=axes[0],
+uhat_climatology = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/ua_Amon_MPI-ESM1-2-LR_HIST_climatology_185005-185909.nc"
 )
-sns.histplot(
-    jet_loc_last10_ano.values.flatten(),
-    label="last10",
-    color="r",
-    bins=np.arange(-30, 31, 2),
-    stat="count",
-    alpha=0.5,
-    ax=axes[0],
+uhat_climatology = uhat_climatology.ua.sel(plev=slice(None, 70000)).mean(dim="plev")
+
+uhat_climatology = uhat_climatology.sel(time=slice("1859-06-01", "1859-08-31")).mean(
+    dim="time"
 )
 
-axes[0].set_title("Jet location anomaly all")
-
-sns.histplot(
-    jet_loc_first10_pos,
-    label="first10_pos",
-    color="b",
-    bins=np.arange(-30, 31, 2),
-    stat="count",
-    ax=axes[1],
-)
-
-sns.histplot(
-    jet_loc_last10_pos,
-    label="last10_pos",
-    color="r",
-    bins=np.arange(-30, 31, 2),
-    stat="count",
-    alpha=0.5,
-    ax=axes[1],
-)
-axes[1].set_title("Jet location anomaly positive NAO")
-
-
-sns.histplot(
-    jet_loc_first10_neg,
-    label="first10",
-    color="b",
-    bins=np.arange(-30, 31, 2),
-    stat="count",
-    ax=axes[2],
-)
-
-sns.histplot(
-    jet_loc_last10_neg,
-    label="last10",
-    color="r",
-    bins=np.arange(-30, 31, 2),
-    stat="count",
-    alpha=0.5,
-    ax=axes[2],
-)
-axes[2].set_title("Jet location anomaly negative NAO")
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/jet_stream/jet_loc_anomaly.png"
-)
-
-# %%
-# plot location histgram and composite mean map together
 uhat_pos_first10 = xr.open_dataset(
     "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/jetstream_MJJAS_first10_pos.nc"
 ).ua
@@ -131,34 +70,74 @@ uhat_neg_last10 = xr.open_dataset(
     "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/jetstream_MJJAS_last10_neg.nc"
 ).ua
 
-# %%
-
 
 # %%
-uhat_climatology = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/ua_Amon_MPI-ESM1-2-LR_HIST_climatology_185005-185909.nc"
-)
-uhat_climatology = uhat_climatology.ua.sel(plev=slice(None, 70000)).mean(dim="plev")
-
-uhat_climatology = uhat_climatology.sel(time=slice("1859-06-01", "1859-08-31")).mean(
-    dim="time"
-)
 # %%
-fig, axes = plt.subplots(
-    1, 3, figsize=(15, 6), subplot_kw={"projection": ccrs.Orthographic(-20, 60)}
-)
+# plot location histgram and composite mean map together
 
-plot_uhat(axes[0], uhat_climatology)
-axes[0].set_title("Climatology")
+# %%
+def generate_intermediate_points(start, end, num_points):
+    return list(
+        zip(
+            np.linspace(start[0], end[0], num_points),
+            np.linspace(start[1], end[1], num_points),
+        )
+    )
+
+def add_box(map_ax):
+    # Define the corners of the box aligned with lat/lon
+    lon_min, lon_max = -60, 0
+    lat_min, lat_max = 15, 75
+
+    # Number of intermediate points (increase for smoother curves)
+    num_points = 100
+
+    # Generate points for each edge of the box
+    left_edge = generate_intermediate_points(
+        (lon_min, lat_min), (lon_min, lat_max), num_points
+    )
+    top_edge = generate_intermediate_points(
+        (lon_min, lat_max), (lon_max, lat_max), num_points
+    )
+    right_edge = generate_intermediate_points(
+        (lon_max, lat_max), (lon_max, lat_min), num_points
+    )
+    bottom_edge = generate_intermediate_points(
+        (lon_max, lat_min), (lon_min, lat_min), num_points
+    )
+
+    # Combine all edges
+    box = left_edge + top_edge + right_edge + bottom_edge
+
+    # Separate longitudes and latitudes
+    lons, lats = zip(*box)
+
+    # Plot the smooth box
+    map_ax.plot(lons, lats, color="k", linewidth=2, transform=ccrs.PlateCarree())
+
+# %%
+fig = plt.figure(figsize=(20, 14))
+
+gs = fig.add_gridspec(2, 3)
 
 
-plot_uhat(axes[1], uhat_pos_first10)
-axes[1].set_title("Positive NAO")
+map_ax1 = fig.add_subplot(gs[0, 0], projection=ccrs.Orthographic(-20, 60))
+plot_uhat(map_ax1, uhat_climatology)
+map_ax1.set_title("Climatology")
 
-plot_uhat(axes[2], uhat_neg_first10)
-axes[2].set_title("Negative NAO")
 
-for ax in axes:
+map_ax2 = fig.add_subplot(gs[0, 1], projection=ccrs.Orthographic(-20, 60))
+plot_uhat(map_ax2, uhat_pos_first10)
+map_ax2.set_title("Positive NAO")
+
+map_ax3 = fig.add_subplot(gs[0, 2], projection=ccrs.Orthographic(-20, 60))
+plot_uhat(map_ax3, uhat_neg_first10)
+map_ax3.set_title("Negative NAO")
+# add bounding box at -60,0 lon, and 15,75 lat
+add_box(map_ax1)
+
+# Add gridlines
+for ax in [map_ax1, map_ax2, map_ax3]:
     # Add gridlines
     gl = ax.gridlines(draw_labels=False, dms=True, x_inline=False, y_inline=False)
 
@@ -167,4 +146,72 @@ for ax in axes:
     gl.ylines = True
 
 
-plt.tight_layout(pad=1.3)
+## histgram
+hist_ax1 = fig.add_subplot(gs[1, 0])
+# jet location anomaly
+sns.histplot(
+    jet_loc_first10_ano.values.flatten(),
+    label="first10",
+    color="b",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    ax=hist_ax1,
+)
+sns.histplot(
+    jet_loc_last10_ano.values.flatten(),
+    label="last10",
+    color="r",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    alpha=0.5,
+    ax=hist_ax1,
+)
+
+hist_ax1.set_title("Jet location anomaly all")
+
+
+hist_ax2 = fig.add_subplot(gs[1, 1])
+sns.histplot(
+    jet_loc_first10_pos,
+    label="first10_pos",
+    color="b",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    ax=hist_ax2,
+)
+
+sns.histplot(
+    jet_loc_last10_pos,
+    label="last10_pos",
+    color="r",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    alpha=0.5,
+    ax=hist_ax2,
+)
+hist_ax2.set_title("Jet location anomaly positive NAO")
+
+
+hist_ax3 = fig.add_subplot(gs[1, 2])
+sns.histplot(
+    jet_loc_first10_neg,
+    label="first10",
+    color="b",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    ax=hist_ax3,
+)
+
+sns.histplot(
+    jet_loc_last10_neg,
+    label="last10",
+    color="r",
+    bins=np.arange(-30, 31, 2),
+    stat="count",
+    alpha=0.5,
+    ax=hist_ax3,
+)
+hist_ax3.set_title("Jet location anomaly negative NAO")
+
+
+# %%
