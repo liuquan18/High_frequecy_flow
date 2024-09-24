@@ -12,73 +12,6 @@ import matplotlib.pyplot as plt
 
 from src.extremes.extreme_read import read_extremes_allens
 
-# %%
-def _jet_stream_anomaly(ens, period, climatology, stat = 'loc'):
-    # Load data
-    jet_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_{period}/"
-    jet_file = glob.glob(f"{jet_path}*r{ens}i1p1f1*.nc")[0]
-
-    jet = xr.open_dataset(jet_file).ua
-    # drop dim lon
-    jet = jet.isel(lon=0)
-
-    if stat == 'speed':
-
-        # maximum westerly wind speed of the resulting profile is then identified and this is defined as the jet speed.
-        jet_speed = jet.max(dim="lat")
-        jet_speed_ano = jet_speed.groupby("time.month") - climatology
-
-        return jet_speed_ano
-
-    elif stat == 'loc':
-            
-        # The jet latitude is defined as the latitude at which this maximum is found.
-        jet_loc = jet.lat[jet.argmax(dim="lat")]
-
-        jet_loc_ano = jet_loc.groupby("time.month") - climatology
-
-        if jet_loc_ano.min() < -50:
-            logging.warning(
-                f"Jet latitude anomaly is below -40 for ens {ens} in period {period}\n"
-            )
-        
-        return jet_loc_ano
-
-
-
-# %%
-def jet_stream_anomaly(period):
-
-    # climatology only use the first10 years
-    jet_speed_clim = xr.open_dataset(
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_speed_climatology_first10.nc"
-    ).ua
-    jet_loc_clim = xr.open_dataset(
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_first10.nc"
-    ).lat
-
-    jet_speed_ano = []
-    jet_loc_ano = []
-
-    for ens in range(1, 51):
-        loc_ano = _jet_stream_anomaly(
-            ens, period, jet_loc_clim, stat="loc"
-        )
-        loc_ano["ens"] = ens
-
-        speed_ano = _jet_stream_anomaly(
-            ens, period, jet_speed_clim, stat="speed"
-        )
-        speed_ano["ens"] = ens
-
-        jet_speed_ano.append(speed_ano)
-        jet_loc_ano.append(loc_ano)
-
-    jet_speed_ano = xr.concat(jet_speed_ano, dim="ens")
-    jet_loc_ano = xr.concat(jet_loc_ano, dim="ens")
-
-    return jet_speed_ano, jet_loc_ano
-
 
 # %%
 
@@ -205,6 +138,8 @@ jet_loc_first10_neg = jet_event(jet_loc_first10_ano, first10_neg_events)
 # %%
 jet_loc_last10_pos = jet_event(jet_loc_last10_ano, last10_pos_events)
 jet_loc_last10_neg = jet_event(jet_loc_last10_ano, last10_neg_events)
+
+
 # %%
 # plot jet location anomaly
 fig, axes = plt.subplots(3,1, figsize=(10, 10))
@@ -348,3 +283,57 @@ sns.histplot(
 axes[2].set_title("Jet speed anomaly negative NAO")
 
 # %%
+# plot location histgram and composite mean map together
+uhat_pos_first10 = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/jetstream_MJJAS_first10_pos.nc"
+).ua
+
+uhat_neg_first10 = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/jetstream_MJJAS_first10_neg.nc"
+).ua
+
+uhat_pos_last10 = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/jetstream_MJJAS_last10_pos.nc"
+).ua
+
+uhat_neg_last10 = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/jetstream_MJJAS_last10_neg.nc"
+).ua
+
+# %%
+
+
+# %%
+uhat_climatology = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/ua_Amon_MPI-ESM1-2-LR_HIST_climatology_185005-185909.nc"
+)
+uhat_climatology = uhat_climatology.ua.sel(plev=slice(None, 70000)).mean(dim="plev")
+
+uhat_climatology = uhat_climatology.sel(time=slice("1859-06-01", "1859-08-31")).mean(
+    dim="time"
+)
+# %%
+fig, axes = plt.subplots(
+    1, 3, figsize=(15,6), subplot_kw={"projection": ccrs.Orthographic(-20, 60)}
+)
+
+plot_uhat(axes[0], uhat_climatology)
+axes[0].set_title("Climatology")
+
+
+plot_uhat(axes[1], uhat_pos_first10)
+axes[1].set_title("Positive NAO")
+
+plot_uhat(axes[2], uhat_neg_first10)
+axes[2].set_title("Negative NAO")
+
+for ax in axes:
+    # Add gridlines
+    gl = ax.gridlines(draw_labels=False, dms=True, x_inline=False, y_inline=False)
+
+    # Optionally, adjust gridline appearance
+    gl.xlines = True
+    gl.ylines = True
+
+
+plt.tight_layout(pad = 1.3)
