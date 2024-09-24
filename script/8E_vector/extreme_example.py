@@ -76,14 +76,14 @@ def read_neg(ens):
 
     # uhat
     umean = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_season_global/ua_Amon_MPI-ESM1-2-LR_HIST_ensmean_185005-185909.nc").ua.sel(plev=25000)
-    uhat = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_ano_first10_hat/ua_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931_ano.nc")
+    uhat = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_first10_hat/ua_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931.nc")
     neg_uhat = uhat.ua.sel(plev=25000, time = neg_extreme_start_date)
     neg_umean = umean.sel(time=neg_extreme_start_date, method='nearest')
     neg_uhat = (neg_uhat + neg_umean).isel(time = 0)
 
     # E
-    M = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/E_M_daily_global/E_M_MJJAS_ano_first10_prime/E_M_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931_ano.nc").ua.sel(plev=25000)
-    N = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/E_N_daily_global/E_N_MJJAS_ano_first10_prime/E_N_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931_ano.nc").ua.sel(plev=25000)
+    M = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/E_M_daily_global/E_M_MJJAS_first10_prime/E_M_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931.nc").ua.sel(plev=25000)
+    N = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/E_N_daily_global/E_N_MJJAS_first10_prime/E_N_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931.nc").ua.sel(plev=25000)
     M['time'] = M.indexes['time'].to_datetimeindex()
     N['time'] = N.indexes['time'].to_datetimeindex()
     E_M = -2*M
@@ -166,5 +166,5 @@ d = div_neg.plot.contourf(ax=ax6, levels = np.arange(-4e-4, 4.1e-4, 1e-4), exten
 plt.colorbar(p, ax=[ax3, ax4], orientation='horizontal', label='u (m/s)', aspect=50)
 plt.colorbar(d, ax=[ax5, ax6], orientation='horizontal', label='divergence ', aspect=50)
 
-plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/E_vector/extreme_example.png', dpi=300)
+# plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/E_vector/extreme_example.png', dpi=300)
 # %%
