@@ -5,13 +5,15 @@ import numpy as np
 import glob
 import logging
 
-logging.basicConfig(level=logging.INFO)
 import seaborn as sns
 
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
 
 from src.extremes.extreme_read import read_extremes_allens
-
+from src.jet_stream.jet_speed_and_location import jet_stream_anomaly
+from src.jet_stream.jet_stream_plotting import plot_uhat
+logging.basicConfig(level=logging.INFO)
 
 # %%
 
