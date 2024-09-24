@@ -8,8 +8,8 @@ period=$1 # first10, last10
 frequency=$2 # prime, prime_veryhigh, prime_intermedia
 
 # u prime and v prime path
-uprime_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_ano_${period}_${frequency}/
-vprime_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_global/va_MJJAS_ano_${period}_${frequency}/
+uprime_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_${period}_${frequency}/
+vprime_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_global/va_MJJAS_${period}_${frequency}/
 
 to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/E_N_daily_global/E_N_MJJAS_ano_${period}_${frequency}/
 # mf: momentum fluxes
