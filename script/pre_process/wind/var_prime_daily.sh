@@ -7,8 +7,8 @@ module load parallel
 var=$1 # zg, ua, va
 period=$2 # first10, last10
 
-from_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_global/${var}_MJJAS_ano_${period}/
-to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_global/${var}_MJJAS_ano_${period}_prime/
+from_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_global/${var}_MJJAS_${period}/
+to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_global/${var}_MJJAS_${period}_prime/
 tmp_dir=/scratch/m/m300883/${var}/bandpass/
 
 
