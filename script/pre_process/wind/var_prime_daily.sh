@@ -36,3 +36,30 @@ band_filter(){
 export -f band_filter
 # parallel band filter in to_dir
 parallel --jobs 10 band_filter ::: ${from_path}*.nc
+
+# check if all files are processed in ${to_path}
+# Loop through numbers 1 to 50
+for i in {1..50}; do
+    # Construct the filename pattern
+    file_pattern="*_r${i}i1p1f1_gn_*.nc"
+    
+    # Check if a file matching the pattern exists
+    matching_file=$(ls "$to_path"/$file_pattern 2>/dev/null | head -n 1)
+    
+    if [ -z "$matching_file" ]; then
+        # If no matching file found, construct an example of the expected filename
+        example_filename=$(ls "$to_path"/*.nc 2>/dev/null | head -n 1)
+        if [ -n "$example_filename" ]; then
+            base_name=$(basename "$example_filename")
+            expected_filename="${base_name/_r*i1p1f1_gn_/_r${i}i1p1f1_gn_}"
+            echo "Missing file: $expected_filename"
+            echo "regenerate without parallel"
+            band_filter ${from_path}${expected_filename}
+
+        else
+            echo "Missing file matching pattern: $file_pattern"
+        fi
+    fi
+
+done
+
