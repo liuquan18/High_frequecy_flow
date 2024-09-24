@@ -1,6 +1,7 @@
 import glob
 import xarray as xr
 import logging
+import numpy as np
 
 logging.basicConfig(level=logging.INFO)
 
@@ -71,3 +72,30 @@ def jet_stream_anomaly(period):
     jet_loc_ano = xr.concat(jet_loc_ano, dim="ens")
 
     return jet_speed_ano, jet_loc_ano
+
+
+# %%
+def jet_event(jet_locs, events, average = True):
+    # change time to tiemstamp
+    try:
+        jet_locs['time'] = jet_locs.indexes['time'].to_datetimeindex()
+    except AttributeError:
+        pass
+    # iterate over all events
+    jet_locs_event = []
+    for idx, event in events.iterrows():
+        jet_loc = jet_locs.sel(
+            time = slice (event.extreme_start_time, event.extreme_end_time),
+            ens = event.ens
+        )
+
+        if average:
+            jet_loc = jet_loc.mean(dim='time')
+        # to numpy array
+        jet_loc = jet_loc.values
+        jet_locs_event.append(jet_loc)
+    try:
+        jet_locs_event = np.concatenate(jet_locs_event)
+    except ValueError:
+        jet_locs_event = np.array(jet_locs_event)
+    return jet_locs_event
