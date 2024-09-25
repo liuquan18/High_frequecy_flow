@@ -43,7 +43,7 @@ neg_pc = pc.sel(time=slice(neg_start_date, neg_end_date))
 # %%
 umean = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_season_global/ua_Amon_MPI-ESM1-2-LR_HIST_ensmean_185005-185909.nc").ua.sel(plev=25000)
 #%%
-uhat = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_ano_first10_hat/ua_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931_ano.nc")
+uhat = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_first10_hat/ua_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931.nc")
 # %%
 pos_uhat = uhat.ua.sel(plev=25000, time=slice(pos_start_date, pos_end_date))
 pos_umean = umean.sel(time=pos_start_date, method='nearest')
@@ -55,7 +55,7 @@ neg_umean = umean.sel(time=neg_start_date, method='nearest')
 neg_uhat = neg_uhat + neg_umean
 neg_uhat = neg_uhat.sel(lon = slice(240,360)).mean(dim='lon')
 # %%
-mf = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/momentum_fluxes_daily_global/momentum_fluxes_MJJAS_ano_first10_prime/momentum_fluxes_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931_ano.nc")
+mf = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/E_N_daily_global/E_N_MJJAS_first10_prime/E_N_day_MPI-ESM1-2-LR_historical_r{ens}i1p1f1_gn_18500501-18590931.nc")
 #%%
 mf_zonal = mf.ua.sel(plev=25000, lon=slice(240,360)).mean(dim='lon')
 pos_mf_zonal = mf_zonal.sel(time=slice(pos_start_date, pos_end_date))
