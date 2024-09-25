@@ -137,5 +137,5 @@ cbar = plt.colorbar(co_mf_neg, cax=cbar_ax, orientation="horizontal")
 cbar.set_label(r'$m^2/s^2$ (zonal mean scaled by 1/5)', loc = 'center')
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-# plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
 # %%
