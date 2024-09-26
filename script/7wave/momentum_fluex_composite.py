@@ -93,10 +93,10 @@ uhat_first10_pos, uhat_first10_neg = composite_variable("ua", 70000, "hat", "fir
 uhat_last10_pos, uhat_last10_neg = composite_variable("ua", 70000, "hat", "last10")
 # %%
 mf_first10_pos, mf_first10_neg = composite_variable(
-    "momentum_fluxes", plev, "prime", "first10"
+    "E_N", plev, "prime", "first10"
 )
 mf_last10_pos, mf_last10_neg = composite_variable(
-    "momentum_fluxes", plev, "prime", "last10"
+    "E_N", plev, "prime", "last10"
 )
 
 # %%
