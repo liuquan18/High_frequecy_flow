@@ -89,8 +89,8 @@ zg_levels = np.arange(-75, 76, 15)
 zg_first10_pos, zg_first10_neg = composite_variable("zg", plev, None, "first10")
 zg_last10_pos, zg_last10_neg = composite_variable("zg", plev, None, "last10")
 # %%
-uhat_first10_pos, uhat_first10_neg = composite_variable("ua", plev, "hat", "first10")
-uhat_last10_pos, uhat_last10_neg = composite_variable("ua", plev, "hat", "last10")
+uhat_first10_pos, uhat_first10_neg = composite_variable("ua", 70000, "hat", "first10")
+uhat_last10_pos, uhat_last10_neg = composite_variable("ua", 70000, "hat", "last10")
 # %%
 mf_first10_pos, mf_first10_neg = composite_variable(
     "momentum_fluxes", plev, "prime", "first10"
