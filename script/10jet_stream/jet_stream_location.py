@@ -213,5 +213,8 @@ sns.histplot(
 )
 hist_ax3.set_title("Jet location anomaly negative NAO")
 
+# vertical line for hist axes
+for ax in [hist_ax1, hist_ax2, hist_ax3]:
+    ax.axvline(x=0, color="k", linestyle="--")
 
 # %%
