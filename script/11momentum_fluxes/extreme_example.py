@@ -35,7 +35,7 @@ pos_uhat = xr.open_dataset(
 )
 pos_uhat = pos_uhat.ua.sel(plev=slice(100000, 70000)).mean(dim="plev")
 pos_uhat = pos_uhat.sel(time=slice(pos_start_date, pos_end_date))
-pos_uhat = pos_uhat.sel(lon=slice(240, 360)).mean(dim="lon")
+pos_uhat = pos_uhat.sel(lon=slice(260, 350)).mean(dim="lon")
 
 # mf
 pos_mf = xr.open_dataset(
@@ -43,7 +43,7 @@ pos_mf = xr.open_dataset(
 ).ua
 # eddy driven jet
 pos_mf_zonal = pos_mf.sel(plev=slice(100000, 70000)).mean(dim="plev")
-pos_mf_zonal = pos_mf_zonal.sel(lon=slice(240, 360)).mean(dim="lon")
+pos_mf_zonal = pos_mf_zonal.sel(lon=slice(260, 350)).mean(dim="lon")
 pos_mf_zonal = pos_mf_zonal.sel(time=slice(pos_start_date, pos_end_date))
 pos_mf_event = pos_mf.sel(time=pos_start_date, plev=25000).squeeze()
 # zg
@@ -82,7 +82,7 @@ neg_uhat = neg_uhat.ua.sel(plev=slice(100000, 70000)).mean(dim="plev")
 # select the time period of the extreme event
 neg_uhat = neg_uhat.sel(time=slice(neg_start_date, neg_end_date))
 # select the region of interest
-neg_uhat = neg_uhat.sel(lon=slice(240, 360)).mean(dim="lon")
+neg_uhat = neg_uhat.sel(lon=slice(260, 350)).mean(dim="lon")
 
 # mf
 neg_mf = xr.open_dataset(
@@ -90,7 +90,7 @@ neg_mf = xr.open_dataset(
 ).ua
 # eddy driven jet
 neg_mf_zonal = neg_mf.sel(plev=slice(100000, 70000)).mean(dim="plev")
-neg_mf_zonal = neg_mf_zonal.sel(lon=slice(240, 360)).mean(dim="lon")
+neg_mf_zonal = neg_mf_zonal.sel(lon=slice(260, 350)).mean(dim="lon")
 neg_mf_zonal = neg_mf_zonal.sel(time=slice(neg_start_date, neg_end_date))
 neg_mf_event = neg_mf.sel(time=neg_start_date, plev=25000).squeeze()
 
@@ -226,6 +226,6 @@ cbar = plt.colorbar(co_mf_neg, cax=cbar_ax, orientation="horizontal")
 cbar.set_label(r"$m^2/s^2$ (zonal mean scaled by 1/5)", loc="center")
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
 
 # %%
