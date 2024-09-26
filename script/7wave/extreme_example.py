@@ -118,6 +118,24 @@ ax2.axhline(y=-1.5, color="r", linestyle="--")
 ax1.set_title("example NAO+ event")
 ax2.set_title("example NAO- event")
 
+# # twin ax of ax1 and ax2 to plot zonal mean of mf_zonal
+ax1_twin = ax1.twinx()
+ax2_twin = ax2.twinx()
+pos_mf_mermean = pos_mf_zonal.sel(lat=slice(30, 60)).mean(dim="lat")
+neg_mf_mermean = neg_mf_zonal.sel(lat=slice(30, 60)).mean(dim="lat")
+
+pos_mf_mermean['time'] = pos_pc.time
+neg_mf_mermean['time'] = neg_pc.time
+
+pos_mf_mermean.plot(
+     ax=ax1_twin, color="k", linestyle="--"
+)
+neg_mf_mermean.plot(
+    ax=ax2_twin, color="k", linestyle="--"
+)
+ax1_twin.set_title(None)
+ax2_twin.set_title(None)
+
 ax3 = fig.add_subplot(gs[1, 0])
 ax4 = fig.add_subplot(gs[1, 1])
 
@@ -208,5 +226,6 @@ cbar = plt.colorbar(co_mf_neg, cax=cbar_ax, orientation="horizontal")
 cbar.set_label(r"$m^2/s^2$ (zonal mean scaled by 1/5)", loc="center")
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
+
 # %%
