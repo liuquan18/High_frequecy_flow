@@ -152,7 +152,7 @@ cbar = plt.colorbar(p, cax=cbar_ax, orientation="horizontal")
 plt.suptitle("Composite of positive extremes (contour interval: 15m)")
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-plt.savefig(figname, dpi=300)
+# plt.savefig(figname, dpi=300)
 # %%
 ########## plot only with zg ##########
 fig, axes = plt.subplots(
@@ -182,10 +182,10 @@ cbar = plt.colorbar(p, cax=cbar_ax, orientation="horizontal")
 plt.suptitle("Composite of positive extremes (contour interval: 15m)")
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/composite_zg_pos.png",
-    dpi=300,
-)
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/composite_zg_pos.png",
+#     dpi=300,
+# )
 # %%
 #################### plot positive extremes with mf and uhat ####################
 uhat_levels = np.arange(-10, 11, 1)
