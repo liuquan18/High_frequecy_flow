@@ -56,7 +56,7 @@ for i, member in enumerate(members_single):
     print(" Period ", period, " member ", member)
 
     # read the data
-    file=glob.glob(base_dir+f'/*r{member}i*.nc')[0]
+    file=glob.glob(base_dir+f'*r{member}i*.nc')[0]
     upvp = xr.open_dataset(file).ua.squeeze()
     upvp['time'] = upvp.indexes['time'].to_datetimeindex()
 
