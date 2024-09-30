@@ -217,4 +217,5 @@ hist_ax3.set_title("Jet location anomaly negative NAO")
 for ax in [hist_ax1, hist_ax2, hist_ax3]:
     ax.axvline(x=0, color="k", linestyle="--")
 
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/jet_stream/jet_location_hist_map.png")
 # %%
