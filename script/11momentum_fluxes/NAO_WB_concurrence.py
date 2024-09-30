@@ -54,6 +54,10 @@ def WB_composite(period, ens):
         NAO_pos_AWB = comp.date_range_composite(AWB, NAO_pos_range)
         NAO_pos_CWB = comp.date_range_composite(CWB, NAO_pos_range)
 
+        # calculate the ocurrence during the events
+        NAO_pos_AWB = NAO_pos_AWB.sum(dim = 'event')
+        NAO_pos_CWB = NAO_pos_CWB.sum(dim = 'event')
+
     if NAO_neg.empty:
         NAO_neg_AWB = None
         NAO_neg_CWB = None
@@ -61,6 +65,9 @@ def WB_composite(period, ens):
         NAO_neg_range = comp.lead_lag_30days(NAO_neg, base_plev=25000, cross_plev=1)
         NAO_neg_AWB = comp.date_range_composite(AWB, NAO_neg_range)
         NAO_neg_CWB = comp.date_range_composite(CWB, NAO_neg_range)
+        # calculate the ocurrence during the events
+        NAO_neg_AWB = NAO_neg_AWB.sum(dim = 'event')
+        NAO_neg_CWB = NAO_neg_CWB.sum(dim = 'event')
 
     return NAO_pos_AWB, NAO_neg_AWB, NAO_pos_CWB, NAO_neg_CWB
 # %%
@@ -84,14 +91,16 @@ def WB_occurrence_period(period):
             neg_CWBs.append(NAO_neg_CWB)
 
 
-    pos_AWBs = xr.concat(pos_AWBs, dim = 'ens')
-    neg_AWBs = xr.concat(neg_AWBs, dim = 'ens')
-    pos_CWBs = xr.concat(pos_CWBs, dim = 'ens')
-    neg_CWBs = xr.concat(neg_CWBs, dim = 'ens')
+    pos_AWBs = xr.concat(pos_AWBs, dim = 'ens').sum(dim = 'ens')
+    neg_AWBs = xr.concat(neg_AWBs, dim = 'ens').sum(dim = 'ens')
+    pos_CWBs = xr.concat(pos_CWBs, dim = 'ens').sum(dim = 'ens')
+    neg_CWBs = xr.concat(neg_CWBs, dim = 'ens').sum(dim = 'ens')
 
     return pos_AWBs, neg_AWBs, pos_CWBs, neg_CWBs
 
 #%%
 first_pos_AWBs, first_neg_AWBs, first_pos_CWBs, first_neg_CWBs = WB_occurrence_period("first10")
+
 # %%
 last_pos_AWBs, last_neg_AWBs, last_pos_CWBs, last_neg_CWBs = WB_occurrence_period("last10")
+# %%
