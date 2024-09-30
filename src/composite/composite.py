@@ -68,7 +68,7 @@ def lead_lag_30days(events, base_plev=None, cross_plev=1):
         ref_time = base_event.extreme_end_time
 
         count_startime = ref_time - pd.Timedelta(days=30)
-        count_endtime = ref_time + pd.Timedelta(days=31)
+        count_endtime = ref_time + pd.Timedelta(days=30)
 
         # select the rows where the time between "extreme_start_time" and "extreme_end_time" has an overlap with the time between "count_startime" and "count_endtime"
         overlapped_events_across_height = events[
