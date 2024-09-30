@@ -263,7 +263,7 @@ sns.barplot(
     orient="h",
     ax=ax,
     hue_order=["last10", "first10"],
-    palette=["C1", "C0"],
+    palette=["r", "w"],
 )
 
 # neg as negative side of y-axis
@@ -275,16 +275,16 @@ sns.barplot(
     x="count",
     hue="period",
     hue_order=["last10", "first10"],
-    palette=["C1", "C0"],
+    palette=["r", "w"],
     orient="h",
     ax=ax,
     alpha=0.5,
 )
 ax.set_ylabel("Pressure Level (hPa)")
 
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_all.png"
-# )
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/count_distribution_all.png"
+)
 
 
 # %%
