@@ -5,6 +5,20 @@ import seaborn as sns
 from src.extremes.extreme_read import read_extremes_allens
 import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
+
+# Set the background color to black
+plt.rcParams['figure.facecolor'] = 'black'
+plt.rcParams['axes.facecolor'] = 'black'
+
+# Set the lines and labels to white
+plt.rcParams['text.color'] = 'white'
+plt.rcParams['axes.labelcolor'] = 'white'
+plt.rcParams['xtick.color'] = 'white'
+plt.rcParams['ytick.color'] = 'white'
+plt.rcParams['axes.edgecolor'] = 'white'
+plt.rcParams['lines.color'] = 'white'
+
 
 # %%
 def combine_events(df, duration=13):
@@ -268,9 +282,9 @@ sns.barplot(
 )
 ax.set_ylabel("Pressure Level (hPa)")
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_all.png"
-)
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/extremes_statistics/count_distribution_all.png"
+# )
 
 
 # %%
