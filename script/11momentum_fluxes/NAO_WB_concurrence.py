@@ -3,6 +3,7 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 import glob
+import matplotlib.pyplot as plt
 # %%
 from src.extremes.extreme_read import read_extremes
 from eventextreme.extreme_threshold import subtract_threshold
@@ -12,39 +13,20 @@ import src.composite.composite as comp
 import importlib
 importlib.reload(comp)
 
-
-# %%
-def construct_df(events):
-    
-    df = pd.DataFrame(index = pd.date_range(start = '1850-05-01', end = '2100-09-30', freq = 'D'), columns = ['WB'], data = 0)
-
-    if len(events) >0 :
-        for i, event in events.iterrows():
-            start_time = event['extreme_start_time']
-            end_time = event['extreme_end_time']
-            df.loc[start_time:end_time, 'WB'] = 1
-
-    xarr = df.to_xarray()
-    xarr = xarr.rename({'index':'time'})
-    
-    return xarr
-
 #%%
-def read_wbs(period, ens):
-    awb_file = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/E_N_daily_global/NA_AWB/AWB_{period}/AWB_{period}_r{ens}.csv"
-    cwb_file = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/E_N_daily_global/NA_CWB/CWB_{period}/CWB_{period}_r{ens}.csv"
-    awbs = pd.read_csv(awb_file)
-    cwbs = pd.read_csv(cwb_file)
-
-    AWB = construct_df(awbs)
-    CWB = construct_df(cwbs)
-
-    return AWB, CWB
+def read_upvp(period, ens):
+    base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/E_N_daily_global/NA_eddy_upvp_{period}/'
+    file=glob.glob(base_dir+f'*r{ens}i*.nc')[0]
+    upvp = xr.open_dataset(file).ua.squeeze()
+    upvp['time'] = upvp.indexes['time'].to_datetimeindex()
+    return upvp
 
 
 # %%
 def WB_composite(period, ens):
-    AWB, CWB = read_wbs(period, ens)
+    upvp = read_upvp(period, ens)
+    AWB = xr.where(upvp > 1, 1, 0)
+    CWB = xr.where(upvp < -1, 1, 0)
     NAO_pos, NAO_neg = read_extremes(period, 8, ens, 25000)
     if NAO_pos.empty:
         NAO_pos_AWB = None
@@ -103,4 +85,81 @@ first_pos_AWBs, first_neg_AWBs, first_pos_CWBs, first_neg_CWBs = WB_occurrence_p
 
 # %%
 last_pos_AWBs, last_neg_AWBs, last_pos_CWBs, last_neg_CWBs = WB_occurrence_period("last10")
+
+#%%
+def smooth(arr, days = 5):
+    arr_smooth = arr.rolling(time = days).mean(dim = 'time')
+    return arr_smooth
+
+
+# %%
+fig, axes = plt.subplots(2,2, figsize = (12,8))
+first_pos_AWBs.plot(ax = axes[0,0])
+last_pos_AWBs.plot(ax = axes[0,0])
+
+first_pos_CWBs.plot(ax = axes[1,0])
+last_pos_CWBs.plot(ax = axes[1,0])
+
+
+first_neg_AWBs.plot(ax = axes[0,1])
+last_neg_AWBs.plot(ax = axes[0,1])
+
+first_neg_CWBs.plot(ax = axes[1,1])
+last_neg_CWBs.plot(ax = axes[1,1])
+
+# %%
+fig, axes = plt.subplots(1,2,figsize = (12,8))
+first_pos_AWBs.plot(ax = axes[0], alpha = 0.5,  color = 'b')
+last_pos_AWBs.plot(ax = axes[0], alpha = 0.5, color = 'r')
+
+first_neg_CWBs.plot(ax = axes[1], alpha = 0.5, color = 'b')
+last_neg_CWBs.plot(ax = axes[1], alpha = 0.5,  color = 'r')
+
+smooth(first_pos_AWBs).plot(ax = axes[0], color = 'b', linewidth = 3, label = 'first10')
+smooth(last_pos_AWBs).plot(ax = axes[0], color = 'r', linewidth = 3, label = 'last10')
+
+smooth(first_neg_CWBs).plot(ax = axes[1], color = 'b', linewidth = 3, label = 'first10')
+smooth(last_neg_CWBs).plot(ax = axes[1], color = 'r', linewidth = 3, label = 'last10')
+
+axes[0].set_title("AWB occurrence during NAO positive")
+axes[1].set_title("CWB occurrence during NAO negative")
+
+axes[0].set_xlim(-21,21)
+axes[1].set_xlim(-21, 21)
+
+axes[0].set_ylabel("WB occurrence", fontsize = 14)
+axes[0].set_ylabel("")
+axes[1].set_xlabel("days after NAO extremes", fontsize = 14)
+axes[0].set_xlabel("days after NAO extremes", fontsize = 14)
+
+axes[1].legend()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/pos_AWB_neg_CWB_occurrence.png", dpi = 300)
+# %%
+# pos_CWB, neg_AWB
+fig, axes = plt.subplots(1,2,figsize = (12,8))
+first_pos_CWBs.plot(ax = axes[0], alpha = 0.5,  color = 'b')
+last_pos_CWBs.plot(ax = axes[0], alpha = 0.5, color = 'r')
+
+first_neg_AWBs.plot(ax = axes[1], alpha = 0.5, color = 'b')
+last_neg_AWBs.plot(ax = axes[1], alpha = 0.5,  color = 'r')
+
+smooth(first_pos_CWBs).plot(ax = axes[0], color = 'b', linewidth = 3, label = 'first10')
+smooth(last_pos_CWBs).plot(ax = axes[0], color = 'r', linewidth = 3, label = 'last10')
+
+smooth(first_neg_AWBs).plot(ax = axes[1], color = 'b', linewidth = 3, label = 'first10')
+smooth(last_neg_AWBs).plot(ax = axes[1], color = 'r', linewidth = 3, label = 'last10')
+
+axes[0].set_title("CWB occurrence during NAO positive")
+axes[1].set_title("AWB occurrence during NAO negative")
+
+axes[0].set_xlim(-21,21)
+axes[1].set_xlim(-21, 21)
+
+axes[0].set_ylabel("WB occurrence", fontsize = 14)
+axes[0].set_ylabel("")
+axes[1].set_xlabel("days after NAO extremes", fontsize = 14)
+axes[0].set_xlabel("days after NAO extremes", fontsize = 14)
+
+axes[1].legend()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/pos_CWB_neg_AWB_occurrence.png", dpi = 300)
 # %%
