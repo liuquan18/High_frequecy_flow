@@ -17,6 +17,15 @@ plt.rcParams['xtick.color'] = 'white'
 plt.rcParams['ytick.color'] = 'white'
 plt.rcParams['axes.edgecolor'] = 'white'
 plt.rcParams['lines.color'] = 'white'
+
+#%%
+# Set default font sizes
+plt.rcParams['axes.titlesize'] = 20  # Title font size
+plt.rcParams['axes.labelsize'] = 15  # X and Y label font size
+plt.rcParams['xtick.labelsize'] = 12  # X tick label font size
+plt.rcParams['ytick.labelsize'] = 12  # Y tick label font size
+plt.rcParams['legend.fontsize'] = 13  # Legend font size
+
 # %%
 pos_ens = 38
 neg_ens = 3
@@ -139,10 +148,10 @@ pos_mf_mermean['time'] = pos_pc.time
 neg_mf_mermean['time'] = neg_pc.time
 
 pos_mf_mermean.plot(
-     ax=ax1_twin, color="k", linestyle="--"
+     ax=ax1_twin, color="w", linestyle="--"
 )
 neg_mf_mermean.plot(
-    ax=ax2_twin, color="k", linestyle="--"
+    ax=ax2_twin, color="w", linestyle="--"
 )
 ax1_twin.set_title(None)
 ax2_twin.set_title(None)
@@ -152,13 +161,13 @@ ax4 = fig.add_subplot(gs[1, 1])
 
 cs_pos = pos_uhat.T.plot.contour(
     ax=ax3,
-    colors="k",
+    colors="w",
     levels=np.arange(4, 10, 1),
     kwargs=dict(inline=True),
 )
 cs_neg = neg_uhat.T.plot.contour(
     ax=ax4,
-    colors="k",
+    colors="w",
     levels=np.arange(4, 10, 1),
     kwargs=dict(inline=True),
 )
@@ -192,14 +201,14 @@ cs_zg_pos = pos_zg.plot.contour(
     transform=ccrs.PlateCarree(),
     levels=np.arange(9100, 10500, 50),
     kwargs=dict(inline=True),
-    colors="k",
+    colors="w",
 )
 cs_zg_neg = neg_zg.plot.contour(
     ax=ax6,
     transform=ccrs.PlateCarree(),
     levels=np.arange(9100, 10500, 50),
     kwargs=dict(inline=True),
-    colors="k",
+    colors="w",
 )
 
 co_mf_pos = pos_mf_event.plot.contourf(
