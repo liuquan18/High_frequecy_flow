@@ -16,6 +16,35 @@ from src.jet_stream.jet_stream_plotting import plot_uhat
 
 logging.basicConfig(level=logging.INFO)
 
+import cartopy.crs as ccrs
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
+# %%
+from src.extremes.extreme_read import read_extremes
+from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+from src.plotting.util import erase_white_line
+# Set the background color to black
+
+#%%
+plt.rcParams['figure.facecolor'] = 'black'
+plt.rcParams['axes.facecolor'] = 'black'
+
+# Set the lines and labels to white
+plt.rcParams['text.color'] = 'white'
+plt.rcParams['axes.labelcolor'] = 'white'
+plt.rcParams['xtick.color'] = 'white'
+plt.rcParams['ytick.color'] = 'white'
+plt.rcParams['axes.edgecolor'] = 'white'
+plt.rcParams['lines.color'] = 'white'
+
+#%%
+# Set default font sizes
+plt.rcParams['axes.titlesize'] = 20  # Title font size
+plt.rcParams['axes.labelsize'] = 15  # X and Y label font size
+plt.rcParams['xtick.labelsize'] = 12  # X tick label font size
+plt.rcParams['ytick.labelsize'] = 12  # Y tick label font size
+plt.rcParams['legend.fontsize'] = 13  # Legend font size
+
 # %%
 ############## jet location hist #####################
 jet_speed_first10_ano, jet_loc_first10_ano = jet_stream_anomaly("first10")
@@ -152,20 +181,21 @@ hist_ax1 = fig.add_subplot(gs[1, 0])
 sns.histplot(
     jet_loc_first10_ano.values.flatten(),
     label="first10",
-    color="b",
+    color="w",
     bins=np.arange(-30, 31, 2),
     stat="count",
     ax=hist_ax1,
 )
-sns.histplot(
-    jet_loc_last10_ano.values.flatten(),
-    label="last10",
-    color="r",
-    bins=np.arange(-30, 31, 2),
-    stat="count",
-    alpha=0.5,
-    ax=hist_ax1,
-)
+
+# sns.histplot(
+#     jet_loc_last10_ano.values.flatten(),
+#     label="last10",
+#     color="r",
+#     bins=np.arange(-30, 31, 2),
+#     stat="count",
+#     alpha=0.5,
+#     ax=hist_ax1,
+# )
 
 hist_ax1.set_title("Jet location anomaly all")
 
@@ -174,47 +204,57 @@ hist_ax2 = fig.add_subplot(gs[1, 1])
 sns.histplot(
     jet_loc_first10_pos,
     label="first10_pos",
-    color="b",
+    color="w",
     bins=np.arange(-30, 31, 2),
     stat="count",
     ax=hist_ax2,
 )
 
-sns.histplot(
-    jet_loc_last10_pos,
-    label="last10_pos",
-    color="r",
-    bins=np.arange(-30, 31, 2),
-    stat="count",
-    alpha=0.5,
-    ax=hist_ax2,
-)
-hist_ax2.set_title("Jet location anomaly positive NAO")
+# sns.histplot(
+#     jet_loc_last10_pos,
+#     label="last10_pos",
+#     color="r",
+#     bins=np.arange(-30, 31, 2),
+#     stat="count",
+#     alpha=0.5,
+#     ax=hist_ax2,
+# )
 
+hist_ax2.set_title("Jet location anomaly NAO+")
+hist_ax2.set_ylim(0, 37)
 
 hist_ax3 = fig.add_subplot(gs[1, 2])
 sns.histplot(
     jet_loc_first10_neg,
     label="first10",
-    color="b",
+    color="w",
     bins=np.arange(-30, 31, 2),
     stat="count",
     ax=hist_ax3,
 )
 
-sns.histplot(
-    jet_loc_last10_neg,
-    label="last10",
-    color="r",
-    bins=np.arange(-30, 31, 2),
-    stat="count",
-    alpha=0.5,
-    ax=hist_ax3,
-)
-hist_ax3.set_title("Jet location anomaly negative NAO")
+# sns.histplot(
+#     jet_loc_last10_neg,
+#     label="last10",
+#     color="r",
+#     bins=np.arange(-30, 31, 2),
+#     stat="count",
+#     alpha=0.5,
+#     ax=hist_ax3,
+# )
+
+hist_ax3.set_title("Jet location anomaly NAO-")
+hist_ax3.set_ylim(0, 26)
 
 # vertical line for hist axes
 for ax in [hist_ax1, hist_ax2, hist_ax3]:
-    ax.axvline(x=0, color="k", linestyle="--")
+    ax.axvline(x=0, color="w", linestyle="--")
+
+    # remove to and right spines
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/jet_location_first10_box.png")
 
 # %%
