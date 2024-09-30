@@ -5,6 +5,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import matplotlib.gridspec as gridspec
+#%%
+# Any import of metpy will activate the accessors
+import metpy.calc as mpcalc
+from metpy.units import units
 
 # %%
 pos_ens = 38
@@ -35,17 +39,24 @@ pos_uhat = xr.open_dataset(
 )
 pos_uhat = pos_uhat.ua.sel(plev=slice(100000, 70000)).mean(dim="plev")
 pos_uhat = pos_uhat.sel(time=slice(pos_start_date, pos_end_date))
-pos_uhat = pos_uhat.sel(lon=slice(240, 350)).mean(dim="lon")
+pos_uhat = pos_uhat.sel(lon=slice(260, 350)).mean(dim="lon")
 
 # mf
 pos_mf = xr.open_dataset(
     f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/E_N_daily_global/E_N_MJJAS_first10_prime/E_N_day_MPI-ESM1-2-LR_historical_r{pos_ens}i1p1f1_gn_18500501-18590931.nc"
 ).ua
+
 # eddy driven jet
 pos_mf_zonal = pos_mf.sel(plev=slice(100000, 70000)).mean(dim="plev")
-pos_mf_zonal = pos_mf_zonal.sel(lon=slice(240, 350)).mean(dim="lon")
+
+# d pos_mf_zonal / dy
+pos_mf_zonal = pos_mf_zonal * units("m**2/s**2")
+pos_mf_zonal = mpcalc.first_derivative(pos_mf_zonal, axis=1)
+
+pos_mf_zonal = pos_mf_zonal.sel(lon=slice(260, 350)).mean(dim="lon")
 pos_mf_zonal = pos_mf_zonal.sel(time=slice(pos_start_date, pos_end_date))
 pos_mf_event = pos_mf.sel(time=pos_start_date, plev=25000).squeeze()
+
 # zg
 pos_zg = xr.open_dataset(
     f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_daily_global/zg_MJJAS_first10/zg_day_MPI-ESM1-2-LR_historical_r{pos_ens}i1p1f1_gn_18500501-18590931.nc"
@@ -82,7 +93,7 @@ neg_uhat = neg_uhat.ua.sel(plev=slice(100000, 70000)).mean(dim="plev")
 # select the time period of the extreme event
 neg_uhat = neg_uhat.sel(time=slice(neg_start_date, neg_end_date))
 # select the region of interest
-neg_uhat = neg_uhat.sel(lon=slice(240, 350)).mean(dim="lon")
+neg_uhat = neg_uhat.sel(lon=slice(260, 350)).mean(dim="lon")
 
 # mf
 neg_mf = xr.open_dataset(
@@ -90,7 +101,9 @@ neg_mf = xr.open_dataset(
 ).ua
 # eddy driven jet
 neg_mf_zonal = neg_mf.sel(plev=slice(100000, 70000)).mean(dim="plev")
-neg_mf_zonal = neg_mf_zonal.sel(lon=slice(240, 350)).mean(dim="lon")
+neg_mf_zonal = neg_mf_zonal * units("m**2/s**2")
+neg_mf_zonal = mpcalc.first_derivative(neg_mf_zonal, axis=1)
+neg_mf_zonal = neg_mf_zonal.sel(lon=slice(260, 350)).mean(dim="lon")
 neg_mf_zonal = neg_mf_zonal.sel(time=slice(neg_start_date, neg_end_date))
 neg_mf_event = neg_mf.sel(time=neg_start_date, plev=25000).squeeze()
 
@@ -153,10 +166,10 @@ cs_neg = neg_uhat.T.plot.contour(
 )
 
 mf_zonal_plot_pos = pos_mf_zonal.T.plot.contourf(
-    ax=ax3, levels=np.arange(-8, 9, 2), add_colorbar=False
+    ax=ax3, levels=np.arange(-20, 21, 5)*1e-06, add_colorbar=False
 )
 mf_zonal_plot_neg = neg_mf_zonal.T.plot.contourf(
-    ax=ax4, levels=np.arange(-8, 9, 2), add_colorbar=False
+    ax=ax4, levels=np.arange(-20, 21, 5)*1e-06, add_colorbar=False
 )
 
 
@@ -226,6 +239,6 @@ cbar = plt.colorbar(co_mf_neg, cax=cbar_ax, orientation="horizontal")
 cbar.set_label(r"$m^2/s^2$ (zonal mean scaled by 1/5)", loc="center")
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
 
 # %%

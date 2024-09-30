@@ -28,7 +28,7 @@ def read_variable(
     freq : str
         frequency label, default is None, hat, prime, prime_veryhigh, prime_intermedia
     """
-    base_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{variable}_daily_global/{variable}_MJJAS_ano_{period}"
+    base_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{variable}_daily_global/{variable}_MJJAS_{period}"
 
     if freq_label is None:
         freq_label = "/"

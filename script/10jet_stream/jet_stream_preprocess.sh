@@ -50,7 +50,7 @@ Jetstream(){
     # replace $var with jet_stream
     filename=${filename/$var/jet_stream}
 
-    cdo -zonmean -sellonlatbox,0,60,15,75 -vertmean -sellevel,100000,85000,70000 $dailyfile ${tmp_mean_dir}${filename}
+    cdo -zonmean -sellonlatbox,-60,0,15,75 -vertmean -sellevel,100000,85000,70000 $dailyfile ${tmp_mean_dir}${filename}
 
     Lowpass ${tmp_mean_dir}${filename} 
 }

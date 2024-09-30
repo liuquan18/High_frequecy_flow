@@ -19,9 +19,8 @@ def jet_stream_climatology(period):
     # drop lon dim
     jets = jets.isel(lon = 0).ua
 
-    # chunk size
-    jets = jets.chunk({'time': -1, 'lat': 33, 'ens': -1})
-
+    # load data into memory
+    jets = jets.load()
     # maximum westerly wind speed of the resulting profile is then identified and this is defined as the jet speed.
     jet_speeds = jets.max(dim = 'lat')
 
