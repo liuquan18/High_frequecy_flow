@@ -8,6 +8,26 @@ import matplotlib.pyplot as plt
 from src.extremes.extreme_read import read_extremes
 from eventextreme.extreme_threshold import subtract_threshold
 import src.composite.composite as comp
+# %%
+# Set the background color to black
+plt.rcParams['figure.facecolor'] = 'black'
+plt.rcParams['axes.facecolor'] = 'black'
+
+# Set the lines and labels to white
+plt.rcParams['text.color'] = 'white'
+plt.rcParams['axes.labelcolor'] = 'white'
+plt.rcParams['xtick.color'] = 'white'
+plt.rcParams['ytick.color'] = 'white'
+plt.rcParams['axes.edgecolor'] = 'white'
+plt.rcParams['lines.color'] = 'white'
+
+#%%
+# Set default font sizes
+plt.rcParams['axes.titlesize'] = 20  # Title font size
+plt.rcParams['axes.labelsize'] = 15  # X and Y label font size
+plt.rcParams['xtick.labelsize'] = 12  # X tick label font size
+plt.rcParams['ytick.labelsize'] = 12  # Y tick label font size
+plt.rcParams['legend.fontsize'] = 13  # Legend font size
 
 # %%
 import importlib
@@ -109,20 +129,20 @@ last_neg_CWBs.plot(ax = axes[1,1])
 
 # %%
 fig, axes = plt.subplots(1,2,figsize = (12,8))
-first_pos_AWBs.plot(ax = axes[0], alpha = 0.5,  color = 'b')
+first_pos_AWBs.plot(ax = axes[0], alpha = 0.5,  color = 'w')
 last_pos_AWBs.plot(ax = axes[0], alpha = 0.5, color = 'r')
 
-first_neg_CWBs.plot(ax = axes[1], alpha = 0.5, color = 'b')
+first_neg_CWBs.plot(ax = axes[1], alpha = 0.5, color = 'w')
 last_neg_CWBs.plot(ax = axes[1], alpha = 0.5,  color = 'r')
 
-smooth(first_pos_AWBs).plot(ax = axes[0], color = 'b', linewidth = 3, label = 'first10')
+smooth(first_pos_AWBs).plot(ax = axes[0], color = 'w', linewidth = 3, label = 'first10')
 smooth(last_pos_AWBs).plot(ax = axes[0], color = 'r', linewidth = 3, label = 'last10')
 
-smooth(first_neg_CWBs).plot(ax = axes[1], color = 'b', linewidth = 3, label = 'first10')
+smooth(first_neg_CWBs).plot(ax = axes[1], color = 'w', linewidth = 3, label = 'first10')
 smooth(last_neg_CWBs).plot(ax = axes[1], color = 'r', linewidth = 3, label = 'last10')
 
-axes[0].set_title("AWB occurrence during NAO positive")
-axes[1].set_title("CWB occurrence during NAO negative")
+axes[0].set_title("AWB occurrence during NAO+")
+axes[1].set_title("CWB occurrence during NAO-")
 
 axes[0].set_xlim(-21,21)
 axes[1].set_xlim(-21, 21)
@@ -132,21 +152,26 @@ axes[0].set_ylabel("")
 axes[1].set_xlabel("days after NAO extremes", fontsize = 14)
 axes[0].set_xlabel("days after NAO extremes", fontsize = 14)
 
+for ax in axes:
+    # no top and right spines
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
 axes[1].legend()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/pos_AWB_neg_CWB_occurrence.png", dpi = 300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/pos_AWB_neg_CWB_occurrence.png", dpi = 300)
 # %%
 # pos_CWB, neg_AWB
 fig, axes = plt.subplots(1,2,figsize = (12,8))
-first_pos_CWBs.plot(ax = axes[0], alpha = 0.5,  color = 'b')
+first_pos_CWBs.plot(ax = axes[0], alpha = 0.5,  color = 'w')
 last_pos_CWBs.plot(ax = axes[0], alpha = 0.5, color = 'r')
 
-first_neg_AWBs.plot(ax = axes[1], alpha = 0.5, color = 'b')
+first_neg_AWBs.plot(ax = axes[1], alpha = 0.5, color = 'w')
 last_neg_AWBs.plot(ax = axes[1], alpha = 0.5,  color = 'r')
 
-smooth(first_pos_CWBs).plot(ax = axes[0], color = 'b', linewidth = 3, label = 'first10')
+smooth(first_pos_CWBs).plot(ax = axes[0], color = 'w', linewidth = 3, label = 'first10')
 smooth(last_pos_CWBs).plot(ax = axes[0], color = 'r', linewidth = 3, label = 'last10')
 
-smooth(first_neg_AWBs).plot(ax = axes[1], color = 'b', linewidth = 3, label = 'first10')
+smooth(first_neg_AWBs).plot(ax = axes[1], color = 'w', linewidth = 3, label = 'first10')
 smooth(last_neg_AWBs).plot(ax = axes[1], color = 'r', linewidth = 3, label = 'last10')
 
 axes[0].set_title("CWB occurrence during NAO positive")
