@@ -19,6 +19,14 @@ plt.rcParams['ytick.color'] = 'white'
 plt.rcParams['axes.edgecolor'] = 'white'
 plt.rcParams['lines.color'] = 'white'
 
+#%%
+# Set default font sizes
+plt.rcParams['axes.titlesize'] = 20  # Title font size
+plt.rcParams['axes.labelsize'] = 15  # X and Y label font size
+plt.rcParams['xtick.labelsize'] = 12  # X tick label font size
+plt.rcParams['ytick.labelsize'] = 12  # Y tick label font size
+plt.rcParams['legend.fontsize'] = 13  # Legend font size
+
 
 # %%
 def combine_events(df, duration=13):
@@ -280,11 +288,14 @@ sns.barplot(
     ax=ax,
     alpha=0.5,
 )
-ax.set_ylabel("Pressure Level (hPa)")
+ax.set_ylabel("Pressure Level (hPa)", fontsize = 15)
+ax.set_xlabel("Count", fontsize = 15)
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/count_distribution_all.png"
-)
+ax.set_xticklabels(fontsize=12)
+ax.set_yticklabels(fontsize=12)
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/count_distribution_all.png"
+# )
 
 
 # %%

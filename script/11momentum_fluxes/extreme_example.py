@@ -128,8 +128,8 @@ gs = gridspec.GridSpec(3, 2)
 ax1 = fig.add_subplot(gs[0, 0])
 ax2 = fig.add_subplot(gs[0, 1])
 
-pos_pc.plot(ax=ax1)
-neg_pc.plot(ax=ax2)
+pos_pc.plot(ax=ax1, linewidth=3)
+neg_pc.plot(ax=ax2, linewidth=3)
 
 # hline at y = 1.5 for ax1, y = -1.5 for ax2
 ax1.axhline(y=1.5, color="r", linestyle="--")
@@ -164,20 +164,25 @@ cs_pos = pos_uhat.T.plot.contour(
     colors="w",
     levels=np.arange(4, 10, 1),
     kwargs=dict(inline=True),
+    linewidths=2,
 )
 cs_neg = neg_uhat.T.plot.contour(
     ax=ax4,
     colors="w",
     levels=np.arange(4, 10, 1),
     kwargs=dict(inline=True),
+    linewidths=2,
 )
 
-# mf_zonal_plot_pos = pos_mf_zonal.T.plot.contourf(
-#     ax=ax3, levels=np.arange(-8, 9, 2), add_colorbar=False
-# )
-# mf_zonal_plot_neg = neg_mf_zonal.T.plot.contourf(
-#     ax=ax4, levels=np.arange(-8, 9, 2), add_colorbar=False
-# )
+shading_level = np.arange(-8, 9, 2)
+shading_level = shading_level[shading_level < -2 or shading_level > 2]
+
+mf_zonal_plot_pos = pos_mf_zonal.T.plot.contourf(
+    ax=ax3, levels=np.arange(-8, 9, 2), add_colorbar=False
+)
+mf_zonal_plot_neg = neg_mf_zonal.T.plot.contourf(
+    ax=ax4, levels=np.arange(-8, 9, 2), add_colorbar=False
+)
 
 
 ax3.clabel(cs_pos, inline=True, fontsize=10)
@@ -243,7 +248,7 @@ ax4.set_ylabel("Latitude")
 plt.subplots_adjust( hspace = 0.8)
 # plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/extreme_example_noshading.png", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/extreme_example_line.png", dpi=300)
 
 # %%
 fig = plt.figure(figsize=(15, 10))
