@@ -16,6 +16,7 @@ def plot_uhat(ax, uhat_first, u_hat_last=None, levels=np.arange(-12, 13, 2)):
         transform=ccrs.PlateCarree(),
         add_colorbar=False,
         levels=levels,
+        extend="both",
     )
     if u_hat_last is not None:
         u_hat_last = erase_white_line(u_hat_last)
