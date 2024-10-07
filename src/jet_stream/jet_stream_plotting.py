@@ -11,7 +11,7 @@ def plot_uhat(ax, uhat_first, u_hat_last=None, levels=np.arange(-12, 13, 2)):
 
     uhat_first = erase_white_line(uhat_first)
 
-    uhat_first.plot.contourf(
+    umap =  uhat_first.plot.contourf(
         ax=ax,
         transform=ccrs.PlateCarree(),
         add_colorbar=False,
@@ -19,7 +19,7 @@ def plot_uhat(ax, uhat_first, u_hat_last=None, levels=np.arange(-12, 13, 2)):
     )
     if u_hat_last is not None:
         u_hat_last = erase_white_line(u_hat_last)
-        umap = u_hat_last.plot.contour(
+        u_hat_last.plot.contour(
             ax=ax,
             transform=ccrs.PlateCarree(),
             colors="w",
