@@ -160,7 +160,7 @@ plot_uhat(map_ax2, uhat_pos_first10)
 map_ax2.set_title("Positive NAO")
 
 map_ax3 = fig.add_subplot(gs[0, 2], projection=ccrs.Orthographic(-20, 60))
-plot_uhat(map_ax3, uhat_neg_first10)
+_, umap = plot_uhat(map_ax3, uhat_neg_first10)
 map_ax3.set_title("Negative NAO")
 # add bounding box at -60,0 lon, and 15,75 lat
 add_box(map_ax1)
@@ -173,6 +173,12 @@ for ax in [map_ax1, map_ax2, map_ax3]:
     # Optionally, adjust gridline appearance
     gl.xlines = True
     gl.ylines = True
+
+
+# add colorbar from umap below map_axes
+cbar_ax = fig.add_axes([0.3, 0.51, 0.4, 0.02])
+cbar = fig.colorbar(umap, cax=cbar_ax, orientation="horizontal")
+cbar.set_label("m/s")
 
 
 ## histgram
@@ -255,6 +261,6 @@ for ax in [hist_ax1, hist_ax2, hist_ax3]:
     ax.spines["right"].set_visible(False)
 
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/jet_location_first10_box.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/jet_location_first10_box.png")
 
 # %%
