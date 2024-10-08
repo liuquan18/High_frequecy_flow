@@ -187,5 +187,5 @@ axes[1].set_xlabel("days after NAO extremes", fontsize = 14)
 axes[0].set_xlabel("days after NAO extremes", fontsize = 14)
 
 axes[1].legend()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave_break/pos_CWB_neg_AWB_occurrence.png", dpi = 300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/pos_CWB_neg_AWB_occurrence.png", dpi = 300)
 # %%
