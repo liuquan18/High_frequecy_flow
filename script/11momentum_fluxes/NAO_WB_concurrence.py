@@ -149,8 +149,9 @@ axes[1].set_xlim(-21, 21)
 
 axes[0].set_ylabel("WB occurrence", fontsize = 14)
 axes[0].set_ylabel("")
-axes[1].set_xlabel("days after NAO extremes", fontsize = 14)
-axes[0].set_xlabel("days after NAO extremes", fontsize = 14)
+axes[0].set_xlabel("days with respect to onset of NAO+", fontsize = 14)
+
+axes[1].set_xlabel("days with respect to onset of NAO-", fontsize = 14)
 
 for ax in axes:
     # no top and right spines
@@ -158,7 +159,7 @@ for ax in axes:
     ax.spines['right'].set_visible(False)
 
 axes[1].legend()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/pos_AWB_neg_CWB_occurrence.png", dpi = 300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/pos_AWB_neg_CWB_occurrence_last10.png", dpi = 300)
 # %%
 # pos_CWB, neg_AWB
 fig, axes = plt.subplots(1,2,figsize = (12,8))
