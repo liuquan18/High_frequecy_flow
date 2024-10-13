@@ -31,7 +31,7 @@ pos_pc = pos_pc.sel(time=slice(pos_start_date, pos_end_date))
 
 # uhat
 pos_uhat = xr.open_dataset(
-    f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_first10_hat/ua_day_MPI-ESM1-2-LR_historical_r{pos_ens}i1p1f1_gn_18500501-18590931.nc"
+    f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_ano_first10_hat/ua_day_MPI-ESM1-2-LR_historical_r{pos_ens}i1p1f1_gn_18500501-18590931_ano.nc"
 )
 pos_uhat = pos_uhat.ua.sel(plev=slice(100000, 70000)).mean(dim="plev")
 pos_uhat = pos_uhat.sel(time=slice(pos_start_date, pos_end_date))
@@ -75,7 +75,7 @@ neg_pc = neg_pc.sel(time=slice(neg_start_date, neg_end_date))
 
 # uhat
 neg_uhat = xr.open_dataset(
-    f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_first10_hat/ua_day_MPI-ESM1-2-LR_historical_r{neg_ens}i1p1f1_gn_18500501-18590931.nc"
+    f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_ano_first10_hat/ua_day_MPI-ESM1-2-LR_historical_r{neg_ens}i1p1f1_gn_18500501-18590931_ano.nc"
 )
 # eddy driven jet (average between plev 1000hPa - 700hPa )
 neg_uhat = neg_uhat.ua.sel(plev=slice(100000, 70000)).mean(dim="plev")
@@ -139,16 +139,20 @@ ax2_twin.set_title(None)
 ax3 = fig.add_subplot(gs[1, 0])
 ax4 = fig.add_subplot(gs[1, 1])
 
+wind_level = np.arange(-6, 7, 1)
+
+wind_level = wind_level[wind_level != 0]
+
 cs_pos = pos_uhat.T.plot.contour(
     ax=ax3,
     colors="k",
-    levels=np.arange(4, 10, 1),
+    levels=wind_level,
     kwargs=dict(inline=True),
 )
 cs_neg = neg_uhat.T.plot.contour(
     ax=ax4,
     colors="k",
-    levels=np.arange(4, 10, 1),
+    levels=wind_level,
     kwargs=dict(inline=True),
 )
 
@@ -226,6 +230,6 @@ cbar = plt.colorbar(co_mf_neg, cax=cbar_ax, orientation="horizontal")
 cbar.set_label(r"$m^2/s^2$ (zonal mean scaled by 1/5)", loc="center")
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
 
 # %%
