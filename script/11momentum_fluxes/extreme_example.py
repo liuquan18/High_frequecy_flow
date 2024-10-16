@@ -6,6 +6,26 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import matplotlib.gridspec as gridspec
 
+# Set the background color to black
+plt.rcParams['figure.facecolor'] = 'black'
+plt.rcParams['axes.facecolor'] = 'black'
+
+# Set the lines and labels to white
+plt.rcParams['text.color'] = 'white'
+plt.rcParams['axes.labelcolor'] = 'white'
+plt.rcParams['xtick.color'] = 'white'
+plt.rcParams['ytick.color'] = 'white'
+plt.rcParams['axes.edgecolor'] = 'white'
+plt.rcParams['lines.color'] = 'white'
+
+#%%
+# Set default font sizes
+plt.rcParams['axes.titlesize'] = 20  # Title font size
+plt.rcParams['axes.labelsize'] = 15  # X and Y label font size
+plt.rcParams['xtick.labelsize'] = 12  # X tick label font size
+plt.rcParams['ytick.labelsize'] = 12  # Y tick label font size
+plt.rcParams['legend.fontsize'] = 13  # Legend font size
+
 # %%
 pos_ens = 38
 neg_ens = 3
@@ -108,33 +128,40 @@ gs = gridspec.GridSpec(3, 2)
 ax1 = fig.add_subplot(gs[0, 0])
 ax2 = fig.add_subplot(gs[0, 1])
 
-pos_pc.plot(ax=ax1)
-neg_pc.plot(ax=ax2)
+pos_pc.plot(ax=ax1, linewidth=2)
+neg_pc.plot(ax=ax2, linewidth=2)
 
 # hline at y = 1.5 for ax1, y = -1.5 for ax2
 ax1.axhline(y=1.5, color="r", linestyle="--")
 ax2.axhline(y=-1.5, color="r", linestyle="--")
 
+# y axis to blue with label
+ax1.set_yticklabels(ax1.get_yticks(), color="C0")
+ax2.set_yticklabels(ax2.get_yticks(), color="C0")
+
+ax1.set_ylabel("pc", color = "C0")
+ax2.set_ylabel("pc", color = "C0")
+
 ax1.set_title("example NAO+ event")
 ax2.set_title("example NAO- event")
 
-# # twin ax of ax1 and ax2 to plot zonal mean of mf_zonal
-ax1_twin = ax1.twinx()
-ax2_twin = ax2.twinx()
-pos_mf_mermean = pos_mf_zonal.sel(lat=slice(30, 60)).mean(dim="lat")
-neg_mf_mermean = neg_mf_zonal.sel(lat=slice(30, 60)).mean(dim="lat")
+# # # twin ax of ax1 and ax2 to plot zonal mean of mf_zonal
+# ax1_twin = ax1.twinx()
+# ax2_twin = ax2.twinx()
+# pos_mf_mermean = pos_mf_zonal.sel(lat=slice(30, 60)).mean(dim="lat")
+# neg_mf_mermean = neg_mf_zonal.sel(lat=slice(30, 60)).mean(dim="lat")
 
-pos_mf_mermean['time'] = pos_pc.time
-neg_mf_mermean['time'] = neg_pc.time
+# pos_mf_mermean['time'] = pos_pc.time
+# neg_mf_mermean['time'] = neg_pc.time
 
-pos_mf_mermean.plot(
-     ax=ax1_twin, color="k", linestyle="--"
-)
-neg_mf_mermean.plot(
-    ax=ax2_twin, color="k", linestyle="--"
-)
-ax1_twin.set_title(None)
-ax2_twin.set_title(None)
+# pos_mf_mermean.plot(
+#      ax=ax1_twin, color="k", linestyle="--"
+# )
+# neg_mf_mermean.plot(
+#     ax=ax2_twin, color="k", linestyle="--"
+# )
+# ax1_twin.set_title(None)
+# ax2_twin.set_title(None)
 
 ax3 = fig.add_subplot(gs[1, 0])
 ax4 = fig.add_subplot(gs[1, 1])
@@ -145,23 +172,23 @@ wind_level = wind_level[wind_level != 0]
 
 cs_pos = pos_uhat.T.plot.contour(
     ax=ax3,
-    colors="k",
+    colors="w",
     levels=wind_level,
     kwargs=dict(inline=True),
 )
 cs_neg = neg_uhat.T.plot.contour(
     ax=ax4,
-    colors="k",
+    colors="w",
     levels=wind_level,
     kwargs=dict(inline=True),
 )
 
-mf_zonal_plot_pos = pos_mf_zonal.T.plot.contourf(
-    ax=ax3, levels=np.arange(-8, 9, 2), add_colorbar=False
-)
-mf_zonal_plot_neg = neg_mf_zonal.T.plot.contourf(
-    ax=ax4, levels=np.arange(-8, 9, 2), add_colorbar=False
-)
+# mf_zonal_plot_pos = pos_mf_zonal.T.plot.contourf(
+#     ax=ax3, levels=np.arange(-8, 9, 2), add_colorbar=False
+# )
+# mf_zonal_plot_neg = neg_mf_zonal.T.plot.contourf(
+#     ax=ax4, levels=np.arange(-8, 9, 2), add_colorbar=False
+# )
 
 
 ax3.clabel(cs_pos, inline=True, fontsize=10)
@@ -172,6 +199,9 @@ ax4.clabel(cs_neg, inline=True, fontsize=10)
 
 ax3.set_ylim(0, None)
 ax4.set_ylim(0, None)
+
+ax3.set_ylabel("latitude")
+ax4.set_ylabel("latitude")
 
 ax3.set_title("eddy driven jet location (NAO+)")
 ax4.set_title("eddy driven jet location (NAO-)")
@@ -230,6 +260,149 @@ cbar = plt.colorbar(co_mf_neg, cax=cbar_ax, orientation="horizontal")
 cbar.set_label(r"$m^2/s^2$ (zonal mean scaled by 1/5)", loc="center")
 plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/extreme_example.png", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/extreme_example_first10.png", dpi=300)
 
 # %%
+fig = plt.figure(figsize=(15, 10))
+
+gs = gridspec.GridSpec(3, 2)
+
+ax1 = fig.add_subplot(gs[0, 0])
+ax2 = fig.add_subplot(gs[0, 1])
+
+pos_pc.plot(ax=ax1, linewidth=2)
+neg_pc.plot(ax=ax2, linewidth=2)
+
+# hline at y = 1.5 for ax1, y = -1.5 for ax2
+ax1.axhline(y=1.5, color="r", linestyle="--")
+ax2.axhline(y=-1.5, color="r", linestyle="--")
+
+# y axis to blue with label
+ax1.set_yticklabels(ax1.get_yticks(), color="C0")
+ax2.set_yticklabels(ax2.get_yticks(), color="C0")
+
+ax1.set_ylabel("pc", color = "C0")
+ax2.set_ylabel("pc", color = "C0")
+
+ax1.set_title("example NAO+ event")
+ax2.set_title("example NAO- event")
+
+# twin ax of ax1 and ax2 to plot zonal mean of mf_zonal
+ax1_twin = ax1.twinx()
+ax2_twin = ax2.twinx()
+# pos_mf_mermean = pos_mf_zonal.sel(lat=slice(30, 60)).mean(dim="lat")
+# neg_mf_mermean = neg_mf_zonal.sel(lat=slice(30, 60)).mean(dim="lat")
+
+# pos_mf_mermean['time'] = pos_pc.time
+# neg_mf_mermean['time'] = neg_pc.time
+
+# pos_mf_mermean.plot(
+#      ax=ax1_twin, color="w", linestyle="--", linewidth = 2
+# )
+# neg_mf_mermean.plot(
+#     ax=ax2_twin, color="w", linestyle="--", linewidth = 2
+# )
+ax1_twin.set_title(None)
+ax2_twin.set_title(None)
+
+# ax1_twin.set_ylabel("u'v'")
+# ax2_twin.set_ylabel("u'v'")
+
+ax3 = fig.add_subplot(gs[1, 0])
+ax4 = fig.add_subplot(gs[1, 1])
+
+wind_level = np.arange(-6, 7, 1)
+
+wind_level = wind_level[wind_level != 0]
+
+cs_pos = pos_uhat.T.plot.contour(
+    ax=ax3,
+    colors="k",
+    levels=wind_level,
+    kwargs=dict(inline=True),
+)
+cs_neg = neg_uhat.T.plot.contour(
+    ax=ax4,
+    colors="k",
+    levels=wind_level,
+    kwargs=dict(inline=True),
+)
+
+mf_zonal_plot_pos = pos_mf_zonal.T.plot.contourf(
+    ax=ax3, levels=np.arange(-8, 9, 2), add_colorbar=False
+)
+mf_zonal_plot_neg = neg_mf_zonal.T.plot.contourf(
+    ax=ax4, levels=np.arange(-8, 9, 2), add_colorbar=False
+)
+
+
+ax3.clabel(cs_pos, inline=True, fontsize=10)
+ax4.clabel(cs_neg, inline=True, fontsize=10)
+
+# add colorbar at the bottom
+# plt.colorbar(mf_zonal_plot_pos, ax=[ax3, ax4], orientation='horizontal', label='m/s', aspect=50)
+
+ax3.set_ylim(0, None)
+ax4.set_ylim(0, None)
+
+ax3.set_ylabel("latitude")
+ax4.set_ylabel("latitude")
+
+ax3.set_title("eddy driven jet location (NAO+)")
+ax4.set_title("eddy driven jet location (NAO-)")
+
+
+ax5 = fig.add_subplot(gs[2, 0], projection=ccrs.PlateCarree(-50))
+ax6 = fig.add_subplot(gs[2, 1], projection=ccrs.PlateCarree(-50))
+
+cs_zg_pos = pos_zg.plot.contour(
+    ax=ax5,
+    transform=ccrs.PlateCarree(),
+    levels=np.arange(9100, 10500, 50),
+    kwargs=dict(inline=True),
+    colors="k",
+)
+cs_zg_neg = neg_zg.plot.contour(
+    ax=ax6,
+    transform=ccrs.PlateCarree(),
+    levels=np.arange(9100, 10500, 50),
+    kwargs=dict(inline=True),
+    colors="k",
+)
+
+co_mf_pos = pos_mf_event.plot.contourf(
+    ax=ax5,
+    transform=ccrs.PlateCarree(),
+    levels=np.arange(-250, 251, 50),
+    add_colorbar=False,
+)
+co_mf_neg = neg_mf_event.plot.contourf(
+    ax=ax6,
+    transform=ccrs.PlateCarree(),
+    levels=np.arange(-250, 251, 50),
+    add_colorbar=False,
+)
+
+
+ax5.clabel(cs_zg_pos, inline=True, fontsize=10)
+ax6.clabel(cs_zg_neg, inline=True, fontsize=10)
+
+ax5.coastlines(alpha=0.5, linewidth=2)
+ax6.coastlines(alpha=0.5, linewidth=2)
+
+ax5.set_extent([280, 360, 0, 90])
+ax6.set_extent([280, 360, 0, 90])
+
+ax5.set_aspect("auto")
+ax6.set_aspect("auto")
+
+# Adjust the layout to make space for the colorbar
+plt.subplots_adjust(bottom=0.1)
+
+# add horizontal colorbar
+cbar_ax = fig.add_axes([0.15, 0.05, 0.7, 0.02])
+cbar = plt.colorbar(co_mf_neg, cax=cbar_ax, orientation="horizontal")
+cbar.set_label(r"$m^2/s^2$ (zonal mean scaled by 1/5)", loc="center")
+plt.tight_layout(rect=[0, 0.1, 1, 1])
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/imprs_retreat_2024/extreme_example_last10.png", dpi=300)
