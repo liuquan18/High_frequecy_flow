@@ -143,5 +143,5 @@ all_ens = np.arange(1,51)
 #%%
 ens_single = np.array_split(all_ens, npro)[rank]
 for i, ens in enumerate(ens_single):
-    logging.info(f'Period {period} ens {ens} rank {rank}: {i}/{len(ens_single)}')
+    logging.info(f'Period {period} ens {ens} rank {rank}: {i+1}/{len(ens_single)}')
     process(ens, period)
