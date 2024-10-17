@@ -87,59 +87,40 @@ def read_data( ens, period):
 
 
 #%%
-u, v , mflux = read_data(ens, period)
+def process(ens, period):
+    u, v , mflux = read_data(ens, period)
+    avor = abs_vorticity(u,v)
+    events = wavebreaking(avor, mflux)
+
+    # anticyclonic and cyclonic by intensity for the Northern Hemisphere
+    anticyclonic = events[events.intensity >= 0]
+    cyclonic = events[events.intensity < 0]
+
+    anti_tracked = wb.track_events(events=anticyclonic,
+                                time_range=24, #time range for temporal tracking in hours
+                                method="by_overlap", #method for tracking ["by_overlap", "by_distance"], optional
+                                buffer=0, # buffer in degrees for polygons overlapping, optional
+                                overlap=0.3, # minimum overlap percentage, optinal
+                                distance=1000) # distance in km for method "by_distance"
+
+
+    cyc_tracked = wb.track_events(events=cyclonic,
+                                time_range=24, #time range for temporal tracking in hours
+                                method="by_overlap", #method for tracking ["by_overlap", "by_distance"], optional
+                                buffer=0, # buffer in degrees for polygons overlapping, optional
+                                overlap=0.3, # minimum overlap percentage, optinal
+                                distance=1000) # distance in km for method "by_distance"
+
+
+    to_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/skader_wb_events/"
+
+    avor.to_netcdf(to_dir + f'AV_{period}/AV_{period}_r{ens}.nc')
+    anti_tracked.to_csv(to_dir + f'AWB_{period}/AWB_{period}_r{ens}.csv', index=False)
+    cyc_tracked.to_csv(to_dir + f'CWB_{period}/CWB_{period}_r{ens}.csv', index=False)
+
+
 
 #%%
-avor = abs_vorticity(u,v)
-
-#%%
-events = wavebreaking(avor, mflux)
-
-#%%
-# anticyclonic and cyclonic by intensity for the Northern Hemisphere
-anticyclonic = events[events.intensity >= 0]
-cyclonic = events[events.intensity < 0]
-
-
-# %%
-anti_array = wb.to_xarray(data = avor,
-                          events = anticyclonic)
-cy_array = wb.to_xarray(data = avor,
-                          events = cyclonic)
-
-# %%
-# import cartopy for projection
-
-wb.plot_step(flag_data=anti_array,
-             step="1850-05-01T12:00:00", #index or date
-             data=avor, # optional
-            #  contour_levels=[0, 7.5*1e-5], # optional
-             proj=ccrs.PlateCarree(), # optional
-             size=(12,8), # optional
-             periodic=True, # optional
-
-             labels=True,# optional
-             levels=None, # optional
-             cmap="Blues", # optional
-             color_events="gold", # optional
-             title="") # optional
-
-
-# %%
-import matplotlib.pyplot as plt
-fig, ax = plt.subplots(subplot_kw=dict(projection=ccrs.PlateCarree()), figsize=(12, 8))
-p = avor.isel(time = 1).plot.contourf(ax=ax, transform=ccrs.PlateCarree(), cmap="Blues", levels=np.arange(-10,11,2)* 1e-5)
-ax.coastlines()
-f = anti_array.isel(time = 1).plot.contour(ax=ax, transform=ccrs.PlateCarree(), colors="gold", levels=[0, 1,2])
-
-# %%
-tracked = wb.track_events(events=anticyclonic,
-                            time_range=24, #time range for temporal tracking in hours
-                            method="by_overlap", #method for tracking ["by_overlap", "by_distance"], optional
-                            buffer=0, # buffer in degrees for polygons overlapping, optional
-                            overlap=0, # minimum overlap percentage, optinal
-                            distance=1000) # distance in km for method "by_distance"
-
 
 
 # %%
