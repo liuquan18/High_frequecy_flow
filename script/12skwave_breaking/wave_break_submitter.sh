@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=recon
-#SBATCH --time=04:00:00
+#SBATCH --time=08:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=5
