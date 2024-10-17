@@ -7,7 +7,24 @@ import metpy.calc as mpcalc
 import metpy.units as mpunits
 import cartopy.crs as ccrs
 from cdo import *   # python version
+import os
+import sys
 import glob
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+# === mpi4py ===
+try:
+  from mpi4py import MPI
+  comm = MPI.COMM_WORLD
+  rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
+  npro = comm.Get_size()  # 10
+except:
+  print('::: Warning: Proceeding without mpi4py! :::')
+  rank = 0
+  npro = 1
+
 
 #%%
 # %%
@@ -40,13 +57,14 @@ def abs_vorticity(u,v):
 def wavebreaking(avor, mflux):
     # calculate contours
     contours = wb.calculate_contours(data=avor,
-                                 contour_levels=[7.5* 1e-5],
+                                 contour_levels=[9.4* 1e-5],
                                  periodic_add=120, # optional
                                  original_coordinates=False) # optional
     
+
     # calculate overturnings index
     overturnings = wb.calculate_overturnings(data=avor,
-                                         contour_levels=[7.5* 1e-5],
+                                         contour_levels=[9.4* 1e-5],
                                          contours=contours, #optional
                                          range_group=5, # optional
                                          min_exp=5, # optional
@@ -62,9 +80,6 @@ def wavebreaking(avor, mflux):
     return events
 
 
-#%%
-ens = 1
-period = 'first10'
 #%%
 def read_data( ens, period):
     base_dir = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/'
@@ -86,6 +101,7 @@ def read_data( ens, period):
 
 
 
+
 #%%
 def process(ens, period):
     u, v , mflux = read_data(ens, period)
@@ -97,18 +113,18 @@ def process(ens, period):
     cyclonic = events[events.intensity < 0]
 
     anti_tracked = wb.track_events(events=anticyclonic,
-                                time_range=24, #time range for temporal tracking in hours
+                                time_range=72, #time range for temporal tracking in hours
                                 method="by_overlap", #method for tracking ["by_overlap", "by_distance"], optional
                                 buffer=0, # buffer in degrees for polygons overlapping, optional
-                                overlap=0.3, # minimum overlap percentage, optinal
+                                overlap=0.5, # minimum overlap percentage, optinal
                                 distance=1000) # distance in km for method "by_distance"
 
 
     cyc_tracked = wb.track_events(events=cyclonic,
-                                time_range=24, #time range for temporal tracking in hours
+                                time_range=72, #time range for temporal tracking in hours
                                 method="by_overlap", #method for tracking ["by_overlap", "by_distance"], optional
                                 buffer=0, # buffer in degrees for polygons overlapping, optional
-                                overlap=0.3, # minimum overlap percentage, optinal
+                                overlap=0.5, # minimum overlap percentage, optinal
                                 distance=1000) # distance in km for method "by_distance"
 
 
@@ -120,20 +136,12 @@ def process(ens, period):
 
 
 
+# %%
+# period from keyboard
+period = sys.argv[1] # 'first10' or 'last10'
+all_ens = np.arange(1,51)
 #%%
-
-
-# %%
-wb.plot_tracks(data=avor,
-               events=tracked,
-               proj=ccrs.PlateCarree(), # optional
-               size=(12,8), # optional
-               min_path=0, # optional
-               plot_events=True, # optional
-               labels=True, # optional
-               title="") # optional
-
-
-
-
-# %%
+ens_single = np.array_split(all_ens, npro)[rank]
+for i, ens in enumerate(ens_single):
+    logging.info(f'Period {period} ens {ens} rank {rank}: {i}/{len(ens_single)}')
+    process(ens, period)
