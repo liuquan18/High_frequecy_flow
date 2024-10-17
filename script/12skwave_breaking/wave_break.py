@@ -113,7 +113,7 @@ def process(ens, period):
     cyclonic = events[events.intensity < 0]
 
     anti_tracked = wb.track_events(events=anticyclonic,
-                                time_range=72, #time range for temporal tracking in hours
+                                time_range=24, #time range for temporal tracking in hours
                                 method="by_overlap", #method for tracking ["by_overlap", "by_distance"], optional
                                 buffer=0, # buffer in degrees for polygons overlapping, optional
                                 overlap=0.5, # minimum overlap percentage, optinal
@@ -121,7 +121,7 @@ def process(ens, period):
 
 
     cyc_tracked = wb.track_events(events=cyclonic,
-                                time_range=72, #time range for temporal tracking in hours
+                                time_range=24, #time range for temporal tracking in hours
                                 method="by_overlap", #method for tracking ["by_overlap", "by_distance"], optional
                                 buffer=0, # buffer in degrees for polygons overlapping, optional
                                 overlap=0.5, # minimum overlap percentage, optinal
