@@ -11,4 +11,4 @@
 
 
 
-mpirun -n 5 python NA_zg_relate_OLR_reconstruct.py $1 $2
+mpirun -n 5 python wavebreak.py $1
