@@ -49,7 +49,7 @@ def lag_lead_composite(NAO, WB):
     return WB_composite
 
 #%%
-def NAO_WB(period):
+def NAO_WB(period, fldmean = True):
     NAO_pos_AWB = []
     NAO_neg_AWB = []
 
@@ -57,8 +57,8 @@ def NAO_WB(period):
     NAO_neg_CWB = []
 
     for ens in range(1, 51):
-        AWB = read_wb(period, ens, 'AWB')
-        CWB = read_wb(period, ens, 'CWB')
+        AWB = read_wb(period, ens, 'AWB', fldmean)
+        CWB = read_wb(period, ens, 'CWB', fldmean)
 
         NAO_pos, NAO_neg = read_extremes(period, 8, ens, 25000)
         if not NAO_pos.empty:
