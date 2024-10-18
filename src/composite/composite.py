@@ -56,7 +56,18 @@ def read_variable(
 
 
 # %%
-def lead_lag_30days(events, base_plev=None, cross_plev=1):
+def lead_lag_30days(events, base_plev=None, cross_plev=None):
+
+    """
+    Parameters
+    ----------
+    events : pandas dataframe
+        extreme events
+    base_plev : int
+        base pressure level
+    cross_plev : int
+        number of pressure levels that the events should concurrently occur
+    """
 
     start_times = []
     end_times = []
@@ -76,7 +87,7 @@ def lead_lag_30days(events, base_plev=None, cross_plev=1):
             & (events.extreme_end_time >= count_startime)
         ]
 
-        if len(overlapped_events_across_height.plev.unique()) < cross_plev:
+        if (cross_plev is not None) and (len(overlapped_events_across_height.plev.unique()) < cross_plev):
             continue
 
         start_times.append(count_startime)
