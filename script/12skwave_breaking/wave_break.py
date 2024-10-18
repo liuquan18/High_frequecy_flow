@@ -146,7 +146,7 @@ def process(ens, period):
         "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/skader_wb_events/"
     )
 
-    avor.to_netcdf(to_dir + f"AV/AV_{period}/AV_{period}_r{ens}.nc")
+    # avor.to_netcdf(to_dir + f"AV/AV_{period}/AV_{period}_r{ens}.nc")
     # anti_tracked.to_csv(
     #     to_dir + f"AWB/AWB_{period}/AWB_{period}_r{ens}.csv", index=False
     # )
