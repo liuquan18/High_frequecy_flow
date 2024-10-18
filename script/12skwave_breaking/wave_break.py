@@ -138,17 +138,25 @@ def process(ens, period):
         distance=1000,
     )  # distance in km for method "by_distance"
 
+
+    anti_array = wb.to_xarray(data=avor, events=anti_tracked)
+    cyc_array = wb.to_xarray(data=avor, events=cyc_tracked)
+
     to_dir = (
         "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/skader_wb_events/"
     )
 
     avor.to_netcdf(to_dir + f"AV/AV_{period}/AV_{period}_r{ens}.nc")
-    anti_tracked.to_csv(
-        to_dir + f"AWB/AWB_{period}/AWB_{period}_r{ens}.csv", index=False
-    )
-    cyc_tracked.to_csv(
-        to_dir + f"CWB/CWB_{period}/CWB_{period}_r{ens}.csv", index=False
-    )
+    # anti_tracked.to_csv(
+    #     to_dir + f"AWB/AWB_{period}/AWB_{period}_r{ens}.csv", index=False
+    # )
+    # cyc_tracked.to_csv(
+    #     to_dir + f"CWB/CWB_{period}/CWB_{period}_r{ens}.csv", index=False
+    # )
+
+    # save arrays
+    anti_array.to_netcdf(to_dir + f"AWB_array/AWB_array_{period}/AWB_{period}_r{ens}.nc")
+    cyc_array.to_netcdf(to_dir + f"CWB_array/CWB_array_{period}/CWB_{period}_r{ens}.nc")
 
 
 # %%
