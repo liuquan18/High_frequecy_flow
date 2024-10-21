@@ -18,7 +18,7 @@ def wind_eof(var, period):
     ds_com = ds.stack(com = ('time','ens'))
     ds_com = ds_com.sel(lat = slice(0,90))
     
-    eof_result = doeof(ds_com, 1, dim = 'com', standard='pc_temporal_std')
+    eof_result = doeof(ds_com, 2, dim = 'com', standard='pc_temporal_std')
     return eof_result
 
 # %%
