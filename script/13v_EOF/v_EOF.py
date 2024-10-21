@@ -25,6 +25,6 @@ def wind_eof(var, period):
 first_va_eof = wind_eof('va', 'first10')
 last_va_eof = wind_eof('va', 'last10')
 # %%
-first_va_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_before_NAO/va_eof_first10.nc")
-last_va_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_before_NAO/va_eof_last10.nc")
+first_va_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vEOF/montly_pattern/va_eof_first10.nc")
+last_va_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vEOF/montly_pattern/va_eof_last10.nc")
 # %%
