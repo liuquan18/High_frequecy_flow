@@ -11,6 +11,7 @@ def doeof(
     nmode: int = 2,
     dim: str = "com",
     standard: str = 'eof_spatial_std',
+    center = False,
 ):
     """
     do eof to seasonal data along a combined dim
@@ -44,7 +45,7 @@ def doeof(
 
     # EOF decompose
     solver = Eof(
-        data.values, weights=wgts, center=False
+        data.values, weights=wgts, center=center
     )  
     
     eof = solver.eofs(neofs=nmode)  # (mode,lat,lon,...)

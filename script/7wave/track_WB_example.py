@@ -44,7 +44,7 @@ WB_df = WB.run_lifecycle(flag = 'flag', variable='ua')
 # %%
 # plotting blocking track (center of mass) and genesis
 f, ax = plt.subplots(1, 1, figsize=(7,5), subplot_kw=dict(projection=ccrs.NorthPolarStereo()))
-ax.set_extent([-180, 180, 30, 90], crs=ccrs.PlateCarree()); ax.coastlines()
+ax.set_extent([-180, 180, 30, 90], crs=ccrs.PlateCarree())
 ax.coastlines() # add coastlines
 
 #need to split each blocking track due to longitude wrapping (jumping at map edge)
