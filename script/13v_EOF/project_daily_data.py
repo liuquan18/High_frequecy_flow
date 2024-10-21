@@ -26,9 +26,9 @@ for i, file in enumerate(files_single):
 
     daily_field = xr.open_dataset(file).va
     daily_field = daily_field.sel(plev=25000, lat = slice(0, 90))
-    eof = xr.open_dataset(eof_path).eof.isel(mode = 0).squeeze()
+    eof = xr.open_dataset(eof_path).eof.squeeze()
 
-    projected_pcs = project_field_to_pattern(daily_field, eof, standard=False)
+    projected_pcs = eof.groupby('mode').apply(lambda x: project_field_to_pattern(daily_field, x.squeeze(), standard=False))
 
     projected_pcs.name = "pc"
     
