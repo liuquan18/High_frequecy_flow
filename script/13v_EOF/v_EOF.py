@@ -18,13 +18,13 @@ def wind_eof(var, period):
     ds_com = ds.stack(com = ('time','ens'))
     ds_com = ds_com.sel(lat = slice(0,90))
     
-    eof_result = doeof(ds_com, 1, dim = 'com', standard='pc_temporal_std')
+    eof_result = doeof(ds_com, 2, dim = 'com', standard='pc_temporal_std')
     return eof_result
 
 # %%
 first_va_eof = wind_eof('va', 'first10')
 last_va_eof = wind_eof('va', 'last10')
 # %%
-first_va_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_before_NAO/va_eof_first10.nc")
-last_va_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_before_NAO/va_eof_last10.nc")
+first_va_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vEOF/montly_pattern/va_eof_first10.nc")
+last_va_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vEOF/montly_pattern/va_eof_last10.nc")
 # %%

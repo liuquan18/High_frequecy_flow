@@ -5,7 +5,7 @@ def cos_lat_weight(lat):
     """Calculate the cosine of latitude for weighting."""
     return np.cos(np.deg2rad(lat))
 
-def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='lon', standard=False):
+def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='lon', standard=False, plev = None):
     """Project field data onto pattern data to get the temporal index, weighted by cos(latitude)."""
     # Extract latitudes and calculate weights
     latitudes = field_data.coords[lat_dim].values
@@ -26,14 +26,25 @@ def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='l
     eof_flat = eof_flat.dropna(dim='spatial')
 
     # for all plevs:
-    Projected_pcs = []
-    for plev in field_flat.plev:
-        field_f = field_flat.sel(plev = plev)
-        eof_f = eof_flat.sel(plev = plev)
-        projected_pcs = field_f.dot(eof_f.T)
-        Projected_pcs.append(projected_pcs)
+    if plev is None:
+        nplev = field_data.plev.size
 
-    Projected_pcs = xr.concat(Projected_pcs, dim = 'plev')
+        if nplev > 1:
+            Projected_pcs = []
+            for plev in field_flat.plev:
+                field_f = field_flat.sel(plev = plev)
+                eof_f = eof_flat.sel(plev = plev)
+                projected_pcs = field_f.dot(eof_f.T)
+                Projected_pcs.append(projected_pcs)
+
+            Projected_pcs = xr.concat(Projected_pcs, dim = 'plev')
+        else:
+            Projected_pcs = field_flat.dot(eof_flat.T)
+    else:
+        field_flat = field_flat.sel(plev = plev)
+        eof_flat = eof_flat.sel(plev = plev)
+        Projected_pcs = field_flat.dot(eof_flat.T)
+
 
     if standard:
         # standardize the ppc with its std
