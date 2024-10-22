@@ -152,7 +152,7 @@ hist_ax1 = fig.add_subplot(gs[1, 0])
 sns.histplot(
     jet_loc_first10_ano.values.flatten(),
     label="first10",
-    color="b",
+    color="k",
     bins=np.arange(-30, 31, 2),
     stat="count",
     ax=hist_ax1,
@@ -174,7 +174,7 @@ hist_ax2 = fig.add_subplot(gs[1, 1])
 sns.histplot(
     jet_loc_first10_pos,
     label="first10_pos",
-    color="b",
+    color="k",
     bins=np.arange(-30, 31, 2),
     stat="count",
     ax=hist_ax2,
@@ -196,7 +196,7 @@ hist_ax3 = fig.add_subplot(gs[1, 2])
 sns.histplot(
     jet_loc_first10_neg,
     label="first10",
-    color="b",
+    color="k",
     bins=np.arange(-30, 31, 2),
     stat="count",
     ax=hist_ax3,
@@ -212,6 +212,7 @@ sns.histplot(
     ax=hist_ax3,
 )
 hist_ax3.set_title("Jet location anomaly negative NAO")
+hist_ax3.legend()
 
 # vertical line for hist axes
 for ax in [hist_ax1, hist_ax2, hist_ax3]:
