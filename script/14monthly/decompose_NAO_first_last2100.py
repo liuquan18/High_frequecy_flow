@@ -91,6 +91,7 @@ data = xr.concat(data_JJA, dim="time").sortby("time")
 # %%
 # rechunk
 data = data.chunk({ "ens":-1, "time": -1, "lat": -1, "lon": -1})
+data = data.load()
 # %%
 first_eof = decompose_single_decade(data, slice("1850-06-01", "1859-08-31"), nmode=2)
 
