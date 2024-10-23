@@ -98,6 +98,6 @@ first_eof = decompose_single_decade(data, slice("1850-06-01", "1859-08-31"), nmo
 last_eof = decompose_single_decade(data, slice("2091-06-01", "2100-08-31"), nmode=2)
 # %%
 # save 
-first_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/EOF_result_first_last2091-2100/first_eofs.nc")
-last_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/EOF_result_first_last2091-2100/last_eofs.nc")
+first_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/EOF_result_first_last2091-2100/first10_eofs.nc")
+last_eof.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/EOF_result_first_last2091-2100/last10_eofs.nc")
 # %%
