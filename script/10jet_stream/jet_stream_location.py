@@ -240,7 +240,8 @@ sns.histplot(
     jet_loc_first10_neg,
     label="first10",
     color="k",
-    bins=np.arange(-30, 31, 2),
+    bins=np.arange(-30, 31, 2), # Note: (20, 21, 1) would give bettern visualisation
+
     stat="count",
     ax=hist_ax3,
 )
