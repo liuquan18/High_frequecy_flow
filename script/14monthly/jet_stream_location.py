@@ -34,10 +34,12 @@ last_neg = last_pc.where(last_pc < -1.5)
 _, jet_loc_first10_ano = jet_stream_anomaly("first10")
 
 _, jet_loc_last10_ano = jet_stream_anomaly("last10")
+#%%
+jet_loc_last10_ano = jet_loc_last10_ano - jet_loc_last10_ano.mean(dim = ('time', 'ens'))
 # %%
 # %%
 # select only the months in jet where the NAO_extreme is valid
-def extreme_jet(NAO_extreme, jet, temporal_mean = False):
+def extreme_jet(NAO_extreme, jet, temporal_mean = True):
     selected_jet = []
     for ens in NAO_extreme.ens:
         NAO_extreme_ens = NAO_extreme.sel(ens = ens)
@@ -159,6 +161,6 @@ hist_ax3.legend()
 for ax in [hist_ax1, hist_ax2, hist_ax3]:
     ax.axvline(x=0, color="k", linestyle="--")
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/monthly/jet_location_month_mean.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/monthly/jet_location_month_mean.png")
 
 # %%
