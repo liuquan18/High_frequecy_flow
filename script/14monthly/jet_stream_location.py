@@ -35,7 +35,6 @@ _, jet_loc_first10_ano = jet_stream_anomaly("first10")
 
 _, jet_loc_last10_ano = jet_stream_anomaly("last10")
 # %%
-
 # %%
 # select only the months in jet where the NAO_extreme is valid
 def extreme_jet(NAO_extreme, jet):
@@ -55,6 +54,7 @@ def extreme_jet(NAO_extreme, jet):
         jet_mask = daily_months.isin(valid_months)
 
         selected_jet_ens = xr.where(jet_mask, jet_ens, np.nan)
+        # selected_jet_ens = selected_jet_ens.mean(dim = 'time')
     
         selected_jet.append(selected_jet_ens)
 
@@ -72,12 +72,12 @@ first_neg_jet = extreme_jet(first_neg, jet_loc_first10_ano)
 last_neg_jet = extreme_jet(last_neg, jet_loc_last10_ano)
 
 #%%
-# save data
-first_pos_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/jet_stream_location/jet_loc_first10_pos.nc")
-last_pos_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/jet_stream_location/jet_loc_last10_pos.nc")
+# # save data
+# first_pos_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/jet_stream_location/jet_loc_first10_pos.nc")
+# last_pos_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/jet_stream_location/jet_loc_last10_pos.nc")
 
-first_neg_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/jet_stream_location/jet_loc_first10_neg.nc")
-last_neg_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/jet_stream_location/jet_loc_last10_neg.nc")
+# first_neg_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/jet_stream_location/jet_loc_first10_neg.nc")
+# last_neg_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/jet_stream_location/jet_loc_last10_neg.nc")
 
 
 # %%
@@ -158,6 +158,6 @@ hist_ax3.legend()
 for ax in [hist_ax1, hist_ax2, hist_ax3]:
     ax.axvline(x=0, color="k", linestyle="--")
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/monthly/jet_location_month.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/monthly/jet_location_month_nomean.png")
 
 # %%
