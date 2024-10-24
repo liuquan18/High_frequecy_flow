@@ -17,15 +17,6 @@ from src.jet_stream.jet_stream_plotting import plot_uhat
 logging.basicConfig(level=logging.INFO)
 #%%
 def read_data(period, same_clim = True, eddy = True):
-    # climatology
-    if eddy:
-        loc_clim = xr.open_dataset(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_{period}.nc"                                 
-                                         ).lat
-    else:
-        loc_clim = xr.open_dataset(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_allplev_{period}.nc"
-                                         ).lat
 
     # anomaly
     ano_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/"
@@ -38,7 +29,7 @@ def read_data(period, same_clim = True, eddy = True):
 
     loc_ano = xr.open_dataset(ano_path).lat_ano
 
-    return loc_clim, loc_ano
+    return loc_ano
 
 #%%
 same_clim = False
@@ -46,12 +37,12 @@ eddy = True
 
 #%%
 # for plot the anomaly of all samples
-_, first10_ano_all = read_data("first10", same_clim = True, eddy = eddy)
-_, last10_ano_all = read_data("last10", same_clim = True, eddy = eddy)
+first10_ano_all = read_data("first10", same_clim = True, eddy = eddy)
+last10_ano_all = read_data("last10", same_clim = True, eddy = eddy)
 
 
-first10_clim, first10_ano = read_data("first10", same_clim = same_clim, eddy = eddy)
-last10_clim, last10_ano = read_data("last10", same_clim = same_clim, eddy = eddy)
+first10_ano = read_data("first10", same_clim = same_clim, eddy = eddy)
+last10_ano = read_data("last10", same_clim = same_clim, eddy = eddy)
 
 # %%
 first10_pos_events, first10_neg_events = read_extremes_allens("first10", 8)
