@@ -12,9 +12,49 @@ logging.basicConfig(level=logging.INFO)
 
 
 # %%
-def jet_stream_anomaly_period(period):
 
-    jet_speed_ano = []
+# %%
+############## jet location hist #####################
+# climatology only use the first10 years
+def climatology(period, same_clim=True, eddy = True):
+    """
+    same_clim: if True, use the climatology of first10 for both first10 and last10
+    eddy: if False, same plev of jet stream as the NAO are used rather than eddy-driven jet
+    """
+
+    
+    base_dir = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/'
+
+    if period == 'first10':
+        if eddy:
+            loc_path = base_dir + 'jet_loc_climatology_first10.nc'
+        else:
+            loc_path = base_dir + 'jet_loc_climatology_allplev_first10.nc'
+
+    elif period == 'last10':
+        if same_clim:
+            if eddy:
+                loc_path = base_dir + 'jet_loc_climatology_first10.nc'
+            else:
+                loc_path = base_dir + 'jet_loc_climatology_allplev_first10.nc'
+        else: # use the last10 climatology
+            if eddy:
+                loc_path = base_dir + 'jet_loc_climatology_last10.nc'
+            else:
+                loc_path = base_dir + 'jet_loc_climatology_allplev_last10.nc'
+
+    jet_loc_clim = xr.open_dataset(loc_path).lat
+
+    try:
+        jet_loc_clim = jet_loc_clim.sel(plev = 25000)
+    except KeyError:
+        pass
+
+    return jet_loc_clim
+
+
+def jet_stream_anomaly_period(period, jet_loc_clim):
+
     jet_loc_ano = []
 
     for ens in range(1, 51):
@@ -31,33 +71,43 @@ def jet_stream_anomaly_period(period):
         )
         loc_ano["ens"] = ens
 
-        speed_ano = jet_stream_anomaly(
-            jet, jet_speed_clim, stat="speed"
-        )
-        speed_ano["ens"] = ens
-
-        jet_speed_ano.append(speed_ano)
         jet_loc_ano.append(loc_ano)
 
-    jet_speed_ano = xr.concat(jet_speed_ano, dim="ens")
+
     jet_loc_ano = xr.concat(jet_loc_ano, dim="ens")
 
-    return jet_speed_ano, jet_loc_ano
+    return jet_loc_ano
+
+def save_path(eddy, same_clim):
+    if eddy:
+        if same_clim:
+            first_to_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/jet_stream_anomaly_eddy_sameclima_first10.nc'
+            last_to_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/jet_stream_anomaly_eddy_sameclima_last10.nc'
+        else:
+            first_to_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/jet_stream_anomaly_eddy_diffclima_first10.nc'
+            last_to_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/jet_stream_anomaly_eddy_diffclima_last10.nc'
+    else:
+        if same_clim:
+            first_to_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/jet_stream_anomaly_noneddy_sameclima_first10.nc'
+            last_to_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/jet_stream_anomaly_noneddy_sameclima_last10.nc'
+        else:
+            first_to_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/jet_stream_anomaly_noneddy_diffclima_first10.nc'
+            last_to_path = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/jet_stream_anomaly_noneddy_diffclima_last10.nc'
+
+    return first_to_path, last_to_path
 
 
+#%%
+eddy = True
+same_clim = False
+
+#%%
+jet_loc_clim = climatology("first10",same_clim = same_clim, eddy = eddy)
+jet_loc_first10_ano = jet_stream_anomaly_period("first10", jet_loc_clim)
+jet_loc_last10_ano = jet_stream_anomaly_period("last10", jet_loc_clim)
+
+first_save_path, last_save_path = save_path(eddy, same_clim)
+
+jet_loc_first10_ano.to_netcdf(first_save_path)
+jet_loc_last10_ano.to_netcdf(last_save_path)
 # %%
-############## jet location hist #####################
-# climatology only use the first10 years
-
-jet_speed_clim = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_speed_climatology_first10.nc"
-).ua
-jet_loc_clim = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_first10.nc"
-).lat
-
-
-jet_speed_first10_ano, jet_loc_first10_ano = jet_stream_anomaly_period("first10")
-
-# %%
-jet_speed_last10_ano, jet_loc_last10_ano = jet_stream_anomaly_period("last10")
