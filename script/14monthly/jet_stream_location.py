@@ -4,10 +4,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
-from src.jet_stream.jet_speed_and_location import jet_stream_anomaly, jet_event
+from src.jet_stream.jet_speed_and_location import jet_stream_anomaly
 import seaborn as sns
-
+import logging
 import glob
+logging.basicConfig(level=logging.INFO)
 # %%
 ############## read NAO ###################
 # %%
@@ -41,7 +42,14 @@ last_neg = last_pc.where(last_pc < -1.5)
 # %%
 ################# jet location #####################
 # %%
-def jet_loc_anomaly(period, climatology):
+def jet_loc_anomaly(period, climatology, plev = 25000):
+
+    try:
+        climatology = climatology.sel(plev = plev)
+    except KeyError:
+        climatology = climatology
+        logging.info("No plev dim in climatology")
+
     jet_locs = []
 
     for ens in range(1, 51):
@@ -65,28 +73,9 @@ def jet_loc_anomaly(period, climatology):
     return jet_locs
 
     
-#%%
-
-jet_loc_clim_first = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_first10.nc"
-).lat
-jet_loc_clim_last = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_last10.nc"
-).lat
-
-#%%
-#%%
-jet_loc_first10_all = jet_loc_anomaly("first10", jet_loc_clim_first)
-jet_loc_last10_all  = jet_loc_anomaly("last10", jet_loc_clim_first) # use the same climatology to show externally forced change
-#%%
-jet_loc_first10_ano = jet_loc_anomaly("first10", jet_loc_clim_first)
-jet_loc_last10_ano = jet_loc_anomaly("last10", jet_loc_clim_last)
-
-
-
 # %%
 # select only the months in jet where the NAO_extreme is valid
-def extreme_jet(NAO_extreme, jet, temporal_mean=True):
+def extreme_jet(NAO_extreme, jet, temporal_mean=False):
     selected_jet = []
     for ens in NAO_extreme.ens:
         NAO_extreme_ens = NAO_extreme.sel(ens=ens)
@@ -113,11 +102,36 @@ def extreme_jet(NAO_extreme, jet, temporal_mean=True):
 
 
 # %%
-first_pos_jet = extreme_jet(first_pos, jet_loc_first10_ano)
-last_pos_jet = extreme_jet(last_pos, jet_loc_last10_ano)
+# config, climatology, and composite
+allplev = True
+temporal_mean = False
 
-first_neg_jet = extreme_jet(first_neg, jet_loc_first10_ano)
-last_neg_jet = extreme_jet(last_neg, jet_loc_last10_ano)
+#%%
+if allplev:
+    first_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_allplev_first10.nc"
+    last_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_allplev_last10.nc"
+else:
+    first_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_first10.nc"
+    last_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_last10.nc"
+
+jet_loc_clim_first = xr.open_dataset(first_path).lat
+jet_loc_clim_last = xr.open_dataset(last_path).lat
+
+#%%
+#%%
+jet_loc_first10_all = jet_loc_anomaly("first10", jet_loc_clim_first)
+jet_loc_last10_all  = jet_loc_anomaly("last10", jet_loc_clim_first) # use the same climatology to show externally forced change
+#%%
+jet_loc_first10_ano = jet_loc_anomaly("first10", jet_loc_clim_first)
+jet_loc_last10_ano = jet_loc_anomaly("last10", jet_loc_clim_last)
+
+
+# %%
+first_pos_jet = extreme_jet(first_pos, jet_loc_first10_ano, temporal_mean)
+last_pos_jet = extreme_jet(last_pos, jet_loc_last10_ano, temporal_mean)
+
+first_neg_jet = extreme_jet(first_neg, jet_loc_first10_ano, temporal_mean)
+last_neg_jet = extreme_jet(last_neg, jet_loc_last10_ano, temporal_mean)
 
 # %%
 # # save data
@@ -163,7 +177,7 @@ sns.histplot(
     first_pos_jet.values.flatten(),
     label="first10_pos",
     color="k",
-    bins=np.arange(-10, 11, 1),
+    bins=np.arange(-20, 21, 2),
     stat="count",
     ax=hist_ax2,
 )
@@ -172,7 +186,7 @@ sns.histplot(
     last_pos_jet.values.flatten(),
     label="last10_pos",
     color="r",
-    bins=np.arange(-10, 11, 1),
+    bins=np.arange(-20, 21, 2),
     stat="count",
     alpha=0.5,
     ax=hist_ax2,
@@ -185,7 +199,7 @@ sns.histplot(
     first_neg_jet.values.flatten(),
     label="first10",
     color="k",
-    bins=np.arange(-10, 11, 1),
+    bins=np.arange(-20, 21, 2),
     stat="count",
     ax=hist_ax3,
 )
@@ -194,7 +208,7 @@ sns.histplot(
     last_neg_jet.values.flatten(),
     label="last10",
     color="r",
-    bins=np.arange(-10, 11, 1),
+    bins=np.arange(-20, 21, 2),
     stat="count",
     alpha=0.5,
     ax=hist_ax3,
@@ -206,6 +220,6 @@ hist_ax3.legend()
 for ax in [hist_ax1, hist_ax2, hist_ax3]:
     ax.axvline(x=0, color="k", linestyle="--")
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/monthly/jet_location_month_mean.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/monthly/jet_location_month_nomean_250hpa.png")
 
 # %%
