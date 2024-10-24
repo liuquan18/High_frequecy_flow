@@ -8,10 +8,7 @@ import logging
 from src.jet_stream.jet_speed_and_location import jet_stream_anomaly
 
 logging.basicConfig(level=logging.INFO)
-#%%
 
-
-# %%
 
 # %%
 ############## jet location hist #####################
@@ -75,6 +72,8 @@ def jet_stream_anomaly_period(period, jet_loc_clim):
 
 
     jet_loc_ano = xr.concat(jet_loc_ano, dim="ens")
+    # name as lat
+    jet_loc_ano.name = 'lat_ano'
 
     return jet_loc_ano
 
@@ -98,7 +97,7 @@ def save_path(eddy, same_clim):
 
 
 #%%
-eddy = True
+eddy = False
 same_clim = False
 
 #%%
@@ -107,7 +106,7 @@ jet_loc_first10_ano = jet_stream_anomaly_period("first10", jet_loc_clim)
 jet_loc_last10_ano = jet_stream_anomaly_period("last10", jet_loc_clim)
 
 first_save_path, last_save_path = save_path(eddy, same_clim)
-
+#%%
 jet_loc_first10_ano.to_netcdf(first_save_path)
 jet_loc_last10_ano.to_netcdf(last_save_path)
 # %%
