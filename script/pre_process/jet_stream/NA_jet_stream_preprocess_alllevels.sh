@@ -1,10 +1,15 @@
 #!/bin/bash
+#SBATCH --job-name=jet
+#SBATCH --time=01:00:00
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks=10
+#SBATCH --mem=0
+#SBATCH --mail-type=FAIL
+#SBATCH --account=mh0033
+#SBATCH --output=jet.%j.out
 
-# The resulting field is then zonally averaged over a\
-# longitudinal sector (0–60 W for the North Atlantic),\
-# neglecting windspoleward of 75 and equatorward of 15 .
 
-# The resulting field is then low-pass filtered to remove variability on time scales shorter than 10 days.
 module load cdo
 module load parallel
 
