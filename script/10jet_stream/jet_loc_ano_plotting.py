@@ -16,7 +16,7 @@ from src.jet_stream.jet_stream_plotting import plot_uhat
 
 logging.basicConfig(level=logging.INFO)
 #%%
-def read_data(period, same_clim = True, eddy = True):
+def read_anomaly(period, same_clim = True, eddy = True):
 
     # anomaly
     ano_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/"
@@ -37,12 +37,12 @@ eddy = True
 
 #%%
 # for plot the anomaly of all samples
-first10_ano_all = read_data("first10", same_clim = True, eddy = eddy)
-last10_ano_all = read_data("last10", same_clim = True, eddy = eddy)
+first10_ano_all = read_anomaly("first10", same_clim = True, eddy = eddy)
+last10_ano_all = read_anomaly("last10", same_clim = True, eddy = eddy)
 
 
-first10_ano = read_data("first10", same_clim = same_clim, eddy = eddy)
-last10_ano = read_data("last10", same_clim = same_clim, eddy = eddy)
+first10_ano = read_anomaly("first10", same_clim = same_clim, eddy = eddy)
+last10_ano = read_anomaly("last10", same_clim = same_clim, eddy = eddy)
 
 # %%
 first10_pos_events, first10_neg_events = read_extremes_allens("first10", 8)
