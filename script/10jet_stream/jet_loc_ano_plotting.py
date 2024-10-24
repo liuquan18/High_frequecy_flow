@@ -16,56 +16,42 @@ from src.jet_stream.jet_stream_plotting import plot_uhat
 
 logging.basicConfig(level=logging.INFO)
 #%%
+def read_data(period, same_clim = True, eddy = True):
+    # climatology
+    if eddy:
+        loc_clim = xr.open_dataset(
+        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_{period}.nc"                                 
+                                         ).lat
+    else:
+        loc_clim = xr.open_dataset(
+        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_allplev_{period}.nc"
+                                         ).lat
 
-# climatology only use the first10 years
-jet_speed_clim = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_speed_climatology_first10.nc"
-).ua
-jet_loc_clim = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_first10.nc"
-).lat
+    # anomaly
+    ano_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/"
+    clima_label = "sameclima" if same_clim else "diffclima"
+    eddy_label = "eddy" if eddy else "noneddy"
 
-# %%
-def jet_stream_anomaly_period(period):
-
-    jet_speed_ano = []
-    jet_loc_ano = []
-
-    for ens in range(1, 51):
-        # Load data
-        jet_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_{period}/"
-        jet_file = glob.glob(f"{jet_path}*r{ens}i1p1f1*.nc")[0]
-
-        jet = xr.open_dataset(jet_file).ua
-        # drop dim lon
-        jet = jet.isel(lon=0)
-
-        loc_ano = jet_stream_anomaly(
-            jet, jet_loc_clim, stat="loc"
-        )
-        loc_ano["ens"] = ens
-
-        speed_ano = jet_stream_anomaly(
-            jet, jet_speed_clim, stat="speed"
-        )
-        speed_ano["ens"] = ens
-
-        jet_speed_ano.append(speed_ano)
-        jet_loc_ano.append(loc_ano)
-
-    jet_speed_ano = xr.concat(jet_speed_ano, dim="ens")
-    jet_loc_ano = xr.concat(jet_loc_ano, dim="ens")
-
-    return jet_speed_ano, jet_loc_ano
+    ano_path = f"{ano_dir}jet_stream_anomaly_{eddy_label}_{clima_label}_{period}.nc"
 
 
-# %%
-############## jet location hist #####################
-jet_speed_first10_ano, jet_loc_first10_ano = jet_stream_anomaly_period("first10")
 
-# %%
-jet_speed_last10_ano, jet_loc_last10_ano = jet_stream_anomaly_period("last10")
+    loc_ano = xr.open_dataset(ano_path).lat_ano
 
+    return loc_clim, loc_ano
+
+#%%
+same_clim = False
+eddy = True
+
+#%%
+# for plot the anomaly of all samples
+_, first10_ano_all = read_data("first10", same_clim = True, eddy = eddy)
+_, last10_ano_all = read_data("last10", same_clim = True, eddy = eddy)
+
+
+first10_clim, first10_ano = read_data("first10", same_clim = same_clim, eddy = eddy)
+last10_clim, last10_ano = read_data("last10", same_clim = same_clim, eddy = eddy)
 
 # %%
 first10_pos_events, first10_neg_events = read_extremes_allens("first10", 8)
@@ -80,11 +66,11 @@ last10_pos_events = last10_pos_events[last10_pos_events["plev"] == 25000]
 last10_neg_events = last10_neg_events[last10_neg_events["plev"] == 25000]
 
 # %%
-jet_loc_first10_pos = jet_event(jet_loc_first10_ano, first10_pos_events)
-jet_loc_first10_neg = jet_event(jet_loc_first10_ano, first10_neg_events)
+jet_loc_first10_pos = jet_event(first10_ano, first10_pos_events)
+jet_loc_first10_neg = jet_event(first10_ano, first10_neg_events)
 # %%
-jet_loc_last10_pos = jet_event(jet_loc_last10_ano, last10_pos_events)
-jet_loc_last10_neg = jet_event(jet_loc_last10_ano, last10_neg_events)
+jet_loc_last10_pos = jet_event(last10_ano, last10_pos_events)
+jet_loc_last10_neg = jet_event(last10_ano, last10_neg_events)
 
 #################### jet composite map ####################
 # %%
@@ -113,10 +99,6 @@ uhat_neg_last10 = xr.open_dataset(
     "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/jetstream_MJJAS_last10_neg.nc"
 ).ua
 
-
-# %%
-# %%
-# plot location histgram and composite mean map together
 
 # %%
 def generate_intermediate_points(start, end, num_points):
@@ -193,7 +175,7 @@ for ax in [map_ax1, map_ax2, map_ax3]:
 hist_ax1 = fig.add_subplot(gs[1, 0])
 # jet location anomaly
 sns.histplot(
-    jet_loc_first10_ano.values.flatten(),
+    first10_ano_all.values.flatten(),
     label="first10",
     color="k",
     bins=np.arange(-30, 31, 2),
@@ -201,7 +183,7 @@ sns.histplot(
     ax=hist_ax1,
 )
 sns.histplot(
-    jet_loc_last10_ano.values.flatten(),
+    last10_ano_all.values.flatten(),
     label="last10",
     color="r",
     bins=np.arange(-30, 31, 2),
@@ -262,5 +244,5 @@ hist_ax3.legend()
 for ax in [hist_ax1, hist_ax2, hist_ax3]:
     ax.axvline(x=0, color="k", linestyle="--")
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/jet_stream/jet_location_hist_map.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/jet_stream/jet_location_hist_map_eddy.png")
 # %%
