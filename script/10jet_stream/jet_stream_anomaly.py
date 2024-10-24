@@ -101,9 +101,10 @@ eddy = False
 same_clim = False
 
 #%%
-jet_loc_clim = climatology("first10",same_clim = same_clim, eddy = eddy)
-jet_loc_first10_ano = jet_stream_anomaly_period("first10", jet_loc_clim)
-jet_loc_last10_ano = jet_stream_anomaly_period("last10", jet_loc_clim)
+first_jet_loc_clim = climatology("first10",same_clim = same_clim, eddy = eddy)
+last_jet_loc_clim = climatology("last10",same_clim = same_clim, eddy = eddy)
+jet_loc_first10_ano = jet_stream_anomaly_period("first10", first_jet_loc_clim)
+jet_loc_last10_ano = jet_stream_anomaly_period("last10", last_jet_loc_clim)
 
 first_save_path, last_save_path = save_path(eddy, same_clim)
 #%%
