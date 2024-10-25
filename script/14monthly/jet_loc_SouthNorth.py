@@ -59,9 +59,8 @@ def read_anomaly(period, same_clim = True, eddy = True):
 
     
 # %%
-# select only the months in jet where the NAO_extreme is valid
-def extreme_jet(NAO_extreme, jet, temporal_mean=False,):
-    selected_jet = []
+def count_jet_loc(NAO_extreme, jet):
+    jet_counts = []
     for ens in NAO_extreme.ens:
         NAO_extreme_ens = NAO_extreme.sel(ens=ens)
         jet_ens = jet.sel(ens=ens)
@@ -74,23 +73,23 @@ def extreme_jet(NAO_extreme, jet, temporal_mean=False,):
         # select only the valid months in daily jet
         daily_months = jet_ens.time.dt.strftime("%Y-%m")
         jet_mask = daily_months.isin(valid_months)
-
         selected_jet_ens = xr.where(jet_mask, jet_ens, np.nan)
-        if temporal_mean:
-            selected_jet_ens = selected_jet_ens.groupby('time.month').sum(dim='time')
 
-        selected_jet.append(selected_jet_ens)
+        # count the jet that is north (south) of climatology
 
-    selected_jet = xr.concat(selected_jet, dim="ens")
+        jet_loc_count = selected_jet_ens.groupby('time.month').sum(dim='time')
 
-    return selected_jet
+        jet_counts.append(jet_loc_count)
+
+    jet_counts = xr.concat(jet_counts, dim="ens")
+
+    return jet_counts
 
 
 
 #%%
-same_clim = False
-eddy = False
-temporal_mean = True
+same_clim = False  # if True, use the same climatology for first and last 10 years
+eddy = False       # if True, use the eddy jet stream
 
 
 #%%
@@ -103,7 +102,7 @@ jet_loc_first10_ano = read_anomaly("first10", same_clim = same_clim, eddy = eddy
 jet_loc_last10_ano = read_anomaly("last10", same_clim = same_clim, eddy = eddy)
 
 # %%
-# select the jet north or south
+# seperate the jet to north or south
 first_jet_south = xr.where(jet_loc_first10_ano < 0, 1, 0)
 last_jet_south = xr.where(jet_loc_last10_ano < 0, 1, 0)
 
@@ -113,11 +112,11 @@ last_jet_north = xr.where(jet_loc_last10_ano > 0, 1, 0)
 
 
 # %%
-first_pos_jet = extreme_jet(first_pos, first_jet_north, temporal_mean)
-last_pos_jet = extreme_jet(last_pos, last_jet_north, temporal_mean)
+first_pos_jet = count_jet_loc(first_pos, first_jet_north)
+last_pos_jet = count_jet_loc(last_pos, last_jet_north)
 
-first_neg_jet = extreme_jet(first_neg, first_jet_south, temporal_mean)
-last_neg_jet = extreme_jet(last_neg, last_jet_south, temporal_mean)
+first_neg_jet = count_jet_loc(first_neg, first_jet_south)
+last_neg_jet = count_jet_loc(last_neg, last_jet_south)
 
 #%%
 first_pos_jet = first_pos_jet.where(first_pos_jet != 0, drop=True)
@@ -125,3 +124,5 @@ last_pos_jet = last_pos_jet.where(last_pos_jet != 0, drop=True)
 
 first_neg_jet = first_neg_jet.where(first_neg_jet != 0, drop=True)
 last_neg_jet = last_neg_jet.where(last_neg_jet != 0, drop=True)
+
+# %%
