@@ -125,4 +125,18 @@ last_pos_jet = last_pos_jet.where(last_pos_jet != 0, drop=True)
 first_neg_jet = first_neg_jet.where(first_neg_jet != 0, drop=True)
 last_neg_jet = last_neg_jet.where(last_neg_jet != 0, drop=True)
 
+#name
+first_pos_jet.name = 'jet_loc'
+last_pos_jet.name = 'jet_loc'
+first_neg_jet.name = 'jet_loc'
+last_neg_jet.name = 'jet_loc'
+
+
+# %%
+# save
+first_pos_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc/jet_loc_pos_north_first10.nc")
+last_pos_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc/jet_loc_pos_north_last10.nc")
+
+first_neg_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc/jet_loc_neg_south_first10.nc")
+last_neg_jet.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc/jet_loc_neg_south_last10.nc")
 # %%
