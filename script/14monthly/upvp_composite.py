@@ -23,7 +23,10 @@ def count_wb_NAO(NAO_extreme, wb):
         selected_wb_ens = xr.where(month_mask, wb_ens, np.nan)
 
         # count the event
-        wb_count_ens = selected_wb_ens.groupby('time.month').sum(dim='time')
+        wb_count_ens = selected_wb_ens.resample(time = 'M').sum(dim='time')
+
+        # select data only in JJA
+        wb_count_ens = wb_count_ens.sel(time=wb_count_ens['time.season'] == 'JJA')
 
         wb_counts.append(wb_count_ens)
 
@@ -38,6 +41,8 @@ def read_upvp(period, ens):
     file=glob.glob(base_dir+f'*r{ens}i*.nc')[0]
     upvp = xr.open_dataset(file).ua.squeeze()
     upvp['time'] = upvp.indexes['time'].to_datetimeindex()
+    # select data only in JJA
+    upvp = upvp.sel(time=upvp['time.season'] == 'JJA')
     return upvp
 #%%
 def read_NAO_extremes():
@@ -92,13 +97,12 @@ last_pos_AWB = count_wb_NAO(last_pos, last_AWB)
 
 first_neg_CWB = count_wb_NAO(first_neg, first_CWB)
 last_neg_CWB = count_wb_NAO(last_neg, last_CWB)
-# %%
-# drop zero
-first_pos_AWB = first_pos_AWB.where(first_pos_AWB != 0, drop=True)
-last_pos_AWB = last_pos_AWB.where(last_pos_AWB != 0, drop=True)
+#%%
+first_pos_CWB = count_wb_NAO(first_pos, first_CWB)
+last_pos_CWB = count_wb_NAO(last_pos, last_CWB)
 
-first_neg_CWB = first_neg_CWB.where(first_neg_CWB != 0, drop=True)
-last_neg_CWB = last_neg_CWB.where(last_neg_CWB != 0, drop=True)
+first_neg_AWB = count_wb_NAO(first_neg, first_AWB)
+last_neg_AWB = count_wb_NAO(last_neg, last_AWB)
 
 # %%
 # name
@@ -107,6 +111,12 @@ last_pos_AWB.name = "wb"
 
 first_neg_CWB.name = "wb"
 last_neg_CWB.name = "wb"
+
+first_pos_CWB.name = "wb"
+last_pos_CWB.name = "wb"
+
+first_neg_AWB.name = "wb"
+last_neg_AWB.name = "wb"
 # %%
 # save
 first_pos_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_first_pos_AWB.nc")
@@ -114,4 +124,25 @@ last_pos_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP
 
 first_neg_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_first_neg_CWB.nc")
 last_neg_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_last_neg_CWB.nc")
+
+first_pos_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_first_pos_CWB.nc")
+last_pos_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_last_pos_CWB.nc")
+
+first_neg_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_first_neg_AWB.nc")
+last_neg_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_last_neg_AWB.nc")
+# %%
+fig, ax = plt.subplots(1,2, figsize=(10, 10))
+first_pos_AWB.plot.hist(ax=ax[0], bins=np.arange(5, 50, 2))
+last_pos_AWB.plot.hist(ax=ax[0], bins=np.arange(5, 50, 2), alpha=0.5)
+
+first_neg_CWB.plot.hist(ax=ax[1], bins=np.arange(2, 15, 1))
+last_neg_CWB.plot.hist(ax=ax[1], bins=np.arange(2, 15, 1), alpha=0.5)
+
+# %%
+fig, ax = plt.subplots(1,2, figsize=(10, 10))
+first_pos_CWB.plot.hist(ax=ax[0], bins=np.arange(2, 15, 1))
+last_pos_CWB.plot.hist(ax=ax[0], bins=np.arange(2, 15, 1), alpha=0.5)
+
+first_neg_AWB.plot.hist(ax=ax[1], bins=np.arange(5, 50, 2))
+last_neg_AWB.plot.hist(ax=ax[1], bins=np.arange(5, 50, 2), alpha=0.5)
 # %%
