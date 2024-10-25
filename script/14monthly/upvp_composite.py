@@ -6,11 +6,11 @@ import glob
 import matplotlib.pyplot as plt
 
 # %%
-def month_extreme_composite(NAO_extreme, var, reduce = 'temporal_sum'):
-    selected_var = []
+def count_wb_NAO(NAO_extreme, wb):
+    wb_counts = []
     for ens in NAO_extreme.ens:
         NAO_extreme_ens = NAO_extreme.sel(ens=ens)
-        var_ens = var.sel(ens=ens)
+        wb_ens = wb.sel(ens=ens)
 
         # get avlid months for this ensemble member
         NAO_months = NAO_extreme_ens.time.dt.strftime("%Y-%m")
@@ -18,20 +18,18 @@ def month_extreme_composite(NAO_extreme, var, reduce = 'temporal_sum'):
         valid_months = NAO_months[valid_mask]
 
         # select only the valid months in daily jet
-        daily_months = var_ens.time.dt.strftime("%Y-%m")
-        jet_mask = daily_months.isin(valid_months)
+        daily_months = wb_ens.time.dt.strftime("%Y-%m")
+        month_mask = daily_months.isin(valid_months)
+        selected_wb_ens = xr.where(month_mask, wb_ens, np.nan)
 
-        selected_var_ens = xr.where(jet_mask, var_ens, np.nan)
-        if reduce == 'temporal_sum':
-            selected_var_ens = selected_var_ens.groupby('time.month').sum(dim='time')
-        elif reduce == 'none':
-            selected_var_ens = selected_var_ens
+        # count the event
+        wb_count_ens = selected_wb_ens.groupby('time.month').sum(dim='time')
 
-        selected_var.append(selected_var_ens)
+        wb_counts.append(wb_count_ens)
 
-    selected_var = xr.concat(selected_var, dim="ens")
+    wb_counts = xr.concat(wb_counts, dim="ens")
 
-    return selected_var
+    return wb_counts
 
 
 #%%
@@ -43,6 +41,7 @@ def read_upvp(period, ens):
     return upvp
 #%%
 def read_NAO_extremes():
+    """both first10 and last10 are need to standardize"""
     first_eofs = xr.open_dataset(
         "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/EOF_result_first_last2091-2100/first10_eofs.nc"
     )
@@ -88,25 +87,31 @@ first_pos, last_pos, first_neg, last_neg = read_NAO_extremes()
 first_AWB, first_CWB = wave_break("first10")
 last_AWB, last_CWB = wave_break("last10")
 # %%
-first_pos_AWB = month_extreme_composite(first_pos, first_AWB)
-last_pos_AWB = month_extreme_composite(last_pos, last_AWB)
+first_pos_AWB = count_wb_NAO(first_pos, first_AWB)
+last_pos_AWB = count_wb_NAO(last_pos, last_AWB)
+
+first_neg_CWB = count_wb_NAO(first_neg, first_CWB)
+last_neg_CWB = count_wb_NAO(last_neg, last_CWB)
 # %%
 # drop zero
 first_pos_AWB = first_pos_AWB.where(first_pos_AWB != 0, drop=True)
 last_pos_AWB = last_pos_AWB.where(last_pos_AWB != 0, drop=True)
-# %%
-first_neg_CWB = month_extreme_composite(first_neg, first_CWB)
-last_neg_CWB = month_extreme_composite(last_neg, last_CWB)
 
-# drop zero
 first_neg_CWB = first_neg_CWB.where(first_neg_CWB != 0, drop=True)
 last_neg_CWB = last_neg_CWB.where(last_neg_CWB != 0, drop=True)
+
 # %%
-fig, ax = plt.subplots()
-first_pos_AWB.plot.hist(bins = np.arange(2, 51,2), ax = ax)
-last_pos_AWB.plot.hist(bins = np.arange(2, 51, 2), ax = ax, alpha = 0.5)
+# name
+first_pos_AWB.name = "wb"
+last_pos_AWB.name = "wb"
+
+first_neg_CWB.name = "wb"
+last_neg_CWB.name = "wb"
 # %%
-fig, ax = plt.subplots()
-first_neg_CWB.plot.hist(bins = np.arange(0,30,2), ax = ax)
-last_neg_CWB.plot.hist(bins = np.arange( 0,30,2), ax = ax, alpha = 0.5)
+# save
+first_pos_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_first_pos_AWB.nc")
+last_pos_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_last_pos_AWB.nc")
+
+first_neg_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_first_neg_CWB.nc")
+last_neg_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_last_neg_CWB.nc")
 # %%
