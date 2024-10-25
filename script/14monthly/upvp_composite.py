@@ -119,17 +119,17 @@ first_neg_AWB.name = "wb"
 last_neg_AWB.name = "wb"
 # %%
 # save
-first_pos_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_first_pos_AWB.nc")
-last_pos_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_last_pos_AWB.nc")
+first_pos_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_pos_AWB_first10.nc")
+last_pos_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_pos_AWB_last10.nc")
 
-first_neg_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_first_neg_CWB.nc")
-last_neg_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_last_neg_CWB.nc")
+first_neg_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_neg_CWB_first10.nc")
+last_neg_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_neg_CWB_last10.nc")
 
-first_pos_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_first_pos_CWB.nc")
-last_pos_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_last_pos_CWB.nc")
+first_pos_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_pos_CWB_first10.nc")
+last_pos_CWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_pos_CWB_last10.nc")
 
-first_neg_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_first_neg_AWB.nc")
-last_neg_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_last_neg_AWB.nc")
+first_neg_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_neg_AWB_first10.nc")
+last_neg_AWB.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/wave_break_count/wb_neg_AWB_last10.nc")
 # %%
 fig, ax = plt.subplots(1,2, figsize=(10, 10))
 first_pos_AWB.plot.hist(ax=ax[0], bins=np.arange(5, 50, 2))
