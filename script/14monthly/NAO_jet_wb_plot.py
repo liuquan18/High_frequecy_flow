@@ -38,7 +38,7 @@ def read_NAO_extremes():
     return first_pos, last_pos, first_neg, last_neg
 
 # %%
-def read_jet(period, NAO_phase, jet_loc):
+def read_jet(period, NAO_phase, jet_loc, eddy = False):
     """
     Parameters
     ----------
@@ -49,8 +49,9 @@ def read_jet(period, NAO_phase, jet_loc):
     jet_loc : str
         north or south
     """
+    eddy_label = "_eddy" if eddy else ""
     base_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/"
-    jet_path = f"{base_dir}jet_loc_{NAO_phase}_{jet_loc}_{period}.nc"
+    jet_path = f"{base_dir}jet_loc{eddy_label}_{NAO_phase}_{jet_loc}_{period}.nc"
 
     jet = xr.open_dataset(jet_path).jet_loc
 
