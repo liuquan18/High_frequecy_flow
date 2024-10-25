@@ -95,7 +95,7 @@ def count_jet_loc(NAO_extreme, jet):
 
 #%%
 same_clim = False  # if True, use the same climatology for first and last 10 years
-eddy = False       # if True, use the eddy jet stream
+eddy = True       # if True, use the eddy jet stream
 
 
 #%%
@@ -139,16 +139,20 @@ last_neg_north.name = "jet_loc"
 first_neg_south.name = "jet_loc"
 last_neg_south.name = "jet_loc"
 # %%
+# eddy label
+eddy_label = "_eddy" if eddy else ""
 # save
-first_pos_north.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc_pos_north_first10.nc")
-last_pos_north.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc_pos_north_last10.nc")
+first_pos_north.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc{eddy_label}_pos_north_first10.nc")
+last_pos_north.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc{eddy_label}_pos_north_last10.nc")
 
-first_pos_south.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc_pos_south_first10.nc")
-last_pos_south.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc_pos_south_last10.nc")
+first_pos_south.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc{eddy_label}_pos_south_first10.nc")
+last_pos_south.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc{eddy_label}_pos_south_last10.nc")
 
-first_neg_north.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc_neg_north_first10.nc")
-last_neg_north.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc_neg_north_last10.nc")
+first_neg_north.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc{eddy_label}_neg_north_first10.nc")
+last_neg_north.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc{eddy_label}_neg_north_last10.nc")
 
-first_neg_south.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc_neg_south_first10.nc")
-last_neg_south.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc_neg_south_last10.nc")
+first_neg_south.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc{eddy_label}_neg_south_first10.nc")
+last_neg_south.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/physics/jet_loc_count/jet_loc{eddy_label}_neg_south_last10.nc")
+
+
 # %%
