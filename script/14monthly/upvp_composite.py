@@ -4,10 +4,6 @@ import pandas as pd
 import numpy as np
 import glob
 import matplotlib.pyplot as plt
-# %%
-from src.extremes.extreme_read import read_extremes
-from eventextreme.extreme_threshold import subtract_threshold
-import src.composite.composite as comp
 
 # %%
 def month_extreme_composite(NAO_extreme, var, reduce = 'temporal_sum'):
