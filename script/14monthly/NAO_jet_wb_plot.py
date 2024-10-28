@@ -331,6 +331,7 @@ sns.histplot(
     hue="period",
     ax=axes[0, 0],
     kde=True,
+    bins=np.arange(-30, 31, 5),
 )
 sns.histplot(
     data=pos_NAO,
@@ -338,6 +339,7 @@ sns.histplot(
     hue="period",
     ax=axes[0, 1],
     kde=True,
+    bins=np.arange(-4, 31, 2),
 )
 
 sns.histplot(
@@ -346,9 +348,20 @@ sns.histplot(
     hue="period",
     ax=axes[1, 0],
     kde=True,
+    bins=np.arange(-30, 31, 5),
 )
 
-sns.histplot(data=neg_NAO, x="wb", hue="period", ax=axes[1, 1], kde=True)
+sns.histplot(
+    data=neg_NAO,
+    x="wb",
+    hue="period",
+    ax=axes[1, 1],
+    kde=True,
+    bins=np.arange(-30, 5, 2),
+    # more smooth
+    kde_kws={'bw_adjust': 1.5},  
+
+)
 
 axes[0, 0].set_xlabel("North_jet_count - South_jet_count")
 axes[1, 0].set_xlabel("North_jet_count - South_jet_count")
