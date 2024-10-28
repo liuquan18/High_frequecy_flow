@@ -366,4 +366,7 @@ for ax in axes.flatten():
     # vline at hlines at 0
     ax.axvline(0, color="black", linestyle="--")
     ax.axhline(0, color="black", linestyle="--")
+
+plt.tight_layout()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/monthly/NAO_jet_wb_hist.png")
 # %%
