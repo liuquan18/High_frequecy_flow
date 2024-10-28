@@ -350,16 +350,16 @@ sns.histplot(
 
 sns.histplot(data=neg_NAO, x="wb", hue="period", ax=axes[1, 1], kde=True)
 
-axes[0,0].set_xlabel("North_jet_count - South_jet_count")
-axes[1,0].set_xlabel("North_jet_count - South_jet_count")
-axes[0,1].set_xlabel("AWB_count - CWB_count")
-axes[1,1].set_xlabel("AWB_count - CWB_count")
+axes[0, 0].set_xlabel("North_jet_count - South_jet_count")
+axes[1, 0].set_xlabel("North_jet_count - South_jet_count")
+axes[0, 1].set_xlabel("AWB_count - CWB_count")
+axes[1, 1].set_xlabel("AWB_count - CWB_count")
 
-axes[0,0].set_title("Jet location (NAO pos)")
-axes[0,1].set_title("wave breaking (NAO pos)")
+axes[0, 0].set_title("Jet location (NAO pos)")
+axes[0, 1].set_title("wave breaking (NAO pos)")
 
-axes[1,0].set_title("Jet location (NAO neg)")
-axes[1,1].set_title("wave breaking (NAO neg)")
+axes[1, 0].set_title("Jet location (NAO neg)")
+axes[1, 1].set_title("wave breaking (NAO neg)")
 
 
 for ax in axes.flatten():
@@ -368,5 +368,7 @@ for ax in axes.flatten():
     ax.axhline(0, color="black", linestyle="--")
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/monthly/NAO_jet_wb_hist.png")
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/monthly/NAO_jet_wb_hist.png"
+)
 # %%
