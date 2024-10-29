@@ -1,19 +1,16 @@
 #%%
 import xarray as xr
-import pandas as pd
-import numpy as np
-import glob
-# %%
-from src.compute.slurm_cluster import init_dask_slurm_cluster
+import sys
 #%%
-client, scluster = init_dask_slurm_cluster(walltime = "04:00:00", memory = "128GB")
-
-#%%
-client
-
-#%%
-def jet_stream_climatology(period):
-    jet_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_{period}/'
+def jet_stream_climatology(period, allplev = False):
+    if allplev:
+        jet_path =  f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_allplev_{period}/'
+        speed_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_speed_climatology_allplev_{period}.nc"
+        loc_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_allplev_{period}.nc"
+    else:
+        jet_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_{period}/'
+        speed_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_speed_climatology_{period}.nc"
+        loc_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_{period}.nc"
     jets = xr.open_mfdataset(f'{jet_path}*.nc', combine = 'nested', concat_dim = 'ens')
 
     # drop lon dim
@@ -28,7 +25,7 @@ def jet_stream_climatology(period):
     jet_speeds = jet_speeds.groupby('time.month').mean(dim = ('time', 'ens'))
 
     # save to file
-    jet_speeds.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_speed_climatology_{period}.nc")
+    jet_speeds.to_netcdf(speed_path)
 
     # The jet latitude is defined as the latitude at which this maximum is found.
     jet_locs = jets.lat[jets.argmax(dim = 'lat')]
@@ -37,8 +34,11 @@ def jet_stream_climatology(period):
     jet_locs_clim = jet_locs.groupby('time.month').mean(dim = ('time', 'ens'))
 
     # save to file
-    jet_locs_clim.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_{period}.nc")
+    jet_locs_clim.to_netcdf(loc_path)
 # %%
-jet_stream_climatology('first10')
-jet_stream_climatology('last10')
+period = sys.argv[1]
+allplev = sys.argv[2]
+print(f"Calculating jet stream climatology for {period} with all plev = {allplev}")
+jet_stream_climatology(period, allplev)
+
 # %%
