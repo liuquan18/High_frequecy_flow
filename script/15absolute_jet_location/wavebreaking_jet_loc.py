@@ -13,14 +13,23 @@ from src.extremes.extreme_read import read_extremes  # NAO extremes
 
 
 # %%
-def jet_location_abs(period, ens):
+def jet_stream_abs(period, ens, plev = None):
 
+    if plev is None: # eddy-driven jet
+        plev_label = ""
+    else:
+        plev_label = "_allplev" # select plev later
     # Load data
-    jet_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_{period}/"
+    jet_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream{plev_label}_{period}/"
     jet_file = glob.glob(f"{jet_path}*r{ens}i1p1f1*.nc")[0]
 
     jet = xr.open_dataset(jet_file).ua
     jet["time"] = jet.indexes["time"].to_datetimeindex()
+
+    try:
+        jet = jet.sel(plev=plev)
+    except KeyError:
+        pass
 
     # drop dim lon
     jet = jet.isel(lon=0)
@@ -76,14 +85,14 @@ def composite_NAO_WB(NAO, WB, lag_days=-10, WB_type="precusor"):
 
 
 # %%
-def event_composite(period):
+def event_composite(period, jet_plev = None):
 
     NAO_pos_composites = []
     NAO_neg_composites = []
 
     for ens in range(1, 51):
 
-        jet_loc, jet_speed = jet_location_abs(period, ens)
+        jet_loc, jet_speed = jet_stream_abs(period, ens, jet_plev)
         NAO_pos, NAO_neg = read_extremes(period, 8, ens, 25000)
 
         AWB = read_wb(period, ens, "AWB", True)
