@@ -180,3 +180,24 @@ sns.scatterplot(data = NAO, x = 'jet_loc', y = 'precusor_WB', hue = 'period', si
 sns.jointplot(data=NAO, x='jet_loc', y='precusor_WB', hue='period', kind='scatter')
 
 # %%
+NAO['WB_diff'] = NAO['precusor_WB'] - NAO['non_precusor_WB']
+# %%
+sns.scatterplot(data = NAO, x = 'jet_loc', y = 'WB_diff', hue = 'period', size = 'extreme_duration', legend = False, style='phase', sizes=(20, 200))
+
+# %%
+sns.jointplot(data=NAO, x='jet_loc', y='WB_diff', hue='period', kind='kde', common_norm=False)
+
+# %%
+fig, axes = plt.subplots(2,1, height_ratios=[0.3, 1], sharex=True, figsize=(6, 6))
+
+sns.kdeplot(data=NAO, x='jet_loc', hue='period', common_norm=True, ax = axes[0])
+
+scatter = sns.scatterplot(data = NAO, x = 'jet_loc', y = 'WB_diff', hue = 'period', size = 'extreme_duration', legend = True, style='phase', sizes=(20, 200))
+# add legend
+
+scatter.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+
+
+for ax in axes:
+    ax.set_xlim(35, 65)
+# %%
