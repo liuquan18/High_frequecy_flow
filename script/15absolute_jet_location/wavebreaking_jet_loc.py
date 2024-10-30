@@ -165,18 +165,6 @@ NAO_neg['phase'] = 'neg'
 NAO = pd.concat([NAO_pos, NAO_neg], axis=0)
 
 
-#%%
-sns.jointplot(data=NAO_pos, x='jet_loc', y='AWB', hue='period', size = 'extreme_duration', kind = 'scatter')
-# %%
-sns.jointplot(data=NAO_neg, x='jet_speed', y='AWB', hue='period', kind='kde')
-# %%
-sns.scatterplot(data=NAO_pos, x='jet_loc', y='AWB', hue='period', size = 'extreme_duration', legend=False)
-# %%
-sns.scatterplot(data = NAO_neg, x = 'jet_loc', y = 'CWB', hue = 'period', size = 'extreme_duration', legend = False)
-# %%
-fig, ax = plt.subplots()
-sns.scatterplot(data = NAO, x = 'jet_loc', y = 'precusor_WB', hue = 'period', size = 'extreme_duration', legend = False, ax = ax, style='phase')
-
 # %%
 # joint plot
 sns.jointplot(data=NAO, x='jet_loc', y='precusor_WB', hue='period', kind='kde', common_norm=False)
@@ -186,6 +174,9 @@ sns.jointplot(data=NAO, x='jet_loc', y='precusor_WB', hue='period', kind='kde', 
 sns.jointplot(data=NAO, x='jet_loc', y='non_precusor_WB', hue='period', kind='kde', common_norm=True)
 
 # %%
-sns.scatterplot(data = NAO, x = 'jet_loc', y = 'non_precusor_WB', hue = 'period', size = 'extreme_duration', legend = False,style='phase')
+sns.scatterplot(data = NAO, x = 'jet_loc', y = 'precusor_WB', hue = 'period', size = 'extreme_duration', legend = False, style='phase')
+
+# %%
+sns.jointplot(data=NAO, x='jet_loc', y='precusor_WB', hue='period', kind='scatter')
 
 # %%
