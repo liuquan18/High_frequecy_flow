@@ -45,7 +45,7 @@ def jet_stream_abs(period, ens, plev = None):
 
 
 # %%
-def composite_NAO_jet(NAO, jet, label="jet_loc"):
+def composite_during_NAO(NAO, jet, label="jet_loc"):
     NAO_jet_composites = []
     for event_id, event in NAO.iterrows():
 
@@ -63,7 +63,7 @@ def composite_NAO_jet(NAO, jet, label="jet_loc"):
 
 
 # %%
-def composite_NAO_WB(NAO, WB, lag_days=[-10,-1], WB_type="precusor"):
+def composite_before_NAO(NAO, WB, lag_days=[-10,-1], WB_type="precusor_WB"):
     NAO_wb_composites = []
 
     for event_id, event in NAO.iterrows():
@@ -80,8 +80,8 @@ def composite_NAO_WB(NAO, WB, lag_days=[-10,-1], WB_type="precusor"):
         NAO_wb_composites.append(WB_comp)
 
     NAO_wb_composites = xr.concat(NAO_wb_composites, dim="event")
-    NAO_wb_composites = NAO_wb_composites.to_dataframe(WB_type+'_WB')
-    return NAO_wb_composites[[WB_type+'_WB']]
+    NAO_wb_composites = NAO_wb_composites.to_dataframe(WB_type)
+    return NAO_wb_composites[[WB_type]]
 
 
 # %%
@@ -103,10 +103,10 @@ def event_composite(period, jet_plev = None):
             NAO_pos.index.name = "event"
             NAO_pos["ens"] = ens
 
-            NAO_pos_jet_loc = composite_NAO_jet(NAO_pos, jet_loc)
-            NAO_pos_jet_speed = composite_NAO_jet(NAO_pos, jet_speed, label="jet_speed")
-            NAO_pos_AWB = composite_NAO_WB(NAO_pos, AWB, WB_type="precusor")
-            NAO_pos_CWB = composite_NAO_WB(NAO_pos, CWB, WB_type="non_precusor")
+            NAO_pos_jet_loc = composite_during_NAO(NAO_pos, jet_loc)
+            NAO_pos_jet_speed = composite_during_NAO(NAO_pos, jet_speed, label="jet_speed")
+            NAO_pos_AWB = composite_before_NAO(NAO_pos, AWB, WB_type="precusor_WB")
+            NAO_pos_CWB = composite_before_NAO(NAO_pos, CWB, WB_type="non_precusor_WB")
 
             NAO_pos_composite = (
                 NAO_pos.join(NAO_pos_jet_loc, on="event")
@@ -121,10 +121,10 @@ def event_composite(period, jet_plev = None):
             NAO_neg.index.name = "event"
             NAO_neg["ens"] = ens
 
-            NAO_neg_jet_loc = composite_NAO_jet(NAO_neg, jet_loc)
-            NAO_neg_jet_speed = composite_NAO_jet(NAO_neg, jet_speed, label="jet_speed")
-            NAO_neg_AWB = composite_NAO_WB(NAO_neg, AWB, WB_type="non_precusor")
-            NAO_neg_CWB = composite_NAO_WB(NAO_neg, CWB, WB_type="precusor")
+            NAO_neg_jet_loc = composite_during_NAO(NAO_neg, jet_loc)
+            NAO_neg_jet_speed = composite_during_NAO(NAO_neg, jet_speed, label="jet_speed")
+            NAO_neg_AWB = composite_before_NAO(NAO_neg, AWB, WB_type="non_precusor_WB")
+            NAO_neg_CWB = composite_before_NAO(NAO_neg, CWB, WB_type="precusor_WB")
 
             NAO_neg_composite = (
                 NAO_neg.join(NAO_neg_jet_loc, on="event")
