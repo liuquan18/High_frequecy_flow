@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import glob
 import seaborn as sns
 
+
 # %%
 from src.composite.composite_NAO_WB import read_wb, lag_lead_composite
 import src.composite.composite as comp
@@ -194,7 +195,9 @@ NAO['precusor'] = NAO['AWB']
 NAO.loc[NAO['phase'] == 'neg', 'precusor'] = NAO.loc[NAO['phase'] == 'neg', 'CWB']
 #%%
 # save 
-NAO.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/abs_jet_loc_NAO.csv", index=True)
+# NAO.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/abs_jet_loc_NAO.csv", index=True)
+# read NAO
+NAO = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/abs_jet_loc_NAO.csv", index_col=0)
 
 # %%
 # read climatology
