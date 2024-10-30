@@ -94,8 +94,8 @@ def composite_jet_loc(period, plev=None, smooth = None):
 
 
 # %%
-first_pos_jet, first_neg_jet, first_jet_mean, first_jet_std = composite_jet_loc("first10", smooth=3)
-last_pos_jet, last_neg_jet, last_jet_mean, last_jet_std = composite_jet_loc("last10", smooth=3)
+first_pos_jet, first_neg_jet, first_jet_mean, first_jet_std = composite_jet_loc("first10", 25000, smooth=3)
+last_pos_jet, last_neg_jet, last_jet_mean, last_jet_std = composite_jet_loc("last10", 25000, smooth=3)
 
 
 # %%
@@ -148,7 +148,7 @@ for ax in axes[:, 1].flat:
 
 
 for ax in axes.flat:
-    ax.set_ylim(35, 65)
+    ax.set_ylim(35, 63)
     ax.set_xlim(-15, 10)
     ax.set_title(ax.get_label())
     ax.set_ylabel("Latitude")
@@ -161,6 +161,6 @@ axes[1,0].set_title("neg-first10")
 axes[1,1].set_title("neg-last10")
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/background_jet/NA_jet_loc_lat_day.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/background_jet/NA_jet250_loc_lat_day.png")
 
 # %%
