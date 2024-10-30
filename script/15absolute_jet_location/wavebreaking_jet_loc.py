@@ -63,7 +63,7 @@ def composite_during_NAO(NAO, jet, label="jet_loc"):
 
 
 # %%
-def composite_before_NAO(NAO, WB, lag_days=[-10, -1], WB_type="precusor_WB"):
+def composite_before_NAO(NAO, WB, lag_days=[-10, -1], WB_type="AWB"):
     NAO_wb_composites = []
 
     for event_id, event in NAO.iterrows():
@@ -115,8 +115,8 @@ def event_composite(period, jet_plev=None):
             NAO_pos_jet_speed_before = composite_before_NAO(
                 NAO_pos, jet_speed, lag_days=[-10, -1], WB_type="jet_speed_before"
             )
-            NAO_pos_AWB = composite_before_NAO(NAO_pos, AWB, WB_type="precusor_WB")
-            NAO_pos_CWB = composite_before_NAO(NAO_pos, CWB, WB_type="non_precusor_WB")
+            NAO_pos_AWB = composite_before_NAO(NAO_pos, AWB, WB_type="AWB")
+            NAO_pos_CWB = composite_before_NAO(NAO_pos, CWB, WB_type="CWB")
 
             NAO_pos_composite = (
                 NAO_pos.join(NAO_pos_jet_loc, on="event")
@@ -145,8 +145,8 @@ def event_composite(period, jet_plev=None):
             NAO_neg_jet_speed_before = composite_before_NAO(
                 NAO_neg, jet_speed, lag_days=[-10, -1], WB_type="jet_speed_before"
             )
-            NAO_neg_AWB = composite_before_NAO(NAO_neg, AWB, WB_type="non_precusor_WB")
-            NAO_neg_CWB = composite_before_NAO(NAO_neg, CWB, WB_type="precusor_WB")
+            NAO_neg_AWB = composite_before_NAO(NAO_neg, AWB, WB_type="AWB")
+            NAO_neg_CWB = composite_before_NAO(NAO_neg, CWB, WB_type="CWB")
 
             NAO_neg_composite = (
                 NAO_neg.join(NAO_neg_jet_loc, on="event")
@@ -187,19 +187,35 @@ NAO_neg["phase"] = "neg"
 
 # merge pos and neg
 NAO = pd.concat([NAO_pos, NAO_neg], axis=0)
-NAO["WB_diff"] = NAO["precusor_WB"] - NAO["non_precusor_WB"]
-
+NAO["WB_diff"] = NAO["AWB"] - NAO["CWB"]
+#%%
+# construct a column called 'percusor', the value equals column 'AWB' is 'phase' is 'pos', otherwise 'CWB'
+NAO['precusor'] = NAO['AWB']
+NAO.loc[NAO['phase'] == 'neg', 'precusor'] = NAO.loc[NAO['phase'] == 'neg', 'CWB']
+#%%
+# save 
+NAO.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/abs_jet_loc_NAO.csv", index=True)
 
 # %%
+# read climatology
+first_jet_loc_clim = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_first10.nc")
+last_jet_loc_clim = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream_climatology/jet_loc_climatology_last10.nc")
 
+first_jet_loc_clim = first_jet_loc_clim.lat.mean(dim ='month')
+last_jet_loc_clim = last_jet_loc_clim.lat.mean(dim ='month')
 # %%
 fig, axes = plt.subplots(
-    3, 1, height_ratios=[0.3, 1, 0.3], sharex=False, figsize=(6, 8)
+    3, 1, height_ratios=[0.3, 1, 0.3], sharex=False, figsize=(8, 8)
 )
 
+# KDE plot during NAO event
 kde_during = sns.kdeplot(data=NAO, x="jet_loc_during", hue="period", common_norm=True, ax=axes[0], legend=True)
-kde_during.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+axes[0].legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+axes[0].set_xlabel("Jet location during NAO event")
 
+
+
+# Scatter plot
 scatter = sns.scatterplot(
     data=NAO,
     x="jet_loc_during",
@@ -211,13 +227,95 @@ scatter = sns.scatterplot(
     sizes=(20, 200),
     ax=axes[1],
 )
-# add legend
-
 scatter.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+axes[1].set_xlabel("Jet location during NAO event")
+axes[1].set_ylabel("AWB - CWB before NAO event")
 
-sns.kdeplot(data=NAO, x="jet_loc_before", hue="period", common_norm=True, ax=axes[2], legend=False)
 
+# KDE plot before NAO event
+kde_before = sns.kdeplot(data=NAO, x="jet_loc_before", hue="period", common_norm=True, ax=axes[2], legend=False)
+axes[2].set_xlabel("Jet location during wave-breaking event")
 
+# Calculate mean jet location before NAO event
+jet_loc_before = NAO.groupby('period')['jet_loc_before'].mean()
+
+# Add vertical lines at mean of period
+for period, color in zip(['first10', 'last10'], ['C0', 'C1']):
+    x = jet_loc_before[period]
+    kde_line = kde_before.get_lines()[1 if period == 'first10' else 0]
+    kde_x, kde_y = kde_line.get_data()
+    y = kde_y[np.argmin(np.abs(kde_x - x))]
+    axes[2].plot([x, x], [0, y], color=color, label=period)
+
+# Add vertical lines at climatology
+axes[2].axvline(first_jet_loc_clim.values, color="C0", linestyle="--", label='first10 climatology')
+axes[2].axvline(last_jet_loc_clim.values, color="C1", linestyle="--", label='last10 climatology')
+
+axes[2].legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+
+# Set x-axis limits
 for ax in axes:
     ax.set_xlim(35, 65)
+
+plt.tight_layout()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/background_jet/WB_jet_background.png", dpi=300)
+
+# %%
+fig, axes = plt.subplots(
+    3, 1, height_ratios=[0.3, 1, 0.3], sharex=False, figsize=(8, 8)
+)
+
+# KDE plot during NAO event
+kde_during = sns.kdeplot(data=NAO, x="jet_loc_during", hue="period", common_norm=True, ax=axes[0], legend=True)
+axes[0].legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+axes[0].set_xlabel("Jet location during NAO event")
+
+
+
+# Scatter plot
+scatter = sns.scatterplot(
+    data=NAO,
+    x="jet_loc_during",
+    y="precusor",
+    hue="period",
+    size="extreme_duration",
+    legend=True,
+    style="phase",
+    sizes=(20, 200),
+    ax=axes[1],
+)
+scatter.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+axes[1].set_xlabel("Jet location during NAO event")
+axes[1].set_ylabel("precursor WB before NAO event")
+axes[1].set_ylim(-0.08, 0.41)
+
+
+# KDE plot before NAO event
+kde_before = sns.kdeplot(data=NAO, x="jet_loc_before", hue="period", common_norm=True, ax=axes[2], legend=False)
+axes[2].set_xlabel("Jet location during wave-breaking event")
+
+# Calculate mean jet location before NAO event
+jet_loc_before = NAO.groupby('period')['jet_loc_before'].mean()
+
+# Add vertical lines at mean of period
+for period, color in zip(['first10', 'last10'], ['C0', 'C1']):
+    x = jet_loc_before[period]
+    kde_line = kde_before.get_lines()[1 if period == 'first10' else 0]
+    kde_x, kde_y = kde_line.get_data()
+    y = kde_y[np.argmin(np.abs(kde_x - x))]
+    axes[2].plot([x, x], [0, y], color=color, label=period)
+
+# Add vertical lines at climatology
+axes[2].axvline(first_jet_loc_clim.values, color="C0", linestyle="--", label='first10 climatology')
+axes[2].axvline(last_jet_loc_clim.values, color="C1", linestyle="--", label='last10 climatology')
+
+axes[2].legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+
+# Set x-axis limits
+for ax in axes:
+    ax.set_xlim(35, 65)
+plt.tight_layout()
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/background_jet/WB_precursor_jet_background.png", dpi=300)
+
 # %%
