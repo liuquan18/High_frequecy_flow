@@ -165,9 +165,9 @@ def event_composite(period, jet_plev=None):
 
 
 # %%
-first_NAO_pos, first_NAO_neg = event_composite("first10")
+first_NAO_pos, first_NAO_neg = event_composite("first10", None)
 # %%
-last_NAO_pos, last_NAO_neg = event_composite("last10")
+last_NAO_pos, last_NAO_neg = event_composite("last10", None)
 
 # %%
 first_NAO_neg["period"] = "first10"
@@ -189,78 +189,7 @@ NAO_neg["phase"] = "neg"
 NAO = pd.concat([NAO_pos, NAO_neg], axis=0)
 NAO["WB_diff"] = NAO["precusor_WB"] - NAO["non_precusor_WB"]
 
-# %%
-# joint plot
-sns.jointplot(
-    data=NAO, x="jet_loc", y="precusor_WB", hue="period", kind="kde", common_norm=False
-)
-# %%
 
-# %%
-sns.jointplot(
-    data=NAO,
-    x="jet_loc",
-    y="non_precusor_WB",
-    hue="period",
-    kind="kde",
-    common_norm=True,
-)
-
-# %%
-sns.scatterplot(
-    data=NAO,
-    x="jet_loc",
-    y="precusor_WB",
-    hue="period",
-    size="extreme_duration",
-    legend=False,
-    style="phase",
-)
-
-# %%
-sns.jointplot(data=NAO, x="jet_loc", y="precusor_WB", hue="period", kind="scatter")
-
-# %%
-
-# %%
-sns.scatterplot(
-    data=NAO,
-    x="jet_loc",
-    y="WB_diff",
-    hue="period",
-    size="extreme_duration",
-    legend=False,
-    style="phase",
-    sizes=(20, 200),
-)
-
-# %%
-sns.jointplot(
-    data=NAO, x="jet_loc", y="WB_diff", hue="period", kind="kde", common_norm=False
-)
-
-# %%
-fig, axes = plt.subplots(2, 1, height_ratios=[0.3, 1], sharex=True, figsize=(6, 6))
-
-sns.kdeplot(data=NAO, x="jet_loc_during", hue="period", common_norm=True, ax=axes[0])
-
-scatter = sns.scatterplot(
-    data=NAO,
-    x="jet_loc_during",
-    y="WB_diff",
-    hue="period",
-    size="extreme_duration",
-    legend=True,
-    style="phase",
-    sizes=(20, 200),
-)
-# add legend
-
-scatter.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
-
-
-for ax in axes:
-    ax.set_xlim(35, 65)
 # %%
 
 # %%
@@ -268,7 +197,8 @@ fig, axes = plt.subplots(
     3, 1, height_ratios=[0.3, 1, 0.3], sharex=False, figsize=(6, 8)
 )
 
-sns.kdeplot(data=NAO, x="jet_loc_during", hue="period", common_norm=True, ax=axes[0])
+kde_during = sns.kdeplot(data=NAO, x="jet_loc_during", hue="period", common_norm=True, ax=axes[0], legend=True)
+kde_during.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
 
 scatter = sns.scatterplot(
     data=NAO,
@@ -285,7 +215,7 @@ scatter = sns.scatterplot(
 
 scatter.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
 
-sns.kdeplot(data=NAO, x="jet_loc_before", hue="period", common_norm=True, ax=axes[2])
+sns.kdeplot(data=NAO, x="jet_loc_before", hue="period", common_norm=True, ax=axes[2], legend=False)
 
 
 for ax in axes:
