@@ -63,7 +63,7 @@ def composite_NAO_jet(NAO, jet, label="jet_loc"):
 
 
 # %%
-def composite_NAO_WB(NAO, WB, lag_days=-10, WB_type="precusor"):
+def composite_NAO_WB(NAO, WB, lag_days=[-10,-1], WB_type="precusor"):
     NAO_wb_composites = []
 
     for event_id, event in NAO.iterrows():
@@ -71,8 +71,8 @@ def composite_NAO_WB(NAO, WB, lag_days=-10, WB_type="precusor"):
 
         WB_comp = WB.sel(
             time=slice(
-                on_set_day + pd.Timedelta(days=lag_days),
-                on_set_day + pd.Timedelta(days=-1),
+                on_set_day + pd.Timedelta(days=lag_days[0]),
+                on_set_day + pd.Timedelta(days=lag_days[1]),
             )
         ).mean(dim="time")
 
