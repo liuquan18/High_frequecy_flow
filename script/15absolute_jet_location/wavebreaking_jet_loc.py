@@ -13,12 +13,12 @@ from src.extremes.extreme_read import read_extremes  # NAO extremes
 
 
 # %%
-def jet_stream_abs(period, ens, plev = None):
+def jet_stream_abs(period, ens, plev=None):
 
-    if plev is None: # eddy-driven jet
+    if plev is None:  # eddy-driven jet
         plev_label = ""
     else:
-        plev_label = "_allplev" # select plev later
+        plev_label = "_allplev"  # select plev later
     # Load data
     jet_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/jet_stream{plev_label}_{period}/"
     jet_file = glob.glob(f"{jet_path}*r{ens}i1p1f1*.nc")[0]
@@ -63,7 +63,7 @@ def composite_during_NAO(NAO, jet, label="jet_loc"):
 
 
 # %%
-def composite_before_NAO(NAO, WB, lag_days=[-10,-1], WB_type="precusor_WB"):
+def composite_before_NAO(NAO, WB, lag_days=[-10, -1], WB_type="precusor_WB"):
     NAO_wb_composites = []
 
     for event_id, event in NAO.iterrows():
@@ -85,7 +85,7 @@ def composite_before_NAO(NAO, WB, lag_days=[-10,-1], WB_type="precusor_WB"):
 
 
 # %%
-def event_composite(period, jet_plev = None):
+def event_composite(period, jet_plev=None):
 
     NAO_pos_composites = []
     NAO_neg_composites = []
@@ -103,14 +103,26 @@ def event_composite(period, jet_plev = None):
             NAO_pos.index.name = "event"
             NAO_pos["ens"] = ens
 
-            NAO_pos_jet_loc = composite_during_NAO(NAO_pos, jet_loc)
-            NAO_pos_jet_speed = composite_during_NAO(NAO_pos, jet_speed, label="jet_speed")
+            NAO_pos_jet_loc = composite_during_NAO(
+                NAO_pos, jet_loc, label="jet_loc_during"
+            )
+            NAO_pos_jet_speed = composite_during_NAO(
+                NAO_pos, jet_speed, label="jet_speed_during"
+            )
+            NAO_pos_jet_loc_before = composite_before_NAO(
+                NAO_pos, jet_loc, lag_days=[-10, -1], WB_type="jet_loc_before"
+            )
+            NAO_pos_jet_speed_before = composite_before_NAO(
+                NAO_pos, jet_speed, lag_days=[-10, -1], WB_type="jet_speed_before"
+            )
             NAO_pos_AWB = composite_before_NAO(NAO_pos, AWB, WB_type="precusor_WB")
             NAO_pos_CWB = composite_before_NAO(NAO_pos, CWB, WB_type="non_precusor_WB")
 
             NAO_pos_composite = (
                 NAO_pos.join(NAO_pos_jet_loc, on="event")
                 .join(NAO_pos_jet_speed, on="event")
+                .join(NAO_pos_jet_loc_before, on="event")
+                .join(NAO_pos_jet_speed_before, on="event")
                 .join(NAO_pos_AWB, on="event")
                 .join(NAO_pos_CWB, on="event")
             )
@@ -121,14 +133,26 @@ def event_composite(period, jet_plev = None):
             NAO_neg.index.name = "event"
             NAO_neg["ens"] = ens
 
-            NAO_neg_jet_loc = composite_during_NAO(NAO_neg, jet_loc)
-            NAO_neg_jet_speed = composite_during_NAO(NAO_neg, jet_speed, label="jet_speed")
+            NAO_neg_jet_loc = composite_during_NAO(
+                NAO_neg, jet_loc, label="jet_loc_during"
+            )
+            NAO_neg_jet_speed = composite_during_NAO(
+                NAO_neg, jet_speed, label="jet_speed_during"
+            )
+            NAO_neg_jet_loc_before = composite_before_NAO(
+                NAO_neg, jet_loc, lag_days=[-10, -1], WB_type="jet_loc_before"
+            )
+            NAO_neg_jet_speed_before = composite_before_NAO(
+                NAO_neg, jet_speed, lag_days=[-10, -1], WB_type="jet_speed_before"
+            )
             NAO_neg_AWB = composite_before_NAO(NAO_neg, AWB, WB_type="non_precusor_WB")
             NAO_neg_CWB = composite_before_NAO(NAO_neg, CWB, WB_type="precusor_WB")
 
             NAO_neg_composite = (
                 NAO_neg.join(NAO_neg_jet_loc, on="event")
                 .join(NAO_neg_jet_speed, on="event")
+                .join(NAO_neg_jet_loc_before, on="event")
+                .join(NAO_neg_jet_speed_before, on="event")
                 .join(NAO_neg_AWB, on="event")
                 .join(NAO_neg_CWB, on="event")
             )
@@ -145,57 +169,123 @@ first_NAO_pos, first_NAO_neg = event_composite("first10")
 # %%
 last_NAO_pos, last_NAO_neg = event_composite("last10")
 
-#%%
-first_NAO_neg['period'] = 'first10'
-last_NAO_neg['period'] = 'last10'
+# %%
+first_NAO_neg["period"] = "first10"
+last_NAO_neg["period"] = "last10"
 
-first_NAO_pos['period'] = 'first10'
-last_NAO_pos['period'] = 'last10'
+first_NAO_pos["period"] = "first10"
+last_NAO_pos["period"] = "last10"
 
-#%%
+# %%
 # merge first and last
 NAO_pos = pd.concat([first_NAO_pos, last_NAO_pos], axis=0)
 NAO_neg = pd.concat([first_NAO_neg, last_NAO_neg], axis=0)
 
-#%%
-NAO_pos['phase'] = 'pos'
-NAO_neg['phase'] = 'neg'
+# %%
+NAO_pos["phase"] = "pos"
+NAO_neg["phase"] = "neg"
 
 # merge pos and neg
 NAO = pd.concat([NAO_pos, NAO_neg], axis=0)
-
+NAO["WB_diff"] = NAO["precusor_WB"] - NAO["non_precusor_WB"]
 
 # %%
 # joint plot
-sns.jointplot(data=NAO, x='jet_loc', y='precusor_WB', hue='period', kind='kde', common_norm=False)
+sns.jointplot(
+    data=NAO, x="jet_loc", y="precusor_WB", hue="period", kind="kde", common_norm=False
+)
 # %%
 
 # %%
-sns.jointplot(data=NAO, x='jet_loc', y='non_precusor_WB', hue='period', kind='kde', common_norm=True)
+sns.jointplot(
+    data=NAO,
+    x="jet_loc",
+    y="non_precusor_WB",
+    hue="period",
+    kind="kde",
+    common_norm=True,
+)
 
 # %%
-sns.scatterplot(data = NAO, x = 'jet_loc', y = 'precusor_WB', hue = 'period', size = 'extreme_duration', legend = False, style='phase')
+sns.scatterplot(
+    data=NAO,
+    x="jet_loc",
+    y="precusor_WB",
+    hue="period",
+    size="extreme_duration",
+    legend=False,
+    style="phase",
+)
 
 # %%
-sns.jointplot(data=NAO, x='jet_loc', y='precusor_WB', hue='period', kind='scatter')
+sns.jointplot(data=NAO, x="jet_loc", y="precusor_WB", hue="period", kind="scatter")
 
 # %%
-NAO['WB_diff'] = NAO['precusor_WB'] - NAO['non_precusor_WB']
-# %%
-sns.scatterplot(data = NAO, x = 'jet_loc', y = 'WB_diff', hue = 'period', size = 'extreme_duration', legend = False, style='phase', sizes=(20, 200))
 
 # %%
-sns.jointplot(data=NAO, x='jet_loc', y='WB_diff', hue='period', kind='kde', common_norm=False)
+sns.scatterplot(
+    data=NAO,
+    x="jet_loc",
+    y="WB_diff",
+    hue="period",
+    size="extreme_duration",
+    legend=False,
+    style="phase",
+    sizes=(20, 200),
+)
 
 # %%
-fig, axes = plt.subplots(2,1, height_ratios=[0.3, 1], sharex=True, figsize=(6, 6))
+sns.jointplot(
+    data=NAO, x="jet_loc", y="WB_diff", hue="period", kind="kde", common_norm=False
+)
 
-sns.kdeplot(data=NAO, x='jet_loc', hue='period', common_norm=True, ax = axes[0])
+# %%
+fig, axes = plt.subplots(2, 1, height_ratios=[0.3, 1], sharex=True, figsize=(6, 6))
 
-scatter = sns.scatterplot(data = NAO, x = 'jet_loc', y = 'WB_diff', hue = 'period', size = 'extreme_duration', legend = True, style='phase', sizes=(20, 200))
+sns.kdeplot(data=NAO, x="jet_loc_during", hue="period", common_norm=True, ax=axes[0])
+
+scatter = sns.scatterplot(
+    data=NAO,
+    x="jet_loc_during",
+    y="WB_diff",
+    hue="period",
+    size="extreme_duration",
+    legend=True,
+    style="phase",
+    sizes=(20, 200),
+)
 # add legend
 
-scatter.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+scatter.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+
+
+for ax in axes:
+    ax.set_xlim(35, 65)
+# %%
+
+# %%
+fig, axes = plt.subplots(
+    3, 1, height_ratios=[0.3, 1, 0.3], sharex=False, figsize=(6, 8)
+)
+
+sns.kdeplot(data=NAO, x="jet_loc_during", hue="period", common_norm=True, ax=axes[0])
+
+scatter = sns.scatterplot(
+    data=NAO,
+    x="jet_loc_during",
+    y="WB_diff",
+    hue="period",
+    size="extreme_duration",
+    legend=True,
+    style="phase",
+    sizes=(20, 200),
+    ax=axes[1],
+)
+# add legend
+
+scatter.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+
+sns.kdeplot(data=NAO, x="jet_loc_before", hue="period", common_norm=True, ax=axes[2])
 
 
 for ax in axes:
