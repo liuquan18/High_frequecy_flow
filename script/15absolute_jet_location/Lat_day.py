@@ -105,7 +105,7 @@ first_pos_jet.plot.contourf(
     y="lat",
     ax=axes[0, 0],
     label="pos-first10",
-    levels=np.arange(5, 41, 5),
+    levels=np.arange(5, 31, 5),
     extend="max",
 )
 first_neg_jet.plot.contourf(
@@ -113,7 +113,7 @@ first_neg_jet.plot.contourf(
     y="lat",
     ax=axes[1, 0],
     label="neg-first10",
-    levels=np.arange(5, 41, 5),
+    levels=np.arange(5, 31, 5),
     extend="max",
 )
 
@@ -122,7 +122,7 @@ last_pos_jet.plot.contourf(
     y="lat",
     ax=axes[0, 1],
     label="pos-last10",
-    levels=np.arange(5, 41, 5),
+    levels=np.arange(5, 31, 5),
     extend="max",
 )
 last_neg_jet.plot.contourf(
@@ -130,7 +130,7 @@ last_neg_jet.plot.contourf(
     y="lat",
     ax=axes[1, 1],
     label="neg-last10",
-    levels=np.arange(5, 41, 5),
+    levels=np.arange(5, 31, 5),
     extend="max",
 )
 
