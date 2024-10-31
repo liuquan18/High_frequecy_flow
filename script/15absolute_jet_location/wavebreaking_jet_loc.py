@@ -116,8 +116,8 @@ def event_composite(period, jet_plev=None):
             NAO_pos_jet_speed_before = composite_before_NAO(
                 NAO_pos, jet_speed, lag_days=[-10, -1], WB_type="jet_speed_before"
             )
-            NAO_pos_AWB = composite_before_NAO(NAO_pos, AWB, WB_type="AWB")
-            NAO_pos_CWB = composite_before_NAO(NAO_pos, CWB, WB_type="CWB")
+            NAO_pos_AWB = composite_before_NAO(NAO_pos, AWB,lag_days= [-5,5], WB_type="AWB")
+            NAO_pos_CWB = composite_before_NAO(NAO_pos, CWB,lag_days= [-5,5], WB_type="CWB")
 
             NAO_pos_composite = (
                 NAO_pos.join(NAO_pos_jet_loc, on="event")
@@ -146,8 +146,8 @@ def event_composite(period, jet_plev=None):
             NAO_neg_jet_speed_before = composite_before_NAO(
                 NAO_neg, jet_speed, lag_days=[-10, -1], WB_type="jet_speed_before"
             )
-            NAO_neg_AWB = composite_before_NAO(NAO_neg, AWB, WB_type="AWB")
-            NAO_neg_CWB = composite_before_NAO(NAO_neg, CWB, WB_type="CWB")
+            NAO_neg_AWB = composite_before_NAO(NAO_neg, AWB,lag_days=[-5,5], WB_type="AWB")
+            NAO_neg_CWB = composite_before_NAO(NAO_neg, CWB, lag_days = [-5,5], WB_type="CWB")
 
             NAO_neg_composite = (
                 NAO_neg.join(NAO_neg_jet_loc, on="event")
@@ -197,7 +197,7 @@ NAO.loc[NAO['phase'] == 'neg', 'precusor'] = NAO.loc[NAO['phase'] == 'neg', 'CWB
 # save 
 # NAO.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/abs_jet_loc_NAO.csv", index=True)
 # read NAO
-NAO = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/abs_jet_loc_NAO.csv", index_col=0)
+# NAO = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/abs_jet_loc_NAO.csv", index_col=0)
 
 # %%
 # read climatology
@@ -207,13 +207,16 @@ last_jet_loc_clim = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/dat
 first_jet_loc_clim = first_jet_loc_clim.lat.mean(dim ='month')
 last_jet_loc_clim = last_jet_loc_clim.lat.mean(dim ='month')
 # %%
+def set_legend_properties(ax):
+    ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+
 fig, axes = plt.subplots(
     3, 1, height_ratios=[0.3, 1, 0.3], sharex=False, figsize=(8, 8)
 )
 
 # KDE plot during NAO event
-kde_during = sns.kdeplot(data=NAO, x="jet_loc_during", hue="period", common_norm=True, ax=axes[0], legend=True)
-axes[0].legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+kde_plot_during_NAO = sns.kdeplot(data=NAO, x="jet_loc_during", hue="period", common_norm=True, ax=axes[0], legend=True)
+set_legend_properties(axes[0])
 axes[0].set_xlabel("Jet location during NAO event")
 
 
@@ -230,14 +233,14 @@ scatter = sns.scatterplot(
     sizes=(20, 200),
     ax=axes[1],
 )
-scatter.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+set_legend_properties(scatter)
 axes[1].set_xlabel("Jet location during NAO event")
-axes[1].set_ylabel("AWB - CWB before NAO event")
+axes[1].set_ylabel("AWB - CWB averaged on [-5, 5] days")
 
 
 # KDE plot before NAO event
 kde_before = sns.kdeplot(data=NAO, x="jet_loc_before", hue="period", common_norm=True, ax=axes[2], legend=False)
-axes[2].set_xlabel("Jet location during wave-breaking event")
+axes[2].set_xlabel("Jet location averaged on [-10, -1] days")
 
 # Calculate mean jet location before NAO event
 jet_loc_before = NAO.groupby('period')['jet_loc_before'].mean()
@@ -254,7 +257,7 @@ for period, color in zip(['first10', 'last10'], ['C0', 'C1']):
 axes[2].axvline(first_jet_loc_clim.values, color="C0", linestyle="--", label='first10 climatology')
 axes[2].axvline(last_jet_loc_clim.values, color="C1", linestyle="--", label='last10 climatology')
 
-axes[2].legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+set_legend_properties(axes[2])
 
 # Set x-axis limits
 for ax in axes:
@@ -270,7 +273,7 @@ fig, axes = plt.subplots(
 
 # KDE plot during NAO event
 kde_during = sns.kdeplot(data=NAO, x="jet_loc_during", hue="period", common_norm=True, ax=axes[0], legend=True)
-axes[0].legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
+sns.move_legend(axes[0], "upper left", bbox_to_anchor=(1.05, 1))
 axes[0].set_xlabel("Jet location during NAO event")
 
 
@@ -289,13 +292,13 @@ scatter = sns.scatterplot(
 )
 scatter.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
 axes[1].set_xlabel("Jet location during NAO event")
-axes[1].set_ylabel("precursor WB before NAO event")
+axes[1].set_ylabel("precusor WB occurrence averaged on [-5, 5] days")
 axes[1].set_ylim(-0.08, 0.41)
 
 
 # KDE plot before NAO event
 kde_before = sns.kdeplot(data=NAO, x="jet_loc_before", hue="period", common_norm=True, ax=axes[2], legend=False)
-axes[2].set_xlabel("Jet location during wave-breaking event")
+axes[2].set_xlabel("Jet location averaged on [-10, -1] days")
 
 # Calculate mean jet location before NAO event
 jet_loc_before = NAO.groupby('period')['jet_loc_before'].mean()
