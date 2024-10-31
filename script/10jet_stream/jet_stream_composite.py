@@ -4,17 +4,14 @@ import pandas as pd
 import numpy as np
 import glob
 import logging
-import cartopy
 
-logging.basicConfig(level=logging.INFO)
 
-import cartopy.crs as ccrs
+import cartopy.crs as ccrs  # noqa: E402
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 # %%
 from src.extremes.extreme_read import read_extremes
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from src.plotting.util import erase_white_line
+logging.basicConfig(level=logging.INFO)
 
 # %%
 def sel_uhat(uhat, events):
