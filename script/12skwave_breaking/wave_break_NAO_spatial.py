@@ -18,22 +18,22 @@ last_NAO_pos_AWB, last_NAO_neg_AWB, last_NAO_pos_CWB, last_NAO_neg_CWB = NAO_WB(
 )
 
 # %%
-first_NAO_pos_AWB.sel(time=slice(-10, -1)).mean(dim="time").plot()
+first_NAO_pos_AWB.sel(time=slice(-5, 5)).mean(dim="time").plot()
 # %%
-last_NAO_pos_AWB.sel(time=slice(-10, -1)).mean(dim="time").plot()
+last_NAO_pos_AWB.sel(time=slice(-5, 5)).mean(dim="time").plot()
 
 # %%
-first_NAO_pos_AWB = first_NAO_pos_AWB.sel(time=slice(-10, -1)).mean(dim="time")
-last_NAO_pos_AWB = last_NAO_pos_AWB.sel(time=slice(-10, -1)).mean(dim="time")
+first_NAO_pos_AWB = first_NAO_pos_AWB.sel(time=slice(-5, 5)).mean(dim="time")
+last_NAO_pos_AWB = last_NAO_pos_AWB.sel(time=slice(-5, 5)).mean(dim="time")
 
-first_NAO_pos_CWB = first_NAO_pos_CWB.sel(time=slice(-10, -1)).mean(dim="time")
-last_NAO_pos_CWB = last_NAO_pos_CWB.sel(time=slice(-10, -1)).mean(dim="time")
+first_NAO_pos_CWB = first_NAO_pos_CWB.sel(time=slice(-5, 5)).mean(dim="time")
+last_NAO_pos_CWB = last_NAO_pos_CWB.sel(time=slice(-5, 5)).mean(dim="time")
 
-first_NAO_neg_AWB = first_NAO_neg_AWB.sel(time=slice(-10, -1)).mean(dim="time")
-last_NAO_neg_AWB = last_NAO_neg_AWB.sel(time=slice(-10, -1)).mean(dim="time")
+first_NAO_neg_AWB = first_NAO_neg_AWB.sel(time=slice(-5, 5)).mean(dim="time")
+last_NAO_neg_AWB = last_NAO_neg_AWB.sel(time=slice(-5, 5)).mean(dim="time")
 
-first_NAO_neg_CWB = first_NAO_neg_CWB.sel(time=slice(-10, -1)).mean(dim="time")
-last_NAO_neg_CWB = last_NAO_neg_CWB.sel(time=slice(-10, -1)).mean(dim="time")
+first_NAO_neg_CWB = first_NAO_neg_CWB.sel(time=slice(-5, 5)).mean(dim="time")
+last_NAO_neg_CWB = last_NAO_neg_CWB.sel(time=slice(-5, 5)).mean(dim="time")
 # %%
 f, axes = plt.subplots(
     2, 1, figsize=(7, 5), subplot_kw=dict(projection=ccrs.PlateCarree(-70))
