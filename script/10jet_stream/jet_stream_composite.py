@@ -6,7 +6,7 @@ import glob
 import logging
 
 
-import cartopy.crs as ccrs  # noqa: E402
+import cartopy.crs as ccrs  
 import matplotlib.pyplot as plt
 # %%
 from src.extremes.extreme_read import read_extremes
@@ -161,6 +161,6 @@ for ax in axes:
 
 plt.tight_layout(pad = 1.3)
 plt.suptitle("Eddy driven Zonal Jet Stream wind Composite of first 10 years", fontsize = 16)
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/jet_stream/jet_stream_composite_first10.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/jet_stream/jet_stream_composite_first10.png")
 
 # %%

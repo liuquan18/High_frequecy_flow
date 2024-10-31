@@ -15,8 +15,10 @@ from src.jet_stream.jet_speed_and_location import jet_stream_anomaly, jet_event
 from src.jet_stream.jet_stream_plotting import plot_uhat
 
 logging.basicConfig(level=logging.INFO)
-#%%
-def read_anomaly(period, same_clim = True, eddy = True):
+
+
+# %%
+def read_anomaly(period, same_clim=True, eddy=True):
 
     # anomaly
     ano_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/loc_anomaly/"
@@ -25,24 +27,23 @@ def read_anomaly(period, same_clim = True, eddy = True):
 
     ano_path = f"{ano_dir}jet_stream_anomaly_{eddy_label}_{clima_label}_{period}.nc"
 
-
-
     loc_ano = xr.open_dataset(ano_path).lat_ano
 
     return loc_ano
 
-#%%
+
+# %%
 same_clim = False
 eddy = True
 
-#%%
+# %%
 # for plot the anomaly of all samples
-first10_ano_all = read_anomaly("first10", same_clim = True, eddy = eddy)
-last10_ano_all = read_anomaly("last10", same_clim = True, eddy = eddy)
+first10_ano_all = read_anomaly("first10", same_clim=True, eddy=eddy)
+last10_ano_all = read_anomaly("last10", same_clim=True, eddy=eddy)
 
 
-first10_ano = read_anomaly("first10", same_clim = same_clim, eddy = eddy)
-last10_ano = read_anomaly("last10", same_clim = same_clim, eddy = eddy)
+first10_ano = read_anomaly("first10", same_clim=same_clim, eddy=eddy)
+last10_ano = read_anomaly("last10", same_clim=same_clim, eddy=eddy)
 
 # %%
 first10_pos_events, first10_neg_events = read_extremes_allens("first10", 8)
@@ -100,6 +101,7 @@ def generate_intermediate_points(start, end, num_points):
         )
     )
 
+
 def add_box(map_ax):
     # Define the corners of the box aligned with lat/lon
     lon_min, lon_max = -60, 0
@@ -131,6 +133,7 @@ def add_box(map_ax):
     # Plot the smooth box
     map_ax.plot(lons, lats, color="k", linewidth=2, transform=ccrs.PlateCarree())
 
+
 # %%
 fig = plt.figure(figsize=(20, 14))
 
@@ -147,7 +150,7 @@ plot_uhat(map_ax2, uhat_pos_first10)
 map_ax2.set_title("Positive NAO")
 
 map_ax3 = fig.add_subplot(gs[0, 2], projection=ccrs.Orthographic(-20, 60))
-plot_uhat(map_ax3, uhat_neg_first10)
+map_axe, jet_map = plot_uhat(map_ax3, uhat_neg_first10)
 map_ax3.set_title("Negative NAO")
 # add bounding box at -60,0 lon, and 15,75 lat
 add_box(map_ax1)
@@ -160,6 +163,17 @@ for ax in [map_ax1, map_ax2, map_ax3]:
     # Optionally, adjust gridline appearance
     gl.xlines = True
     gl.ylines = True
+
+# Add colorbar under the three maps
+cbar_ax = fig.add_axes([0.27, 0.51, 0.5, 0.02])
+
+cbar = plt.colorbar(
+    jet_map,
+    cax=cbar_ax,
+    orientation="horizontal",
+    label="u_250hPa (m/s)",
+    extend="both",
+)
 
 
 ## histgram
@@ -213,8 +227,7 @@ sns.histplot(
     jet_loc_first10_neg,
     label="first10",
     color="k",
-    bins=np.arange(-30, 31, 2), # Note: (20, 21, 1) would give bettern visualisation
-
+    bins=np.arange(-30, 31, 2),  # Note: (20, 21, 1) would give bettern visualisation
     stat="count",
     ax=hist_ax3,
 )
@@ -234,6 +247,7 @@ hist_ax3.legend()
 # vertical line for hist axes
 for ax in [hist_ax1, hist_ax2, hist_ax3]:
     ax.axvline(x=0, color="k", linestyle="--")
+    ax.set_xlabel("Jet location anomaly relative to climatology (deg)")
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/jet_stream/jet_location_hist_map_eddy.png")
 # %%
