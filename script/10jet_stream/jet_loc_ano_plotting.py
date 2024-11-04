@@ -135,7 +135,7 @@ def add_box(map_ax):
 
 
 # %%
-fig = plt.figure(figsize=(20, 14))
+fig = plt.figure(figsize=(13, 10))
 
 gs = fig.add_gridspec(2, 3)
 
@@ -171,9 +171,11 @@ cbar = plt.colorbar(
     jet_map,
     cax=cbar_ax,
     orientation="horizontal",
-    label="u_250hPa (m/s)",
     extend="both",
+    
 )
+cbar_ax.set_title('u_250 hPa (m/s)')
+
 
 
 ## histgram
