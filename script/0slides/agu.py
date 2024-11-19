@@ -13,8 +13,6 @@ from src.plotting.util import erase_white_line
 import cartopy.crs as ccrs
 
 
-
-
 # %%
 #### extreme count
 def combine_events(df, duration=13):
@@ -83,7 +81,6 @@ def extreme_stat_allens(start_duration=5, duration_lim=8, plev=50000):
     return first10_pos, first10_neg, last10_pos, last10_neg
 
 
-
 # %%
 increase_bys_pos = {}
 increase_bys_neg = {}
@@ -127,7 +124,7 @@ neg_extrems = pd.concat(neg_extrems)
 pos_extrems = pos_extrems.sort_values(by="period", ascending=True)
 neg_extrems = neg_extrems.sort_values(by="period", ascending=True)
 
-#%%
+# %%
 
 
 # %%
@@ -144,7 +141,6 @@ def read_anomaly(period, same_clim=True, eddy=True):
     loc_ano = xr.open_dataset(ano_path).lat_ano
 
     return loc_ano
-
 
 
 same_clim = False
@@ -173,26 +169,32 @@ jet_loc_last10_pos = jet_event(last10_ano, last10_pos_events)
 jet_loc_last10_neg = jet_event(last10_ano, last10_neg_events)
 
 
-#%%%% wave breaking
-first_NAO_pos_AWB, first_NAO_neg_AWB, first_NAO_pos_CWB, first_NAO_neg_CWB = NAO_WB('first10')
-last_NAO_pos_AWB, last_NAO_neg_AWB, last_NAO_pos_CWB, last_NAO_neg_CWB = NAO_WB('last10')
+# %%%% wave breaking
+first_NAO_pos_AWB, first_NAO_neg_AWB, first_NAO_pos_CWB, first_NAO_neg_CWB = NAO_WB(
+    "first10"
+)
+last_NAO_pos_AWB, last_NAO_neg_AWB, last_NAO_pos_CWB, last_NAO_neg_CWB = NAO_WB(
+    "last10"
+)
 # %%
 
 # %%
-cm = 1/2.54  # centimeters in inches
-fig = plt.figure(figsize=(36*cm, 60*cm))
+cm = 1 / 2.54  # centimeters in inches
+fig = plt.figure(figsize=(36 * cm, 60 * cm))
 # adjust hratio
-plt.subplots_adjust(hspace=2*cm, wspace=2*cm)
+plt.subplots_adjust(hspace=2 * cm, wspace=2 * cm)
 gs = fig.add_gridspec(3, 2, height_ratios=[0.6, 0.6, 0.8])
 
 # Set the default font size
-plt.rcParams.update({
-    'font.size': 20,
-    'xtick.labelsize': 20,
-    'ytick.labelsize': 20,
-    'axes.labelsize': 25,
-    'axes.titlesize': 25
-})
+plt.rcParams.update(
+    {
+        "font.size": 20,
+        "xtick.labelsize": 20,
+        "ytick.labelsize": 20,
+        "axes.labelsize": 25,
+        "axes.titlesize": 25,
+    }
+)
 
 ax1 = fig.add_subplot(gs[0, :])
 
@@ -271,27 +273,34 @@ sns.histplot(
 
 hist_ax3.legend()
 hist_ax3.set_ylabel("eddy-driven jet stream count")
-hist_ax2.set_ylabel('')
+hist_ax2.set_ylabel("")
 
 for ax in [hist_ax2, hist_ax3]:
     ax.axvline(x=0, color="k", linestyle="--", linewidth=2)
-    ax.set_xlabel(r"Jet loc anomaly relative to climatology ($\degree$)", fontsize = 20)
+    ax.set_xlabel(r"Jet loc anomaly relative to climatology ($\degree$)", fontsize=20)
 
 line_ax1 = fig.add_subplot(gs[2, 0])
 line_ax2 = fig.add_subplot(gs[2, 1])
 
-first_NAO_pos_AWB.plot(ax=line_ax2, alpha=0.5, color='k', linewidth=2, label='first10')
-last_NAO_pos_AWB.plot(ax=line_ax2, alpha=0.5, color='r', linewidth=2, label='last10')
+first_NAO_pos_AWB.plot(ax=line_ax2, alpha=0.5, color="k", linewidth=2, label="first10")
+last_NAO_pos_AWB.plot(ax=line_ax2, alpha=0.5, color="r", linewidth=2, label="last10")
 
-first_NAO_neg_CWB.plot(ax=line_ax1, alpha=0.5, color='k',linewidth=2, label='first10')
-last_NAO_neg_CWB.plot(ax=line_ax1, alpha=0.5, color='r', linewidth=2, label='last10')
+first_NAO_neg_CWB.plot(ax=line_ax1, alpha=0.5, color="k", linewidth=2, label="first10")
+last_NAO_neg_CWB.plot(ax=line_ax1, alpha=0.5, color="r", linewidth=2, label="last10")
 
-smooth(first_NAO_pos_AWB).plot(ax=line_ax2, color='k', linewidth=4, label='first10 5day-mean')
-smooth(last_NAO_pos_AWB).plot(ax=line_ax2, color='r', linewidth=4, label='last10 5day-mean')
+smooth(first_NAO_pos_AWB).plot(
+    ax=line_ax2, color="k", linewidth=4, label="first10 5day-mean"
+)
+smooth(last_NAO_pos_AWB).plot(
+    ax=line_ax2, color="r", linewidth=4, label="last10 5day-mean"
+)
 
-smooth(first_NAO_neg_CWB).plot(ax=line_ax1, color='k', linewidth=4, label='first10 5day-mean')
-smooth(last_NAO_neg_CWB).plot(ax=line_ax1, color='r', linewidth=4, label='last10 5day-mean')
-
+smooth(first_NAO_neg_CWB).plot(
+    ax=line_ax1, color="k", linewidth=4, label="first10 5day-mean"
+)
+smooth(last_NAO_neg_CWB).plot(
+    ax=line_ax1, color="r", linewidth=4, label="last10 5day-mean"
+)
 
 
 line_ax2.set_xlim(-21, 21)
@@ -305,18 +314,22 @@ line_ax2.set_ylabel("")
 line_ax1.set_xlabel("days relative to onset of NAO extremes", fontsize=20)
 line_ax2.set_xlabel("days relative to onset of NAO extremes", fontsize=20)
 
-line_ax1.legend(frameon = False, loc = 'upper right')
-line_ax1.set_ylabel('WB occurrence')
+line_ax1.legend(frameon=False, loc="upper right")
+line_ax1.set_ylabel("WB occurrence")
 plt.tight_layout()
 
 # no line at the top and right of the plot
 for ax in [ax1, hist_ax2, hist_ax3, line_ax1, line_ax2]:
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
 
 
 # save as pdf without background
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/slides/agu/agu.pdf", dpi=500, transparent=True)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/slides/agu/agu.pdf",
+    dpi=500,
+    transparent=True,
+)
 # %%
 
 # %%
@@ -341,33 +354,73 @@ first_NAO_neg_CWB = first_NAO_neg_CWB.sel(time=slice(-5, 5)).mean(dim="time")
 last_NAO_neg_CWB = last_NAO_neg_CWB.sel(time=slice(-5, 5)).mean(dim="time")
 # %%
 # Set the default font size
-plt.rcParams.update({
-    'font.size': 10,
-    'xtick.labelsize': 10,
-    'ytick.labelsize': 10,
-    'axes.labelsize': 12,
-    'axes.titlesize': 12
-})
+plt.rcParams.update(
+    {
+        "font.size": 10,
+        "xtick.labelsize": 10,
+        "ytick.labelsize": 10,
+        "axes.labelsize": 12,
+        "axes.titlesize": 12,
+    }
+)
 
-f, axes = plt.subplots(4,1, figsize=(17*cm, 14*cm),subplot_kw=dict(projection=ccrs.PlateCarree(-70)))
+f, axes = plt.subplots(
+    4, 1, figsize=(17 * cm, 14 * cm), subplot_kw=dict(projection=ccrs.PlateCarree(-70))
+)
 erase_white_line(first_NAO_pos_AWB).plot.contourf(
-    ax=axes[0], transform=ccrs.PlateCarree(), levels=np.arange(10, 50, 5), extend="max", 
-    cbar_kwargs={'label': 'count', 'ticks': np.arange(10, 50, 10), 'format': '%.0f', 'shrink': 0.8, 'pad': 0.05}
+    ax=axes[0],
+    transform=ccrs.PlateCarree(),
+    levels=np.arange(10, 50, 5),
+    extend="max",
+    cbar_kwargs={
+        "label": "count",
+        "ticks": np.arange(10, 50, 10),
+        "format": "%.0f",
+        "shrink": 0.8,
+        "pad": 0.05,
+    },
 )
 
 erase_white_line(last_NAO_pos_AWB).plot.contourf(
-    ax=axes[1], transform=ccrs.PlateCarree(), levels=np.arange(10, 50, 5), extend="max", 
-    cbar_kwargs={'ticks': np.arange(10, 50, 10), 'format': '%.0f', 'shrink': 0.8, 'pad': 0.05, 'label': 'count'}
+    ax=axes[1],
+    transform=ccrs.PlateCarree(),
+    levels=np.arange(10, 50, 5),
+    extend="max",
+    cbar_kwargs={
+        "ticks": np.arange(10, 50, 10),
+        "format": "%.0f",
+        "shrink": 0.8,
+        "pad": 0.05,
+        "label": "count",
+    },
 )
 
 erase_white_line(first_NAO_neg_CWB).plot.contourf(
-    ax=axes[2], transform=ccrs.PlateCarree(), levels=np.arange(2, 10, 1), extend="max", 
-    cbar_kwargs={'ticks': np.arange(2, 10, 2), 'format': '%.0f', 'shrink': 0.8, 'pad': 0.05, 'label': 'count'}
+    ax=axes[2],
+    transform=ccrs.PlateCarree(),
+    levels=np.arange(2, 10, 1),
+    extend="max",
+    cbar_kwargs={
+        "ticks": np.arange(2, 10, 2),
+        "format": "%.0f",
+        "shrink": 0.8,
+        "pad": 0.05,
+        "label": "count",
+    },
 )
 
 erase_white_line(last_NAO_neg_CWB).plot.contourf(
-    ax=axes[3], transform=ccrs.PlateCarree(), levels=np.arange(2, 10, 1), extend="max", 
-    cbar_kwargs={'ticks': np.arange(2, 10, 2), 'format': '%.0f', 'shrink': 0.8, 'pad': 0.05, 'label': 'count'}
+    ax=axes[3],
+    transform=ccrs.PlateCarree(),
+    levels=np.arange(2, 10, 1),
+    extend="max",
+    cbar_kwargs={
+        "ticks": np.arange(2, 10, 2),
+        "format": "%.0f",
+        "shrink": 0.8,
+        "pad": 0.05,
+        "label": "count",
+    },
 )
 
 for ax in axes:
@@ -375,6 +428,10 @@ for ax in axes:
     ax.coastlines()
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/slides/agu/wb_spatial.pdf", dpi=500, transparent=True)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/slides/agu/wb_spatial.pdf",
+    dpi=500,
+    transparent=True,
+)
 
 # %%
