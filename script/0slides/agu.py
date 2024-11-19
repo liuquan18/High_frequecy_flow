@@ -9,6 +9,8 @@ from src.jet_stream.jet_speed_and_location import jet_stream_anomaly, jet_event
 from src.jet_stream.jet_stream_plotting import plot_uhat
 
 from src.composite.composite_NAO_WB import smooth, NAO_WB
+from src.plotting.util import erase_white_line
+import cartopy.crs as ccrs
 
 
 
@@ -315,4 +317,64 @@ for ax in [ax1, hist_ax2, hist_ax3, line_ax1, line_ax2]:
 
 # save as pdf without background
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/slides/agu/agu.pdf", dpi=500, transparent=True)
+# %%
+
+# %%
+first_NAO_pos_AWB, first_NAO_neg_AWB, first_NAO_pos_CWB, first_NAO_neg_CWB = NAO_WB(
+    "first10", fldmean=False
+)
+last_NAO_pos_AWB, last_NAO_neg_AWB, last_NAO_pos_CWB, last_NAO_neg_CWB = NAO_WB(
+    "last10", fldmean=False
+)
+
+# %%
+first_NAO_pos_AWB = first_NAO_pos_AWB.sel(time=slice(-5, 5)).mean(dim="time")
+last_NAO_pos_AWB = last_NAO_pos_AWB.sel(time=slice(-5, 5)).mean(dim="time")
+
+first_NAO_pos_CWB = first_NAO_pos_CWB.sel(time=slice(-5, 5)).mean(dim="time")
+last_NAO_pos_CWB = last_NAO_pos_CWB.sel(time=slice(-5, 5)).mean(dim="time")
+
+first_NAO_neg_AWB = first_NAO_neg_AWB.sel(time=slice(-5, 5)).mean(dim="time")
+last_NAO_neg_AWB = last_NAO_neg_AWB.sel(time=slice(-5, 5)).mean(dim="time")
+
+first_NAO_neg_CWB = first_NAO_neg_CWB.sel(time=slice(-5, 5)).mean(dim="time")
+last_NAO_neg_CWB = last_NAO_neg_CWB.sel(time=slice(-5, 5)).mean(dim="time")
+# %%
+# Set the default font size
+plt.rcParams.update({
+    'font.size': 10,
+    'xtick.labelsize': 10,
+    'ytick.labelsize': 10,
+    'axes.labelsize': 12,
+    'axes.titlesize': 12
+})
+
+f, axes = plt.subplots(4,1, figsize=(17*cm, 14*cm),subplot_kw=dict(projection=ccrs.PlateCarree(-70)))
+erase_white_line(first_NAO_pos_AWB).plot.contourf(
+    ax=axes[0], transform=ccrs.PlateCarree(), levels=np.arange(10, 50, 5), extend="max", 
+    cbar_kwargs={'label': 'count', 'ticks': np.arange(10, 50, 10), 'format': '%.0f', 'shrink': 0.8, 'pad': 0.05}
+)
+
+erase_white_line(last_NAO_pos_AWB).plot.contourf(
+    ax=axes[1], transform=ccrs.PlateCarree(), levels=np.arange(10, 50, 5), extend="max", 
+    cbar_kwargs={'ticks': np.arange(10, 50, 10), 'format': '%.0f', 'shrink': 0.8, 'pad': 0.05, 'label': 'count'}
+)
+
+erase_white_line(first_NAO_neg_CWB).plot.contourf(
+    ax=axes[2], transform=ccrs.PlateCarree(), levels=np.arange(2, 10, 1), extend="max", 
+    cbar_kwargs={'ticks': np.arange(2, 10, 2), 'format': '%.0f', 'shrink': 0.8, 'pad': 0.05, 'label': 'count'}
+)
+
+erase_white_line(last_NAO_neg_CWB).plot.contourf(
+    ax=axes[3], transform=ccrs.PlateCarree(), levels=np.arange(2, 10, 1), extend="max", 
+    cbar_kwargs={'ticks': np.arange(2, 10, 2), 'format': '%.0f', 'shrink': 0.8, 'pad': 0.05, 'label': 'count'}
+)
+
+for ax in axes:
+    ax.set_extent([-180, 180, 0, 90], crs=ccrs.PlateCarree())
+    ax.coastlines()
+
+plt.tight_layout()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/slides/agu/wb_spatial.pdf", dpi=500, transparent=True)
+
 # %%
