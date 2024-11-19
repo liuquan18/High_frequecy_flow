@@ -37,7 +37,7 @@ Softlink() {
     dailyfile=${tmp_path}${var}_day_MPI-ESM1-2-LR_ssp585_r${member}i1p1f1_gn_20910101-21001231.nc
     tofile=${to_path}${var}_day_MPI-ESM1-2-LR_ssp585_r${member}i1p1f1_gn_20910501-21000931.nc
     # include month Mayb and september for later rolling window
-    cdo -sellevel,100000,85000,70000,50000,25000 -selmonth,5/9 -selyear,2091/2100 $dailyfile \
+    cdo -selmonth,5/9 -selyear,2091/2100 $dailyfile \
         ${tofile}
 }
 

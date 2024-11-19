@@ -4,17 +4,14 @@ import pandas as pd
 import numpy as np
 import glob
 import logging
-import cartopy
 
-logging.basicConfig(level=logging.INFO)
 
-import cartopy.crs as ccrs
+import cartopy.crs as ccrs  
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 # %%
 from src.extremes.extreme_read import read_extremes
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from src.plotting.util import erase_white_line
+logging.basicConfig(level=logging.INFO)
 
 # %%
 def sel_uhat(uhat, events):
@@ -164,6 +161,6 @@ for ax in axes:
 
 plt.tight_layout(pad = 1.3)
 plt.suptitle("Eddy driven Zonal Jet Stream wind Composite of first 10 years", fontsize = 16)
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/jet_stream/jet_stream_composite_first10.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/jet_stream/jet_stream_composite_first10.png")
 
 # %%
