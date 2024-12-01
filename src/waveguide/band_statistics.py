@@ -33,9 +33,9 @@ def band_stat(base_point, v_data, stat = 'var', **kwargs):
     if stat == 'var':
         try:
             mean = kwargs['mean']
-            logging.info("using mean provided to calculate 'var'")
+            # logging.info("using mean provided to calculate 'var'")
         except KeyError:
-            logging.warning("no valid mean provided, calculate 'mean' from current data")
+            # logging.warning("no valid mean provided, calculate 'mean' from current data")
             mean = v_data.mean(dim = ['lat', 'lon'])
         mean_base = mean.sel(lat=lat_base, lon=lon_base, method='nearest')
         result =  ((sector - mean_base) ** 2).mean(dim=["lat", "lon"])
