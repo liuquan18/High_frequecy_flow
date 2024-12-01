@@ -70,6 +70,7 @@ for i, file in enumerate(files_node):
     variance_all = []
     for i, time in enumerate(single_times):
         logging.info(f'node: {node} rank: {rank} {i+1}/{len(single_times)}')
+        logging.info(time)
         va = v_data.sel(time = time)
         variance = band_variance(va, mean = band_means)
 
@@ -84,5 +85,5 @@ for i, file in enumerate(files_node):
         variance = xr.concat(variance_all, dim='time')
 
         variance.to_netcdf(to_dir + f'{os.path.basename(file)}')
-
+        logging.info(f'{os.path.basename(file)} saved')
 # %%
