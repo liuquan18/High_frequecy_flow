@@ -50,8 +50,6 @@ files_node = np.array_split(files, 15)[node] # each node process 5 of the files,
 band_means = xr.open_mfdataset(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_global/va_bandmean_allens/va_bandmean_{period}_all.nc').__xarray_dataarray_variable__
 
 for i, file in enumerate(files_node):
-    logging.info("*************************")
-    logging.info(f'node: {node} {i+1}/{len(files_node)}')
 
     v_data = xr.open_dataset(file, chunks={
         'lat':96,
