@@ -52,7 +52,7 @@ def band_mean(v_data):
     v_data_cut = v_data.sel(lat=slice(5, 85))   
     mean_band = v_data_cut.groupby(
         lat=UniqueGrouper(), lon=UniqueGrouper() # time should be averaged
-    ).apply(band_stat, v_data=v_data, stat = 'mean')
+    ).map(band_stat, v_data=v_data, stat = 'mean')
 
     # de weight data with cos(lat)
     mean_band = mean_band / np.cos(np.deg2rad(mean_band.lat))
@@ -62,7 +62,7 @@ def band_variance(v_data, **kwargs):
     v_data_cut = v_data.sel(lat=slice(5, 85))
     variance_band = v_data_cut.groupby(
         lat=UniqueGrouper(), lon=UniqueGrouper(), time = UniqueGrouper() # time should be retained
-    ).apply(band_stat, v_data=v_data, stat = 'var', **kwargs)
+    ).map(band_stat, v_data=v_data, stat = 'var', **kwargs)
     # deweight data with cos(lat)
     variance_band = variance_band / np.cos(np.deg2rad(variance_band.lat))
 
