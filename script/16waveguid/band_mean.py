@@ -43,9 +43,10 @@ files_single = np.array_split(files, size)[rank] # each node process 5 of the fi
 
 # allocate 10 dask clusters
 client, cluster = init_dask_slurm_cluster(scale =1, processes=20, memory='200GB', walltime='08:00:00')
+logging.info(f"rank {rank+1}/{size} allocated dask cluster")
 
 for file in files_single:
-    logging.info(f"processing {os.path.basename(file)}")
+    # logging.info(f"processing {os.path.basename(file)}")
 
     v_data = xr.open_dataset(file, chunks={
         'lat':96,
