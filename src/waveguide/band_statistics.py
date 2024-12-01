@@ -38,11 +38,15 @@ def band_stat(base_point, v_data, stat = 'var', **kwargs):
             logging.warning("no valid mean provided, calculate 'mean' from current data")
             mean = v_data.mean(dim = ['lat', 'lon'])
         mean_base = mean.sel(lat=lat_base, lon=lon_base, method='nearest')
-        return ((sector - mean_base) ** 2).mean(dim=["lat", "lon"])
+        result =  ((sector - mean_base) ** 2).mean(dim=["lat", "lon"])
+        result.name = 'va'
     
     elif stat == 'mean':
         logging.info("calculating mean")
-        return sector.mean(dim = ['lat', 'lon', 'time'])
+        result =  sector.mean(dim = ['lat', 'lon', 'time'])
+        result.name = 'va'
+
+    return result
 #%%
 def band_mean(v_data):
     v_data_cut = v_data.sel(lat=slice(5, 85))   
