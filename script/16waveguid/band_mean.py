@@ -28,7 +28,8 @@ except:
 
 #%%
 stat = 'mean'
-period = 'first10'
+# get period from command line
+period = sys.argv[1]
 
 from_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_global/va_MJJAS_{period}/'
 to_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_global/va_band{stat}_{period}/'
