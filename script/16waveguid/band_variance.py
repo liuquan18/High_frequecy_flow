@@ -7,7 +7,6 @@ import logging
 import sys
 import glob
 import logging
-from src.compute.slurm_cluster import init_dask_slurm_cluster
 from src.waveguide.band_statistics import band_variance
 import os
 
@@ -42,8 +41,23 @@ to_dir = f'/scratch/m/m300883/waveguide/{period}/'
 if not os.path.exists(to_dir):
     os.makedirs(to_dir)
 
-files = glob.glob(from_dir + "*.nc")
-files_node = np.array_split(files, 9)[node] # each node process 5 of the files, totally 10 nodes are used
+# files = glob.glob(from_dir + "*.nc")
+# files_node = np.array_split(files, 9)[node] # each node process 5 of the files, totally 10 nodes are used
+
+# # for completeness
+# files_node = (glob.glob(from_dir + "*r11i1p1f1*.nc") +
+#               glob.glob(from_dir + "*r27i1p1f1*.nc") +
+#               glob.glob(from_dir + "*r35i1p1f1*.nc") +
+#               glob.glob(from_dir + "*r38i1p1f1*.nc") +
+#               glob.glob(from_dir + "*r43i1p1f1*.nc") +
+#               glob.glob(from_dir + "*r49i1p1f1*.nc"))
+
+files_node = (glob.glob(from_dir + "*r4i1p1f1*.nc") +
+              glob.glob(from_dir + "*r13i1p1f1*.nc") +
+              glob.glob(from_dir + "*r14i1p1f1*.nc") +
+              glob.glob(from_dir + "*r22i1p1f1*.nc") +
+              glob.glob(from_dir + "*r25i1p1f1*.nc") +
+              glob.glob(from_dir + "*r38i1p1f1*.nc"))
 
 
 # read mean 
