@@ -36,27 +36,22 @@ stat = 'var'
 
 #%%
 from_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_global/va_MJJAS_{period}/'
-to_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_global/va_band{stat}_{period}/'
+to_dir = f'/scratch/m/m300883/waveguide/{period}/'
 
 # mkdir to_dir if it does not exist
 if not os.path.exists(to_dir):
     os.makedirs(to_dir)
 
 files = glob.glob(from_dir + "*.nc")
-files_node = np.array_split(files, 15)[node] # each node process 5 of the files, totally 10 nodes are used
+files_node = np.array_split(files, 9)[node] # each node process 5 of the files, totally 10 nodes are used
 
 
 # read mean 
 band_means = xr.open_mfdataset(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_global/va_bandmean_allens/va_bandmean_{period}_all.nc').__xarray_dataarray_variable__
 
-for i, file in enumerate(files_node):
+for j, file in enumerate(files_node):
 
-    v_data = xr.open_dataset(file, chunks={
-        'lat':96,
-        'lon':192,
-        'plev':1,
-        'time':-1
-    }).va
+    v_data = xr.open_dataset(file, chunks='auto').va
     v_data = v_data.sel(plev=25000).sel(lat=slice(0, 90))
 
     # weight data with cos(lat)
@@ -67,21 +62,32 @@ for i, file in enumerate(files_node):
     single_times = np.array_split(all_times, size)[rank]
     variance_all = []
     for i, time in enumerate(single_times):
-        logging.info(f'node: {node} rank: {rank} {i+1}/{len(single_times)}')
-        logging.info(time)
+        logging.info(f'period: {period} node: {node} {j+1}/{len(files_node)} rank: {rank} {i+1}/{len(single_times)}')
+
         va = v_data.sel(time = time)
         variance = band_variance(va, mean = band_means)
 
         variance_all.append(variance)
 
+    variance_all = xr.concat(variance_all, dim='time')
 
-    # collect all ranks
-    variance_all = comm.gather(variance_all, root=0)
+    file_name = file.split('/')[-1]
+    ens_folder = file_name.split('_')[4]
+    time_label_start= single_times[0].astype('datetime64[D]').astype(str)
+    time_label_end = single_times[-1].astype('datetime64[D]').astype(str)
 
-    if rank == 0:
-        variance_all = [item for sublist in variance_all for item in sublist]
-        variance = xr.concat(variance_all, dim='time')
+    to_path = to_dir + f'{ens_folder}/'
+    # mkdir to_path if it does not exist
+    if not os.path.exists(to_path):
+        os.makedirs(to_path)
 
-        variance.to_netcdf(to_dir + f'{os.path.basename(file)}')
-        logging.info(f'{os.path.basename(file)} saved')
+    pre_name = file_name.rsplit('_', 1)[0]
+
+    # Add the new time label and the file extension
+    new_file_name = f"{pre_name}_{time_label_start}-{time_label_end}.nc"
+    variance.to_netcdf(to_path + new_file_name)
+    logging.info(f"Saved to {to_path + new_file_name}")
+
+
+
 # %%
