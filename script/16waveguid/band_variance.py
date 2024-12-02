@@ -85,7 +85,7 @@ for j, file in enumerate(files_node):
 
     # Add the new time label and the file extension
     new_file_name = f"{pre_name}_{time_label_start}-{time_label_end}.nc"
-    variance.to_netcdf(to_path + new_file_name)
+    variance_all.to_netcdf(to_path + new_file_name)
     logging.info(f"Saved to {to_path + new_file_name}")
 
 
