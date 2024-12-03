@@ -66,87 +66,8 @@ first_NAO_pos_vvar, first_NAO_neg_vvar, first_clim_vvar = composite("first10")
 # %%
 last_NAO_pos_vvar, last_NAO_neg_vvar, last_clim_vvar = composite("last10")
 # %%
-fig, axes = plt.subplots(2, 2, figsize=(10, 10))
 levels = np.arange(100, 146, 5)
 
-first_NAO_pos_vvar.mean(dim="event").plot.contourf(
-    x="lon", y="time", ax=axes[0, 0], levels=levels
-)
-last_NAO_pos_vvar.mean(dim="event").plot.contourf(
-    x="lon", y="time", ax=axes[0, 1], levels=levels
-)
-
-first_NAO_neg_vvar.mean(dim="event").plot.contourf(
-    x="lon", y="time", ax=axes[1, 0], levels=levels
-)
-last_NAO_neg_vvar.mean(dim="event").plot.contourf(
-    x="lon", y="time", ax=axes[1, 1], levels=levels
-)
-
-for ax in axes.flatten():
-    ax.set_ylim(10, -10)
-    ax.set_xlim(120, 360)
-
-
-# %%
-# maps
-fig, axes = plt.subplots(
-    2, 2, subplot_kw={"projection": ccrs.PlateCarree(central_longitude=-120)}
-)
-levels = np.arange(100, 146, 5)
-
-first_NAO_pos_vvar.mean(dim="event").sel(time=slice(-10, 5)).mean(
-    dim="time"
-).plot.contourf(
-    x="lon",
-    y="lat",
-    ax=axes[0, 0],
-    levels=levels,
-    extend = 'max',
-    transform=ccrs.PlateCarree(),
-    add_colorbar=False,
-)
-
-last_NAO_pos_vvar.mean(dim="event").sel(time=slice(-10, 5)).mean(
-    dim="time"
-).plot.contourf(
-    x="lon",
-    y="lat",
-    ax=axes[0, 1],
-    levels=levels,
-    extend = 'max',
-    transform=ccrs.PlateCarree(),
-    add_colorbar=False,
-)
-
-first_NAO_neg_vvar.mean(dim="event").sel(time=slice(-10, 5)).mean(
-    dim="time"
-).plot.contourf(
-    x="lon",
-    y="lat",
-    ax=axes[1, 0],
-    levels=levels,
-    extend = 'max',
-    transform=ccrs.PlateCarree(),
-    add_colorbar=False,
-)
-
-last_NAO_neg_vvar.mean(dim="event").sel(time=slice(-10, 5)).mean(
-    dim="time"
-).plot.contourf(
-    x="lon",
-    y="lat",
-    ax=axes[1, 1],
-    levels=levels,
-    extend = 'max',
-    transform=ccrs.PlateCarree(),
-    add_colorbar=False,
-)
-
-for ax in axes.flat:
-    ax.coastlines(color = 'k')
-
-plt.tight_layout()
 # %%
 # climatology maps
 fig, axes = plt.subplots(
@@ -158,21 +79,112 @@ first_clim_vvar.mean(dim=("ens",'time')).plot.contourf(
     y="lat",
     ax=axes[0],
     levels=levels,
-    extend = 'max',
     transform=ccrs.PlateCarree(),
     add_colorbar=False,
 )
+axes[0].set_title("First 10 years")
 
 last_clim_vvar.mean(dim=("ens",'time')).plot.contourf(
     x="lon",
     y="lat",
     ax=axes[1],
     levels=levels,
-    extend = 'max',
+    transform=ccrs.PlateCarree(),
+    add_colorbar=False,
+)
+axes[1].set_title("Last 10 years")
+
+for ax in axes.flat:
+    ax.coastlines(color = 'w')
+
+plt.tight_layout()
+plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_climatology.png', dpi=300)
+# %%
+# %%
+# maps
+fig, axes = plt.subplots(
+    2, 2, figsize = (8,5), subplot_kw={"projection": ccrs.PlateCarree(central_longitude=-120)}
+)
+levels = np.arange(100, 146, 5)
+
+first_NAO_pos_vvar.mean(dim="event").sel(time=slice(-10, 5)).mean(
+    dim="time"
+).plot.contourf(
+    x="lon",
+    y="lat",
+    ax=axes[0, 0],
+    levels=levels,
     transform=ccrs.PlateCarree(),
     add_colorbar=False,
 )
 
+last_NAO_pos_vvar.mean(dim="event").sel(time=slice(-10, 5)).mean(
+    dim="time"
+).plot.contourf(
+    x="lon",
+    y="lat",
+    ax=axes[0, 1],
+    levels=levels,
+    transform=ccrs.PlateCarree(),
+    add_colorbar=False,
+)
+
+first_NAO_neg_vvar.mean(dim="event").sel(time=slice(-10, 5)).mean(
+    dim="time"
+).plot.contourf(
+    x="lon",
+    y="lat",
+    ax=axes[1, 0],
+    levels=levels,
+    transform=ccrs.PlateCarree(),
+    add_colorbar=False,
+)
+
+last_NAO_neg_vvar.mean(dim="event").sel(time=slice(-10, 5)).mean(
+    dim="time"
+).plot.contourf(
+    x="lon",
+    y="lat",
+    ax=axes[1, 1],
+    levels=levels,
+    transform=ccrs.PlateCarree(),
+    add_colorbar=False,
+)
+axes[0,0].set_title("First 10 years, positive NAO")
+axes[0,1].set_title("Last 10 years, positive NAO")
+
+axes[1,0].set_title("First 10 years, negative NAO")
+axes[1,1].set_title("Last 10 years, negative NAO")
 for ax in axes.flat:
-    ax.coastlines(color = 'k')
+    ax.coastlines(color = 'w')
+
+plt.tight_layout()
+
+plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_composite_maps.png', dpi=300)
+# %%
+fig, axes = plt.subplots(2, 2, figsize=(10, 10))
+levels = np.arange(100, 146, 5)
+
+first_NAO_pos_vvar.sel(lat=slice(30, 60)).mean(dim=("event", "lat")).plot.contourf(
+    x="lon", y="time", ax=axes[0, 0], levels=levels
+)
+last_NAO_pos_vvar.sel(lat=slice(30, 60)).mean(dim=("event", "lat")).plot.contourf(
+    x="lon", y="time", ax=axes[0, 1], levels=levels
+)
+
+first_NAO_neg_vvar.sel(lat=slice(30, 60)).mean(dim=("event", "lat")).plot.contourf(
+    x="lon", y="time", ax=axes[1, 0], levels=levels
+)
+last_NAO_neg_vvar.sel(lat=slice(30, 60)).mean(dim=("event", "lat")).plot.contourf(
+    x="lon", y="time", ax=axes[1, 1], levels=levels
+)
+
+for ax in axes.flatten():
+    ax.set_ylim(10, -10)
+    ax.set_xlim(120, 360)
+
+plt.tight_layout()
+plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_composite_profile.png', dpi=300)
+# %%
+
 # %%
