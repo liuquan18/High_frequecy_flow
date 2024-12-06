@@ -1,21 +1,28 @@
-# %%
+#%%
 import xarray as xr
-import pandas as pd
 import numpy as np
-
 import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
-import seaborn as sns
-import pandas as pd
 import glob
-
-# %%
 import src.composite.composite as comp
 from src.extremes.extreme_read import read_extremes  # NAO extremes
-
+import cartopy.crs as ccrs
 
 # %%
-def read_vvar(period, ens):
+first_var_clim = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/band_variance/first10_var_midlat.nc")
+last_var_clim = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/band_variance/last_var_midlat.nc")
+# %%
+first_var_clim.load()
+last_var_clim.load()
+
+#%%
+first_clim_vvar = first_var_clim.va
+last_clim_vvar = last_var_clim.va
+#%%
+first_clim_vvar['plev'] = 25000
+last_clim_vvar['plev'] = 25000
+
+# %%
+def read_vvar(period, ens, clim):
     # Load data
     vvar_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_global/va_bandvar_{period}/"
     vvar_file = glob.glob(f"{vvar_path}*r{ens}i1p1f1*.nc")[0]
@@ -26,11 +33,12 @@ def read_vvar(period, ens):
     except AttributeError:
         pass
 
-    return vvar
+    vvar_ratio = vvar / clim
+    return vvar_ratio
 
 
 # %%
-def composite(period):
+def composite(period, clim):
 
     clim_vvar = []
     NAO_pos_vvar = []
@@ -40,7 +48,7 @@ def composite(period):
         # read NAO
         NAO_pos, NAO_neg = read_extremes(period, 8, ens, 25000)
         # read vvar
-        vvar = read_vvar(period, ens)
+        vvar = read_vvar(period, ens, clim)
         clim_vvar.append(vvar)
 
         if not NAO_pos.empty:
@@ -54,27 +62,32 @@ def composite(period):
             NAO_neg_vvar.append(vvar_neg)
 
     # concatenate
-    NAO_pos_vvar = xr.concat(NAO_pos_vvar, dim="event")
-    NAO_neg_vvar = xr.concat(NAO_neg_vvar, dim="event")
-    clim_vvar = xr.concat(clim_vvar, dim="ens")
+    NAO_pos_vvar = xr.concat(NAO_pos_vvar, dim="event", coords='minimal')
+    NAO_neg_vvar = xr.concat(NAO_neg_vvar, dim="event", coords='minimal')
+    clim_vvar = xr.concat(clim_vvar, dim="ens", coords='minimal')
 
     return NAO_pos_vvar, NAO_neg_vvar, clim_vvar
 
 
 # %%
-first_NAO_pos_vvar, first_NAO_neg_vvar, first_clim_vvar = composite("first10")
+first_NAO_pos_vvar, first_NAO_neg_vvar, first_clim_vvar = composite("first10", first_var_clim)
 # %%
-last_NAO_pos_vvar, last_NAO_neg_vvar, last_clim_vvar = composite("last10")
-# %%
-levels = np.arange(100, 146, 5)
+last_NAO_pos_vvar, last_NAO_neg_vvar, last_clim_vvar = composite("last10", last_var_clim)
 
+#%%
+first_NAO_neg_vvar = first_NAO_neg_vvar.va
+first_NAO_pos_vvar = first_NAO_pos_vvar.va
+
+last_NAO_neg_vvar = last_NAO_neg_vvar.va
+last_NAO_pos_vvar = last_NAO_pos_vvar.va
 # %%
+levels = np.arange(0,1.1,0.1)
 # climatology maps
 fig, axes = plt.subplots(
     1, 2, subplot_kw={"projection": ccrs.PlateCarree(central_longitude=-120)}
 )
 
-first_clim_vvar.mean(dim=("ens",'time')).plot.contourf(
+first_clim_vvar.va.mean(dim=("ens",'time')).plot.contourf(
     x="lon",
     y="lat",
     ax=axes[0],
@@ -84,7 +97,7 @@ first_clim_vvar.mean(dim=("ens",'time')).plot.contourf(
 )
 axes[0].set_title("First 10 years")
 
-map= last_clim_vvar.mean(dim=("ens",'time')).plot.contourf(
+map = last_clim_vvar.va.mean(dim=("ens",'time')).plot.contourf(
     x="lon",
     y="lat",
     ax=axes[1],
@@ -96,29 +109,24 @@ axes[1].set_title("Last 10 years")
 
 for ax in axes.flat:
     ax.coastlines(color = 'w')
-
-
-axes[0].add_patch(plt.Rectangle(
-    xy=[180, 40], width=180, height=10,
-    edgecolor='red', facecolor='none',
-    transform=ccrs.PlateCarree()
-))
-
-# add a red point at lat 35, lon 180
-axes[0].plot(180, 45, 'ro', transform=ccrs.PlateCarree())
+    # Add box for sector lat 30-60, lon all
+    ax.add_patch(plt.Rectangle(
+        xy=[-180, 30], width=360, height=30,
+        edgecolor='red', facecolor='none',
+        transform=ccrs.PlateCarree()
+    ))
 
 # add colorbar
 cbar_ax = fig.add_axes([0.15, 0.1, 0.7, 0.05])
 fig.colorbar(map, cax=cbar_ax, orientation="horizontal")
-
 plt.tight_layout()
-plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_climatology.png', dpi=300)
+plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_ratio_climatology_maps.png', dpi=300)
 # %%
 # maps
 fig, axes = plt.subplots(
     2, 2, figsize = (8,5), subplot_kw={"projection": ccrs.PlateCarree(central_longitude=-120)}
 )
-levels = np.arange(100, 146, 5)
+levels = np.arange(0,1.1,0.1)
 
 first_NAO_pos_vvar.mean(dim="event").sel(time=slice(-10, 5)).mean(
     dim="time"
@@ -172,12 +180,9 @@ for ax in axes.flat:
     ax.coastlines(color = 'w')
 
 plt.tight_layout()
-
-plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_composite_maps.png', dpi=300)
 # %%
 fig, axes = plt.subplots(2, 2, figsize=(10, 10))
-levels = np.arange(100, 146, 5)
-
+levels = np.arange(0, 0.9, 0.09)
 first_NAO_pos_vvar.sel(lat=slice(30, 60)).mean(dim=("event", "lat")).plot.contourf(
     x="lon", y="time", ax=axes[0, 0], levels=levels
 )
@@ -197,10 +202,39 @@ for ax in axes.flatten():
     ax.set_xlim(120, 360)
 
 plt.tight_layout()
-plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_composite_profile.png', dpi=300)
 # %%
+fig, axes = plt.subplots(2, 2, figsize=(10, 10))
+levels = np.arange(0, 21,2)
+
+(first_NAO_pos_vvar.sel(lat=slice(30, 60)).mean(dim='lat') > 1).sum(dim='event').plot.contourf(
+    x="lon", y="time", ax=axes[0, 0], levels=levels, extend = 'max'
+)
+(last_NAO_pos_vvar.sel(lat=slice(30, 60)).mean(dim='lat') > 1).sum(dim='event').plot.contourf(
+    x="lon", y="time", ax=axes[0, 1], levels=levels, extend = 'max'
+)
+(first_NAO_neg_vvar.sel(lat=slice(30, 60)).mean(dim='lat') > 1).sum(dim='event').plot.contourf(
+    x="lon", y="time", ax=axes[1, 0], levels=levels, extend = 'max'
+)
+occurrence = (last_NAO_neg_vvar.sel(lat=slice(30, 60)).mean(dim='lat') > 1).sum(dim='event').plot.contourf(
+    x="lon", y="time", ax=axes[1, 1], levels=levels, extend = 'max'
+)
+
+for ax in axes.flatten():
+    ax.set_ylim(0,-20)
+    ax.set_xlim(120, 360)
+
+
+axes[0,0].set_title("First 10 years, positive NAO")
+axes[0,1].set_title("Last 10 years, positive NAO")
+
+axes[1,0].set_title("First 10 years, negative NAO")
+axes[1,1].set_title("Last 10 years, negative NAO")
+
+axes[0,0].set_ylabel("days relative to onset of NAO extremes")
+axes[1,0].set_ylabel("days relative to onset of NAO extremes")
 
 
 
-
+plt.tight_layout()
+plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_ratio_composite_maps.png', dpi=300)
 # %%
