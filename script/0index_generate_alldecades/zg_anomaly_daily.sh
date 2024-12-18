@@ -1,5 +1,4 @@
 #!/bin/bash
-#!/bin/bash
 #SBATCH --job-name=ano
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
@@ -17,6 +16,7 @@ module load parallel
 
 # get the ensemble member from the command line
 member=$1
+echo "Ensemble member ${member}"
 
 # Define file paths for both scenarios
 historical_path=/pool/data/CMIP6/data/CMIP/MPI-M/MPI-ESM1-2-LR/historical/r${member}i1p1f1/day/zg/gn/v????????/
@@ -29,12 +29,12 @@ export zg_ano_save_path
 # Define function called Anomaly
 Anomaly() {
     infile=$1
+    # Get the filename
+    filename=$(basename $infile)
+    echo "Processing $filename"
 
     year_start=$(cdo showyear $infile | awk '{print $1}')
     year_end=$(cdo showyear $infile | awk '{print $NF}')
-
-    # Get the filename
-    filename=$(basename $infile)
     outfile=$zg_ano_save_path${filename%.*}_ano.nc
 
 
