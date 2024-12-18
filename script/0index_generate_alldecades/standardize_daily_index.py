@@ -10,6 +10,7 @@ import mpi4py.MPI as MPI
 logging.basicConfig(level=logging.INFO)
 # %%
 start_year = int(sys.argv[1])
+logging.info(f"This node is working on year {start_year} - {start_year+9}")
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -39,7 +40,9 @@ std = all_pcs.pc.std(dim = ('time','member'))
 # standardize every member and save to a new folder with same name
 files_single = np.array_split(files, size)[rank]  # files on this core
 
-for file in files_single:
+for i, file in enumerate(files_single):
+    logging.info(f"Rank {rank} {i}/{len(files_single)}")
+
     out_file = file.replace("nonstd", "std")
     # make dir if not exist
     if rank == 0:
