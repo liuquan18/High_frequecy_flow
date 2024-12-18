@@ -32,8 +32,9 @@ eof_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/season/EOF
 pc_path=f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_decade_nonstd/r{member}i1p1f1/"
 
 # mkdir pc_path
-if not os.path.exists(pc_path):
-    os.makedirs(pc_path)
+if rank == 0:
+    if not os.path.exists(pc_path):
+        os.makedirs(pc_path)
 
 #%%
 for i, start_year in enumerate(start_years_single):
