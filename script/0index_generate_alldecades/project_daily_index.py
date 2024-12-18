@@ -5,6 +5,8 @@ import mpi4py.MPI as MPI
 import numpy as np
 import sys
 import os
+import logging
+logging.basicConfig(level=logging.INFO)
 
 # %%
 # nodes for different ensemble members
@@ -12,6 +14,7 @@ import os
 
 # nodes and cores
 node = int(sys.argv[1]) # ensemble members
+
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
@@ -20,6 +23,8 @@ name = MPI.Get_processor_name()
 #%%
 start_years = np.arange(1850, 2100, 10)
 member=node
+logging.info(f"This node is working on ensemble member {member}")
+
 #%%
 start_years_single = np.array_split(start_years, size)[rank]  # years on this core
 daily_zg_path=f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/zg_MJJAS_ano_decade/r{member}i1p1f1/"
