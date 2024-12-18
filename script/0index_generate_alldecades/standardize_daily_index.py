@@ -27,6 +27,18 @@ if rank == 0:
         logging.ERROR(f"Files length is not 50, but {len(files)}")
         sys.exit()
 
+    import os
+
+    # Base directory where the folders will be created
+    base_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_decade_std"
+
+    # Create folders with names r{number}i1p1f1 where number ranges from 1 to 50
+    for number in range(1, 51):
+        folder_name = f"r{number}i1p1f1"
+        folder_path = os.path.join(base_dir, folder_name)
+        os.makedirs(folder_path, exist_ok=True)
+        print(f"Created folder: {folder_path}")
+
 
 
 # %%
@@ -41,13 +53,9 @@ std = all_pcs.pc.std(dim = ('time','member'))
 files_single = np.array_split(files, size)[rank]  # files on this core
 
 for i, file in enumerate(files_single):
-    logging.info(f"Rank {rank} {i}/{len(files_single)}")
+    logging.info(f"Rank {rank} {i+1}/{len(files_single)}")
 
     out_file = file.replace("nonstd", "std")
-    # make dir if not exist
-    if rank == 0:
-        if not os.path.exists(os.path.dirname(out_file)):
-            os.makedirs(os.path.dirname(out_file))
 
     pc = xr.open_dataset(file).pc
     pc = (pc - mean) / std
