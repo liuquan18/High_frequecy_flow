@@ -45,6 +45,10 @@ def band_stat(base_point, v_data, stat = 'var', **kwargs):
         logging.info("calculating mean")
         result =  sector.mean(dim = ['lat', 'lon', 'time'])
         result.name = 'va'
+    elif stat == 'std':
+        logging.info("calculating std")
+        result =  sector.std(dim = ['lat', 'lon', 'time'])
+        result.name = 'va'
 
     return result
 #%%
