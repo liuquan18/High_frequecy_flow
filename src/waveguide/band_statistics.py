@@ -16,10 +16,19 @@ def band_stat(base_point, v_data, stat = 'var', **kwargs):
         base_point.lat.values.ravel()[0],
         base_point.lon.values.ravel()[0],
     )
-    lon_min = lon_base
-    lon_max = lon_base + 180
-    lat_min = lat_base - 5
-    lat_max = lat_base + 5
+
+    # define band sector
+    lat_plus = kwargs.get('lat_plus', 5)
+    lat_minus = kwargs.get('lat_minus', 5)
+
+    lon_plus = kwargs.get('lon_plus', 180)
+    lon_minus = kwargs.get('lon_minus', 0)
+
+
+    lon_min = lon_base - lon_minus
+    lon_max = lon_base + lon_plus
+    lat_min = lat_base - lat_minus
+    lat_max = lat_base + lat_plus
 
     if lon_max > 360:
         lon_max -= 360
@@ -52,11 +61,11 @@ def band_stat(base_point, v_data, stat = 'var', **kwargs):
 
     return result
 #%%
-def band_mean(v_data):
+def band_mean(v_data, **kwargs):
     v_data_cut = v_data.sel(lat=slice(5, 85))   
     mean_band = v_data_cut.groupby(
         lat=UniqueGrouper(), lon=UniqueGrouper() # time should be averaged
-    ).map(band_stat, v_data=v_data, stat = 'mean')
+    ).map(band_stat, v_data=v_data, stat = 'mean', **kwargs)
 
     # de weight data with cos(lat)
     mean_band = mean_band / np.cos(np.deg2rad(mean_band.lat))
