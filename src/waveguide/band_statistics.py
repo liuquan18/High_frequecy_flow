@@ -71,3 +71,14 @@ def band_variance(v_data, **kwargs):
     variance_band = variance_band / np.cos(np.deg2rad(variance_band.lat))
 
     return variance_band
+
+#%%
+def band_std(v_data, **kwargs):
+    v_data_cut = v_data.sel(lat=slice(5, 85))
+    std_band = v_data_cut.groupby(
+        lat=UniqueGrouper(), lon=UniqueGrouper(), time = UniqueGrouper() # time should be retained
+    ).map(band_stat, v_data=v_data, stat = 'std', **kwargs)
+    # deweight data with cos(lat)
+    std_band = std_band / np.cos(np.deg2rad(std_band.lat))
+
+    return std_band 
