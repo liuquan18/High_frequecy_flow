@@ -29,18 +29,64 @@ save_path = (
 # %%
 ############## first 10 years ################
 # "mon" frequency "historical" experiment, "rlut" variable
-cat_hist_olr_daily = cat_MPI_GE_CMIP6.search(
+cat_hist_daily = cat_MPI_GE_CMIP6.search(
     frequency="day",
-    variable_id="rlut",
+    variable_id=["tas", "hur"],
     experiment_id="historical",
 )
+
+
 #%%
-daily_files = get_from_cat(cat_hist_olr_daily, "path")
+cat_hist_daily = cat_hist_daily.search(
+    member_id = [
+        member_id for member_id in cat_hist_daily.df.member_id.unique() if member_id != 'r1i2000p1f1'
+    ],
+)
+#%%
+cat_hist_daily_first10 = cat_hist_daily.search(
+    path = [
+        path for path in cat_hist_daily.df.path.unique() if "18500101-18691231.nc" in path
+    ],
+)
+
+
+
+
+#%%
+dataset_dict = cat_hist_daily_first10.to_dataset_dict(
+    cdf_kwargs={"chunks": {"time": 1, "plev":1}},
+)
+
+#%%
+
+
+
+
+
+
+
+
+#%%
+daily_files = cat_hist_tas_daily[["path"]]
 
 
 # only select path with name ending with  "185001-186912.nc"
 first10_daily_files = daily_files.loc[daily_files.path.str.contains("18500101-18691231.nc")]
 
+
+
+
+
+
+#%%
+cat_hist_hur_daily = cat_MPI_GE_CMIP6.search(
+    frequency="day",
+    variable_id="hur",
+    experiment_id="historical",
+)
+cat_hist_hur_daily = cat_hist_hur_daily.df[cat_hist_hur_daily.df['member_id'] != 'r1i2000p1f1']
+
+#%%
 # save the list of path to a file for read in by bash
 first10_daily_files.to_csv("/work/mh0033/m300883/High_frequecy_flow/script/pre_process/OLR/first10_daily_files.csv", index=False, header=False)
 
