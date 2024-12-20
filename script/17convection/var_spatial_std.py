@@ -41,7 +41,7 @@ files_core = np.array_split(all_files, size)[rank]
 # %%
 for i, file in enumerate(files_core):
     logging.info(f"rank {rank} Processing {i+1}/{len(files_core)}")
-    ds = xr.open_dataset(file, chunks = {'time': 10})
+    ds = xr.open_dataset(file, chunks = {'time': 50})
     ds = ds[var]
     lon_window = 33
     lat_window = 5
