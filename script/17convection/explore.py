@@ -32,8 +32,8 @@ hur_weighted = hur.weighted(weights)
 # %%
 hur_weighted_mean = hur_weighted.mean(dim = 'plev')
 # %%
-hur = hur_weighted_mean.isel(time = slice(0,3))
-tas = tas.isel(time = slice(0,3))
+hur = hur_weighted_mean.sel(time = slice('1850-06-01', '1850-06-03'))
+tas = tas.sel(time = slice('1850-06-01', '1850-06-03'))
 
 # %%
 def rolling_lon_periodic(arr, lon_window, lat_window, stat = 'std'):
@@ -58,22 +58,35 @@ hur_tas_ratio_rolled = hur_rolled / tas_rolled
 # %%
 # plot hur_tas_ratio with cartopy
 fig = plt.figure(figsize=(10, 5))
-ax = plt.axes(projection=ccrs.PlateCarree())
-hur_tas_ratio_rolled.isel(time = 0).plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'coolwarm')
+ax = plt.axes(projection=ccrs.PlateCarree(100))
+hur_tas_ratio_rolled.isel(time = 0).plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'coolwarm', levels = np.arange(0,10,1))
 ax.coastlines()
-plt.show()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/rolling_hur_tas_ratio_ex.png")
 
 # %%
-# plot hur_band_std with cartopy
+# hur rolled std
 fig = plt.figure(figsize=(10, 5))
-ax = plt.axes(projection=ccrs.PlateCarree())
-hur_rolled.isel(time = 0).plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'coolwarm', levels=np.arange(0, 40,5))
+ax = plt.axes(projection=ccrs.PlateCarree(100))
+hur_rolled.isel(time = 0).plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'coolwarm', levels=np.arange(0, 30,1))
 ax.coastlines()
-plt.show()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/rolling_hur_std_ex.png")
+# %%
+# tas rolled std
+fig = plt.figure(figsize=(10, 5))
+ax = plt.axes(projection=ccrs.PlateCarree(100))
+tas_rolled.isel(time = 0).plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'coolwarm', levels=np.arange(0, 10,1))
+ax.coastlines()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/rolling_tas_std_ex.png")
 # %%
 fig = plt.figure(figsize=(10, 5))
-ax = plt.axes(projection=ccrs.PlateCarree())
-tas_rolled.isel(time = 0).plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'coolwarm', levels=np.arange(0, 20,1))
+ax = plt.axes(projection=ccrs.PlateCarree(100))
+tas.isel(time = 0).plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'coolwarm')
 ax.coastlines()
-plt.show()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/tas_ex.png")
+# %%
+fig = plt.figure(figsize=(10, 5))
+ax = plt.axes(projection=ccrs.PlateCarree(100))
+hur.isel(time = 0).plot(ax=ax, transform=ccrs.PlateCarree(), cmap = 'coolwarm')
+ax.coastlines()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/hur_ex.png")
 # %%
