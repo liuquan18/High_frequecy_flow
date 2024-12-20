@@ -72,7 +72,7 @@ merge() {
     files=$(find $tmp_path -type f -name "*_r${member}i1p1f1_gn_*.nc" | grep -E "$regex")
 
     if [ -n "$files" ]; then
-        outfile="${to_path}zg_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${start_year}0501-${end_year}0930_ano.nc"
+        outfile="${to_path}${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${start_year}0501-${end_year}0930_ano.nc"
         cdo -O -mergetime -apply,-selmonth,5/9 [ $files ] $outfile
         echo "Created $outfile"
     else
