@@ -73,7 +73,7 @@ merge() {
 
     if [ -n "$files" ]; then
         outfile="${to_path}zg_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${start_year}0501-${end_year}0930_ano.nc"
-        cdo mergetime $files $outfile
+        cdo -O -mergetime -apply,-selmonth,5/9 [ $files ] $outfile
         echo "Created $outfile"
     else
         echo "No files found for the decade ${start_year}-${end_year}"
