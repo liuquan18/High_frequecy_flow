@@ -14,7 +14,6 @@ logging.basicConfig(level=logging.INFO)
 node = sys.argv[1]
 var = sys.argv[2] # 'tas' or 'hur'
 member = node
-logging.info(f"This node is processing {var} ensemble member {member}")
 #%%
 try:
     from mpi4py import MPI
@@ -33,6 +32,8 @@ to_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_dail
 if rank == 0:
     if not os.path.exists(to_path):
         os.makedirs(to_path)
+    logging.info(f"This node is processing {var} ensemble member {member}")
+
 
 #%%
 all_files = glob.glob(from_path + "*.nc")
@@ -41,7 +42,7 @@ files_core = np.array_split(all_files, size)[rank]
 # %%
 for i, file in enumerate(files_core):
     logging.info(f"rank {rank} Processing {i+1}/{len(files_core)}")
-    ds = xr.open_dataset(file, chunks = {'time': 50})
+    ds = xr.open_dataset(file, chunks = {'time': 10})
     ds = ds[var]
     lon_window = 33
     lat_window = 5
