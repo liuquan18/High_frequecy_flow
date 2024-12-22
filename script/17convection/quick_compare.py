@@ -8,6 +8,7 @@ import glob
 from xhistogram.xarray import histogram
 import cartopy.crs as ccrs
 import cartopy
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 # %%
@@ -86,6 +87,11 @@ diff_hus_bined_plot = diff_hus_bined_plot.rename({"tas_diff": "lat"})
 first_hus_bined_plot["lat"] = first_hus_bined_plot["lat"] * 6
 last_hus_bined_plot["lat"] = last_hus_bined_plot["lat"] * 6
 diff_hus_bined_plot["lat"] = diff_hus_bined_plot["lat"] * 6
+#%%
+# change unit from 1 to g/kg
+first_hus_bined_plot = first_hus_bined_plot * 1000
+last_hus_bined_plot = last_hus_bined_plot * 1000
+diff_hus_bined_plot = diff_hus_bined_plot * 1000
 # %%
 fig, axes = plt.subplots(
     4,
@@ -98,12 +104,13 @@ fig, axes = plt.subplots(
 
 y_tick_labels = np.arange(0.5, 10, 1)
 
-first_hus_bined_plot.plot(
+first_plot = first_hus_bined_plot.plot(
     ax=axes[0],
     cmap="viridis",
     transform=ccrs.PlateCarree(),
-    levels=np.arange(0, 30, 1),
+    levels=np.arange(0, 5, 0.5),
     extend="max",
+    add_colorbar=False,
 )
 axes[0].set_title("1850-1859")
 axes[0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
@@ -113,12 +120,15 @@ axes[0].set_yticklabels(y_tick_labels)
 axes[0].set_ylabel("tas_diff")
 
 
-last_hus_bined_plot.plot(
+
+
+last_plot = last_hus_bined_plot.plot(
     ax=axes[1],
     cmap="viridis",
     transform=ccrs.PlateCarree(),
-    levels=np.arange(0, 30, 1),
+    levels=np.arange(0, 5, 0.5),
     extend="max",
+    add_colorbar=False,
 )
 axes[1].set_title("2090-2099")
 axes[1].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
@@ -126,12 +136,13 @@ axes[1].set_yticks(np.arange(0, 60, 6) + 3)
 axes[1].set_yticklabels(y_tick_labels)
 axes[1].set_ylabel("tas_diff")
 
-diff_hus_bined_plot.plot(
+diff_plot = diff_hus_bined_plot.plot(
     ax=axes[2],
     cmap="RdBu",
     transform=ccrs.PlateCarree(),
-    levels=np.arange(-10, 11, 1),
-    extend="max",
+    levels=np.arange(-2, 2.1, 0.2),
+    extend="both",
+    add_colorbar=False,
 )
 axes[2].set_title("2090-2099 - 1850-1859")
 axes[2].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
@@ -140,9 +151,9 @@ axes[2].set_yticklabels(y_tick_labels)
 axes[2].set_ylabel("tas_diff")
 
 
-first_tas.isel(time=0, ens=0).plot(
-    ax=axes[3], transform=ccrs.PlateCarree(), cmap="gray", add_colorbar=True
-)
+# first_tas.isel(time=0, ens=0).plot(
+#     ax=axes[3], transform=ccrs.PlateCarree(), cmap="gray", add_colorbar=True
+# )
 
 axes[3].coastlines()
 axes[3].set_extent([-180, 180, -30, 30], crs=ccrs.PlateCarree())
@@ -153,8 +164,7 @@ axes[3].set_xlabel("lon")
 axes[3].set_ylabel("lat")
 
 plt.tight_layout()
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/quick_compare.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/quick_compare.png")
 
-# chagne the ratio of each subplot
 
 # %%
