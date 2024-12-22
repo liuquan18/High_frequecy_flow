@@ -19,7 +19,7 @@ conda activate air_sea
 
 # done
 
-var='hur'
+var=$1
 for ens in {1..50}
 do
     echo "Ensemble member ${ens}"
