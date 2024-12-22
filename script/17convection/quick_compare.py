@@ -5,7 +5,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import glob
-from xhistogram.xarray import histogram
 import cartopy.crs as ccrs
 import cartopy
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -93,75 +92,84 @@ first_hus_bined_plot = first_hus_bined_plot * 1000
 last_hus_bined_plot = last_hus_bined_plot * 1000
 diff_hus_bined_plot = diff_hus_bined_plot * 1000
 # %%
-fig, axes = plt.subplots(
-    4,
-    1,
-    figsize=(15, 10),
-    subplot_kw={"projection": ccrs.PlateCarree(100)},
-    sharex=True,
-    sharey=False,
+fig = plt.figure(figsize=(15, 10))
+
+gs = fig.add_gridspec(4, 2, width_ratios=[50, 1], wspace=0.1)
+
+
+axes = np.array(
+    [
+        [fig.add_subplot(gs[0, 0], projection=ccrs.PlateCarree(100)), fig.add_subplot(gs[0, 1])],  
+        [fig.add_subplot(gs[1, 0], projection=ccrs.PlateCarree(100)), fig.add_subplot(gs[1, 1])],
+        [fig.add_subplot(gs[2, 0], projection=ccrs.PlateCarree(100)), fig.add_subplot(gs[2, 1])],
+        [fig.add_subplot(gs[3, 0], projection=ccrs.PlateCarree(100)), None
+        ],
+    ]
 )
+
 
 y_tick_labels = np.arange(0.5, 10, 1)
 
 first_plot = first_hus_bined_plot.plot(
-    ax=axes[0],
+    ax=axes[0, 0],
     cmap="viridis",
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 5, 0.5),
     extend="max",
     add_colorbar=False,
 )
-axes[0].set_title("1850-1859")
-axes[0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
-# y-tick labels is divided by 6
-axes[0].set_yticks(np.arange(0, 60, 6) + 3)
-axes[0].set_yticklabels(y_tick_labels)
-axes[0].set_ylabel("tas_diff")
+axes[0, 0].set_title("1850-1859")
+axes[0, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
+axes[0, 0].set_yticks(np.arange(0, 60, 6) + 3)
+axes[0, 0].set_yticklabels(y_tick_labels)
+axes[0, 0].set_ylabel("tas_diff")
 
 
+fig.colorbar(first_plot, cax=axes[0, 1], orientation="vertical")
+axes[0,1].set_ylabel("g/kg")
 
 
 last_plot = last_hus_bined_plot.plot(
-    ax=axes[1],
+    ax=axes[1, 0],
     cmap="viridis",
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 5, 0.5),
     extend="max",
     add_colorbar=False,
 )
-axes[1].set_title("2090-2099")
-axes[1].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
-axes[1].set_yticks(np.arange(0, 60, 6) + 3)
-axes[1].set_yticklabels(y_tick_labels)
-axes[1].set_ylabel("tas_diff")
+axes[1, 0].set_title("2090-2099")
+axes[1, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
+axes[1, 0].set_yticks(np.arange(0, 60, 6) + 3)
+axes[1, 0].set_yticklabels(y_tick_labels)
+axes[1, 0].set_ylabel("tas_diff")
+fig.colorbar(last_plot, cax=axes[1, 1], orientation="vertical")
+axes[1,1].set_ylabel("g/kg")
 
 diff_plot = diff_hus_bined_plot.plot(
-    ax=axes[2],
+    ax=axes[2, 0],
     cmap="RdBu",
     transform=ccrs.PlateCarree(),
     levels=np.arange(-2, 2.1, 0.2),
     extend="both",
     add_colorbar=False,
 )
-axes[2].set_title("2090-2099 - 1850-1859")
-axes[2].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
-axes[2].set_yticks(np.arange(0, 60, 6) + 3)
-axes[2].set_yticklabels(y_tick_labels)
-axes[2].set_ylabel("tas_diff")
+axes[2, 0].set_title("2090-2099 - 1850-1859")
+axes[2, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
+axes[2, 0].set_yticks(np.arange(0, 60, 6) + 3)
+axes[2, 0].set_yticklabels(y_tick_labels)
+axes[2, 0].set_ylabel("tas_diff")
+fig.colorbar(diff_plot, cax=axes[2, 1], orientation="vertical")
+axes[2,1].set_ylabel("g/kg")
 
-
-# first_tas.isel(time=0, ens=0).plot(
-#     ax=axes[3], transform=ccrs.PlateCarree(), cmap="gray", add_colorbar=True
-# )
-
-axes[3].coastlines()
-axes[3].set_extent([-180, 180, -30, 30], crs=ccrs.PlateCarree())
-# tick labels
-axes[3].set_xticks(np.arange(-180, 180, 60))
-axes[3].set_yticks(np.arange(-30, 30, 10))
-axes[3].set_xlabel("lon")
-axes[3].set_ylabel("lat")
+axes[3, 0].coastlines()
+# add ocean 
+axes[3, 0].add_feature(cartopy.feature.OCEAN)
+axes[3, 0].set_extent([-180, 180, -30, 30], crs=ccrs.PlateCarree())
+axes[3, 0].set_yticks(np.arange(-30, 31, 10))
+axes[3, 0].set_xlabel("lon")
+axes[3, 0].set_ylabel("lat")
+# add xticks and labels
+axes[3, 0].set_xticks(np.arange(-180, 181, 60))
 
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/quick_compare.png")
