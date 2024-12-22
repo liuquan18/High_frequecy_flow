@@ -31,61 +31,61 @@ def read_data(var, decade):
     return data
 
 
-def bin_hur_on_tas(lon_df):
+def bin_hus_on_tas(lon_df):
 
     ts_diff_bins = np.arange(0, 11, 1)
 
-    hur_bined = (
-        lon_df[["hur"]]
+    hus_bined = (
+        lon_df[["hus"]]
         .groupby(pd.cut(lon_df["tas"], bins=ts_diff_bins), observed=True)
         .mean()
     )
     # add one column called tas_diff, which is the middle value of the bin
-    hur_bined["tas_diff"] = hur_bined.index.map(lambda x: x.mid)
+    hus_bined["tas_diff"] = hus_bined.index.map(lambda x: x.mid)
     # make the tas_diff as the index
-    hur_bined = hur_bined.set_index("tas_diff")
-    return hur_bined
+    hus_bined = hus_bined.set_index("tas_diff")
+    return hus_bined
 
 
 # %%
 first_tas = read_data("tas", 1850)
-first_hur = read_data("hus", 1850)
-first_data = xr.Dataset({"tas": first_tas, "hur": first_hur})
-first_df = first_data.to_dataframe()[["tas", "hur"]]
+first_hus = read_data("hus", 1850)
+first_data = xr.Dataset({"tas": first_tas, "hus": first_hus})
+first_df = first_data.to_dataframe()[["tas", "hus"]]
 
 # %%
 
 last_tas = read_data("tas", 2090)
-last_hur = read_data("hur", 2090)
-last_data = xr.Dataset({"tas": last_tas, "hur": last_hur})
-last_df = last_data.to_dataframe()[["tas", "hur"]]
+last_hus = read_data("hus", 2090)
+last_data = xr.Dataset({"tas": last_tas, "hus": last_hus})
+last_df = last_data.to_dataframe()[["tas", "hus"]]
 
 # %%
-first_hur_bined = first_df.groupby("lon").apply(bin_hur_on_tas)
+first_hus_bined = first_df.groupby("lon").apply(bin_hus_on_tas)
 
-last_hur_bined = last_df.groupby("lon").apply(bin_hur_on_tas)
+last_hus_bined = last_df.groupby("lon").apply(bin_hus_on_tas)
 
-diff_hur_bined = last_hur_bined - first_hur_bined
+diff_hus_bined = last_hus_bined - first_hus_bined
 # %%
 # Reset index to convert MultiIndex to columns
-first_hur_bined = first_hur_bined.reset_index()
-last_hur_bined = last_hur_bined.reset_index()
-diff_hur_bined = diff_hur_bined.reset_index()
+first_hus_bined = first_hus_bined.reset_index()
+last_hus_bined = last_hus_bined.reset_index()
+diff_hus_bined = diff_hus_bined.reset_index()
 # %%
-first_hur_bined_plot = first_hur_bined.set_index(["tas_diff", "lon"]).to_xarray().hur
-last_hur_bined_plot = last_hur_bined.set_index(["tas_diff", "lon"]).to_xarray().hur
-diff_hur_bined_plot = diff_hur_bined.set_index(["tas_diff", "lon"]).to_xarray().hur
+first_hus_bined_plot = first_hus_bined.set_index(["tas_diff", "lon"]).to_xarray().hus
+last_hus_bined_plot = last_hus_bined.set_index(["tas_diff", "lon"]).to_xarray().hus
+diff_hus_bined_plot = diff_hus_bined.set_index(["tas_diff", "lon"]).to_xarray().hus
 
 # %%
 # change the 'tas_diff' to 'lat'
-first_hur_bined_plot = first_hur_bined_plot.rename({"tas_diff": "lat"})
-last_hur_bined_plot = last_hur_bined_plot.rename({"tas_diff": "lat"})
-diff_hur_bined_plot = diff_hur_bined_plot.rename({"tas_diff": "lat"})
+first_hus_bined_plot = first_hus_bined_plot.rename({"tas_diff": "lat"})
+last_hus_bined_plot = last_hus_bined_plot.rename({"tas_diff": "lat"})
+diff_hus_bined_plot = diff_hus_bined_plot.rename({"tas_diff": "lat"})
 # %%
 # value of 'lat' is multiplied by  3
-first_hur_bined_plot["lat"] = first_hur_bined_plot["lat"] * 6
-last_hur_bined_plot["lat"] = last_hur_bined_plot["lat"] * 6
-diff_hur_bined_plot["lat"] = diff_hur_bined_plot["lat"] * 6
+first_hus_bined_plot["lat"] = first_hus_bined_plot["lat"] * 6
+last_hus_bined_plot["lat"] = last_hus_bined_plot["lat"] * 6
+diff_hus_bined_plot["lat"] = diff_hus_bined_plot["lat"] * 6
 # %%
 fig, axes = plt.subplots(
     4,
@@ -98,7 +98,7 @@ fig, axes = plt.subplots(
 
 y_tick_labels = np.arange(0.5, 10, 1)
 
-first_hur_bined_plot.plot(
+first_hus_bined_plot.plot(
     ax=axes[0],
     cmap="viridis",
     transform=ccrs.PlateCarree(),
@@ -113,7 +113,7 @@ axes[0].set_yticklabels(y_tick_labels)
 axes[0].set_ylabel("tas_diff")
 
 
-last_hur_bined_plot.plot(
+last_hus_bined_plot.plot(
     ax=axes[1],
     cmap="viridis",
     transform=ccrs.PlateCarree(),
@@ -126,7 +126,7 @@ axes[1].set_yticks(np.arange(0, 60, 6) + 3)
 axes[1].set_yticklabels(y_tick_labels)
 axes[1].set_ylabel("tas_diff")
 
-diff_hur_bined_plot.plot(
+diff_hus_bined_plot.plot(
     ax=axes[2],
     cmap="RdBu",
     transform=ccrs.PlateCarree(),
