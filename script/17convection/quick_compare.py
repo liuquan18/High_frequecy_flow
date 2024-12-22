@@ -8,7 +8,7 @@ import glob
 import cartopy.crs as ccrs
 import cartopy
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-
+import matplotlib.colors as mcolors
 
 # %%
 def read_data(var, decade):
@@ -30,10 +30,10 @@ def read_data(var, decade):
 
     return data
 
-
 def bin_hus_on_tas(lon_df):
 
     ts_diff_bins = np.arange(0, 11, 1)
+    ts_diff_bins = np.append(ts_diff_bins, np.inf)  # Add an extra bin for >10
 
     hus_bined = (
         lon_df[["hus"]]
@@ -41,7 +41,7 @@ def bin_hus_on_tas(lon_df):
         .mean()
     )
     # add one column called tas_diff, which is the middle value of the bin
-    hus_bined["tas_diff"] = hus_bined.index.map(lambda x: x.mid)
+    hus_bined["tas_diff"] = hus_bined.index.map(lambda x: x.mid if x.right != np.inf else 11)
     # make the tas_diff as the index
     hus_bined = hus_bined.set_index("tas_diff")
     return hus_bined
@@ -96,7 +96,6 @@ fig = plt.figure(figsize=(15, 10))
 
 gs = fig.add_gridspec(4, 2, width_ratios=[50, 1], wspace=0.1)
 
-
 axes = np.array(
     [
         [fig.add_subplot(gs[0, 0], projection=ccrs.PlateCarree(100)), fig.add_subplot(gs[0, 1])],  
@@ -106,13 +105,18 @@ axes = np.array(
         ],
     ]
 )
+seq_data_in_the_txt_file = np.loadtxt("/work/mh0033/m300883/High_frequecy_flow/data/colormaps-master/continuous_colormaps_rgb_0-1/prec_seq.txt")
+div_data_in_the_txt_file = np.loadtxt("/work/mh0033/m300883/High_frequecy_flow/data/colormaps-master/continuous_colormaps_rgb_0-1/prec_div.txt")
+#create the colormap
+seq_prec_cm = mcolors.LinearSegmentedColormap.from_list('colormap', seq_data_in_the_txt_file)
+div_prec_cm = mcolors.LinearSegmentedColormap.from_list('colormap', div_data_in_the_txt_file)
 
 
 y_tick_labels = np.arange(0.5, 10, 1)
 
 first_plot = first_hus_bined_plot.plot(
     ax=axes[0, 0],
-    cmap="viridis",
+    cmap=seq_prec_cm,
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 5, 0.5),
     extend="max",
@@ -131,7 +135,7 @@ axes[0,1].set_ylabel("g/kg")
 
 last_plot = last_hus_bined_plot.plot(
     ax=axes[1, 0],
-    cmap="viridis",
+    cmap=seq_prec_cm,
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 5, 0.5),
     extend="max",
@@ -147,7 +151,7 @@ axes[1,1].set_ylabel("g/kg")
 
 diff_plot = diff_hus_bined_plot.plot(
     ax=axes[2, 0],
-    cmap="RdBu",
+    cmap=div_prec_cm,
     transform=ccrs.PlateCarree(),
     levels=np.arange(-2, 2.1, 0.2),
     extend="both",
