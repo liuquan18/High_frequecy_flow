@@ -65,28 +65,28 @@ last_df = last_data.to_dataframe()[["tas", "hus"]]
 
 # %%
 try:
-    first_tas_95 = xr.open_dataarray("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_tas_95.nc")
+    first_tas_95 = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_tas_95.csv")
 except FileNotFoundError:
     first_tas_95 = first_df.groupby("lon").quantile(0.95).reset_index()
-    first_tas_95.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_tas_95.nc")
+    first_tas_95.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_tas_95.csv", index=False)
 
 try:
-    last_tas_95 = xr.open_dataarray("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_tas_95.nc")
+    last_tas_95 = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_tas_95.csv")
 except FileNotFoundError:
     last_tas_95 = last_df.groupby("lon").quantile(0.95).reset_index()
-    last_tas_95.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_tas_95.nc")
+    last_tas_95.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_tas_95.csv", index=False)
     
 
 #%%
 try:
-    first_hus_bined = xr.open_dataarray("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_hus_bined.nc")
-    last_hus_bined = xr.open_dataarray("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_hus_bined.nc")
+    first_hus_bined = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_hus_bined.csv")
+    last_hus_bined = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_hus_bined.csv")
 
 except FileNotFoundError:
-    first_hus_bined = first_df.groupby("lon").apply(bin_hus_on_tas)
-    last_hus_bined = last_df.groupby("lon").apply(bin_hus_on_tas)
-    first_hus_bined.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_hus_bined.nc")
-    last_hus_bined.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_hus_bined.nc")
+    first_hus_bined = first_df.groupby("lon").apply(bin_hus_on_tas).reset_index()
+    last_hus_bined = last_df.groupby("lon").apply(bin_hus_on_tas).reset_index()
+    first_hus_bined.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_hus_bined.csv", index=False)
+    last_hus_bined.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_hus_bined.csv", index=False)
 
 diff_hus_bined = last_hus_bined - first_hus_bined
 # %%
@@ -151,6 +151,8 @@ axes[0, 0].set_yticks(np.arange(0, 80, 5) + 2)
 axes[0, 0].set_yticklabels(y_tick_labels)
 axes[0, 0].set_ylabel("tas_diff")
 
+axes[0,0].plot(first_tas_95.lon, first_tas_95.tas, color="black", linestyle="--", label="95% quantile")
+
 
 fig.colorbar(first_plot, cax=axes[0, 1], orientation="vertical")
 axes[0,1].set_ylabel("g/kg")
@@ -169,6 +171,8 @@ axes[1, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[1, 0].set_yticks(np.arange(0, 80, 5) + 2)
 axes[1, 0].set_yticklabels(y_tick_labels)
 axes[1, 0].set_ylabel("tas_diff")
+axes[1,0].plot(last_tas_95.lon, last_tas_95.tas, color="black", linestyle="--", label="95% quantile")
+
 fig.colorbar(last_plot, cax=axes[1, 1], orientation="vertical")
 axes[1,1].set_ylabel("g/kg")
 
@@ -205,7 +209,7 @@ axes[3, 0].set_position([axes[0,0].get_position().x0, box.y0, box.width * 0.78, 
 
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/quick_compare.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/quick_compare.png")
 
 
 # %%
