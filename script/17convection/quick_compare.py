@@ -153,7 +153,7 @@ axes[3].set_xlabel("lon")
 axes[3].set_ylabel("lat")
 
 plt.tight_layout()
-
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/quick_compare.png")
 
 # chagne the ratio of each subplot
 
