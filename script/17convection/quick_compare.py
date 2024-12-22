@@ -49,7 +49,7 @@ def bin_hur_on_tas(lon_df):
 
 # %%
 first_tas = read_data("tas", 1850)
-first_hur = read_data("hur", 1850)
+first_hur = read_data("hus", 1850)
 first_data = xr.Dataset({"tas": first_tas, "hur": first_hur})
 first_df = first_data.to_dataframe()[["tas", "hur"]]
 
@@ -153,7 +153,7 @@ axes[3].set_xlabel("lon")
 axes[3].set_ylabel("lat")
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/quick_compare.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/quick_compare.png")
 
 # chagne the ratio of each subplot
 
