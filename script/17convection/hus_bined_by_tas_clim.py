@@ -44,28 +44,28 @@ last_df = last_data.to_dataframe()[["tas", "hus"]]
 
 # %%
 try:
-    first_tas_95 = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_tas_95.csv")
+    first_tas_95 = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/first_tas_95.csv")
 except FileNotFoundError:
     first_tas_95 = first_df.groupby("lon").quantile(0.95).reset_index()
-    first_tas_95.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_tas_95.csv", index=False)
+    first_tas_95.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/first_tas_95.csv", index=False)
 
 try:
-    last_tas_95 = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_tas_95.csv")
+    last_tas_95 = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/last_tas_95.csv")
 except FileNotFoundError:
     last_tas_95 = last_df.groupby("lon").quantile(0.95).reset_index()
-    last_tas_95.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_tas_95.csv", index=False)
+    last_tas_95.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/last_tas_95.csv", index=False)
     
 
 #%%
 try:
-    first_hus_bined = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_hus_bined.csv")
-    last_hus_bined = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_hus_bined.csv")
+    first_hus_bined = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/first_hus_bined.csv")
+    last_hus_bined = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/last_hus_bined.csv")
 
 except FileNotFoundError:
     first_hus_bined = first_df.groupby("lon").apply(bin_hus_on_tas)
     last_hus_bined = last_df.groupby("lon").apply(bin_hus_on_tas)
-    first_hus_bined.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/first_hus_bined.csv", index=False)
-    last_hus_bined.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_hur_variability/last_hus_bined.csv", index=False)
+    first_hus_bined.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/first_hus_bined.csv", index=False)
+    last_hus_bined.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/last_hus_bined.csv", index=False)
 
 #%%
 diff_hus_bined = last_hus_bined - first_hus_bined
