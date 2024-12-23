@@ -241,12 +241,12 @@ axes[0, 0].set_title("1850-1859")
 axes[0, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[0, 0].set_yticks(np.arange(0, 80, 5) + 2)
 axes[0, 0].set_yticklabels(y_tick_labels)
-axes[0, 0].set_ylabel("tas_diff")
+axes[0, 0].set_ylabel("tas_diff (K)")
 axes[0,0].plot(first_tas_95.lon, first_tas_95.tas, color="black", linestyle="--", label="95% quantile")
 
 
 fig.colorbar(first_plot, cax=axes[0, 1], orientation="vertical")
-axes[0,1].set_ylabel("g/kg")
+axes[0,1].set_ylabel("hus (g/kg)")
 
 
 last_plot = last_hus_bined_plot.plot(
@@ -261,11 +261,11 @@ axes[1, 0].set_title("2090-2099")
 axes[1, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[1, 0].set_yticks(np.arange(0, 80, 5) + 2)
 axes[1, 0].set_yticklabels(y_tick_labels)
-axes[1, 0].set_ylabel("tas_diff")
+axes[1, 0].set_ylabel("tas_diff (K)")
 axes[1,0].plot(last_tas_95.lon, last_tas_95.tas, color="black", linestyle="--", label="95% quantile")
 
 fig.colorbar(last_plot, cax=axes[1, 1], orientation="vertical")
-axes[1,1].set_ylabel("g/kg")
+axes[1,1].set_ylabel("hus (g/kg)")
 
 diff_plot = diff_hus_bined_plot.plot(
     ax=axes[2, 0],
@@ -279,9 +279,9 @@ axes[2, 0].set_title("2090-2099 - 1850-1859")
 axes[2, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[2, 0].set_yticks(np.arange(0, 80, 5) + 2)
 axes[2, 0].set_yticklabels(y_tick_labels)
-axes[2, 0].set_ylabel("tas_diff")
+axes[2, 0].set_ylabel("tas_diff (K)")
 fig.colorbar(diff_plot, cax=axes[2, 1], orientation="vertical")
-axes[2,1].set_ylabel("g/kg")
+axes[2,1].set_ylabel("hus (g/kg)")
 
 axes[3, 0].coastlines()
 # add ocean 
