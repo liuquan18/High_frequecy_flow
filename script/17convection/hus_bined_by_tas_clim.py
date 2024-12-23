@@ -8,7 +8,7 @@ import cartopy.crs as ccrs
 import cartopy
 import matplotlib.colors as mcolors
 # %%
-def read_data(var, decade, meridional_mean = False):
+def read_data(var, decade, tropics = True, meridional_mean = False):
     time_tag = f"{decade}0501-{decade+9}0930"
     data_path = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_std/"
@@ -21,7 +21,9 @@ def read_data(var, decade, meridional_mean = False):
     data = data[var]
 
     # select -30 to 30 lat
-    data = data.sel(lat=slice(-30, 30))
+    if tropics:
+        data = data.sel(lat=slice(-30, 30))
+        
     if meridional_mean:
         data = data.mean("lat")
     
