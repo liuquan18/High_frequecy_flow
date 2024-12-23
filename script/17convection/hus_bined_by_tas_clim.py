@@ -11,7 +11,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.colors as mcolors
 import os
 # %%
-def read_data(var, decade):
+def read_data(var, decade, lat_mean = False):
     time_tag = f"{decade}0501-{decade+9}0930"
     data_path = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_std/"
@@ -25,6 +25,9 @@ def read_data(var, decade):
 
     # select -30 to 30 lat
     data = data.sel(lat=slice(-30, 30))
+    if lat_mean:
+        data = data.mean("lat")
+    
     # change longitude from 0-360 to -180-180
     data = data.assign_coords(lon=(data.lon + 180) % 360 - 180).sortby("lon")
 
