@@ -7,30 +7,8 @@ import glob
 import cartopy.crs as ccrs
 import cartopy
 import matplotlib.colors as mcolors
+from src.moisture.longitudinal_contrast import read_data
 # %%
-def read_data(var, decade, tropics = True, meridional_mean = False):
-    time_tag = f"{decade}0501-{decade+9}0930"
-    data_path = (
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_std/"
-    )
-    files = glob.glob(data_path + "r*i1p1f1/" + f"*{var}*{time_tag}.nc")
-
-    data = xr.open_mfdataset(
-        files, combine="nested", concat_dim="ens", chunks={"ens": 1}
-    )
-    data = data[var]
-
-    # select -30 to 30 lat
-    if tropics:
-        data = data.sel(lat=slice(-30, 30))
-        
-    if meridional_mean:
-        data = data.mean("lat")
-    
-    # change longitude from 0-360 to -180-180
-    data = data.assign_coords(lon=(data.lon + 180) % 360 - 180).sortby("lon")
-
-    return data
 
 def bin_hus_on_tas(lon_df):
 
