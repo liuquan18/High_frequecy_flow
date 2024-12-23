@@ -45,20 +45,45 @@ last_mean = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE
 
 first_qu95 = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/first_qu95.nc")
 last_qu95 = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/last_qu95.nc")
+#%%
+# change unit
+first_mean.hus = first_mean.hus * 1000
+last_mean.hus = last_mean.hus * 1000
+
+first_qu95.hus = first_qu95.hus * 1000
+last_qu95.hus = last_qu95.hus * 1000
+
 
 #%%
-temp_cmap = np.loadtxt("/work/mh0033/m300883/High_frequecy_flow/data/colormaps-master/continuous_colormaps_rgb_0-1/temp_div.txt")
+temp_cmap = np.loadtxt("/work/mh0033/m300883/High_frequecy_flow/data/colormaps-master/continuous_colormaps_rgb_0-1/temp_seq.txt")
 temp_cmap = mcolors.ListedColormap(temp_cmap, name='temp_div')
 
-prec_cmap = np.loadtxt("/work/mh0033/m300883/High_frequecy_flow/data/colormaps-master/continuous_colormaps_rgb_0-1/prec_div.txt")
+prec_cmap = np.loadtxt("/work/mh0033/m300883/High_frequecy_flow/data/colormaps-master/continuous_colormaps_rgb_0-1/prec_seq.txt")
 prec_cmap = mcolors.ListedColormap(prec_cmap, name='prec_div')
 
 
-#%%
 # %%
 fig, axes = plt.subplots(4, 1, figsize = (12, 6), subplot_kw={'projection': ccrs.PlateCarree(100)})
 first_mean.tas.plot(ax = axes[0], transform=ccrs.PlateCarree(), cmap = temp_cmap, cbar_kwargs = {'label': 'Temperature (K)'})
 axes[0].set_title("1850-1859")
 axes[0].coastlines()
 axes[0].set_global()
+
+
+last_mean.tas.plot(ax = axes[1], transform=ccrs.PlateCarree(), cmap = temp_cmap, cbar_kwargs = {'label': 'Temperature (K)'})
+axes[1].set_title("2090-2099")
+axes[1].coastlines()
+axes[1].set_global()
+
+
+first_mean.hus.plot(ax = axes[2], transform=ccrs.PlateCarree(), cmap = prec_cmap, cbar_kwargs = {'label': 'Specific Humidity (g/kg)'})
+axes[2].set_title("1850-1859")
+axes[2].coastlines()
+axes[2].set_global()
+
+last_mean.hus.plot(ax = axes[3], transform=ccrs.PlateCarree(), cmap = prec_cmap, cbar_kwargs = {'label': 'Specific Humidity (g/kg)'})
+axes[3].set_title("2090-2099")
+axes[3].coastlines()
+axes[3].set_global()
+
 # %%
