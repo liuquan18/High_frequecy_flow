@@ -8,6 +8,7 @@ import cartopy.crs as ccrs
 import cartopy
 import matplotlib.colors as mcolors
 from src.moisture.longitudinal_contrast import read_data
+from src.moisture.plot_utils import draw_box
 # %%
 
 def bin_hus_on_tas(lon_df):
@@ -269,25 +270,8 @@ axes[3, 0].add_feature(cartopy.feature.OCEAN)
 
 # draw an example box
 ex_base_point = (-60, 10)
-lon_window = 33 # index wise
-lat_window = 5 # index wise
-lon_width = lon_window * 1.875 # resolution of lon
-lat_width = lat_window * 1.86525287 # resolution of lat
 
-ex_box = [
-    (ex_base_point[0] - lon_width / 2, ex_base_point[1] - lat_width / 2),
-    (ex_base_point[0] + lon_width / 2, ex_base_point[1] - lat_width / 2),
-    (ex_base_point[0] + lon_width / 2, ex_base_point[1] + lat_width / 2),
-    (ex_base_point[0] - lon_width / 2, ex_base_point[1] + lat_width / 2),
-    (ex_base_point[0] - lon_width / 2, ex_base_point[1] - lat_width / 2)
-]
-
-# add box to the plot
-ex_box = np.array(ex_box)
-axes[3, 0].plot(ex_box[:,0], ex_box[:,1], color="red")
-
-# add the base point
-axes[3, 0].plot(ex_base_point[0], ex_base_point[1], marker="o", color="red")
+draw_box(axes, ex_base_point)
 
 
 axes[3, 0].set_extent([-180, 180, -30, 30], crs=ccrs.PlateCarree())
@@ -295,7 +279,8 @@ axes[3, 0].set_yticks(np.arange(-30, 31, 10))
 axes[3, 0].set_xlabel("lon")
 axes[3, 0].set_ylabel("lat")
 # add xticks and labels
-axes[3, 0].set_xticks(np.arange(-180, 181, 60))
+axes[3, 0].set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
+axes[3, 0].set_xticklabels(['180°', '120°W', '60°W', '0°', '60°E', '120°E'])
 
 # Make the axes[3,0] smaller with a ratio compared to axes[0,0] and axes[1,0]
 box = axes[3, 0].get_position()
