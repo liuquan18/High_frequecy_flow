@@ -209,7 +209,7 @@ axes[3, 0].set_position([axes[0,0].get_position().x0, box.y0, box.width * 0.78, 
 
 
 plt.tight_layout()
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/quick_compare.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/hus_bined_by_tas_clim.png")
 
 
 # %%
