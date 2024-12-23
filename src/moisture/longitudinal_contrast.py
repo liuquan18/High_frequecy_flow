@@ -39,3 +39,5 @@ def read_data(var, decade, tropics = True, meridional_mean = False):
     data = data.assign_coords(lon=(data.lon + 180) % 360 - 180).sortby("lon")
 
     return data
+
+# %%
