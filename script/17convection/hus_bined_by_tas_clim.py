@@ -3,13 +3,10 @@ import xarray as xr
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import glob
 import cartopy.crs as ccrs
 import cartopy
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.colors as mcolors
-import os
 # %%
 def read_data(var, decade, meridional_mean = False):
     time_tag = f"{decade}0501-{decade+9}0930"
