@@ -93,31 +93,22 @@ except FileNotFoundError:
 
 diff_hus_bined = last_hus_bined - first_hus_bined
 # %%
-# Reset index to convert MultiIndex to columns
-first_hus_bined = first_hus_bined.reset_index()
-last_hus_bined = last_hus_bined.reset_index()
-diff_hus_bined = diff_hus_bined.reset_index()
-# %%
-first_hus_bined_plot = first_hus_bined.set_index(["tas_diff", "lon"]).to_xarray().hus
-last_hus_bined_plot = last_hus_bined.set_index(["tas_diff", "lon"]).to_xarray().hus
-diff_hus_bined_plot = diff_hus_bined.set_index(["tas_diff", "lon"]).to_xarray().hus
+def to_plot_data(df, var):
+    # create fake 'lat' dimension to align with coastlines.
+    df = df.reset_index()
+    df = df.set_index(["tas_diff", "lon"]).to_xarray()[var]
+    df = df.rename({"tas_diff": "lat"})
+    df["lat"] = df["lat"] * 6
+    df = df * 1000
+    return df
 
-# %%
-# change the 'tas_diff' to 'lat'
-first_hus_bined_plot = first_hus_bined_plot.rename({"tas_diff": "lat"})
-last_hus_bined_plot = last_hus_bined_plot.rename({"tas_diff": "lat"})
-diff_hus_bined_plot = diff_hus_bined_plot.rename({"tas_diff": "lat"})
-# %%
-# value of 'lat' is multiplied by  3
-first_hus_bined_plot["lat"] = first_hus_bined_plot["lat"] * 6
-last_hus_bined_plot["lat"] = last_hus_bined_plot["lat"] * 6
-diff_hus_bined_plot["lat"] = diff_hus_bined_plot["lat"] * 6
 #%%
-# change unit from 1 to g/kg
-first_hus_bined_plot = first_hus_bined_plot * 1000
-last_hus_bined_plot = last_hus_bined_plot * 1000
-diff_hus_bined_plot = diff_hus_bined_plot * 1000
-# %%
+first_hus_bined_plot = to_plot_data(first_hus_bined, "hus")
+last_hus_bined_plot = to_plot_data(last_hus_bined, "hus")
+diff_hus_bined_plot = to_plot_data(diff_hus_bined, "hus")
+
+
+#%%
 fig = plt.figure(figsize=(15, 10))
 
 gs = fig.add_gridspec(4, 2, width_ratios=[50, 1], wspace=0.1)
