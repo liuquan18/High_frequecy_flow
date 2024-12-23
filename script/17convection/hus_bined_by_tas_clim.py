@@ -239,7 +239,7 @@ first_plot = first_hus_bined_plot.plot(
 )
 axes[0, 0].set_title("1850-1859")
 axes[0, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
-axes[0, 0].set_yticks(np.arange(0, 80, 5) + 2)
+axes[0, 0].set_yticks(np.arange(0, 80, 5) + 2.5)
 axes[0, 0].set_yticklabels(y_tick_labels)
 axes[0, 0].set_ylabel("tas_diff (K)")
 axes[0,0].plot(first_tas_95.lon, first_tas_95.tas, color="black", linestyle="--", label="95% quantile")
@@ -259,8 +259,8 @@ last_plot = last_hus_bined_plot.plot(
 )
 axes[1, 0].set_title("2090-2099")
 axes[1, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
-axes[1, 0].set_yticks(np.arange(0, 80, 5) + 2)
-axes[1, 0].set_yticklabels(y_tick_labels)
+axes[1, 0].set_yticks(np.arange(0, 80, 5) + 2.5)
+axes[1, 0].set_yticklabels(y_tick_labels, verticalalignment='center')
 axes[1, 0].set_ylabel("tas_diff (K)")
 axes[1,0].plot(last_tas_95.lon, last_tas_95.tas, color="black", linestyle="--", label="95% quantile")
 
@@ -277,7 +277,7 @@ diff_plot = diff_hus_bined_plot.plot(
 )
 axes[2, 0].set_title("2090-2099 - 1850-1859")
 axes[2, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
-axes[2, 0].set_yticks(np.arange(0, 80, 5) + 2)
+axes[2, 0].set_yticks(np.arange(0, 80, 5) + 2.5)
 axes[2, 0].set_yticklabels(y_tick_labels)
 axes[2, 0].set_ylabel("tas_diff (K)")
 fig.colorbar(diff_plot, cax=axes[2, 1], orientation="vertical")
@@ -286,6 +286,30 @@ axes[2,1].set_ylabel("hus (g/kg)")
 axes[3, 0].coastlines()
 # add ocean 
 axes[3, 0].add_feature(cartopy.feature.OCEAN)
+
+# draw an example box
+ex_base_point = (-60, 10)
+lon_window = 33 # index wise
+lat_window = 5 # index wise
+lon_width = lon_window * 1.875 # resolution of lon
+lat_width = lat_window * 1.86525287 # resolution of lat
+
+ex_box = [
+    (ex_base_point[0] - lon_width / 2, ex_base_point[1] - lat_width / 2),
+    (ex_base_point[0] + lon_width / 2, ex_base_point[1] - lat_width / 2),
+    (ex_base_point[0] + lon_width / 2, ex_base_point[1] + lat_width / 2),
+    (ex_base_point[0] - lon_width / 2, ex_base_point[1] + lat_width / 2),
+    (ex_base_point[0] - lon_width / 2, ex_base_point[1] - lat_width / 2)
+]
+
+# add box to the plot
+ex_box = np.array(ex_box)
+axes[3, 0].plot(ex_box[:,0], ex_box[:,1], color="red")
+
+# add the base point
+axes[3, 0].plot(ex_base_point[0], ex_base_point[1], marker="o", color="red")
+
+
 axes[3, 0].set_extent([-180, 180, -30, 30], crs=ccrs.PlateCarree())
 axes[3, 0].set_yticks(np.arange(-30, 31, 10))
 axes[3, 0].set_xlabel("lon")
