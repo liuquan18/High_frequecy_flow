@@ -1,5 +1,7 @@
 import xarray as xr
 import numpy as np
+import logging
+logging.basicConfig(level=logging.INFO)
 
 def cos_lat_weight(lat):
     """Calculate the cosine of latitude for weighting."""
@@ -42,7 +44,12 @@ def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='l
             Projected_pcs = field_flat.dot(eof_flat.T)
     else:
         field_flat = field_flat.sel(plev = plev)
-        eof_flat = eof_flat.sel(plev = plev)
+        try:
+            eof_flat = eof_flat.sel(plev = plev)
+        except KeyError:
+            eof_flat = eof_flat
+            logging.warning(f"plev {plev} not found in pattern data, assume it is corresponding to the reference plev")
+
         Projected_pcs = field_flat.dot(eof_flat.T)
 
 
