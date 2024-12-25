@@ -24,25 +24,25 @@ def bin_hus_on_tas(lon_df):
         .mean()
     )
     # add one column called tas_percent_label, which is the percentile value (0, 5, 10, ..., 100)
-    hus_bined["tas_percent_label"] = percentiles[:-1] + 2.5  # middle of each bin
+    hus_bined["tas_percent"] = percentiles[:-1] + 2.5  # middle of each bin
     # make the tas_percent_label as the index
     hus_bined = hus_bined.set_index("tas_percent_label")
     # add one column called tas_percent_label_label, which is the percentile value (0, 5, 10, ..., 100)
-    hus_bined["tas_percent_label_label"] = percentiles[:-1]
+    hus_bined["tas_percent"] = percentiles[:-1]
     # make the tas_percent_label_label as the index
-    hus_bined = hus_bined.set_index("tas_percent_label_label")
+    hus_bined = hus_bined.set_index("tas_percent")
     return hus_bined
 
 # %%
-first_tas = read_data("tas", 1850, (0, 60), meridional_mean=True)
-first_hus = read_data("hus", 1850, (0, 60), meridional_mean=True)
+first_tas = read_data("tas", 1850, (0, 60), meridional_mean=False)
+first_hus = read_data("hus", 1850, (0, 60), meridional_mean=False)
 first_data = xr.Dataset({"tas": first_tas, "hus": first_hus})
 first_df = first_data.to_dataframe()[["tas", "hus"]]
 
 # %%
 
-last_tas = read_data("tas", 2090, (0, 60), meridional_mean=True)
-last_hus = read_data("hus", 2090, (0, 60), meridional_mean=True)
+last_tas = read_data("tas", 2090, (0, 60), meridional_mean=False)
+last_hus = read_data("hus", 2090, (0, 60), meridional_mean=False)
 last_data = xr.Dataset({"tas": last_tas, "hus": last_hus})
 last_df = last_data.to_dataframe()[["tas", "hus"]]
 
@@ -63,18 +63,16 @@ diff_hus_bined = diff_hus_bined.reset_index()
 def to_plot_data(df, var):
     # create fake 'lat' dimension to align with coastlines.
     df = df.reset_index()
-    df = df.set_index(["tas_percent_label", "lon"]).to_xarray()[var]
-    df = df.rename({"tas_percent_label": "lat"})
+    df = df.set_index(["tas_percent", "lon"]).to_xarray()[var]
+    df = df.rename({"tas_percent": "lat"})
     df["lat"] = df["lat"]/2
     df = df * 1000
     return df
-
-
 # %%
 first_hus_bined_plot = to_plot_data(first_hus_bined, "hus")
 last_hus_bined_plot = to_plot_data(last_hus_bined, "hus")
 diff_hus_bined_plot = to_plot_data(diff_hus_bined, "hus")
-
+#%%
 
 # # %%
 # first_tas.load()
@@ -134,7 +132,7 @@ first_plot = first_hus_bined_plot.plot(
     ax=axes[0, 0],
     cmap=seq_prec_cm,
     transform=ccrs.PlateCarree(),
-    levels=np.arange(0, 2.6, 0.1),
+    levels=np.arange(0, 4.1, 0.2),
     extend="max",
     add_colorbar=False,
 )
@@ -155,7 +153,7 @@ last_plot = last_hus_bined_plot.plot(
     ax=axes[1, 0],
     cmap=seq_prec_cm,
     transform=ccrs.PlateCarree(),
-    levels=np.arange(0, 2.6, 0.1),
+    levels=np.arange(0, 4.1, 0.2),
     extend="max",
     add_colorbar=False,
 )
@@ -173,7 +171,7 @@ diff_plot = diff_hus_bined_plot.plot(
     ax=axes[2, 0],
     cmap=div_prec_cm,
     transform=ccrs.PlateCarree(),
-    levels=np.arange(-0.8, 0.805, 0.05),
+    levels=np.arange(-1.5, 1.55, 0.1),
     extend="both",
     add_colorbar=False,
 )
@@ -195,5 +193,5 @@ for ax in axes[:,0]:
 
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/hus_bined_by_tasPerc_clim_meridmean_0-60.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/hus_bined_by_tasPerc_clim_nomeridmean_0-60.png")
 # %%
