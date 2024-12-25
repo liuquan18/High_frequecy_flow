@@ -16,7 +16,7 @@ module load parallel
 
 # get the ensemble member from the command line
 member=$1
-var=$2
+var='ta'
 echo "Ensemble member ${member}"
 
 historical_path=/pool/data/CMIP6/data/CMIP/MPI-M/MPI-ESM1-2-LR/historical/r${member}i1p1f1/day/${var}/gn/v????????/
