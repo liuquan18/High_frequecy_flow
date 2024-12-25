@@ -184,12 +184,12 @@ axes[2, 1].set_ylabel("hus (g/kg)")
 for ax in axes[:3, 0]:
     # ax.set_ylim(0, 100)
     ax.set_aspect(1.5)
+    ax.set_yticks(np.arange(0, 51, 10))
+    ax.set_yticklabels(np.arange(0, 110, 20))
+
 axes[2, 0].set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
 axes[2, 0].set_xticklabels(["180W", "120W", "60W", "0", "60E", "120E"])
 
-for ax in axes[:,0]:
-    ax.set_yticks(np.arange(0, 51, 10))
-    ax.set_yticklabels(np.arange(0, 110, 20))
 
 
 plt.tight_layout()
