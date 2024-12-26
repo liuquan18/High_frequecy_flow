@@ -41,7 +41,6 @@ def thermal_wind(zg):
 # %%
 # nodes for different ensemble members
 node = sys.argv[1]
-logging.info(f"Processing ensemble member {node}")
 try:
     from mpi4py import MPI
 
@@ -61,6 +60,7 @@ save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/thermal_
 if rank == 0:
     if not os.path.exists(save_path):
         os.makedirs(save_path)
+    logging.info(f"Processing ensemble member {node}")
 
 # %%
 # %%
