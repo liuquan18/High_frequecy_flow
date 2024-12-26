@@ -7,33 +7,20 @@ import metpy.calc as mpcalc
 from metpy.units import units
 import metpy.constants as mpconstants
 
-
 # %%
+def calc_factor(arr):
+    """
+    calculate 1/fa
 
-# variables
+    """
+    lat = arr.lat
+    f = mpcalc.coriolis_parameter(lat)
+    a = mpconstants.earth_avg_radius
 
+    return 1 / (f * a)
 
-# f     coriolis parameter          mpcalc.coriolis_parameter(lat)         's^-1'
-# a     earth radius                mpconstants.earth_avg_radius            'm'
-
-
-# $(\partial T / \partial P) s^*$
-#       moist adiabatic lapse rate  mpcalc.moist_lapse_rate(pressure, temperature)  'K / Pa'
-
-
-# c_p  Specific heat at constant pressure for water vapor mpconstants.wv_specific_heat_press  'J/kg/K'
-# \theta_e^* equivalent potential temperature mpcalc.equivalent_potential_temperature(pressure, temperature, dewpoint)  'K'
-
-# $$
-# s^* = c_p \ln \theta_e^*
-
-# where c_p is the specific heat of air at constant pressure
-# \theta_e^* is the equivalent potential temperature
-
-# $$
-
-
-def calc_malr(temp):
+#%%
+def calc_malr_1d(temp):
     """
     Calculates the moist adiabatic lapse rate.
     # inputs are 1d vertical profiles of pressure and temperature :
@@ -87,8 +74,81 @@ def calc_malr(temp):
 
     return dtemp_dp_ma
 
+def calc_malr(arr):
+    """
+    Calculates the moist adiabatic lapse rate.
 
-# %%
+    """
+    return xr.apply_ufunc(
+        calc_malr_1d,
+        arr,
+        input_core_dims=[["plev"]],
+        output_core_dims=[["plev"]],
+    )
+#%%
+def s_entropy_1d(T, p, relative_humidity=1.0):
+    """
+    Calculate saturation (moist) entropy s* = sd + Lvq*/T
+    
+    Parameters:
+    T (float): Temperature in Kelvin
+    p (float): Pressure in Pa
+    relative_humidity (float): Relative humidity (0-1), default=1.0 for saturation
+    
+    Returns:
+    float: Saturation entropy in J/kg/K
+    """
+    # Constants
+    cp = 1004.0  # Specific heat at constant pressure (J/kg/K)
+    Lv = 2.5e6   # Latent heat of vaporization (J/kg)
+    Rd = 287.0   # Gas constant for dry air (J/kg/K)
+    Rv = 461.5   # Gas constant for water vapor (J/kg/K)
+    p0 = 100000  # Reference pressure (Pa)
+    
+    # Calculate saturation vapor pressure (Bolton's formula)
+    es = 611.2 * np.exp(17.67 * (T - 273.15) / (T - 29.65))
+    
+    # Calculate mixing ratio at saturation
+    qs = (0.622 * es * relative_humidity) / (p - es * relative_humidity)
+    
+    # Calculate potential temperature
+    theta = T * (p0/p)**(Rd/cp)
+    
+    # Calculate dry entropy component
+    sd = cp * np.log(theta)
+    
+    # Calculate moist component
+    s_moist = Lv * qs / T
+    
+    # Total saturation entropy
+    s_star = sd + s_moist
+    
+    return s_star
+
+def calc_saturation_entropy(T):
+    """
+    Calculates the saturation entropy s* = sd + Lvq*/T
+
+    """
+    return xr.apply_ufunc(
+        s_entropy_1d,
+        T * units.kelvin,
+        T.plev * units.pascal,
+    )
+#%%
+def d_s_entropy_d_lon(arr):
+    """
+    Calculate the gradient of saturation entropy s* = sd + Lvq*/T with respect to longitude
+
+    """
+    return xr.apply_ufunc(
+        mpcalc.gradient,
+        arr,
+        input_core_dims=[["lon"]],
+        output_core_dims=[["lon"]],
+    )
+
+
 
 # %%
 ta = xr.open_dataset(
@@ -99,11 +159,9 @@ ta = ta.isel(time=slice(0, 4))
 # %%
 # apply_ufunc calc_malr to calculate moist adiabatic lapse rate
 # along the vertical profile of temperature, p = ta.plev.values, for all lon,lat, and time
-Malr = xr.apply_ufunc(
-    calc_malr,
-    ta,
-    input_core_dims=[["plev"]],
-    output_core_dims=[["plev"]],
-)
-
+malr = calc_malr(ta)
+# %%
+factor = calc_factor(ta)
+# %%
+s_entropy = calc_saturation_entropy(ta)
 # %%
