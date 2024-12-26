@@ -132,8 +132,8 @@ def calc_saturation_entropy(T):
     """
     return xr.apply_ufunc(
         s_entropy_1d,
-        T * units.kelvin,
-        T.plev * units.pascal,
+        T,
+        T.plev,
     )
 #%%
 def d_s_entropy_d_lon(arr):
@@ -141,15 +141,34 @@ def d_s_entropy_d_lon(arr):
     Calculate the gradient of saturation entropy s* = sd + Lvq*/T with respect to longitude
 
     """
-    return xr.apply_ufunc(
-        mpcalc.gradient,
-        arr,
-        input_core_dims=[["lon"]],
-        output_core_dims=[["lon"]],
-    )
+    return arr.differentiate(coord="lon")
 
 
+#%%
+def calc_moisture_thermal_wind(ta):
+    """
+    Calculate the moisture thermal wind
 
+    """
+    # Calculate moist adiabatic lapse rate
+    malr = calc_malr(ta)
+    
+    # Calculate factor 1/fa
+    factor = calc_factor(ta)
+    
+    # Calculate saturation entropy
+    s_entropy = calc_saturation_entropy(ta)
+    
+    # Calculate gradient of saturation entropy
+    s_entropy_grad = d_s_entropy_d_lon(s_entropy)
+    
+    # Calculate moisture thermal wind
+    u_mt = -factor * malr * s_entropy_grad
+
+    # aggregate all the plev levels
+    u_mt = u_mt.sum(dim="plev")
+    
+    return u_mt
 # %%
 ta = xr.open_dataset(
     "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zzz_tmp/ta_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc"
@@ -164,4 +183,6 @@ malr = calc_malr(ta)
 factor = calc_factor(ta)
 # %%
 s_entropy = calc_saturation_entropy(ta)
+# %%
+s_entropy_grad = d_s_entropy_d_lon(s_entropy)
 # %%
