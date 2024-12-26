@@ -31,7 +31,7 @@ def thermal_wind(zg):
     d_vg_dp = v_g.differentiate('plev')
 
     # thermal wind 
-    v_t = d_vg_dp.sum('plev')
+    v_t = d_vg_dp.integrate('plev')
 
     v_t = v_t.metpy.dequantify().drop_vars('metpy_crs')
     v_t.name = 'v_t'
