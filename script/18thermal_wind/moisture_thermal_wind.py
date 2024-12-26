@@ -14,10 +14,10 @@ def calc_factor(arr):
 
     """
     lat = arr.lat
-    f = mpcalc.coriolis_parameter(lat)
+    f = mpcalc.coriolis_parameter(lat * units.degree_north)
     a = mpconstants.earth_avg_radius
 
-    return 1 / (f * a)
+    return 1 / (f * a).metpy.dequantify()
 
 #%%
 def calc_malr_1d(temp):
@@ -178,11 +178,6 @@ ta = ta.isel(time=slice(0, 4))
 # %%
 # apply_ufunc calc_malr to calculate moist adiabatic lapse rate
 # along the vertical profile of temperature, p = ta.plev.values, for all lon,lat, and time
-malr = calc_malr(ta)
-# %%
-factor = calc_factor(ta)
-# %%
-s_entropy = calc_saturation_entropy(ta)
-# %%
-s_entropy_grad = d_s_entropy_d_lon(s_entropy)
+#%%
+thermal_wind = calc_moisture_thermal_wind(ta)
 # %%
