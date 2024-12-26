@@ -17,10 +17,10 @@ def calc_factor(arr):
     f = mpcalc.coriolis_parameter(lat * units.degree_north)
     a = mpconstants.earth_avg_radius
 
-    return 1 / (f * a).metpy.dequantify()
+    return 1 / (f * a) 
 
 #%%
-def calc_malr_1d(temp):
+def calc_malr_1d(temp, p):
     """
     Calculates the moist adiabatic lapse rate.
     # inputs are 1d vertical profiles of pressure and temperature :
@@ -36,29 +36,30 @@ def calc_malr_1d(temp):
     dtemp_dp_ma : array-like
         Derivative of potential temperature with respect to pressure along a moist adiabat
     """
-    p = [100000.0, 85000.0, 70000.0, 50000.0, 25000.0]
+    temp = temp * units.kelvin
+    p = p * units.pascal
+
     # Constants
-    Rd = 287.04  # gas constant for dry air [J/kg/K]
-    Rv = 461.5  # gas constant for water vapor [J/kg/K]
-    cpd = 1005.7  # specific heat dry air [J/kg/K]
-    cpv = 1870  # specific heat water vapor [J/kg/K]
-    g = 9.80665  # gravitational acceleration [m/s^2]
+    Rd = 287.04 * units.joule / (units.kilogram * units.kelvin)  # gas constant for dry air
+    Rv = 461.5 * units.joule / (units.kilogram * units.kelvin)  # gas constant for water vapor
+    cpd = 1005.7 * units.joule / (units.kilogram * units.kelvin)  # specific heat dry air
+    cpv = 1870 * units.joule / (units.kilogram * units.kelvin)  # specific heat water vapor
+    g = 9.80665 * units.meter / units.second**2  # gravitational acceleration
     gc_ratio = Rd / Rv
 
     # Saturation vapor pressure [Pa]
-    Tc = temp - 273.15
-    es = 611.20 * np.exp(17.67 * Tc / (Tc + 243.5))  # Bolton 1980 equation 10
+    Tc = temp - 273.15 * units.kelvin
+    es = 611.20 * units.pascal * np.exp(17.67 * Tc / (Tc + 243.5 * units.kelvin))  # Bolton 1980 equation 10
 
     # Latent heat of condensation [J/kg]
-    L = (2.501 - 0.00237 * Tc) * 1e6  # Bolton 1980 equation 2
+    L = (2.501 - 0.00237 * Tc.magnitude) * 1e6 * units.joule / units.kilogram  # Bolton 1980 equation 2
 
     # Saturation mixing ratio
     rs = gc_ratio * es / (p - es)
 
     # Density
-    temp_virtual = temp * (1.0 + rs / gc_ratio) / (1.0 + rs)
-    rho = p / (Rd * temp_virtual)
-
+    rho = mpcalc.density(p, temp, rs)
+    
     # Moist adiabatic lapse rate
     malr = (
         g
@@ -69,10 +70,7 @@ def calc_malr_1d(temp):
         / (1 + L**2 * rs * (1 + rs / gc_ratio) / (Rv * temp**2 * (cpd + rs * cpv)))
     )
 
-    # Derivative of potential temperature wrt pressure along a moist adiabat
-    dtemp_dp_ma = malr / g / rho
-
-    return dtemp_dp_ma
+    return malr.magnitude
 
 def calc_malr(arr):
     """
@@ -82,48 +80,54 @@ def calc_malr(arr):
     return xr.apply_ufunc(
         calc_malr_1d,
         arr,
-        input_core_dims=[["plev"]],
+        arr.plev,
+        input_core_dims=[["plev"], ["plev"]],
         output_core_dims=[["plev"]],
     )
 #%%
-def s_entropy_1d(T, p, relative_humidity=1.0):
+def s_entropy_1d(temp, p, relative_humidity=1.0):
     """
     Calculate saturation (moist) entropy s* = sd + Lvq*/T
     
     Parameters:
-    T (float): Temperature in Kelvin
-    p (float): Pressure in Pa
+    temp (float): Temperature in Kelvin
+    pressure (float): Pressure in Pa
     relative_humidity (float): Relative humidity (0-1), default=1.0 for saturation
     
     Returns:
     float: Saturation entropy in J/kg/K
     """
+    # units
+    temp = temp * units.kelvin
+    p = p * units.pascal
+
     # Constants
-    cp = 1004.0  # Specific heat at constant pressure (J/kg/K)
-    Lv = 2.5e6   # Latent heat of vaporization (J/kg)
-    Rd = 287.0   # Gas constant for dry air (J/kg/K)
-    Rv = 461.5   # Gas constant for water vapor (J/kg/K)
-    p0 = 100000  # Reference pressure (Pa)
-    
+    cp = mpconstants.wv_specific_heat_press
+
+    # Calculate potential temperature
+    theta = mpcalc.potential_temperature(p, temp)
+
+    # Calculate dry entropy component
+    sd = cp * (np.log(theta / units.kelvin)*units.kelvin)
+
+
+    Lv = mpconstants.water_heat_vaporization
     # Calculate saturation vapor pressure (Bolton's formula)
-    es = 611.2 * np.exp(17.67 * (T - 273.15) / (T - 29.65))
     
     # Calculate mixing ratio at saturation
-    qs = (0.622 * es * relative_humidity) / (p - es * relative_humidity)
-    
-    # Calculate potential temperature
-    theta = T * (p0/p)**(Rd/cp)
-    
-    # Calculate dry entropy component
-    sd = cp * np.log(theta)
-    
+    rs = mpcalc.saturation_mixing_ratio(p, temp)
+
+    # calculate saturation specific humidity
+    qs = mpcalc.specific_humidity_from_mixing_ratio(rs)
+
+
     # Calculate moist component
-    s_moist = Lv * qs / T
+    s_moist = Lv * qs / temp
     
     # Total saturation entropy
     s_star = sd + s_moist
     
-    return s_star
+    return s_star.magnitude
 
 def calc_saturation_entropy(T):
     """
@@ -135,14 +139,6 @@ def calc_saturation_entropy(T):
         T,
         T.plev,
     )
-#%%
-def d_s_entropy_d_lon(arr):
-    """
-    Calculate the gradient of saturation entropy s* = sd + Lvq*/T with respect to longitude
-
-    """
-    return arr.differentiate(coord="lon")
-
 
 #%%
 def calc_moisture_thermal_wind(ta):
@@ -152,18 +148,29 @@ def calc_moisture_thermal_wind(ta):
     """
     # Calculate moist adiabatic lapse rate
     malr = calc_malr(ta)
+    # units
+    malr = malr * units.kelvin / units.meter
     
     # Calculate factor 1/fa
-    factor = calc_factor(ta)
+    factor = calc_factor(ta) # units second/meter
+
     
     # Calculate saturation entropy
     s_entropy = calc_saturation_entropy(ta)
+    s_entropy = s_entropy * units.joule / units.kilogram / units.kelvin
     
     # Calculate gradient of saturation entropy
-    s_entropy_grad = d_s_entropy_d_lon(s_entropy)
-    
+    s_entropy = s_entropy.metpy.assign_crs(
+        grid_mapping_name='latitude_longitude',
+        earth_radius=6371229.0
+    )
+    s_entropy_grad = mpcalc.gradient(s_entropy, axes = ['lon'])[0]
+    # convert units
+    s_entropy_grad = s_entropy_grad.metpy.convert_units(units.meter/(units.kelvin * units.second2))
+
     # Calculate moisture thermal wind
     u_mt = -factor * malr * s_entropy_grad
+           # second/meter * kelvin/pascal * meter/(kelvin * second**2)
 
     # aggregate all the plev levels
     u_mt = u_mt.sum(dim="plev")
@@ -180,4 +187,7 @@ ta = ta.isel(time=slice(0, 4))
 # along the vertical profile of temperature, p = ta.plev.values, for all lon,lat, and time
 #%%
 thermal_wind = calc_moisture_thermal_wind(ta)
+# %%
+temp = ta.isel(time=0, lon=0, lat=0).values
+p = ta.plev.values
 # %%
