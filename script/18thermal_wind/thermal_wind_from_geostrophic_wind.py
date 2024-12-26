@@ -41,17 +41,7 @@ def thermal_wind(zg):
 # %%
 # nodes for different ensemble members
 node = sys.argv[1]
-
-#%%
-member = node
-data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_daily/r{member}i1p1f1/"
-save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/thermal_wind_daily/r{member}i1p1f1/"
-
-if not os.path.exists(save_path):
-    os.makedirs(save_path)
-
-# %%
-#%%
+logging.info(f"Processing ensemble member {node}")
 try:
     from mpi4py import MPI
 
@@ -62,6 +52,17 @@ except:
     logging.warning("::: Warning: Proceeding without mpi4py! :::")
     rank = 0
     size = 1
+
+#%%
+member = node
+data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_daily/r{member}i1p1f1/"
+save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/thermal_wind_daily/r{member}i1p1f1/"
+
+if rank == 0:
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
+# %%
 # %%
 all_zg_files = glob.glob(data_path + "*.nc")
 # %%
