@@ -124,3 +124,4 @@ for i, daily_file in enumerate(single_files):
     cycles.to_csv(cycle_path + cycle_name, index = False)
 
     data.close()
+# %%
