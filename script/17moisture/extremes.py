@@ -61,8 +61,7 @@ def extract_extremes(data, threshold, gorl = '>=', var = 'tas'):
     cycles = cycles.to_dataframe().reset_index().dropna(axis = 0, how = 'any' )
     # drop column 'index'
     cycles = cycles.drop(columns = 'index')
-    cycles['Flag'] = cycles['year']*1000 + cycles['Flag']
-
+    cycles['Flag_unique'] = cycles['year']*1000 + cycles['Flag']
 
 
     return extremes, cycles
