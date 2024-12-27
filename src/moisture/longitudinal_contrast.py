@@ -1,6 +1,8 @@
 #%%
 import xarray as xr
 import glob
+import logging
+logging.basicConfig(level=logging.INFO)
 # %%
 def rolling_lon_periodic(arr, lon_window, lat_window, stat = 'std'):
     extended_arr = xr.concat([arr, arr], dim='lon')
@@ -26,7 +28,11 @@ def read_data(var, decade, latitude_slice = (-30,30), meridional_mean = False, s
     data = xr.open_mfdataset(
         files, combine="nested", concat_dim="ens", chunks={"ens": 1}
     )
-    data = data[var]
+    try:
+        data = data[var]
+    except KeyError:
+        pass
+        logging.warning(f"Variable {var} not found in the dataset")
 
     # select -30 to 30 lat
     if latitude_slice is not None:
