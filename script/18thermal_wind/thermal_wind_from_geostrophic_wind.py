@@ -34,7 +34,7 @@ def thermal_wind(zg):
     v_t = d_vg_dp.integrate('plev')
 
     v_t = v_t.metpy.dequantify().drop_vars('metpy_crs')
-    v_t.name = 'v_t'
+    v_t.name = 'vt'
 
     return v_t
 
@@ -73,6 +73,9 @@ for i, zg_file in enumerate(single_zg_files):
     ds = xr.open_dataset(zg_file, chunks ='auto')
     ds = ds['zg']
     v_t = thermal_wind(ds)
-    v_t.to_netcdf(save_path + zg_file.split('/')[-1])
+    to_file_name = save_path + zg_file.split('/')[-1]
+    # replace 'zg' in to_file_name with 'vt'
+    to_file_name = to_file_name.replace('zg', 'vt')
+    v_t.to_netcdf(to_file_name)
     ds.close()
     v_t.close()
