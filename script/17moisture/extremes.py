@@ -48,11 +48,9 @@ def run_cycle_1year(data, threshold, gorl = '>=', var = 'tas'):
     )
 
     EE_df = EE.run_lifecycle(flag = 'flag', variable=var)
+    EE_df = EE_df.dropna(axis = 0, how = 'any')
     EE_df = EE_df.to_xarray()
 
-    # drop na if row is all na
-    EE_df = EE_df.dropna(axis = 0, how = 'all')
-    
     return EE_df
 # %%
 def extract_extremes(data, threshold, gorl = '>=', var = 'tas'):
