@@ -55,7 +55,7 @@ except:
 #%%
 member = node
 data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/zg_daily/r{member}i1p1f1/"
-save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/thermal_wind_daily/r{member}i1p1f1/"
+save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily/r{member}i1p1f1/"
 
 if rank == 0:
     if not os.path.exists(save_path):
