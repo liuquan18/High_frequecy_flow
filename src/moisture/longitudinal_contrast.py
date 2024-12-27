@@ -16,10 +16,10 @@ def rolling_lon_periodic(arr, lon_window, lat_window, stat = 'std'):
     final_result = rolled_result.isel({'lon': slice(original_size-lon_window//2, 2*original_size-lon_window//2)})
     return final_result.sortby('lon')
 #%%
-def read_data(var, decade, latitude_slice = (-30,30), meridional_mean = False):
+def read_data(var, decade, latitude_slice = (-30,30), meridional_mean = False, suffix = '_std'):
     time_tag = f"{decade}0501-{decade+9}0930"
     data_path = (
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_std/"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
     )
     files = glob.glob(data_path + "r*i1p1f1/" + f"*{var}*{time_tag}.nc")
 
