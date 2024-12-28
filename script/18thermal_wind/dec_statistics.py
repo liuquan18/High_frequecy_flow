@@ -43,7 +43,7 @@ except:
     size = 1
 #%%
 
-decade = node
+decade = int(node)
 
 #%%
 logging.info(f"processing decade {decade}")
