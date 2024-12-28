@@ -69,7 +69,7 @@ except:
 
 #%%
 member = node
-data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily/r{member}i1p1f1/"
+data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_std/r{member}i1p1f1/"
 extreme_pos_path= f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_extremes_pos/r{member}i1p1f1/"
 cycle_pos_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_cycles_pos/r{member}i1p1f1/"
 
@@ -103,8 +103,8 @@ for i, daily_file in enumerate(single_files):
     data = data.load()
 
     var = 'vt'    
-    extremes_pos, cycles_pos = extract_extremes(data, threshold = 13.2, gorl='>=', var = var)
-    extremes_neg, cycles_neg = extract_extremes(data, threshold = -14.7, gorl='<=', var = var)
+    extremes_pos, cycles_pos = extract_extremes(data, threshold = 15, gorl='>=', var = var)
+    extremes_neg, cycles_neg = extract_extremes(data, threshold = -15, gorl='<=', var = var)
 
 
     outname = daily_file.split('/')[-1]
