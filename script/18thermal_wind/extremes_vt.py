@@ -43,8 +43,10 @@ def extract_extremes(data, threshold, gorl = '>=', var = 'vt'):
         data_year = data.sel(time = str(year))
         extremes_year, cycles_year= extract_extreme_1year(data_year, threshold = threshold, gorl = gorl, var = var)
 
-        extremes_all.append(extremes_year)
-        cycles_all.append(cycles_year)
+        if extremes_year.time.size > 0:
+            extremes_all.append(extremes_year)
+        if not cycles_year.empty:
+            cycles_all.append(cycles_year)
 
     extremes = xr.concat(extremes_all, dim = 'time')
     cycles = pd.concat(cycles_all, axis = 0)
@@ -103,8 +105,8 @@ for i, daily_file in enumerate(single_files):
     data = data.load()
 
     var = 'vt'    
-    extremes_pos, cycles_pos = extract_extremes(data, threshold = 15, gorl='>=', var = var)
-    extremes_neg, cycles_neg = extract_extremes(data, threshold = -15, gorl='<=', var = var)
+    extremes_pos, cycles_pos = extract_extremes(data, threshold = 28, gorl='>=', var = var) # 99th percentile of [20, 60]
+    extremes_neg, cycles_neg = extract_extremes(data, threshold = -32, gorl='<=', var = var) # 1st percentile of [20, 60]
 
 
     outname = daily_file.split('/')[-1]
