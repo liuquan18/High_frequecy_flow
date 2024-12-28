@@ -69,7 +69,7 @@ except:
 
 #%%
 member = node
-data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_std/r{member}i1p1f1/"
+data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_ano/r{member}i1p1f1/"
 extreme_pos_path= f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_extremes_pos/r{member}i1p1f1/"
 cycle_pos_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_cycles_pos/r{member}i1p1f1/"
 
