@@ -23,7 +23,7 @@ def extract_extreme_1year(data, threshold, gorl, var="vt"):
     EE.set_up(force=True)
     EE.run_contrack(
         variable=var,
-        threshold=threshold,  # quantile 0.99 of [30, 60] lat mean, 13.2/-14.7 m/s for vt
+        threshold=threshold,  # quantile 0.9 of [30, 60] lat mean, 13.2/-14.7 m/s for vt
         gorl=gorl,
         overlap=0.5,
         persistence=5,
@@ -110,11 +110,11 @@ for i, daily_file in enumerate(single_files):
 
     var = "vt"
     extremes_pos, cycles_pos = extract_extremes(
-        data, threshold=28, gorl=">=", var=var
-    )  # 99th percentile of [20, 60]
+        data, threshold=13, gorl=">=", var=var
+    )  # 90th percentile of [20, 60]
     extremes_neg, cycles_neg = extract_extremes(
-        data, threshold=-32, gorl="<=", var=var
-    )  # 1st percentile of [20, 60]
+        data, threshold=-13, gorl="<=", var=var
+    )  # 10st percentile of [20, 60]
 
     outname = daily_file.split("/")[-1]
 
