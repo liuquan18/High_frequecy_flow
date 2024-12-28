@@ -55,15 +55,23 @@ first_vt_extremes_neg = read_data("vt", 1850, (-90, 90), False, suffix='_extreme
 
 def plot_frequency(block):
     fig, ax = plt.subplots(figsize=(7, 5), subplot_kw={'projection': ccrs.PlateCarree(100)})
-    (xr.where(block['flag']>1,1,0).sum(dim=('time','ens'))/(block.time.size*block.ens.size)*100).plot(levels=np.arange(2,18,2), cmap='Oranges', extend = 'max', transform=ccrs.PlateCarree())
+    (xr.where(block['flag']>1,1,0).sum(dim=('time','ens'))/(block.time.size*block.ens.size)*100).plot(levels=np.arange(0,18,2), cmap='Oranges', extend = 'max', transform=ccrs.PlateCarree())
     (xr.where(block['flag']>1,1,0).sum(dim=('time','ens'))/(block.time.size*block.ens.size)*100).plot.contour(colors='grey', linewidths=0.8, levels=np.arange(2,18,2), transform=ccrs.PlateCarree())
-    ax.set_extent([-180, 180,30, 60], crs=ccrs.PlateCarree())
+    ax.set_extent([-180, 180,-90, 90], crs=ccrs.PlateCarree())
     ax.coastlines()
     plt.show()
-
+#%%
+def frequency(block):
+    return (xr.where(block['flag']>1,1,0).sum(dim=('time','ens'))/(block.time.size*block.ens.size)*100)
 
 # %%
 plot_frequency(first_vt_extremes_pos)
 # %%
 plot_frequency(first_vt_extremes_neg)
+# %%
+
+frequency_first_pos = frequency(first_vt_extremes_pos).sel(lat = slice(20, 60)).mean(dim = ('lon','lat'))
+frequency_first_neg = frequency(first_vt_extremes_neg).sel(lat = slice(20, 60)).mean(dim = ('lon','lat'))
+# %%
+frequency_first = (frequency_first_pos + frequency_first_neg)/2
 # %%
