@@ -12,9 +12,6 @@ import os
 logging.basicConfig(level=logging.ERROR)
 # %%
 import src.ConTrack.contrack as ct
-#%%
-import importlib
-importlib.reload(ct)
 
 # %%
 def extract_extreme_1year(data, threshold, gorl, var = 'vt'):
@@ -70,7 +67,7 @@ def extract_extremes(data, threshold, gorl = '>=', var = 'tas'):
 # %%
 # nodes for different ensemble members
 node = sys.argv[1]
-var = sys.argv[2] # tas, hus, vt
+var = 'vt' # tas, hus, vt
 try:
     from mpi4py import MPI
 
@@ -122,7 +119,7 @@ for i, daily_file in enumerate(single_files):
     outname = daily_file.split('/')[-1]
 
     # replace 'day' with 'extreme'
-    extreme_name = outname.replace('day', 'extreme_')
+    extreme_name = outname.replace('day', 'extreme')
     cycle_name = outname.replace('day', 'cycle').replace('.nc', '.csv')
 
     extremes_pos.flag.to_netcdf(extreme_pos_path + extreme_name)
