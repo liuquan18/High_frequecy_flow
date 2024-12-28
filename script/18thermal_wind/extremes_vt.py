@@ -28,38 +28,26 @@ def extract_extreme_1year(data, threshold, gorl, var = 'vt'):
         twosided=True,
     )
 
-    return EE.dataset
-
-def run_cycle_1year(data, threshold, gorl = '>=', var = 'tas'):
-    EE = ct.contrack()
-    EE.ds = data
-
-    EE.set_up(force=True)
-    EE.run_contrack(
-        variable=var,
-        threshold=threshold, 
-        gorl = gorl,
-        overlap=0.5,
-        persistence=5,
-        twosided=True,
-    )
-
     EE_df = EE.run_lifecycle(flag = 'flag', variable=var)
-    EE_df = EE_df.dropna(axis = 0, how = 'any')
-    EE_df = EE_df.to_xarray()
 
-    return EE_df
+    return EE.dataset, EE_df
+
 # %%
-def extract_extremes(data, threshold, gorl = '>=', var = 'tas'):
+def extract_extremes(data, threshold, gorl = '>=', var = 'vt'):
 
-    extremes = data.groupby('time.year').apply(extract_extreme_1year, threshold = threshold, gorl = gorl, var = var)
-    cycles = data.groupby('time.year').apply(run_cycle_1year, threshold = threshold, gorl = gorl, var = var)
-    
-    cycles = cycles.to_dataframe().reset_index().dropna(axis = 0, how = 'any' )
-    # drop column 'index'
-    cycles = cycles.drop(columns = 'index')
-    cycles['Flag_unique'] = cycles['year']*1000 + cycles['Flag']
+    extremes_all = []
+    cycles_all = []
 
+    for year in np.unique(data.time.dt.year.values):
+        logging.error(f"Processing year {year}")
+        data_year = data.sel(time = str(year))
+        extremes_year, cycles_year= extract_extreme_1year(data_year, threshold = threshold, gorl = gorl, var = var)
+
+        extremes_all.append(extremes_year)
+        cycles_all.append(cycles_year)
+
+    extremes = xr.concat(extremes_all, dim = 'time')
+    cycles = pd.concat(cycles_all, axis = 0)
 
     return extremes, cycles
 
@@ -102,14 +90,17 @@ if rank == 0:
 
     logging.error(f"Processing ensemble member {node}")
 
-# %%
+
+#%%
 all_files =  glob.glob(data_path + "*.nc")
 single_files = np.array_split(all_files, size)[rank]
 # %%
 for i, daily_file in enumerate(single_files):
     logging.error(f"rank {rank} Processing {i+1}/{len(single_files)}")
 
+
     data = xr.open_dataset(daily_file)
+    data = data.load()
 
     var = 'vt'    
     extremes_pos, cycles_pos = extract_extremes(data, threshold = 13.2, gorl='>=', var = var)
