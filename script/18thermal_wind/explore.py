@@ -44,9 +44,10 @@ first_vt.load()
 std_first_tas = first_tas.sel(lat = slice(0, 60)).mean(dim = ('lon','lat')).quantile(0.99, dim = ('time', 'ens'))
 std_first_hus = first_hus.sel(lat = slice(0, 60)).mean(dim = ('lon','lat')).quantile(0.99, dim = ('time', 'ens'))
 # %%
-std_first_vt_pos = first_vt.where(first_vt >0).sel(lat = slice(20, 60)).mean(dim = ('lon','lat')).quantile(0.99, dim = ('time', 'ens'))
-std_first_vt_neg = first_vt.where(first_vt <0).sel(lat = slice(20, 60)).mean(dim = ('lon','lat')).quantile(0.01, dim = ('time', 'ens'))
-# %%
+std_first_vt_threshold = first_vt.sel(lat = slice(20, 60)).quantile([0.99, 0.01], dim = ('time', 'ens','lon','lat'))
+
+
+#%%
 
 first_vt_extremes_pos = read_data("vt", 1850, (-90, 90), False, suffix='_extremes_pos')
 first_vt_extremes_neg = read_data("vt", 1850, (-90, 90), False, suffix='_extremes_neg')
