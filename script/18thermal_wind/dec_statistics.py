@@ -43,8 +43,7 @@ except:
     size = 1
 #%%
 
-decades = np.arange(1850, 2100, 10)
-decade = decades[int(node)]
+decade = node
 
 #%%
 logging.info(f"processing decade {decade}")
