@@ -24,7 +24,7 @@ def extract_extreme_1year(data, threshold, gorl, var = 'vt'):
     EE.set_up(force=True)
     EE.run_contrack(
         variable=var,
-        threshold=threshold, # quantile 0.99 of [0, 60] lat mean, 3.62 K for tas,  2 g/kg for hus, 12/-12 m/s for vt
+        threshold=threshold, # quantile 0.99 of [30, 60] lat mean, 13.2/-14.7 m/s for vt
         gorl = gorl,
         overlap=0.5,
         persistence=5,
@@ -40,7 +40,7 @@ def run_cycle_1year(data, threshold, gorl = '>=', var = 'tas'):
     EE.set_up(force=True)
     EE.run_contrack(
         variable=var,
-        threshold=threshold, # quantile 0.99 of [0, 60] lat mean, 3.62 K for tas,  2 g/kg for hus, 12/-12 m/s for vt
+        threshold=threshold, 
         gorl = gorl,
         overlap=0.5,
         persistence=5,
@@ -115,8 +115,8 @@ for i, daily_file in enumerate(single_files):
     data = xr.open_dataset(daily_file)
 
     var = 'vt'    
-    extremes_pos, cycles_pos = extract_extremes(data, threshold = 12, gorl='>=', var = var)
-    extremes_neg, cycles_neg = extract_extremes(data, threshold = -12, gorl='<=', var = var)
+    extremes_pos, cycles_pos = extract_extremes(data, threshold = 13.2, gorl='>=', var = var)
+    extremes_neg, cycles_neg = extract_extremes(data, threshold = -14.7, gorl='<=', var = var)
 
 
     outname = daily_file.split('/')[-1]
