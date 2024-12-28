@@ -18,15 +18,16 @@ def rolling_lon_periodic(arr, lon_window, lat_window, stat = 'std'):
     final_result = rolled_result.isel({'lon': slice(original_size-lon_window//2, 2*original_size-lon_window//2)})
     return final_result.sortby('lon')
 #%%
-def read_data(var, decade, latitude_slice = (-30,30), meridional_mean = False, suffix = '_std'):
+def read_data(var, decade, latitude_slice = (-30,30), meridional_mean = False, suffix = '_std', **kwargs):
     time_tag = f"{decade}0501-{decade+9}0930"
     data_path = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
     )
-    files = glob.glob(data_path + "r*i1p1f1/" + f"{var}*{time_tag}.nc")
+    files = glob.glob(data_path + "r*i1p1f1/" + f"{var}*{time_tag}*.nc")
+    chunks = kwargs.get('chunks', {"ens": 1, "time": 765, "lat": -1, "lon": -1})
 
     data = xr.open_mfdataset(
-        files, combine="nested", concat_dim="ens", chunks={"ens": 1}
+        files, combine="nested", concat_dim="ens", chunks=chunks
     )
     try:
         data = data[var]
