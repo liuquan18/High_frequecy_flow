@@ -23,7 +23,7 @@ def read_data(var, decade, latitude_slice = (-30,30), meridional_mean = False, s
     data_path = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
     )
-    files = glob.glob(data_path + "r*i1p1f1/" + f"*{var}*{time_tag}.nc")
+    files = glob.glob(data_path + "r*i1p1f1/" + f"{var}*{time_tag}.nc")
 
     data = xr.open_mfdataset(
         files, combine="nested", concat_dim="ens", chunks={"ens": 1}
