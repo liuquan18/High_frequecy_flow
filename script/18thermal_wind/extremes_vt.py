@@ -105,8 +105,9 @@ single_files = np.array_split(all_files, size)[rank]
 for i, daily_file in enumerate(single_files):
     logging.error(f"rank {rank} Processing {i+1}/{len(single_files)}")
 
-    data = xr.open_dataset(daily_file, chunks={"time": 765, "lon": -1, "lat": -1})
-    data = data.load()
+    data = xr.open_dataset(daily_file, chunks={"time": -1, "lon": -1, "lat": -1})
+    data.load()
+    data = data.rolling(time=3, center=True).median() # smooth to remove single day spikes
 
     var = "vt"
     extremes_pos, cycles_pos = extract_extremes(
