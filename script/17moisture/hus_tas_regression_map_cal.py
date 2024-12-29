@@ -27,8 +27,13 @@ def regression(x, y):
     Returns:
     float: regression slope
     """
+    # only select the x within percentile [10,100]
+    x_p10 = np.percentile(x, 10)
+    X = x[x >= x_p10]
+    y = y[x >= x_p10]
+
     # Ensure input arrays are properly shaped for sklearn
-    X = np.array(x).reshape(-1, 1)
+    X = np.array(X).reshape(-1, 1)
     Y = np.array(y).reshape(-1, 1)
     
     # Perform regression
@@ -71,18 +76,15 @@ def calculate_spatial_regression(data):
     
     return slope
 
-# %%
 #%%
 first_data.load()
+
 #%%
 first_slope = calculate_spatial_regression(first_data)
-#%%
 first_slope.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/first_hus_tas_slope.nc")
 # %%
 last_data.load()
-# %%
 last_slope = calculate_spatial_regression(last_data)
-# %%
 last_slope.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/last_hus_tas_slope.nc")
 # %%
 
