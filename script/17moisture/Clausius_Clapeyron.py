@@ -82,18 +82,24 @@ plt.figure(figsize=(12, 8))
 plt.plot(T_kelvin, q_s, 'b-', linewidth=2, label='q*(T)')
 
 # Plot tangent lines
-colors = ['r', 'g']
+colors = ['C0', 'C1']
 for i, (T, T_line, q_line) in enumerate(zip(T_tangent, T_range_tangent, q_tangent)):
     plt.plot(T_line, q_line, f'{colors[i]}--', 
              label=f'Tangent at T={T}K\n(dq*/dT={dqs_dT_tangent[i]:.2e})')
     plt.plot(T, calculate_saturation_specific_humidity(T), f'{colors[i]}o')
 
-plt.grid(True)
+# plt.grid(True)
 plt.xlabel('Temperature (K)')
 plt.ylabel('Saturation Specific Humidity (kg/kg)')
 plt.title('Saturation Specific Humidity and Tangent Lines')
 plt.legend()
 plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
-plt.show()
+# text 'first10' and 'last10' at the T_tangent[0] and T_tangent[1] points
+plt.text(T_tangent[0], calculate_saturation_specific_humidity(T_tangent[0]), 'first10', fontsize=12, ha='right')
+plt.text(T_tangent[1], calculate_saturation_specific_humidity(T_tangent[1]), 'last10', fontsize=12, ha='right')
+
+
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/CC_relation.png")
 # %%
