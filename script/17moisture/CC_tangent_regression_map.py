@@ -13,11 +13,11 @@ from src.moisture.plot_utils import draw_box
 
 # %%
 first_slope = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/first_hus_tas_slope.nc"
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/first_ratio.nc"
 ).__xarray_dataarray_variable__
 # %%
 last_slope = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/last_hus_tas_slope.nc"
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/last_ratio.nc"
 ).__xarray_dataarray_variable__
 # %%
 first_tangent = xr.open_dataset(
@@ -117,20 +117,20 @@ last_tangent.plot(
 for ax in axes.flat:
     ax.coastlines()
 
-axes[0, 0].set_title("1850-1859 slope")
-axes[0, 1].set_title("1850-1859 tangent")
-axes[0, 2].set_title("slope - tangent")
-axes[1, 0].set_title("2090-2099 slope")
-axes[1, 1].set_title("2090-2099 tangent")
-axes[1, 2].set_title("slope - tangent")
+axes[0, 0].set_title("1850-1859 hus")
+axes[0, 1].set_title("1850-1859 hussat")
+axes[0, 2].set_title("hus - hussat")
+axes[1, 0].set_title("2090-2099 hus")
+axes[1, 1].set_title("2090-2099 hussat")
+axes[1, 2].set_title("hus - hussat")
 axes[2, 0].set_title("2090-2099 - 1850-1859")
 axes[2, 1].set_title("2090-2099 - 1850-1859")
-axes[2, 2].set_title("slope - tangent")
+axes[2, 2].set_title("hus - hussat")
 # add colorbar at the bottom
 cax = fig.add_axes([0.15, 0.01, 0.7, 0.02])
 plt.colorbar(slope, ax=axes, orientation='horizontal', label='slope / tangent', cax=cax)
 
 plt.tight_layout()
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/slope_tangent_diff_map.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/tangent_hus_shus.png")
 # %%
