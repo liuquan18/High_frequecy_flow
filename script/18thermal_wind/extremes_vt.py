@@ -64,7 +64,7 @@ def extract_extremes(data, threshold, gorl=">=", var="vt"):
 node = sys.argv[1]
 global var
 var = sys.argv[2]  # vt va
-
+#%%
 try:
     from mpi4py import MPI
 
