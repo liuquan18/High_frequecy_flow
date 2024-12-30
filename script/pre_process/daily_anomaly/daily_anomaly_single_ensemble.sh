@@ -14,7 +14,7 @@ module load parallel
 
 # get the ensemble member from the command line
 member=$1
-var='vt'
+var=$2
 echo "Ensemble member ${member}"
 
 
