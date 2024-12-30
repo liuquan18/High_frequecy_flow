@@ -62,7 +62,9 @@ def extract_extremes(data, threshold, gorl=">=", var="vt"):
 # %%
 # nodes for different ensemble members
 node = sys.argv[1]
-var = "vt"  # tas, hus, vt
+global var
+var = sys.argv[2]  # vt va
+
 try:
     from mpi4py import MPI
 
@@ -109,7 +111,6 @@ for i, daily_file in enumerate(single_files):
     data.load()
     data = data.rolling(time=3, center=True).median() # smooth to remove single day spikes
 
-    var = "vt"
     extremes_pos, cycles_pos = extract_extremes(
         data, threshold=13, gorl=">=", var=var
     )  # 90th percentile of [20, 60]
