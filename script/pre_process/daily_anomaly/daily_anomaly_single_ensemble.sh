@@ -28,6 +28,7 @@ savedir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_a
 mkdir -p $savedir
 
 export savedir
+export var
 
 # define the function
 Anomaly() {
