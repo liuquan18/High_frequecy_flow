@@ -119,6 +119,7 @@ for i, daily_file in enumerate(single_files):
     
     data = data.rolling(time=3, center=True).median() # smooth to remove single day spikes
 
+    data = data.to_dataset()
     extremes_pos, cycles_pos = extract_extremes(
         data, threshold=threshold, gorl=">", var=var
     )  # 90th percentile of [20, 60]
