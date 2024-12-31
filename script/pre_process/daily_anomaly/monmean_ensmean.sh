@@ -1,4 +1,13 @@
 #!/bin/bash
+#SBATCH --job-name=ensmean
+#SBATCH --time=01:00:00
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks=10
+#SBATCH --mem=200G
+#SBATCH --mail-type=FAIL
+#SBATCH --account=mh0033
+#SBATCH --output=ensmean.%j.out
 
 module load cdo
 module load parallel
@@ -19,4 +28,4 @@ out_name=${var}_monmean_ensmean_${decade}05_$((${decade}+9))09.nc
 first_ens_list=($(find $base_path -name $file_name -print))
 
 
-cdo -P 16 -ensmean -apply,ymonmean [ ${first_ens_list[@]} ] $to_path${out_name}
+cdo -P 10 -ensmean -apply,ymonmean [ ${first_ens_list[@]} ] $to_path${out_name}
