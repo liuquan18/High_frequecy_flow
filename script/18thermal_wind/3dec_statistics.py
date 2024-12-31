@@ -13,11 +13,11 @@ logging.basicConfig(level=logging.INFO)
 def frequency(block):
     return (xr.where(block['flag']>1,1,0).sum(dim=('time','ens'))/(block.time.size*block.ens.size)*100)
 
-def extreme_freq(decade):
+def extreme_freq(decade, var = 'vt'):
     logging.info(f"Processing decade {decade}")
 
-    vt_extremes_pos = read_data("vt", decade, (20, 60), False, suffix='_extremes_pos')
-    vt_extremes_neg = read_data("vt", decade, (20, 60), False, suffix='_extremes_neg')
+    vt_extremes_pos = read_data(var, decade, (20, 60), False, suffix='_extremes_pos')
+    vt_extremes_neg = read_data(var, decade, (20, 60), False, suffix='_extremes_neg')
 
     pos_freq = frequency(vt_extremes_pos)
     neg_freq = frequency(vt_extremes_neg)
@@ -49,8 +49,8 @@ decade = int(node)
 logging.info(f"processing decade {decade}")
 
 if rank == 0:
-    logging.info("processing vt extremes pos")
-    frequency_dec = extreme_freq(decade)
+    logging.info("processing vt extremes")
+    frequency_dec = extreme_freq(decade, var = 'vt')
     to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily_extremes_decade_freq/"
     if not os.path.exists(to_path):
         os.makedirs(to_path)
@@ -58,7 +58,7 @@ if rank == 0:
 
 if rank == 1:
     logging.info("processing tas")
-    tas = read_data("tas", decade, (20, 60), meridional_mean=False)
+    tas = read_data("tas", decade, (20, 60), meridional_mean=False, suffix='_std_extremes')
     tas_dec = decade_mean(tas)
     to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_daily_std_extremes_decade_freq/"
     if not os.path.exists(to_path):
@@ -67,7 +67,7 @@ if rank == 1:
 
 if rank == 2:
     logging.info("processing hus")
-    hus = read_data("hus", decade, (20, 60), meridional_mean=False)
+    hus = read_data("hus", decade, (20, 60), meridional_mean=False, suffix='_std_extremes')
     hus_dec = decade_mean(hus)
     to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_std_extremes_decade_freq/"
     if not os.path.exists(to_path):
@@ -76,9 +76,9 @@ if rank == 2:
 
 if rank == 3:
     logging.info("processing va")
-    va = read_data("va", decade, (20, 60), meridional_mean=False)
-    va_dec = decade_mean(va)
+
+    frequency_dec = extreme_freq(decade, var = 'va')
     to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_extremes_decade_freq/"
     if not os.path.exists(to_path):
         os.makedirs(to_path)
-    va_dec.to_netcdf(to_path + f"va_extreme_dec_{decade}.nc")
+    frequency_dec.to_netcdf(to_path + f"va_extreme_dec_{decade}.nc")
