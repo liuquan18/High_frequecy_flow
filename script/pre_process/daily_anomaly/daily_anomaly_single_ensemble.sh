@@ -34,7 +34,10 @@ export var
 Anomaly() {
 
     infile=$1
-    month_ens=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_monthly_ensmean/first10_${var}_monthly_ymonmean_ensmean.nc
+    
+    # get the decade label from $infile name
+    decade_label=$(basename "$infile" | cut -d'_' -f 6 | cut -c1-4)
+    month_ens=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_monthly_ensmean/${var}_monmean_ensmean_${decade_label}05_$((${decade_label}+9))09.nc
 
     cdo -ymonsub ${infile} ${month_ens} ${savedir}$(basename ${infile} .nc)_ano.nc
 }
