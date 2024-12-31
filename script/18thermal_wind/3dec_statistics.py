@@ -61,6 +61,8 @@ if rank == 1:
     tas = read_data("tas", decade, (20, 60), meridional_mean=False)
     tas_dec = decade_mean(tas)
     to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_daily_std_extremes_decade_freq/"
+    if not os.path.exists(to_path):
+        os.makedirs(to_path)
     tas_dec.to_netcdf(to_path + f"tas_std_dec_{decade}.nc")
 
 if rank == 2:
@@ -68,6 +70,8 @@ if rank == 2:
     hus = read_data("hus", decade, (20, 60), meridional_mean=False)
     hus_dec = decade_mean(hus)
     to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_std_extremes_decade_freq/"
+    if not os.path.exists(to_path):
+        os.makedirs(to_path)
     hus_dec.to_netcdf(to_path + f"hus_std_dec_{decade}.nc")
 
 if rank == 3:
@@ -75,4 +79,6 @@ if rank == 3:
     va = read_data("va", decade, (20, 60), meridional_mean=False)
     va_dec = decade_mean(va)
     to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_extremes_decade_freq/"
+    if not os.path.exists(to_path):
+        os.makedirs(to_path)
     va_dec.to_netcdf(to_path + f"va_extreme_dec_{decade}.nc")
