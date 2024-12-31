@@ -85,8 +85,8 @@ except:
 #%%
 member = node
 data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_std/r{member}i1p1f1/"
-extreme_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_extremes/r{member}i1p1f1/"
-cycle_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_cycles/r{member}i1p1f1/"
+extreme_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_std_extremes/r{member}i1p1f1/"
+cycle_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_std_cycles/r{member}i1p1f1/"
 if rank == 0:
     if not os.path.exists(extreme_path):
         os.makedirs(extreme_path)
