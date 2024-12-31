@@ -23,5 +23,5 @@ for ens in {1..50}
 do
     echo "Ensemble member ${ens}"
     # run the python script
-    sbatch hussat_daily_cal_submitter.sh ${ens}
+    sbatch 2hussat_daily_cal_submitter.sh ${ens}
 done

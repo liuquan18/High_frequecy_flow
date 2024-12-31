@@ -10,4 +10,4 @@
 #SBATCH --output=std.%j.out
 
 
-mpirun -n 5 python -u thermal_wind_from_geostrophic_wind.py $1 # node
+mpirun -n 5 python -u 0thermal_wind_from_geostrophic_wind.py $1 # node

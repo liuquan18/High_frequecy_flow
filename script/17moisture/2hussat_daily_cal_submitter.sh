@@ -10,4 +10,4 @@
 #SBATCH --output=hussat.%j.out
 
 
-mpirun -n 5 python -u hussat_daily_cal.py $1 
+mpirun -n 5 python -u 2hussat_daily_cal.py $1 

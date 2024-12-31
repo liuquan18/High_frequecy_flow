@@ -19,5 +19,5 @@ for ens in {1..50}
 do
     echo "Ensemble member ${ens}"
     # run the python script
-    sbatch thermal_wind_submitter.sh ${ens}
+    sbatch 0thermal_wind_submitter.sh ${ens}
 done

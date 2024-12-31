@@ -10,4 +10,4 @@
 #SBATCH --output=extreme.%j.out
 
 
-mpirun -n 5 python -u extremes.py $1 $2 # node, var
+mpirun -n 5 python -u 1extremes.py $1 $2 # node, var
