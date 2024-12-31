@@ -30,7 +30,7 @@ def decade_mean(data):
 #%%
 # nodes for different decades
 node = sys.argv[1]
-var = "vt"  # tas, hus, vt
+
 try:
     from mpi4py import MPI
 
@@ -51,17 +51,28 @@ logging.info(f"processing decade {decade}")
 if rank == 0:
     logging.info("processing vt extremes pos")
     frequency_dec = extreme_freq(decade)
-    frequency_dec.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_extremes_freq_decade/vt_extreme_freq_{decade}.nc")
+    to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily_extremes_decade_freq/"
+    if not os.path.exists(to_path):
+        os.makedirs(to_path)
+    frequency_dec.to_netcdf(to_path + f"vt_extreme_dec_{decade}.nc")
 
 if rank == 1:
     logging.info("processing tas")
     tas = read_data("tas", decade, (20, 60), meridional_mean=False)
     tas_dec = decade_mean(tas)
-    tas_dec.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_daily_std_dec/tas_dec_{decade}.nc")
+    to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_daily_std_extremes_decade_freq/"
+    tas_dec.to_netcdf(to_path + f"tas_std_dec_{decade}.nc")
 
 if rank == 2:
     logging.info("processing hus")
     hus = read_data("hus", decade, (20, 60), meridional_mean=False)
     hus_dec = decade_mean(hus)
-    hus_dec.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_std_dec/hus_dec_{decade}.nc")
+    to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_std_extremes_decade_freq/"
+    hus_dec.to_netcdf(to_path + f"hus_std_dec_{decade}.nc")
 
+if rank == 3:
+    logging.info("processing va")
+    va = read_data("va", decade, (20, 60), meridional_mean=False)
+    va_dec = decade_mean(va)
+    to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_extremes_decade_freq/"
+    va_dec.to_netcdf(to_path + f"va_extreme_dec_{decade}.nc")
