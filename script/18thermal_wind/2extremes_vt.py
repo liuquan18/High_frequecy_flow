@@ -113,6 +113,8 @@ for i, daily_file in enumerate(single_files):
 
     data = xr.open_dataset(daily_file, chunks={"time": -1, "lon": -1, "lat": -1})
     data.load()
+    if var == 'va':
+        data = data.sel(plev=25000)
     data = data.rolling(time=3, center=True).median() # smooth to remove single day spikes
 
     extremes_pos, cycles_pos = extract_extremes(
