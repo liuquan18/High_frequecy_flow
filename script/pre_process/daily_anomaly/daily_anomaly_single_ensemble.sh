@@ -19,12 +19,12 @@ echo "Ensemble member ${member}"
 
 
 # vt daily
-vt_daily_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily/r${member}i1p1f1/
-vt_daily_file=vt_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_*.nc
+vt_daily_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/r${member}i1p1f1/
+vt_daily_file=${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_*.nc
 daily_files=($(find $vt_daily_path -name $vt_daily_file -print))
 
 
-savedir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily_ano/r${member}i1p1f1/
+savedir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_ano/r${member}i1p1f1/
 mkdir -p $savedir
 
 export savedir
@@ -33,7 +33,7 @@ export savedir
 Anomaly() {
 
     infile=$1
-    month_ens=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_monthly_ensmean/first10_vt_monthly_ymonmean_ensmean.nc
+    month_ens=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_monthly_ensmean/first10_${var}_monthly_ymonmean_ensmean.nc
 
     cdo -ymonsub ${infile} ${month_ens} ${savedir}$(basename ${infile} .nc)_ano.nc
 }
