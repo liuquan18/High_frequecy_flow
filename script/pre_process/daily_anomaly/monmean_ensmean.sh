@@ -15,6 +15,8 @@ module load parallel
 decade=$1 # 1850, node
 var=$2
 
+echo "Decade ${decade} for variable ${var}"
+
 
 base_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/
 to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_monthly_ensmean/
