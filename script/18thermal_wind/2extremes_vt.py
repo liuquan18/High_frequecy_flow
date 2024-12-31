@@ -64,6 +64,10 @@ def extract_extremes(data, threshold, gorl=">=", var="vt"):
 node = sys.argv[1]
 global var
 var = sys.argv[2]  # vt va
+if var == "vt":
+    threshold = 13.5
+elif var == "va":
+    threshold = 14.5 # 90th percentile of [20, 60]
 #%%
 try:
     from mpi4py import MPI
@@ -112,10 +116,10 @@ for i, daily_file in enumerate(single_files):
     data = data.rolling(time=3, center=True).median() # smooth to remove single day spikes
 
     extremes_pos, cycles_pos = extract_extremes(
-        data, threshold=13, gorl=">=", var=var
+        data, threshold=threshold, gorl=">", var=var
     )  # 90th percentile of [20, 60]
     extremes_neg, cycles_neg = extract_extremes(
-        data, threshold=-13, gorl="<=", var=var
+        data, threshold=-1*threshold, gorl="<", var=var
     )  # 10st percentile of [20, 60]
 
     outname = daily_file.split("/")[-1]
