@@ -9,5 +9,5 @@ for dec in {1850..2090..10}
 do
     echo "Decade ${dec}"
     # run the python script
-    sbatch dec_stat_submitter.sh ${dec}
+    sbatch 3dec_stat_submitter.sh ${dec}
 done
