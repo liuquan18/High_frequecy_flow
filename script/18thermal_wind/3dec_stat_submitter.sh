@@ -10,4 +10,4 @@
 #SBATCH --output=dec.%j.out
 
 
-mpirun -n 4 python -u dec_statistics.py $1 # node, var
+mpirun -n 4 python -u 3dec_statistics.py $1 # node, var
