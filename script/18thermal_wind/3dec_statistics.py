@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 def frequency(block):
     return (xr.where(block['flag']>1,1,0).sum(dim=('time','ens'))/(block.time.size*block.ens.size)*100)
 
-def extreme_freq(decade, var = 'vt'):
+def wind_extremes(decade, var = 'vt'):
     logging.info(f"Processing decade {decade}")
 
     vt_extremes_pos = read_data(var, decade, (20, 60), False, suffix='_extremes_pos')
@@ -50,7 +50,7 @@ logging.info(f"processing decade {decade}")
 
 if rank == 0:
     logging.info("processing vt extremes")
-    frequency_dec = extreme_freq(decade, var = 'vt')
+    frequency_dec = wind_extremes(decade, var = 'vt')
     to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily_extremes_decade_freq/"
     if not os.path.exists(to_path):
         os.makedirs(to_path)
@@ -77,7 +77,7 @@ if rank == 2:
 if rank == 3:
     logging.info("processing va")
 
-    frequency_dec = extreme_freq(decade, var = 'va')
+    frequency_dec = wind_extremes(decade, var = 'va')
     to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_extremes_decade_freq/"
     if not os.path.exists(to_path):
         os.makedirs(to_path)
