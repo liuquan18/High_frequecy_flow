@@ -1,5 +1,5 @@
 #/bin/bash
-directory="/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_std"
+directory=$1
 
 # Loop through all files in the directory
 find "$directory" -type f | while read -r file; do

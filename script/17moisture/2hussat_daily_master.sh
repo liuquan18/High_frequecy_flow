@@ -19,10 +19,9 @@ conda activate air_sea
 
 # done
 
-var=$1
 for ens in {1..50}
 do
     echo "Ensemble member ${ens}"
     # run the python script
-    sbatch var_spatial_std_submitter.sh ${ens} ${var}
+    sbatch 2hussat_daily_cal_submitter.sh ${ens}
 done
