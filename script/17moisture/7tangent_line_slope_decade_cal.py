@@ -20,19 +20,10 @@ box_NPO = [140, -145, 20, 60] # [lon_min, lon_max, lat_min, lat_max] North Pacif
 # nodes for different decades
 node = sys.argv[1]
 
-try:
-    from mpi4py import MPI
-
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
-    size = comm.Get_size()  # 10
-except:
-    logging.warning("::: Warning: Proceeding without mpi4py! :::")
-    rank = 0
-    size = 1
 #%%
 
 decade = int(node)
+logging.info(f"processing decade {decade}")
 # %%
 tas = read_data("tas", decade, (20,60), False, suffix='_std')
 hus = read_data("hus", decade, (20,60), False, suffix='_std')
