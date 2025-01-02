@@ -117,8 +117,47 @@ plot_last_first = (last_hus_tas - first_hus_tas).plot(
     add_colorbar = False
 )
 
+
+def lon2x(longitude):
+    """
+    Convert longitude to corresponding x-coordinates.
+    """
+    x_coord = axes[2, 2].projection.transform_point(longitude, 0, ccrs.PlateCarree())[0]
+
+    return x_coord
+
+def lat2y(latitude):
+    """
+    Convert latitude to corresponding y-coordinates.
+    """
+    y_coord = axes[2, 2].projection.transform_point(0, latitude, ccrs.PlateCarree())[1]
+
+    return y_coord
+# for the axes[2,2]
+# add hlines at y = 30 and y = 60
+axes[2,2].axhline(y=lat2y(20), color='black', linestyle='dotted')
+axes[2,2].axhline(y=lat2y(60), color='black', linestyle='dotted')
+
+axes[2,2].axvline(x=lon2x(-145), ymin=0.62, ymax=0.86, color='black', linestyle='dotted')
+axes[2,2].axvline(x=lon2x(140), ymin=0.62, ymax=0.86, color='black', linestyle='dotted')
+axes[2,2].axvline(x=lon2x(-35), ymin=0.62, ymax=0.86, color='black', linestyle='dotted')
+axes[2,2].axvline(x=lon2x(-70), ymin=0.62, ymax=0.86, color='black', linestyle='dotted')
+
 for ax in axes.flat:
     ax.coastlines()
+
+# add x-ticks for the last row
+for ax in axes[2, :]:
+    ax.set_xticks(np.arange(-180, 181, 60), crs=ccrs.PlateCarree())
+    lon_formatter = cartopy.mpl.ticker.LongitudeFormatter()
+    ax.xaxis.set_major_formatter(lon_formatter)
+    ax.set_xlabel("")
+# add y-ticks for the first column
+for ax in axes[:, 0]:
+    ax.set_yticks(np.arange(-90, 91, 30), crs=ccrs.PlateCarree())
+    lat_formatter = cartopy.mpl.ticker.LatitudeFormatter()
+    ax.yaxis.set_major_formatter(lat_formatter)
+    ax.set_ylabel("")
 
 axes[0, 0].set_title("1850-1859 hus")
 axes[0, 1].set_title("1850-1859 hussat")
@@ -146,5 +185,5 @@ cbar3.set_ticks(np.arange(-1, 1.1, 0.5))
 
 plt.tight_layout(rect=[0, 0, 0.9, 1])
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/tangent_hus_shus.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/tangent_hus_shus.png")
 # %%
