@@ -9,13 +9,6 @@ import logging
 from src.moisture.longitudinal_contrast import read_data
 
 logging.basicConfig(level=logging.INFO)
-# %%
-
-box_EAA = [-35, 140, 20,60] # [lon_min, lon_max, lat_min, lat_max] Eurasia and Africa
-box_NAM = [-145, -70, 20, 60] # [lon_min, lon_max, lat_min, lat_max] North America
-box_NAL = [-70, -35, 20, 60] # [lon_min, lon_max, lat_min, lat_max] North Atlantic
-box_NPO = [140, -145, 20, 60] # [lon_min, lon_max, lat_min, lat_max] North Pacific
-# %%
 #%%
 # nodes for different decades
 node = sys.argv[1]
