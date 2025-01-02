@@ -16,8 +16,8 @@ def frequency(block):
 def wind_extremes(decade, var = 'vt'):
     logging.info(f"Processing decade {decade}")
 
-    vt_extremes_pos = read_data(var, decade, (20, 60), False, suffix='_extremes_pos')
-    vt_extremes_neg = read_data(var, decade, (20, 60), False, suffix='_extremes_neg')
+    vt_extremes_pos = read_data(var, decade, (-90,90), False, suffix='_extremes_pos')
+    vt_extremes_neg = read_data(var, decade, (-90,90), False, suffix='_extremes_neg')
 
     pos_freq = frequency(vt_extremes_pos)
     neg_freq = frequency(vt_extremes_neg)
@@ -58,7 +58,7 @@ if rank == 0:
 
 if rank == 1:
     logging.info("processing tas")
-    tas = read_data("tas", decade, (20, 60), meridional_mean=False, suffix='_std_extremes')
+    tas = read_data("tas", decade, (-90,90), meridional_mean=False, suffix='_std_extremes')
     tas_dec = decade_mean(tas)
     to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_daily_std_extremes_decade_freq/"
     if not os.path.exists(to_path):
@@ -67,7 +67,7 @@ if rank == 1:
 
 if rank == 2:
     logging.info("processing hus")
-    hus = read_data("hus", decade, (20, 60), meridional_mean=False, suffix='_std_extremes')
+    hus = read_data("hus", decade, (-90,90), meridional_mean=False, suffix='_std_extremes')
     hus_dec = decade_mean(hus)
     to_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_std_extremes_decade_freq/"
     if not os.path.exists(to_path):
