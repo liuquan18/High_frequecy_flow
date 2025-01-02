@@ -86,43 +86,71 @@ df_ano["region"] = df["region"]
 
 # %%
 fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+
+# Update the region labels
+df["region"] = df["region"].replace({
+    "EAA": "Eurasia_North_Africa",
+    "NAM": "North_America",
+    "NAL": "North_Atlantic",
+    "NPO": "North_Pacific"
+})
+
 sns.lineplot(
-    data=df[df["region"].isin(["EAA", "NAM"])],
+    data=df[df["region"].isin(["Eurasia_North_Africa", "North_America"])],
     x="decade",
     y="hus",
     hue="region",
     ax=ax[0],
+    palette = [sns.color_palette()[1], sns.color_palette()[3]]
 )
 sns.lineplot(
-    data=df[df["region"].isin(["EAA", "NAM"])],
+    data=df[df["region"].isin(["Eurasia_North_Africa", "North_America"])],
     x="decade",
     y="hussat",
     hue="region",
     ax=ax[0],
-    linestyle="--",
+    linestyle="dotted",
     legend=False,
+    palette = [sns.color_palette()[1], sns.color_palette()[3]]
 )
 
 sns.lineplot(
-    data=df[df["region"].isin(["NAL", "NPO"])],
+    data=df[df["region"].isin(["North_Atlantic", "North_Pacific"])],
     x="decade",
     y="hus",
     hue="region",
     ax=ax[1],
+    palette = [sns.color_palette()[0], sns.color_palette()[-1]]
 )
 sns.lineplot(
-    data=df[df["region"].isin(["NAL", "NPO"])],
+    data=df[df["region"].isin(["North_Atlantic", "North_Pacific"])],
     x="decade",
     y="hussat",
     hue="region",
     ax=ax[1],
-    linestyle="--",
+    linestyle="dotted",
     legend=False,
+    palette = [sns.color_palette()[0], sns.color_palette()[-1]]
 )
 
 ax[0].set_title("Continent")
 ax[1].set_title("Ocean")
 
-ax[0].set_ylabel(r"$\Delta$ hus / $\Delta$ tas")
-ax[1].set_ylabel(r"$\Delta$ hussat / $\Delta$ tas")
+ax[0].set_ylabel(r"$\Delta$ moisture / $\Delta$ tas (g/kg/K)")
+ax[1].set_ylabel(r"$\Delta$ moisture / $\Delta$ tas (g/kg/K)")
+
+# create custom legend, solid line for 'hus' and dashed line for 'hussat'
+handles, labels = ax[0].get_legend_handles_labels()
+lines = [
+    plt.Line2D([0], [0], color="grey", lw=2),
+    plt.Line2D([0], [0], color="grey", lw=2, linestyle="dotted"),
+]
+custom_labels = ["hus", "hussat"]
+ax[0].legend(handles + lines, labels + custom_labels, loc="upper left")
+
+handles, labels = ax[1].get_legend_handles_labels()
+ax[1].legend(handles + lines, labels + custom_labels, loc="upper left")
+
+plt.tight_layout()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/mosit_get_mosit_dec.png")
 # %%
