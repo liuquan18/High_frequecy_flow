@@ -37,6 +37,11 @@ data = data.where(data.tas >= tas_lim, drop = True)
 # %%
 ratio_hus = data.hus / data.tas
 ratio_hussat = data.hussat / data.tas
+
+#%%
+ratio_hus_mean = ratio_hus.mean(dim = ('time', 'ens'))
+ratio_hussat_mean = ratio_hussat.mean(dim = ('time', 'ens'))
+#%%
 ratio = xr.Dataset({"hus": ratio_hus, "hussat": ratio_hussat})
 # %%
 file_name = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/husDBtas_hussatDBtas_dec/moist_tas_ratio_{decade}.nc"
