@@ -76,6 +76,8 @@ upvp(){
     fname_upvp=${upvp_path}${fname_upvp/ua/upvp}.nc
     cdo -O -P 10 -mul ${fname_u} ${fname_v} ${fname_upvp}
 
+    echo "Created ${fname_upvp}"
+
 }
 
 export -f band_filter upvp
