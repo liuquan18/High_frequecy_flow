@@ -3,7 +3,7 @@
 #SBATCH --time=01:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=10
+#SBATCH --ntasks=5
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
@@ -47,7 +47,7 @@ band_filter(){
     cdo -P 10 -splityear ${infile} ${tmp_dir}${fname}_year
     # band filter, keep 2-12 days 
     year_files=$(ls ${tmp_dir}${fname}_year*)
-    cdo -O -P 10 -mergetime -apply,bandpass,30.5,182.5 [ ${year_files} ] ${outfile}
+    cdo -O -mergetime -apply,bandpass,30.5,182.5 [ ${year_files} ] ${outfile}
     # remove temporary files
     rm ${tmp_dir}${fname}_year*
 }
@@ -74,12 +74,12 @@ upvp(){
     #momentum fluxes
     fname_upvp=$(basename ${ufile%.nc})
     fname_upvp=${upvp_path}${fname_upvp/ua/upvp}.nc
-    cdo -O -P 10 -mul ${fname_u} ${fname_v} ${fname_upvp}
+    cdo -O -mul ${fname_u} ${fname_v} ${fname_upvp}
 
-    echo "Created ${fname_upvp}"
-
+    # remove temporary files
+    rm ${fname_u} ${fname_v}
 }
 
 export -f band_filter upvp
 # parallel band filter in to_dir
-parallel --jobs 10 upvp ::: {1850..2090..10} 
+parallel --jobs 5 upvp ::: {1850..2090..10} 
