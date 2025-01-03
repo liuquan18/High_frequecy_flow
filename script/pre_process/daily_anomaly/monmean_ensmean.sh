@@ -3,7 +3,7 @@
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=10
+#SBATCH --ntasks=5
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
@@ -30,4 +30,4 @@ out_name=${var}_monmean_ensmean_${decade}05_$((${decade}+9))09.nc
 first_ens_list=($(find $base_path -name $file_name -print))
 
 
-cdo -P 10 -ensmean -apply,ymonmean [ ${first_ens_list[@]} ] $to_path${out_name}
+cdo -P 5 -ensmean -apply,ymonmean [ ${first_ens_list[@]} ] $to_path${out_name}
