@@ -3,7 +3,7 @@
 #SBATCH --time=00:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=7
+#SBATCH --ntasks=5
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
@@ -39,9 +39,9 @@ Anomaly() {
     decade_label=$(basename "$infile" | cut -d'_' -f 6 | cut -c1-4)
     month_ens=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_monthly_ensmean/${var}_monmean_ensmean_${decade_label}05_$((${decade_label}+9))09.nc
 
-    cdo -ymonsub ${infile} ${month_ens} ${savedir}$(basename ${infile} .nc)_ano.nc
+    cdo -O -ymonsub ${infile} ${month_ens} ${savedir}$(basename ${infile} .nc)_ano.nc
 }
 
 
 export -f Anomaly
-parallel --jobs 10 Anomaly ::: ${daily_files[@]}
+parallel --jobs 5 Anomaly ::: ${daily_files[@]}
