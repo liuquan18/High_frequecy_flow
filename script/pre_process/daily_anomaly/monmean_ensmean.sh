@@ -10,7 +10,6 @@
 #SBATCH --output=ensmean.%j.out
 
 module load cdo
-module load parallel
 
 decade=$1 # 1850, node
 var=$2
