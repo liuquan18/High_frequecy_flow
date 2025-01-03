@@ -27,7 +27,7 @@ vp_path=/scratch/m/m300883/vp/r${member}i1p1f1/
 tmp_dir=/scratch/m/m300883/upvp/r${member}i1p1f1/
 upvp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily/r${member}i1p1f1/
 
-mkdir -p ${upvp_path} ${up_path} ${vp_path}
+mkdir -p ${upvp_path} ${up_path} ${vp_path} ${tmp_dir}
 
 
 export u_path up_path 
