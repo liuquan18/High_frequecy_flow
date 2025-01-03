@@ -30,7 +30,7 @@ def wavebreaking(avor, mflux):
     # calculate overturnings index
     overturnings = wb.calculate_overturnings(
         data=avor,
-        contour_levels=[1.5 * 1e-4],
+        contour_levels=[4 * 1e-5], # 90th percentile of [20, 60]
         range_group=5,  # optional
         min_exp=5,  # optional
         intensity=mflux,  # optional
@@ -45,9 +45,9 @@ def wavebreaking(avor, mflux):
 
     return events
 # %%
-def event_postprocessing(events):
+def event_classify(events):
     # anticyclonic and cyclonic by intensity for the Northern Hemisphere
-    anticyclonic = events[events.intensity >= 0]
+    anticyclonic = events[events.intensity > 0]
     cyclonic = events[events.intensity < 0]
 
     anti_tracked = wb.track_events(
@@ -88,13 +88,18 @@ except:
     rank = 0
     size = 1
 # %%
-av_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/av_daily/r{ens}i1p1f1/"
-mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily/r{ens}i1p1f1/"
+av_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/av_daily_ano/r{ens}i1p1f1/"
+mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily_ano/r{ens}i1p1f1/"
 
-wb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_daily/r{ens}i1p1f1/"
+awb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_awb_daily/r{ens}i1p1f1/"
+cwb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_cwb_daily/r{ens}i1p1f1/"
+
 if rank == 0:
-    if not os.path.exists(wb_path):
-        os.makedirs(wb_path)
+    if not os.path.exists(awb_path):
+        os.makedirs(awb_path)
+
+    if not os.path.exists(cwb_path):
+        os.makedirs(cwb_path)
 # %%
 all_decades = np.arange(1850, 2100, 10)
 single_decades = np.array_split(all_decades, size)[rank]
@@ -113,5 +118,14 @@ for i, dec in enumerate(single_decades):
 
     events = wavebreaking(av, mf)
 
-    break
+    anti_tracked, cyc_tracked = event_classify(events)
+
+    anti_tracked.to_csv(
+        awb_path + f"AWB_r{ens}_{dec}0502-{dec+9}0930.csv", index=False
+    )
+
+    cyc_tracked.to_csv(
+        cwb_path + f"CWB_r{ens}_{dec}0502-{dec+9}0930.csv", index=False
+    )
+
 # %%
