@@ -67,7 +67,7 @@ upvp(){
     
     
     fname_v=$(basename ${vfile%.nc})    
-    echo "Processing ${vfile}"
+    echo "Processing ${fname_v}"
     fname_v=${vp_path}${fname_v/va/vp}.nc
     band_filter ${vfile} ${fname_v}
 
