@@ -15,12 +15,11 @@ vt_threshold = first_upvp.ua.sel(lat = slice(20, 60)).quantile([0.9, 0.1], dim =
 # %%
 var = 'av'
 # %%
-first_avor = read_data(var, 1850, (-90, 90), False, suffix='')
-# %%
-first_avor
+first_avor = read_data(var, 1850, (-90, 90), False, suffix='_ano')
+
 # %%
 first_avor.load()
 # %%
 avor_threshold = first_avor.AV.sel(lat = slice(20, 60)).quantile(0.9, dim = ('time', 'ens','lon','lat'))
 # %%
-# 1.5*1e-4
+# 4.31473897e-05
