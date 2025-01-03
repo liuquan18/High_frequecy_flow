@@ -29,4 +29,4 @@ out_name=${var}_monmean_ensmean_${decade}05_$((${decade}+9))09.nc
 first_ens_list=($(find $base_path -name $file_name -print))
 
 
-cdo -P 5 -ensmean -apply,ymonmean [ ${first_ens_list[@]} ] $to_path${out_name}
+cdo -O -P 5 -ensmean -apply,ymonmean [ ${first_ens_list[@]} ] $to_path${out_name}
