@@ -22,19 +22,14 @@ v_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily/r${mem
 up_path=/scratch/m/m300883/up/r${member}i1p1f1/
 vp_path=/scratch/m/m300883/vp/r${member}i1p1f1/
 
-
-
 tmp_dir=/scratch/m/m300883/upvp/r${member}i1p1f1/
 upvp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily/r${member}i1p1f1/
 
 mkdir -p ${upvp_path} ${up_path} ${vp_path} ${tmp_dir}
 
-
 export u_path up_path 
 export v_path vp_path 
 export upvp_path member tmp_dir
-
-
 
 # function to band filter
 band_filter(){
@@ -52,8 +47,6 @@ band_filter(){
     rm ${tmp_dir}${fname}_year*
 }
 
-
-
 # function to band filter
 upvp(){
     dec=$1
@@ -64,7 +57,6 @@ upvp(){
     echo "Processing ${fname_u}"
     fname_u=${up_path}${fname_u/ua/up}.nc
     band_filter ${ufile} ${fname_u}
-    
     
     fname_v=$(basename ${vfile%.nc})    
     echo "Processing ${fname_v}"
@@ -82,4 +74,16 @@ upvp(){
 
 export -f band_filter upvp
 # parallel band filter in to_dir
-parallel --jobs 5 upvp ::: {1850..2090..10} 
+# parallel --jobs 5 upvp ::: {1850..2090..10}
+
+# Check if all required decades are saved
+for dec in {1850..2090..10}; do
+    if [ ! -f ${upvp_path}upvp_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501-$((dec+9))0930.nc ]; then
+        echo "File for decade ${dec} is missing in ${upvp_path}"
+    
+        # calculate the missing dec
+        echo "recalculate ${dec}"
+        upvp ${dec}
+
+    fi
+done
