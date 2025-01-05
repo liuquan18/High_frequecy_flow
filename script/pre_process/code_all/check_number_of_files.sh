@@ -1,7 +1,8 @@
 # ...existing code...
 #!/usr/bin/env bash
-var=$1
-BASE_DIR="/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_std"
+# var=$1
+# BASE_DIR="/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_std"
+BASE_DIR=$1
 missing=0
 
 for i in {1..50}; do
