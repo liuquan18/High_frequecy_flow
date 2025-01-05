@@ -82,8 +82,8 @@ cwb_counts_dec = cwb_counts_dec.assign_coords(dec=np.arange(1850, 2100, 10))
 awb_counts_dec = awb_counts_dec.to_dataframe().reset_index()[['dec','flag']]
 cwb_counts_dec = cwb_counts_dec.to_dataframe().reset_index()[['dec','flag']]
 # %%
-awb_counts_dec.to_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/awb_NA_counts_dec.csv', index=False)
-cwb_counts_dec.to_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/cwb_NA_counts_dec.csv', index=False)
+awb_counts_dec.to_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/awb_NA_counts_max_dec.csv', index=False)
+cwb_counts_dec.to_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/cwb_NA_counts_max_dec.csv', index=False)
 # %%
 wb_count = pd.DataFrame()
 wb_count ['count'] = (awb_counts_dec.flag + cwb_counts_dec.flag)/2
