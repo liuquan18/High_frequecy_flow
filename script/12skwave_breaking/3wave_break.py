@@ -30,7 +30,7 @@ def wavebreaking(avor, mflux):
     # calculate overturnings index
     overturnings = wb.calculate_overturnings(
         data=avor,
-        contour_levels=[4 * 1e-5], # 90th percentile of [20, 60]
+        contour_levels=[3 * 1e-5], # 90th percentile of [20, 60]
         range_group=5,  # optional
         min_exp=5,  # optional
         intensity=mflux,  # optional
@@ -87,8 +87,8 @@ except:
 av_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/av_daily_ano/r{ens}i1p1f1/"
 mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily_ano/r{ens}i1p1f1/"
 
-awb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_awb_daily/r{ens}i1p1f1/"
-cwb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_cwb_daily/r{ens}i1p1f1/"
+awb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_awb_th3_daily/r{ens}i1p1f1/"
+cwb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_cwb_th3_daily/r{ens}i1p1f1/"
 
 if rank == 0:
     if not os.path.exists(awb_path):
@@ -113,7 +113,7 @@ for i, dec in enumerate(single_decades):
     mf = remap(mf_file[0], var = 'ua')
 
     events = wavebreaking(av, mf)
-    
+
     if not events.empty:
 
         anti_tracked, cyc_tracked = event_classify(events)
