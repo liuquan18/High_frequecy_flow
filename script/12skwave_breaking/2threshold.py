@@ -23,3 +23,7 @@ first_avor.load()
 avor_threshold = first_avor.AV.sel(lat = slice(20, 60)).quantile(0.9, dim = ('time', 'ens','lon','lat'))
 # %%
 # 4.31473897e-05
+#%%
+avor_threshold = first_avor.AV.sel(lat = slice(20, 60)).std(dim = ('time', 'ens','lon','lat'))
+# %%
+# 3.29948027e-05
