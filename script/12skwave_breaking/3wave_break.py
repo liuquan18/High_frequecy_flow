@@ -46,13 +46,13 @@ def wavebreaking(avor, mflux):
     return events
 # %%
 def event_classify(events):
+
     # anticyclonic and cyclonic by intensity for the Northern Hemisphere
     anticyclonic = events[events.intensity > 0]
     cyclonic = events[events.intensity < 0]
 
     anti_tracked = wb.track_events(
         events=anticyclonic,
-        time_range=24,  # time range for temporal tracking in hours
         method="by_overlap",  # method for tracking ["by_overlap", "by_distance"], optional
         buffer=1.9,  # buffer in degrees for polygons overlapping, spatial resolution is 1.875 
         overlap=0.3,  # minimum overlap percentage, optinal
@@ -60,16 +60,11 @@ def event_classify(events):
 
     cyc_tracked = wb.track_events(
         events=cyclonic,
-        time_range=24,  # time range for temporal tracking in hours
         method="by_overlap",  # method for tracking ["by_overlap", "by_distance"], optional
         buffer=1.9,  # buffer in degrees for polygons overlapping, optional
         overlap=0.3,  # minimum overlap percentage, optinal
     )  
 
-
-    # to array
-    # anti_array = wb.to_xarray(data=avor, events=anti_tracked)
-    # cyc_array = wb.to_xarray(data=avor, events=cyc_tracked)
 
     return anti_tracked, cyc_tracked
 # %%
@@ -118,15 +113,17 @@ for i, dec in enumerate(single_decades):
     mf = remap(mf_file[0], var = 'ua')
 
     events = wavebreaking(av, mf)
+    
+    if not events.empty:
 
-    anti_tracked, cyc_tracked = event_classify(events)
+        anti_tracked, cyc_tracked = event_classify(events)
 
-    anti_tracked.to_csv(
-        awb_path + f"AWB_r{ens}_{dec}0502-{dec+9}0930.csv", index=False
-    )
+        anti_tracked.to_csv(
+            awb_path + f"AWB_r{ens}_{dec}0502-{dec+9}0930.csv", index=False
+        )
 
-    cyc_tracked.to_csv(
-        cwb_path + f"CWB_r{ens}_{dec}0502-{dec+9}0930.csv", index=False
-    )
+        cyc_tracked.to_csv(
+            cwb_path + f"CWB_r{ens}_{dec}0502-{dec+9}0930.csv", index=False
+        )
 
 # %%
