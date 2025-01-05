@@ -7,4 +7,5 @@ do
     echo "Ensemble member ${ens}"
     # run the python script
     sbatch daily_anomaly_single_ensemble.sh ${ens} ${var}
+    # ./daily_anomaly_single_ensemble.sh ${ens} ${var}
 done
