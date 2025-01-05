@@ -75,6 +75,7 @@ def event_classify(events):
 # %%
 node = sys.argv[1]
 ens = int(node)
+logging.info(f"Processing ensemble {ens}")
 # %%
 #%%
 try:
