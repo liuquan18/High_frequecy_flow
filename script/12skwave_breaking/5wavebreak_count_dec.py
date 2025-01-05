@@ -67,8 +67,8 @@ cwb_counts_dec = []
 for dec in range(1850, 2100, 10):
     awb = read_wb(dec, 'awb')
     cwb = read_wb(dec, 'cwb')
-    awb_count = count_wb(awb, stat='mean')
-    cwb_count = count_wb(cwb, stat='mean')
+    awb_count = count_wb(awb, stat='max')
+    cwb_count = count_wb(cwb, stat='max')
     awb_counts_dec.append(awb_count)
     cwb_counts_dec.append(cwb_count)
 
