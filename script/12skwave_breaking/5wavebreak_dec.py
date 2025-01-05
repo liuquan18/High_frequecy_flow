@@ -85,3 +85,13 @@ cwb_counts_dec = cwb_counts_dec.to_dataframe().reset_index()[['dec','flag']]
 awb_counts_dec.to_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/awb_NA_counts_dec.csv', index=False)
 cwb_counts_dec.to_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/cwb_NA_counts_dec.csv', index=False)
 # %%
+wb_count = pd.DataFrame()
+wb_count ['count'] = (awb_counts_dec.flag + cwb_counts_dec.flag)/2
+wb_count['dec'] = awb_counts_dec.dec
+# %%
+fig, ax = plt.subplots()
+wb_count.plot(x='dec', y='count', ax=ax)
+ax.set_ylabel('Wave breaking event count')
+ax.set_xlabel('Decade')
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/wb_extreme_count.png")
+# %%
