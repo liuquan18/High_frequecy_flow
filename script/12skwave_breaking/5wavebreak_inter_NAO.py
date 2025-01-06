@@ -167,3 +167,7 @@ awb_count = awb_dec.groupby(['dec']).size().reset_index(name='count')
 # %%
 cwb_count = cwb_dec.groupby(['dec']).size().reset_index(name='count')
 # %%
+fig, ax = plt.subplots(1, 1, figsize=(5,5))
+ax.plot(awb_count['dec'], awb_count['count'], label='AWB')
+ax.plot(cwb_count['dec'], cwb_count['count'], label='CWB')
+# %%
