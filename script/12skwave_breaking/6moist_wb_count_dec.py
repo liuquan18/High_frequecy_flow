@@ -121,8 +121,8 @@ sns.lineplot(data=final_merge, x='decade', y='count_cwb', ax=ax[1], label='CWB',
 sns.lineplot(data=final_merge, x='decade', y='hus_NAL', ax=ax[0], label='NAL', color = sns.color_palette()[0])
 sns.lineplot(data=final_merge, x='decade', y='hus_NPO', ax=ax[0], label='NPO', color = sns.color_palette()[-1])
 
-ax[0].set_title('humidity')
-ax[1].set_title('wave breaking')
+ax[0].set_title('humidity 20-60N')
+ax[1].set_title('wave breaking (NAL)')
 
 
 ax[0].set_ylabel(r'longitudinal $\Delta$ hus /$\Delta$ tas ($g \cdot kg^{-1}K^{-1}$)')
