@@ -10,4 +10,4 @@
 #SBATCH --output=before_wb.%j.out
 
 
-mpirun -n 25 python -u 8hus_before_wb.py
+mpirun -n 25 python -u 9hus_before_NAO.py
