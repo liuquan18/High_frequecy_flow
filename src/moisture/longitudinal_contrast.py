@@ -24,11 +24,14 @@ def read_data(var, decade, latitude_slice = (-30,30), meridional_mean = False, s
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
     )
     files = glob.glob(data_path + "r*i1p1f1/" + f"{var}*{time_tag}*.nc")
+    # sort files
+    files.sort(key=lambda x: int(x.split('/')[-2][1:].split('i')[0]))
     chunks = kwargs.get('chunks', {"ens": 1, "time": 765, "lat": -1, "lon": -1})
 
     data = xr.open_mfdataset(
         files, combine="nested", concat_dim="ens", chunks=chunks
     )
+    data['ens'] = range(1, 51)
     try:
         data = data[var]
     except KeyError:
