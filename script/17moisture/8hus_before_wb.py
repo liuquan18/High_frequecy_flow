@@ -23,9 +23,7 @@ except:
     rank = 0
     size = 1
 
-#%%
-decades = np.arange(1980, 2011, 10)
-decade_single = np.array_split(decades, size)[rank]
+
 
 #%%
 def read_all_data(decade):
@@ -108,7 +106,6 @@ def sel_before_wb(wb, data, lag = (-20, 10)):
 
 #%%
 def process_data(decade):
-    logging.info(f"processing decade {decade} \n")
     # read data
     awb_dec, cwb_dec, data = read_all_data(decade)
 
@@ -124,7 +121,11 @@ def process_data(decade):
     cwb_NPO.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_cwb_NPO/cwb_NPO_{decade}.csv')
 
 
-# %%
+#%%
+decades_all = np.arange(1850, 2100, 10)
+decade_single = np.array_split(decades_all, size)[rank]
+
 for decade in decade_single:
+    logging.info(f"rank {rank} is processing decade {decade} \n")
     process_data(decade)
 # %%
