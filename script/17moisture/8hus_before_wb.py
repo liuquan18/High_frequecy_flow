@@ -17,6 +17,7 @@ try:
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
     size = comm.Get_size()  # 10
+    logging.info(f"Rank: {rank}, Size: {size}")
 except:
     logging.warning("::: Warning: Proceeding without mpi4py! :::")
     rank = 0
@@ -107,7 +108,7 @@ def sel_before_wb(wb, data, lag = (-20, 10)):
 
 #%%
 def process_data(decade):
-    logging.info(f"processing decade {decade}")
+    logging.info(f"processing decade {decade} \n")
     # read data
     awb_dec, cwb_dec, data = read_all_data(decade)
 
