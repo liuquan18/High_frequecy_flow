@@ -83,6 +83,8 @@ def filter_by_overlap_threshold(gdf, region_box, threshold=0.5):
     
     # Calculate intersection areas
     valid_geometries = gdf[gdf.geometry.is_valid]
+    if valid_geometries.shape[0] < gdf.shape[0]:
+        logging.warning(f"Removed {gdf.shape[0] - valid_geometries.shape[0]} invalid geometries")
 
     # Calculate original and intersection areas
     original_areas = valid_geometries.geometry.area
