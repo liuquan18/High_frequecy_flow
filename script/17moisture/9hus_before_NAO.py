@@ -5,9 +5,10 @@ import pandas as pd
 import sys
 import matplotlib.pyplot as plt
 import seaborn as sns
+import glob
 import logging
 from src.moisture.longitudinal_contrast import read_data
-
+import re
 logging.basicConfig(level=logging.INFO)
 #%%
 # nodes for different decades
@@ -23,22 +24,39 @@ except:
     rank = 0
     size = 1
 
+#%%
+def read_NAO_extremes(decade, phase = 'positive'):
+    base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/{phase}_extreme_events_decades/'
+    file_list = glob.glob(base_dir + f'r*i1p1f1/*{decade}*.csv')
 
+    # sort
+    file_list.sort(key=lambda x: int(x.split('/')[-2][1:].split('i')[0]))
+
+    extremes = []
+    for filename in file_list:
+        match = re.search(r"/r(\d+)i1p1f1/", filename)
+        if match:
+            ens = match.group(1)
+    
+        extreme = pd.read_csv(filename)
+        extreme['ens'] = ens
+
+        extremes.append(extreme)
+    extremes = pd.concat(extremes)
+    return extremes
 
 #%%
 def read_all_data(decade):
     # wave breaking
-    awb = pd.read_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wave_breaking_stat/awb_th3_NAO_overlap70.csv', index_col=0)
-    cwb = pd.read_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wave_breaking_stat/cwb_th3_NAO_overlap70.csv', index_col=0)
-    awb_dec = awb[awb.dec == decade]
-    cwb_dec = cwb[cwb.dec == decade]
+    NAO_pos = read_NAO_extremes(decade, 'positive')
+    NAO_neg = read_NAO_extremes(decade, 'negative')
 
 
     tas = read_data("tas", decade, (20,60), False, suffix='_std')
     hus = read_data("hus", decade, (20,60), False, suffix='_std')
     data = xr.Dataset({"tas": tas, "hus": hus*1000})
 
-    return awb_dec, cwb_dec, data
+    return NAO_pos, NAO_neg, data
 #%%
 def ocean_sector(data):
     box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
@@ -63,27 +81,26 @@ def merge_event_ratio(event, ratio, lag = (-20, 10)):
     # fill the value in ratio_df to expected_ratio_df
     expected_ratio_df[ratio_df.columns] = ratio_df
 
-    expected_ratio_df.columns = ['days ' + str(i) for i in expected_ratio_df.columns]
-    merged = pd.concat([event, ratio_df], axis = 1)
+    merged = pd.concat([event, expected_ratio_df], axis = 1)
 
     return merged
 
 
 # %%
-def sel_before_wb(wb, data, lag = (-20, 10)):
+def sel_before_NAO(NAO, data, lag = (-20, 10)):
 
     NAL_ratios = []
     NPO_ratios = []
 
-    for i, event in wb.iterrows():
-        event_ens = event.ens
-        event_date = pd.to_datetime(event.date)
+    for i, event in NAO.iterrows():
+        event_ens = int(event.ens)
+        event_date = pd.to_datetime(event.extreme_start_time)
         event_date_20before = event_date + pd.Timedelta(days=lag[0])
         event_date_10after = event_date + pd.Timedelta(days=lag[1])
 
-        data_wb_event = data.sel(time=slice(event_date_20before, event_date_10after), ens = event_ens)
+        data_NAO_event = data.sel(time=slice(event_date_20before, event_date_10after), ens = event_ens)
 
-        ratio = data_wb_event.hus / data_wb_event.tas
+        ratio = data_NAO_event.hus / data_NAO_event.tas
 
         # change the time as the difference between the event date and the date of the data
         ratio['time'] =  pd.to_datetime(ratio['time'].values) - event_date
@@ -92,8 +109,8 @@ def sel_before_wb(wb, data, lag = (-20, 10)):
 
         NAL_ratio, NPO_ratio = ocean_sector(ratio)
 
-        NAL_df = merge_event_ratio(event, NAL_ratio)
-        NPO_df = merge_event_ratio(event, NPO_ratio)
+        NAL_df = merge_event_ratio(event, NAL_ratio, lag)
+        NPO_df = merge_event_ratio(event, NPO_ratio, lag)
 
         NAL_ratios.append(NAL_df)
         NPO_ratios.append(NPO_df)
@@ -107,20 +124,21 @@ def sel_before_wb(wb, data, lag = (-20, 10)):
 #%%
 def process_data(decade):
     # read data
-    awb_dec, cwb_dec, data = read_all_data(decade)
+    NAO_pos, NAO_neg, data = read_all_data(decade)
 
-    # select the data before wb
-    awb_NAL, awb_NPO = sel_before_wb(awb_dec, data)
-    cwb_NAL, cwb_NPO = sel_before_wb(cwb_dec, data)
+    # select the data before NAO
+    NAO_pos_NAL, NAO_pos_NPO = sel_before_NAO(NAO_pos, data)
+    NAO_neg_NAL, NAO_neg_NPO = sel_before_NAO(NAO_neg, data)
+
 
     # save the data
-    awb_NAL.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_awb_NAL/awb_NAL_{decade}.csv')
-    awb_NPO.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_awb_NPO/awb_NPO_{decade}.csv')
+    NAO_pos_NAL.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NAL/NAO_pos_NAL_{decade}.csv')
+    NAO_pos_NPO.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NPO/NAO_pos_NPO_{decade}.csv')
 
-    cwb_NAL.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_cwb_NAL/cwb_NAL_{decade}.csv')
-    cwb_NPO.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_cwb_NPO/cwb_NPO_{decade}.csv')
+    NAO_neg_NAL.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NAL/NAO_neg_NAL_{decade}.csv')
+    NAO_neg_NPO.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NPO/NAO_neg_NPO_{decade}.csv')
 
-
+    
 #%%
 decades_all = np.arange(1850, 2100, 10)
 decade_single = np.array_split(decades_all, size)[rank]
