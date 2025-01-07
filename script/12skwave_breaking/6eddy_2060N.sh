@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=upvp
+#SBATCH --job-name=eddy_sel
 #SBATCH --time=00:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
@@ -7,7 +7,7 @@
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=upvp.%j.out
+#SBATCH --output=eddy_sel.%j.out
 
 module load cdo
 module load parallel
