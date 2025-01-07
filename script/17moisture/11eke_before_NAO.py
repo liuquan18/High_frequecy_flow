@@ -54,11 +54,12 @@ def read_all_data(decade):
     NAO_pos = read_NAO_extremes(decade, 'positive')
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
-    eke = read_data("eke", decade, (20,60), True, suffix='')
+    eke = read_data("eke", decade, (20,60), False, suffix='', chunks = {"ens": -1, "time": -1, "lat": -1, "lon": -1})
+    
 
     return NAO_pos, NAO_neg, eke
 
-##%%
+#%%
 def merge_event_ratio(event, ratio, lag = (-20, 10)):
     
 
@@ -108,6 +109,8 @@ def sel_before_NAO(NAO, data, lag = (-20, 10)):
 def process_data(decade):
     # read data
     NAO_pos, NAO_neg, data = read_all_data(decade)
+
+    data.compute()
 
     # select the data before NAO
 
