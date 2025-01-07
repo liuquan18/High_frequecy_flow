@@ -28,7 +28,7 @@ def read_data(var, decade, latitude_slice = (-30,30), meridional_mean = False, s
     files = glob.glob(data_path + "r*i1p1f1/" + f"{var}*{time_tag}*.nc")
     # sort files
     files.sort(key=lambda x: int(x.split('/')[-2][1:].split('i')[0]))
-    chunks = kwargs.get('chunks', {"ens": 1, "time": 765, "lat": -1, "lon": -1})
+    chunks = kwargs.get('chunks', {"ens": 1, "time": -1, "lat": -1, "lon": -1})
 
     data = xr.open_mfdataset(
         files, combine="nested", concat_dim="ens", chunks=chunks
