@@ -85,7 +85,7 @@ except:
     size = 1
 # %%
 av_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/av_daily_ano/r{ens}i1p1f1/"
-mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily/r{ens}i1p1f1/"
+mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily_ano/r{ens}i1p1f1/"
 
 awb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_awb_th3_daily/r{ens}i1p1f1/"
 cwb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_cwb_th3_daily/r{ens}i1p1f1/"
