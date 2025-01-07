@@ -2,6 +2,8 @@
 import xarray as xr
 import glob
 import logging
+import pandas as pd
+import re
 logging.basicConfig(level=logging.INFO)
 # %%
 def rolling_lon_periodic(arr, lon_window, lat_window, stat = 'std'):
