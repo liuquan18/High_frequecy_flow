@@ -46,7 +46,7 @@ last_NAO_neg_NPO = pd.read_csv(
 
 
 # %%
-lag = range(-15, 5)
+lag = range(-15, 0)
 lag_columns = [str(i) for i in lag]
 
 # %%
