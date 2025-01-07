@@ -51,3 +51,23 @@ def read_data(var, decade, latitude_slice = (-30,30), meridional_mean = False, s
     return data
 
 # %%
+#%%
+def read_NAO_extremes(decade, phase = 'positive'):
+    base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/{phase}_extreme_events_decades/'
+    file_list = glob.glob(base_dir + f'r*i1p1f1/*{decade}*.csv')
+
+    # sort
+    file_list.sort(key=lambda x: int(x.split('/')[-2][1:].split('i')[0]))
+
+    extremes = []
+    for filename in file_list:
+        match = re.search(r"/r(\d+)i1p1f1/", filename)
+        if match:
+            ens = match.group(1)
+    
+        extreme = pd.read_csv(filename)
+        extreme['ens'] = ens
+
+        extremes.append(extreme)
+    extremes = pd.concat(extremes)
+    return extremes
