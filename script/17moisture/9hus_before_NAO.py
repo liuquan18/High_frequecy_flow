@@ -18,11 +18,14 @@ try:
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
     size = comm.Get_size()  # 10
-    logging.info(f"Rank: {rank}, Size: {size}")
+
 except:
     logging.warning("::: Warning: Proceeding without mpi4py! :::")
     rank = 0
     size = 1
+
+if rank == 0:
+    logging.info(f"::: Running on {size} cores :::")
 
 #%%
 def read_NAO_extremes(decade, phase = 'positive'):
