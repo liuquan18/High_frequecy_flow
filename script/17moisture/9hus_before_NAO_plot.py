@@ -1,106 +1,147 @@
-#%%
+# %%
 import xarray as xr
 import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-# %%
-first_awb_NAL = pd.read_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_awb_NAL/awb_NAL_1850.csv', index_col = 0)
-first_awb_NPO = pd.read_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_awb_NPO/awb_NPO_1850.csv', index_col = 0)
-
-first_cwb_NAL = pd.read_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_cwb_NAL/cwb_NAL_1850.csv', index_col = 0)
-first_cwb_NPO = pd.read_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_cwb_NPO/cwb_NPO_1850.csv', index_col = 0)
-# %%
-last_awb_NAL = pd.read_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_awb_NAL/awb_NAL_2090.csv', index_col = 0)
-last_awb_NPO = pd.read_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_awb_NPO/awb_NPO_2090.csv', index_col = 0)
-
-last_cwb_NAL = pd.read_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_cwb_NAL/cwb_NAL_2090.csv', index_col = 0)
-last_cwb_NPO = pd.read_csv('/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_cwb_NPO/cwb_NPO_2090.csv', index_col = 0)
 
 # %%
-first_awb_NAL['type'] = 'AWB'
-first_awb_NPO['type'] = 'AWB'
+first_NAO_pos_NAL = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NAL/NAO_pos_NAL_1850.csv",
+    index_col=0,
+)
+first_NAO_pos_NPO = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NPO/NAO_pos_NPO_1850.csv",
+    index_col=0,
+)
 
-first_cwb_NAL['type'] = 'CWB'
-first_cwb_NPO['type'] = 'CWB'
+first_NAO_neg_NAL = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NAL/NAO_neg_NAL_1850.csv",
+    index_col=0,
+)
+first_NAO_neg_NPO = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NPO/NAO_neg_NPO_1850.csv",
+    index_col=0,
+)
 
-last_awb_NAL['type'] = 'AWB'
-last_awb_NPO['type'] = 'AWB'
+# %%
+last_NAO_pos_NAL = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NAL/NAO_pos_NAL_2090.csv",
+    index_col=0,
+)
+last_NAO_pos_NPO = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NPO/NAO_pos_NPO_2090.csv",
+    index_col=0,
+)
 
-last_cwb_NAL['type'] = 'CWB'
-last_cwb_NPO['type'] = 'CWB'
+last_NAO_neg_NAL = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NAL/NAO_neg_NAL_2090.csv",
+    index_col=0,
+)
+last_NAO_neg_NPO = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NPO/NAO_neg_NPO_2090.csv",
+    index_col=0,
+)
 
-#%%
-lag = range(-10, -5)
+
+# %%
+lag = range(-15, 5)
 lag_columns = [str(i) for i in lag]
 
-#%%
-first_awb_NAL['lag_mean'] = first_awb_NAL[lag_columns].mean(axis=1)
-first_awb_NPO['lag_mean'] = first_awb_NPO[lag_columns].mean(axis=1)
+# %%
+first_NAO_pos_NAL["lag_mean"] = first_NAO_pos_NAL[lag_columns].mean(axis=1)
+first_NAO_pos_NPO["lag_mean"] = first_NAO_pos_NPO[lag_columns].mean(axis=1)
 
-first_cwb_NAL['lag_mean'] = first_cwb_NAL[lag_columns].mean(axis=1)
-first_cwb_NPO['lag_mean'] = first_cwb_NPO[lag_columns].mean(axis=1)
+first_NAO_neg_NAL["lag_mean"] = first_NAO_neg_NAL[lag_columns].mean(axis=1)
+first_NAO_neg_NPO["lag_mean"] = first_NAO_neg_NPO[lag_columns].mean(axis=1)
 
-last_awb_NAL['lag_mean'] = last_awb_NAL[lag_columns].mean(axis=1)
-last_awb_NPO['lag_mean'] = last_awb_NPO[lag_columns].mean(axis=1)
+last_NAO_pos_NAL["lag_mean"] = last_NAO_pos_NAL[lag_columns].mean(axis=1)
+last_NAO_pos_NPO["lag_mean"] = last_NAO_pos_NPO[lag_columns].mean(axis=1)
 
-last_cwb_NAL['lag_mean'] = last_cwb_NAL[lag_columns].mean(axis=1)
-last_cwb_NPO['lag_mean'] = last_cwb_NPO[lag_columns].mean(axis=1)
+last_NAO_neg_NAL["lag_mean"] = last_NAO_neg_NAL[lag_columns].mean(axis=1)
+last_NAO_neg_NPO["lag_mean"] = last_NAO_neg_NPO[lag_columns].mean(axis=1)
 
 
-#%%
-first_awb_NAL = first_awb_NAL.reset_index()[['date','ens','type','dec','lag_mean']]
-first_awb_NPO = first_awb_NPO.reset_index()[['lag_mean']]
+# %%
+def select_columns_merge(NAO_NAL, NAO_NPO):
+    NAO_NAL = NAO_NAL.reset_index()
+    NAO_NPO = NAO_NPO.reset_index()
 
-first_awb_NAL.rename(columns={'lag_mean': 'NAL'}, inplace=True)
-first_awb_NPO.rename(columns={'lag_mean': 'NPO'}, inplace=True)
+    NAO_df = NAO_NAL[["extreme_duration", "lag_mean"]].join(
+        NAO_NPO[["lag_mean"]],
+        lsuffix="_NAL",
+        rsuffix="_NPO",
+    )
 
-first_awb = first_awb_NAL.join(first_awb_NPO)
-#%%
-first_cwb_NAL = first_cwb_NAL.reset_index()[['date','ens','type','dec','lag_mean']]
-first_cwb_NPO = first_cwb_NPO.reset_index()[['lag_mean']]
+    NAO_df = NAO_df[NAO_df["extreme_duration"] > 5]
+    # dropna
+    NAO_df = NAO_df.dropna(subset=["lag_mean_NAL", "lag_mean_NPO"])
 
-first_cwb_NAL.rename(columns={'lag_mean': 'NAL'}, inplace=True)
-first_cwb_NPO.rename(columns={'lag_mean': 'NPO'}, inplace=True)
+    return NAO_df
 
-first_cwb = first_cwb_NAL.join(first_cwb_NPO)
-#%%
-last_awb_NAL = last_awb_NAL.reset_index()[['date','ens','type','dec','lag_mean']]
-last_awb_NPO = last_awb_NPO.reset_index()[['lag_mean']]
-last_awb_NAL.rename(columns={'lag_mean': 'NAL'}, inplace=True)
-last_awb_NPO.rename(columns={'lag_mean': 'NPO'}, inplace=True)
-last_awb = last_awb_NAL.join(last_awb_NPO)
 
-#%%
-last_cwb_NAL = last_cwb_NAL.reset_index()[['date','ens','type','dec','lag_mean']]
-last_cwb_NPO = last_cwb_NPO.reset_index()[['lag_mean']]
-last_cwb_NAL.rename(columns={'lag_mean': 'NAL'}, inplace=True)
-last_cwb_NPO.rename(columns={'lag_mean': 'NPO'}, inplace=True)
+# %%
 
-last_cwb = last_cwb_NAL.join(last_cwb_NPO)
+first_NAO_pos = select_columns_merge(first_NAO_pos_NAL, first_NAO_pos_NPO)
+first_NAO_neg = select_columns_merge(first_NAO_neg_NAL, first_NAO_neg_NPO)
 
-#%%
-awb_df = pd.concat([first_awb, last_awb])
-cwb_df = pd.concat([first_cwb, last_cwb])
-#%%
-# drop the row when either of 'NAL' or 'NPO' is NaN
-awb_df = awb_df.dropna(subset=['NAL', 'NPO'])
-cwb_df = cwb_df.dropna(subset=['NAL', 'NPO'])
+last_NAO_pos = select_columns_merge(last_NAO_pos_NAL, last_NAO_pos_NPO)
+last_NAO_neg = select_columns_merge(last_NAO_neg_NAL, last_NAO_neg_NPO)
+# %%
+first_NAO_pos["dec"] = 1850
+first_NAO_neg["dec"] = 1850
+
+last_NAO_pos["dec"] = 2090
+last_NAO_neg["dec"] = 2090
+
+# %%
+NAO_pos = pd.concat([first_NAO_pos, last_NAO_pos])
+NAO_neg = pd.concat([first_NAO_neg, last_NAO_neg])
+
 
 # %%
 fig, axes = plt.subplots(1, 2, figsize=(10, 5))
-sns.kdeplot(data=awb_df, x="NAL", y = 'NPO', hue="dec", ax=axes[0], common_norm=True)
+sns.kdeplot(
+    data=NAO_pos,
+    x="lag_mean_NAL",
+    y="lag_mean_NPO",
+    hue="dec",
+    ax=axes[0],
+    common_norm=True,
+    weights="extreme_duration",
+    palette=['k','r'],
+    alpha=0.7,
+)
 
 
-sns.kdeplot(data=cwb_df, x="NAL", y = 'NPO', hue="dec", ax=axes[1], common_norm=True, fill=False)
+sns.kdeplot(
+    data=NAO_neg,
+    x="lag_mean_NAL",
+    y="lag_mean_NPO",
+    hue="dec",
+    ax=axes[1],
+    common_norm=True,
+    fill=False,
+    weights="extreme_duration",
+    palette=['k','r'],
+    alpha=0.7,
+)
 # plot the 1:1 line
 for ax in axes:
     x = np.linspace(0, 1.2, 100)
     y = x
-    ax.plot(x, y, 'k', linestyle='dotted')
-    ax.set_ylim(0.3, 1.3)
-    ax.set_xlim(0.3, 1.3)
+    ax.plot(x, y, "k", linestyle="dotted")
+    ax.set_ylim(0.4, 1.2)
+    ax.set_xlim(0.4, 1.2)
 
+for ax in axes:
+    ax.set_xlabel(r"North Atlantic $\Delta$hus / $\Delta$tas")
+    ax.set_ylabel(r"North Pacific $\Delta$hus / $\Delta$tas")
+
+axes[0].set_title("NAO positive")
+axes[1].set_title("NAO negative")
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/NAO_lag_mean_moist.png")
 
 # %%
