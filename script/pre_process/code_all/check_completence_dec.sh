@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-var=$1
-BASE_DIR="/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_std"
+
+BASE_DIR=$1
+var=$2
 missing=0
 
 # Check subfolders
