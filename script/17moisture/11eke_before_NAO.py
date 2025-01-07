@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import glob
 import logging
-from src.moisture.longitudinal_contrast import read_data
 import re
 logging.basicConfig(level=logging.INFO)
 #%%
@@ -27,6 +26,33 @@ except:
 if rank == 0:
     logging.info(f"::: Running on {size} cores :::")
 
+#%%
+def read_eke( decade, suffix = '_2060N', plev = 25000, **kwargs):
+    var = 'eke'
+    time_tag = f"{decade}0501-{decade+9}0930"
+    data_path = (
+        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
+    )
+    files = glob.glob(data_path + "r*i1p1f1/" + f"{var}*{time_tag}*.nc")
+    # sort files
+    files.sort(key=lambda x: int(x.split('/')[-2][1:].split('i')[0]))
+
+    data = xr.open_mfdataset(
+        files, combine="nested", concat_dim="ens",
+        chunks = {"ens": -1, "time": -1, "lat": -1, "lon": -1}
+    )
+    data = data[var]
+    data.load()
+
+    data = data.drop_vars(('plev','lat'))
+
+    data['ens'] = range(1, 51)
+    # change longitude from 0-360 to -180-180
+    data = data.assign_coords(lon=(data.lon + 180) % 360 - 180).sortby("lon")
+
+    return data
+
+    
 #%%
 def read_NAO_extremes(decade, phase = 'positive'):
     base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/{phase}_extreme_events_decades/'
@@ -50,33 +76,37 @@ def read_NAO_extremes(decade, phase = 'positive'):
 
 #%%
 def read_all_data(decade):
+    logging.info("reading NAO extremes")
     # wave breaking
     NAO_pos = read_NAO_extremes(decade, 'positive')
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
-    eke = read_data("eke", decade, (20,60), False, suffix='', chunks = {"ens": -1, "time": -1, "lat": -1, "lon": -1})
+    logging.info("reading eke")
+    eke = read_eke( decade)
     
 
     return NAO_pos, NAO_neg, eke
 
 #%%
-def merge_event_ratio(event, ratio, lag = (-20, 10)):
+def eke_to_df(event, ratio, lag = (-20, 10)):
     
 
     event = pd.DataFrame(event).transpose()
-    expected_ratio_df = pd.DataFrame(np.nan, index = event.index, columns = np.arange(lag[0], lag[1]+1))
-    ratio_df = ratio.to_dataframe(name = 'ratio')[['ratio']].transpose()
+    ratio_df = ratio.to_dataframe().reset_index()[['time','lon','eke']]
+    ratio_df = ratio_df.pivot(index = 'lon', columns = 'time', values = 'eke')
 
-    ratio_df.index.name = None
     ratio_df.columns.name = None
-    ratio_df.index = event.index
+    # add one more multitindex to ratio_df the same index as event
+    ratio_df = pd.concat([ratio_df]*len(event), keys = event.index)
 
     # fill the value in ratio_df to expected_ratio_df
-    expected_ratio_df[ratio_df.columns] = ratio_df
 
-    merged = pd.concat([event, expected_ratio_df], axis = 1)
+ 
+    ratio_df['ens'] = event['ens'].values[0]
+    ratio_df['extreme_duration'] = event['extreme_duration'].values[0]
+    ratio_df['extreme_start_time'] = event['extreme_start_time'].values[0]
 
-    return merged
+    return ratio_df
 
 
 # %%
@@ -97,7 +127,7 @@ def sel_before_NAO(NAO, data, lag = (-20, 10)):
         data_NAO_event['time'] = data_NAO_event['time'].dt.days
 
 
-        eke_df = merge_event_ratio(event, data_NAO_event, lag)
+        eke_df = eke_to_df(event, data_NAO_event, lag)
 
         eke_evnets.append(eke_df)
 
@@ -110,13 +140,12 @@ def process_data(decade):
     # read data
     NAO_pos, NAO_neg, data = read_all_data(decade)
 
-    data.compute()
-
-    # select the data before NAO
-
+    # select data before NAO events
     eke_NAO_pos = sel_before_NAO(NAO_pos, data)
     eke_NAO_neg = sel_before_NAO(NAO_neg, data)
-    
+
+    logging.info(f"rank {rank} is saving data for decade {decade} \n")
+
     eke_NAO_pos.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_pos/eke_NAO_pos_{decade}.csv')
     eke_NAO_neg.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_neg/eke_NAO_neg_{decade}.csv')
     
