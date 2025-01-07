@@ -4,7 +4,7 @@
 #SBATCH --partition=compute
 #SBATCH --nodes=5
 #SBATCH --ntasks=25
-#SBATCH --ntasks-per-node=5
+#SBATCH --ntasks-per-node=1
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
