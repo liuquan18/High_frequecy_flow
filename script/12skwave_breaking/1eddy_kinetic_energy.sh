@@ -39,7 +39,7 @@ band_filter(){
     fname=$(basename ${infile%.nc})
 
     # split years
-    cdo -splityear ${infile} ${tmp_dir}${fname}_year
+    cdo -O -splityear ${infile} ${tmp_dir}${fname}_year
     # band filter, keep 2-12 days 
     year_files=$(ls ${tmp_dir}${fname}_year*)
     cdo -O -mergetime -apply,bandpass,30.5,182.5 [ ${year_files} ] ${outfile}
