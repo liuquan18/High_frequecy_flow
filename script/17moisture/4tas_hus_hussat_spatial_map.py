@@ -94,7 +94,7 @@ hus_levels_div = np.arange(-1.5,1.6,0.1)
 
 # %%
 fig, axes = plt.subplots(
-    3, 3, figsize=(15, 8), subplot_kw={"projection": ccrs.PlateCarree(100)}
+    3, 3, figsize=(11.5, 5), subplot_kw={"projection": ccrs.PlateCarree(100)}
 )
 axes[0, 0].set_title("1850-1859")
 axes[0, 1].set_title("1850-1859")
@@ -112,7 +112,7 @@ first_mean.tas.plot(
     ax=axes[0, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_seq,
-    cbar_kwargs={"label": "Temperature (K)", "shrink": 0.5},
+    cbar_kwargs={"label": "tas (K)", "shrink": 0.6},
     levels=temp_levels,
     extend='max',
 )
@@ -124,7 +124,7 @@ first_mean.hussat.plot(
     ax=axes[0, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "saturate specific Humidity (g/kg)", "shrink": 0.5},
+    cbar_kwargs={"label": "hussat (g/kg)", "shrink": 0.6},
     levels=hus_levels*2,
     extend='max',
 )
@@ -136,7 +136,7 @@ first_mean.hus.plot(
     ax=axes[0, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "Specific Humidity (g/kg)", "shrink": 0.5},
+    cbar_kwargs={"label": "hus (g/kg)", "shrink": 0.6},
     levels=hus_levels,
     extend='max',
 )
@@ -148,7 +148,7 @@ last_mean.tas.plot(
     ax=axes[1, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_seq,
-    cbar_kwargs={"label": "Temperature (K)", "shrink": 0.5},
+    cbar_kwargs={"label": "tas (K)", "shrink": 0.6},
     levels=temp_levels,
     extend='max',
 )
@@ -160,7 +160,7 @@ last_mean.hussat.plot(
     ax=axes[1, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "saturate specific Humidity (g/kg)", "shrink": 0.5},
+    cbar_kwargs={"label": "hussat (g/kg)", "shrink": 0.6},
     levels=hus_levels*2,
     extend='max',
 )
@@ -172,7 +172,7 @@ last_mean.hus.plot(
     ax=axes[1, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "Specific Humidity (g/kg)", "shrink": 0.5},
+    cbar_kwargs={"label": "hus (g/kg)", "shrink": 0.6},
     levels=hus_levels,
     extend='max',
 )
@@ -185,7 +185,7 @@ diff_mean.tas.plot(
     ax=axes[2, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
-    cbar_kwargs={"label": "Temperature (K)", "shrink": 0.5},
+    cbar_kwargs={"label": "tas (K)", "shrink": 0.6},
     levels=temp_levels_div,
     extend='both',
 )
@@ -197,7 +197,7 @@ diff_mean.hussat.plot(
     ax=axes[2, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_div,
-    cbar_kwargs={"label": "saturate specific Humidity (g/kg)", "shrink": 0.5},
+    cbar_kwargs={"label": "hussat (g/kg)", "shrink": 0.6},
     levels=hus_levels_div*2,
     extend='both',
 )
@@ -209,7 +209,7 @@ diff_mean.hus.plot(
     ax=axes[2, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_div,
-    cbar_kwargs={"label": "Specific Humidity (g/kg)", "shrink": 0.5},
+    cbar_kwargs={"label": "hus (g/kg)", "shrink": 0.6},
     levels=hus_levels_div,
     extend='both',
 )
@@ -244,9 +244,11 @@ for i, ax in enumerate(axes.flatten()):
         size=12,
         weight="bold",
     )
+    ax.set_ylabel('')
+    ax.set_xlabel('')
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/first_last_clim.pdf", dpi = 300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/first_last_clim.pdf", dpi=300)
 
 #%%
 first_qu95 = xr.open_dataset(
