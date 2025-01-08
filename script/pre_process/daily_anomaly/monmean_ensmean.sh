@@ -13,7 +13,8 @@
 module load cdo
 module load parallel    
 
-var=$1 
+decade=$1
+var=$2
 
 export var
 
@@ -41,4 +42,5 @@ ensmean(){
 
 export -f ensmean
 
-parallel --jobs 25 ensmean ::: {1850..2090..10}
+# parallel --jobs 25 ensmean ::: {1850..2090..10}
+ensmean $decade
