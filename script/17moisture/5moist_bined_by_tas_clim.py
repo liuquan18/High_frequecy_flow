@@ -150,7 +150,7 @@ first_hussat_bined_plot.plot(
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 2.6, 0.1) * 2,
     extend="max",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta hussat$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q^*$"},
 )
 axes[0, 0].set_title("1850-1859")
 axes[0, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
@@ -164,7 +164,7 @@ last_hussat_bined_plot.plot(
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 2.6, 0.1) * 2,
     extend="max",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta hussat$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q^*$"},
 )
 axes[1, 0].set_title("2090-2099")
 axes[1, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
@@ -178,7 +178,7 @@ diff_hussat_bined_plot.plot(
     transform=ccrs.PlateCarree(),
     levels=np.arange(-1, 1.1, 0.1) * 2,
     extend="both",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta hussat$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q^*$"},
 )
 axes[2, 0].set_title("2090-2099 - 1850-1859")
 axes[2, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
@@ -191,7 +191,7 @@ first_plot = first_hus_bined_plot.plot(
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 2.6, 0.1),
     extend="max",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta hus$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q$"},
 )
 first_tas_95_plot.plot(
     color="black",
@@ -211,7 +211,7 @@ last_plot = last_hus_bined_plot.plot(
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 2.6, 0.1),
     extend="max",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta hus$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q$"},
 )
 last_tas_95_plot.plot(
     color="black", linestyle="--", ax=axes[1, 0], transform=ccrs.PlateCarree()
@@ -227,7 +227,7 @@ diff_plot = diff_hus_bined_plot.plot(
     transform=ccrs.PlateCarree(),
     levels=np.arange(-1, 1.1, 0.1),
     extend="both",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta hus$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q$"},
 )
 axes[2, 1].set_title("2090-2099 - 1850-1859")
 axes[2, 1].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
@@ -237,7 +237,7 @@ axes[2, 1].set_yticklabels(y_tick_labels)
 for ax in axes.flatten():
     ax.set_ylim(0, 50)
     ax.set_aspect(1.8)
-    ax.set_ylabel(r"$\Delta tas$ (K)")
+    ax.set_ylabel(r"$\Delta T$ (K)")
 
 axes[2, 0].set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
 axes[2, 0].set_xticklabels(["180W", "120W", "60W", "0", "60E", "120E"])
