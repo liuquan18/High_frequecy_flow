@@ -284,7 +284,7 @@ sns.lineplot(
 )
 
 axes[1].set_title("Moist-get-moister in continents and oceans")
-axes[1].set_ylabel(r"$\Delta$ moisture / $\Delta$ tas ($g \cdot kg^{-1}K^{-1}$)")
+axes[1].set_ylabel(r"$\Delta$ moisture / $\Delta T (g \cdot kg^{-1}K^{-1})$")
 
 # create custom legend, solid line for 'hus' and dashed line for 'hussat'
 handles, labels = axes[1].get_legend_handles_labels()
