@@ -292,7 +292,7 @@ lines = [
     plt.Line2D([0], [0], color="grey", lw=2),
     plt.Line2D([0], [0], color="grey", lw=2, linestyle="dotted"),
 ]
-custom_labels = ["hus", "hussat"]
+custom_labels = [r"$\Delta q / \Delta T$", r"$\Delta q^* / \Delta T$"]
 axes[1].legend(handles + lines, labels + custom_labels, loc="upper left", frameon=False)
 
 
@@ -302,8 +302,8 @@ new_labels = [
     "North_America",
     "North_Atlantic",
     "North_Pacific",
-    "hus",
-    "hussat",
+    "q",
+    "q*",
 ]
 new_colors = [
     sns.color_palette()[3],
