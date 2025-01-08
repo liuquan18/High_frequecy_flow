@@ -240,6 +240,9 @@ axes[0].text(
     color="C1",
 )
 
+# Add 'a' at the left corner of the first subplot
+axes[0].text(-0.05, 1.05, 'a', transform=axes[0].transAxes, fontsize=16, fontweight='bold', va='top', ha='right')
+
 ## plot the ratio
 # Update the region labels
 df["region"] = df["region"].replace(
@@ -316,7 +319,11 @@ for text, color in zip(axes[1].get_legend().get_texts()[:4], new_colors):
 for handle in axes[1].get_legend().legendHandles[:4]:
     handle.set_visible(False)
 axes[1].set_ylim(0.39, 1.05)
+
+# Add 'b' at the left corner of the second subplot
+axes[1].text(-0.05, 1.05, 'b', transform=axes[1].transAxes, fontsize=16, fontweight='bold', va='top', ha='right')
+
 plt.tight_layout()
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/mosit_get_mosit_dec.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/CC_moisture_tangent_slope.pdf", dpi = 300)
 # %%
