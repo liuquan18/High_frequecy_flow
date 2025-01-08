@@ -116,8 +116,6 @@ last_tas_95_plot = last_tas_05 * 6
 # %%
 fig, axes = plt.subplots(3, 2, figsize=(15, 8), subplot_kw={"projection": ccrs.PlateCarree(100)})
 
-
-
 seq_data_in_the_txt_file = np.loadtxt(
     "/work/mh0033/m300883/High_frequecy_flow/data/colormaps-master/continuous_colormaps_rgb_0-1/prec_seq.txt"
 )
@@ -136,49 +134,40 @@ y_tick_labels = np.arange(0, 15, 1)
 # add 11 at the end
 y_tick_labels = np.append(y_tick_labels, ">15")
 
-first_plot = first_hus_bined_plot.plot(
+# plot hussat
+first_hussat_bined_plot.plot(
     ax=axes[0, 0],
     cmap=seq_prec_cm,
     transform=ccrs.PlateCarree(),
-    levels=np.arange(0, 2.6, 0.1),
+    levels=np.arange(0, 2.6, 0.1)*2,
     extend="max",
     add_colorbar=True,
-)
-first_tas_95_plot.plot(
-    color="black",label = 'tas_diff 5th perc', linestyle="--", ax=axes[0, 0], transform=ccrs.PlateCarree()
 )
 axes[0, 0].set_title("1850-1859")
 axes[0, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[0, 0].set_yticks(np.arange(0, 80, 5))
 axes[0, 0].set_yticklabels(y_tick_labels)
-
 axes[0, 0].set_ylabel("tas_diff (K)")
 
-
-last_plot = last_hus_bined_plot.plot(
+last_hussat_bined_plot.plot(
     ax=axes[1, 0],
     cmap=seq_prec_cm,
     transform=ccrs.PlateCarree(),
-    levels=np.arange(0, 2.6, 0.1),
+    levels=np.arange(0, 2.6, 0.1)*2,
     extend="max",
     add_colorbar=True,
-)
-last_tas_95_plot.plot(
-    color="black", linestyle="--", ax=axes[1, 0], transform=ccrs.PlateCarree()
 )
 axes[1, 0].set_title("2090-2099")
 axes[1, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[1, 0].set_yticks(np.arange(0, 80, 5))
 axes[1, 0].set_yticklabels(y_tick_labels, verticalalignment="center")
-
 axes[1, 0].set_ylabel("tas_diff (K)")
 
-
-diff_plot = diff_hus_bined_plot.plot(
+diff_hussat_bined_plot.plot(
     ax=axes[2, 0],
     cmap=div_prec_cm,
     transform=ccrs.PlateCarree(),
-    levels=np.arange(-1, 1.1, 0.1),
+    levels=np.arange(-1, 1.1, 0.1)*2,
     extend="both",
     add_colorbar=True,
 )
@@ -186,55 +175,51 @@ axes[2, 0].set_title("2090-2099 - 1850-1859")
 axes[2, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[2, 0].set_yticks(np.arange(0, 80, 5))
 axes[2, 0].set_yticklabels(y_tick_labels)
-axes[2, 0].set_ylabel("tas_diff (K)")
 
-# plot hussat
-first_hussat_bined_plot.plot(
+first_plot = first_hus_bined_plot.plot(
     ax=axes[0, 1],
     cmap=seq_prec_cm,
     transform=ccrs.PlateCarree(),
-    levels=np.arange(0, 2.6, 0.1)*2,
+    levels=np.arange(0, 2.6, 0.1),
     extend="max",
     add_colorbar=True,
 )
-
+first_tas_95_plot.plot(
+    color="black",label = 'tas_diff 5th perc', linestyle="--", ax=axes[0, 1], transform=ccrs.PlateCarree()
+)
 axes[0, 1].set_title("1850-1859")
 axes[0, 1].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[0, 1].set_yticks(np.arange(0, 80, 5))
 axes[0, 1].set_yticklabels(y_tick_labels)
 
-
-last_hussat_bined_plot.plot(
+last_plot = last_hus_bined_plot.plot(
     ax=axes[1, 1],
     cmap=seq_prec_cm,
     transform=ccrs.PlateCarree(),
-    levels=np.arange(0, 2.6, 0.1)*2,
+    levels=np.arange(0, 2.6, 0.1),
     extend="max",
     add_colorbar=True,
 )
-
+last_tas_95_plot.plot(
+    color="black", linestyle="--", ax=axes[1, 1], transform=ccrs.PlateCarree()
+)
 axes[1, 1].set_title("2090-2099")
 axes[1, 1].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[1, 1].set_yticks(np.arange(0, 80, 5))
 axes[1, 1].set_yticklabels(y_tick_labels, verticalalignment="center")
 
-
-diff_hussat_bined_plot.plot(
+diff_plot = diff_hus_bined_plot.plot(
     ax=axes[2, 1],
     cmap=div_prec_cm,
     transform=ccrs.PlateCarree(),
-    levels=np.arange(-1, 1.1, 0.1)*2,
+    levels=np.arange(-1, 1.1, 0.1),
     extend="both",
     add_colorbar=True,
 )
-
 axes[2, 1].set_title("2090-2099 - 1850-1859")
 axes[2, 1].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[2, 1].set_yticks(np.arange(0, 80, 5))
 axes[2, 1].set_yticklabels(y_tick_labels)
-
-
-
 
 for ax in axes.flatten():
     ax.set_ylim(0, 50)
@@ -244,7 +229,6 @@ axes[2, 0].set_xticklabels(["180W", "120W", "60W", "0", "60E", "120E"])
 
 axes[2, 1].set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
 axes[2, 1].set_xticklabels(["180W", "120W", "60W", "0", "60E", "120E"])
-
 
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/hus_bined_by_tas_clim_meridmean_0-60.png")
