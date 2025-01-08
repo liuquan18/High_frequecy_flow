@@ -197,7 +197,7 @@ first_tas_95_plot.plot(
     color="black",
     label="tas_diff 5th perc",
     linestyle="--",
-    ax=axes[0, 1],
+    ax=axes[0, 0],
     transform=ccrs.PlateCarree(),
 )
 axes[0, 1].set_title("1850-1859")
@@ -214,7 +214,7 @@ last_plot = last_hus_bined_plot.plot(
     cbar_kwargs={"shrink": 1.0, "label": r"$\Delta hus$"},
 )
 last_tas_95_plot.plot(
-    color="black", linestyle="--", ax=axes[1, 1], transform=ccrs.PlateCarree()
+    color="black", linestyle="--", ax=axes[1, 0], transform=ccrs.PlateCarree()
 )
 axes[1, 1].set_title("2090-2099")
 axes[1, 1].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
