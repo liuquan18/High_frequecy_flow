@@ -94,13 +94,25 @@ hus_levels_div = np.arange(-1.5,1.6,0.1)
 
 # %%
 fig, axes = plt.subplots(
-    3, 3, figsize=(15, 10), subplot_kw={"projection": ccrs.PlateCarree(100)}
+    3, 3, figsize=(15, 8), subplot_kw={"projection": ccrs.PlateCarree(100)}
 )
+axes[0, 0].set_title("1850-1859")
+axes[0, 1].set_title("1850-1859")
+axes[0, 2].set_title("1850-1859")
+
+axes[1, 0].set_title("2090-2099")
+axes[1, 1].set_title("2090-2099")
+axes[1, 2].set_title("2090-2099")
+
+axes[2, 0].set_title("2090-2099 - 1850-1859")
+axes[2, 1].set_title("2090-2099 - 1850-1859")
+axes[2, 2].set_title("2090-2099 - 1850-1859")
+
 first_mean.tas.plot(
     ax=axes[0, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_seq,
-    cbar_kwargs={"label": "Temperature (K)"},
+    cbar_kwargs={"label": "Temperature (K)", "shrink": 0.5},
     levels=temp_levels,
     extend='max',
 )
@@ -108,37 +120,35 @@ axes[0, 0].set_title("1850-1859")
 axes[0, 0].coastlines()
 axes[0, 0].set_global()
 
-first_mean.hus.plot(
+first_mean.hussat.plot(
     ax=axes[0, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "Specific Humidity (g/kg)"},
-    levels=hus_levels,
+    cbar_kwargs={"label": "saturate specific Humidity (g/kg)", "shrink": 0.5},
+    levels=hus_levels*2,
     extend='max',
 )
 axes[0, 1].set_title("1850-1859")
 axes[0, 1].coastlines()
 axes[0, 1].set_global()
 
-first_mean.hussat.plot(
+first_mean.hus.plot(
     ax=axes[0, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "saturate specific Humidity (g/kg)"},
-    levels=hus_levels*2,
+    cbar_kwargs={"label": "Specific Humidity (g/kg)", "shrink": 0.5},
+    levels=hus_levels,
     extend='max',
 )
-axes[0,2].set_title("1850-1859")
-axes[0,2].coastlines()
-axes[0,2].set_global()
-
-
+axes[0, 2].set_title("1850-1859")
+axes[0, 2].coastlines()
+axes[0, 2].set_global()
 
 last_mean.tas.plot(
     ax=axes[1, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_seq,
-    cbar_kwargs={"label": "Temperature (K)"},
+    cbar_kwargs={"label": "Temperature (K)", "shrink": 0.5},
     levels=temp_levels,
     extend='max',
 )
@@ -146,38 +156,36 @@ axes[1, 0].set_title("2090-2099")
 axes[1, 0].coastlines()
 axes[1, 0].set_global()
 
-last_mean.hus.plot(
+last_mean.hussat.plot(
     ax=axes[1, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "Specific Humidity (g/kg)"},
-    levels=hus_levels,
+    cbar_kwargs={"label": "saturate specific Humidity (g/kg)", "shrink": 0.5},
+    levels=hus_levels*2,
     extend='max',
 )
 axes[1, 1].set_title("2090-2099")
 axes[1, 1].coastlines()
 axes[1, 1].set_global()
 
-last_mean.hussat.plot(
+last_mean.hus.plot(
     ax=axes[1, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "saturate specific Humidity (g/kg)"},
-    levels=hus_levels*2,
+    cbar_kwargs={"label": "Specific Humidity (g/kg)", "shrink": 0.5},
+    levels=hus_levels,
     extend='max',
 )
-axes[1,2].set_title("2090-2099")
-axes[1,2].coastlines()
-axes[1,2].set_global()
-
-
+axes[1, 2].set_title("2090-2099")
+axes[1, 2].coastlines()
+axes[1, 2].set_global()
 
 # difference between last and first
 diff_mean.tas.plot(
     ax=axes[2, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
-    cbar_kwargs={"label": "Temperature (K)"},
+    cbar_kwargs={"label": "Temperature (K)", "shrink": 0.5},
     levels=temp_levels_div,
     extend='both',
 )
@@ -185,34 +193,29 @@ axes[2, 0].set_title("2090-2099 - 1850-1859")
 axes[2, 0].coastlines()
 axes[2, 0].set_global()
 
-
-diff_mean.hus.plot(
+diff_mean.hussat.plot(
     ax=axes[2, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_div,
-    cbar_kwargs={"label": "Specific Humidity (g/kg)"},
-    levels=hus_levels_div,
+    cbar_kwargs={"label": "saturate specific Humidity (g/kg)", "shrink": 0.5},
+    levels=hus_levels_div*2,
     extend='both',
 )
-
 axes[2, 1].set_title("2090-2099 - 1850-1859")
 axes[2, 1].coastlines()
 axes[2, 1].set_global()
 
-diff_mean.hussat.plot(
+diff_mean.hus.plot(
     ax=axes[2, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_div,
-    cbar_kwargs={"label": "saturate specific Humidity (g/kg)"},
-    levels=hus_levels_div*2,
+    cbar_kwargs={"label": "Specific Humidity (g/kg)", "shrink": 0.5},
+    levels=hus_levels_div,
     extend='both',
 )
-axes[2,2].set_title("2090-2099 - 1850-1859")
-axes[2,2].coastlines()
-axes[2,2].set_global()
-
-
-
+axes[2, 2].set_title("2090-2099 - 1850-1859")
+axes[2, 2].coastlines()
+axes[2, 2].set_global()
 
 # latitude ticks
 for ax in axes.flatten():
@@ -229,12 +232,9 @@ for ax in axes.flatten():
 
 axes[1, 1].set_xlabel("Longitude")
 
-
 draw_box(axes[0, 0], (60, 30))
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/first_last_clim_mean.png")
-
-
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/first_last_clim.pdf", dpi = 300)
 
 #%%
 first_qu95 = xr.open_dataset(

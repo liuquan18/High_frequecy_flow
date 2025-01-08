@@ -207,9 +207,9 @@ axes[0].text(
     ha="center",
 )
 axes[0].text(
-    T_tangent[0] + 9.9,
+    T_tangent[0] + 10,
     calculate_saturation_specific_humidity(T_tangent[0] + 7) / 2 + 0.006,
-    r"$\Delta hus$",
+    r"$\Delta hussat$",
     fontsize=12,
     va="center",
     rotation=90,
