@@ -94,7 +94,7 @@ hus_levels_div = np.arange(-1.5,1.6,0.1)
 
 # %%
 fig, axes = plt.subplots(
-    3, 3, figsize=(11.5, 5), subplot_kw={"projection": ccrs.PlateCarree(100)}
+    3, 3, figsize=(12, 6), subplot_kw={"projection": ccrs.PlateCarree(100)}
 )
 axes[0, 0].set_title("1850-1859")
 axes[0, 1].set_title("1850-1859")
@@ -224,7 +224,7 @@ for ax in axes.flatten():
     ax.yaxis.set_major_formatter(cartopy.mpl.ticker.LatitudeFormatter())
     # Set longitude ticks and labels
     ax.set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
-    ax.set_xticklabels(['180°W', '120°W', '60°W', '0°', '60°E', '120°E'])
+    ax.set_xticklabels(['180°', '120°W', '60°W', '0°', '60°E', '120°E'])
     ax.set_yticks(np.arange(-60, 76, 30), crs=ccrs.PlateCarree())
     ax.set_yticklabels(['60°S', '30°S', '0°', '30°N', '60°N'])
     ax.set_ylabel("Latitude")
@@ -247,7 +247,7 @@ for i, ax in enumerate(axes.flatten()):
     ax.set_ylabel('')
     ax.set_xlabel('')
 
-plt.tight_layout()
+plt.tight_layout(w_pad=-1)
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/first_last_clim.pdf", dpi=300)
 
 #%%
