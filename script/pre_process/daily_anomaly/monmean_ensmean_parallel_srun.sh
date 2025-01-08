@@ -41,4 +41,4 @@ ensmean(){
 
 export -f ensmean
 
-parallel --jobs 25 ensmean ::: {1850..2090..10}
+parallel --jobs $SLURM_NTASKS srun --nodes=1 --ntasks=1 -ntasks-per-node=1 ensmean ::: {1850..2090..10}
