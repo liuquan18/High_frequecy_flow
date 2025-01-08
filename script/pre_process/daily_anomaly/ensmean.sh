@@ -1,6 +1,8 @@
 #!/bin/bash
 decade=$1 # 1850, node
+var=$2
 
+echo "Node number: $SLURM_NODEID"
 echo "Decade ${decade} for variable ${var}"
 
 
