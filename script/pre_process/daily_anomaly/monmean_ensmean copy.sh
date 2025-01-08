@@ -2,8 +2,8 @@
 #SBATCH --job-name=ensmean
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
+#SBATCH --nodes=25
+#SBATCH --ntasks=25
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
@@ -13,8 +13,7 @@
 module load cdo
 module load parallel    
 
-decade=$1
-var=$2
+var=$1 
 
 export var
 
@@ -42,5 +41,4 @@ ensmean(){
 
 export -f ensmean
 
-# parallel --jobs 25 ensmean ::: {1850..2090..10}
-ensmean $decade
+parallel --jobs 25 ensmean ::: {1850..2090..10}
