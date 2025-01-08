@@ -202,14 +202,14 @@ axes[0].plot(
 axes[0].text(
     T_tangent[0] + 4.5,
     calculate_saturation_specific_humidity(T_tangent[0]) - 0.003,
-    r"$\Delta tas$",
+    r"$\Delta T$",
     fontsize=12,
     ha="center",
 )
 axes[0].text(
     T_tangent[0] + 10,
     calculate_saturation_specific_humidity(T_tangent[0] + 7) / 2 + 0.006,
-    r"$\Delta hussat$",
+    r"$\Delta q^*$",
     fontsize=12,
     va="center",
     rotation=90,
