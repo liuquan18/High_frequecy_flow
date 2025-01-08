@@ -233,6 +233,18 @@ for ax in axes.flatten():
 axes[1, 1].set_xlabel("Longitude")
 
 draw_box(axes[0, 0], (60, 30))
+
+# a, b, c labels for each subplots
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        -0.1,
+        1.0,
+        chr(97 + i),
+        transform=ax.transAxes,
+        size=12,
+        weight="bold",
+    )
+
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/first_last_clim.pdf", dpi = 300)
 
