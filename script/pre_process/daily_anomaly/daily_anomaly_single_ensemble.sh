@@ -4,6 +4,7 @@
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks=5
+#SBATCH --ntasks-per-node=5
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
@@ -15,6 +16,7 @@ module load parallel
 # get the ensemble member from the command line
 member=$1
 var=$2
+index=$3
 echo "Ensemble member ${member} for variable ${var}"
 
 
@@ -44,7 +46,8 @@ Anomaly() {
 
 
 export -f Anomaly
-parallel --jobs 5 Anomaly ::: ${daily_files[@]}
+# parallel --jobs 5 Anomaly ::: ${daily_files[$index]}
+Anomaly ${daily_files[$index]}
 
 
 
