@@ -29,7 +29,7 @@ last_hussat_tas = xr.open_dataset(
 ).__xarray_dataarray_variable__
 # %%
 fig, axes = plt.subplots(
-    3, 3, figsize=(12, 7), subplot_kw={"projection": ccrs.PlateCarree(100)}
+    3, 3, figsize=(11, 6), subplot_kw={"projection": ccrs.PlateCarree(100)}
 )
 
 tangent_level_seq = np.arange(-2, 2.1, 0.1)
@@ -37,7 +37,7 @@ tangent_level_diff = np.arange(-2, 2.1, 0.1)/2
 
 # rows for 'slope', 'tangent', 'slope - tangent'
 # columns for 'first', 'last', 'difference'
-plot_first = first_hus_tas.plot(
+first_hussat_tas.plot(
     ax=axes[0, 0],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
@@ -46,14 +46,14 @@ plot_first = first_hus_tas.plot(
     add_colorbar = False
 )
 
-first_hussat_tas.plot(
+plot_first = first_hus_tas.plot(
     ax=axes[0, 1],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
     levels=tangent_level_seq,
     extend='both',
     add_colorbar = False
-    )
+)
 
 (first_hus_tas - first_hussat_tas).plot(
     ax=axes[0, 2],
@@ -63,7 +63,8 @@ first_hussat_tas.plot(
     extend='both',
     add_colorbar = False
 )
-plot_last = last_hus_tas.plot(
+
+last_hussat_tas.plot(
     ax=axes[1, 0],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
@@ -72,7 +73,7 @@ plot_last = last_hus_tas.plot(
     add_colorbar = False
 )
 
-last_hussat_tas.plot(
+plot_last = last_hus_tas.plot(
     ax=axes[1, 1],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
@@ -90,7 +91,7 @@ last_hussat_tas.plot(
     add_colorbar = False
 )
 
-plot_last_first = (last_hus_tas - first_hus_tas).plot(
+(last_hussat_tas - first_hussat_tas).plot(
     ax=axes[2, 0],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
@@ -99,7 +100,7 @@ plot_last_first = (last_hus_tas - first_hus_tas).plot(
     add_colorbar = False
 )
 
-(last_hussat_tas - first_hussat_tas).plot(
+plot_last_first = (last_hus_tas - first_hus_tas).plot(
     ax=axes[2, 1],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
@@ -159,14 +160,14 @@ for ax in axes[:, 0]:
     ax.yaxis.set_major_formatter(lat_formatter)
     ax.set_ylabel("")
 
-axes[0, 0].set_title("1850-1859" + ' ' + r"$\Delta q/\Delta T$")
-axes[0, 1].set_title("1850-1859" +' ' + r"$\Delta q^*/\Delta T$")
+axes[0, 0].set_title("1850-1859" +' ' + r"$\Delta q^*/\Delta T$")
+axes[0, 1].set_title("1850-1859" + ' ' + r"$\Delta q/\Delta T$")
 axes[0, 2].set_title(r"$\Delta q/\Delta T - \Delta q^*/\Delta T$")
-axes[1, 0].set_title("2090-2099" + ' ' +r"$\Delta q/\Delta T$")
-axes[1, 1].set_title("2090-2099" + ' ' +r"$\Delta q^*/\Delta T$")
+axes[1, 0].set_title("2090-2099" + ' ' + r"$\Delta q^*/\Delta T$")
+axes[1, 1].set_title("2090-2099" + ' ' + r"$\Delta q/\Delta T$")
 axes[1, 2].set_title(r"$\Delta q/\Delta T - \Delta q^*/\Delta T$")
-axes[2, 0].set_title("2090-2099 - 1850-1859" + ' ' + r"$\Delta q/\Delta T$")
-axes[2, 1].set_title("2090-2099 - 1850-1859" + ' ' + r"$\Delta q^*/\Delta T$")
+axes[2, 0].set_title("2090-2099 - 1850-1859" + ' ' + r"$\Delta q^*/\Delta T$")
+axes[2, 1].set_title("2090-2099 - 1850-1859" + ' ' + r"$\Delta q/\Delta T$")
 axes[2, 2].set_title(r"$\Delta q/\Delta T - \Delta q^*/\Delta T$")
 
 # add colorbars
