@@ -27,8 +27,10 @@ for ens in {1..50}; do
 done
 
 
-find ${base_dir} -name "${var}_day_MPI-ESM1-2-LR_r*i1p1f1_gn_*.nc" | parallel -j $SLURM_NTASKS srun --nodes=1 --ntasks=1 --cpus-per-task=10 anomaly.sh
+find ${base_dir} -name "${var}_day_MPI-ESM1-2-LR_r*i1p1f1_gn_*.nc" | parallel -j $(($SLURM_NTASKS / 10)) srun --nodes=1 --ntasks=1 --cpus-per-task=10 anomaly.sh
 
+echo "##############################"
+echo "Check if all files are saved"
 
 for member in {1..50}; do
     echo "Checking ensemble member ${member}"
@@ -38,8 +40,8 @@ for member in {1..50}; do
             echo "File for decade ${dec} is missing in ${savedir}"
         
             # calculate the missing dec
-            echo "recalculate ${dec}"
-            ./anomaly.sh ${vt_daily_path}${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501-$((dec+9))0930.nc
+            echo "recalculate ${base_dir}r${member}i1p1f1/${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501-$((dec+9))0930.nc"
+            ./anomaly.sh ${base_dir}${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501-$((dec+9))0930.nc
         fi
     done
 done
