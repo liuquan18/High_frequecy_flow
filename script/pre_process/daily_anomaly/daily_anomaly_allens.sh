@@ -21,4 +21,4 @@ var=$1
 
 module load parallel
 
-parallel --dryrun --jobs $SLURM_NTASKS srun --nodes=1 --ntasks-per-node=1 --cpus-per-task=5 daily_anomaly_single_ensemble.sh ::: {1..50} ::: $var ::: {0..24}
+parallel --jobs $SLURM_NTASKS srun --nodes=1 --ntasks-per-node=1 --cpus-per-task=5 daily_anomaly_single_ensemble.sh ::: {1..50} ::: $var ::: {0..24}

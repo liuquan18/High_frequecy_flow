@@ -46,7 +46,7 @@ Anomaly() {
 
 
 export -f Anomaly
-# parallel --jobs 5 Anomaly ::: ${daily_files[$index]}
+# parallel --jobs 5 Anomaly ::: ${daily_files[@]}
 Anomaly ${daily_files[$index]}
 
 
