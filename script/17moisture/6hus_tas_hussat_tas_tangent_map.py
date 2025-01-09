@@ -183,6 +183,20 @@ cbar1.set_ticks(np.arange(-2, 2.1, 1))
 cbar2.set_ticks(np.arange(-2, 2.1, 1))
 cbar3.set_ticks(np.arange(-1, 1.1, 0.5))
 
+# a, b, c labels for each subplots
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        -0.1,
+        1.1,
+        chr(97 + i),
+        transform=ax.transAxes,
+        size=12,
+        weight="bold",
+    )
+    ax.set_ylabel('')
+    ax.set_xlabel('')
+
+
 plt.tight_layout(rect=[0, 0, 0.9, 1])
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/tangent_hus_shus.pdf", dpi = 300)
