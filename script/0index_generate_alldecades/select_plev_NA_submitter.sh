@@ -23,7 +23,5 @@ for member in {1..50}; do
 done
 
 
-export base_dir
-
 
 find ${base_dir} -name "${var}_day_MPI-ESM1-2-LR_r*i1p1f1_gn_*.nc" | parallel -j $SLURM_NTASKS srun --nodes=1 --ntasks=1 --cpus-per-task=10 Select_NA.sh
