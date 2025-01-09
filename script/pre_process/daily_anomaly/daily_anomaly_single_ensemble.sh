@@ -31,6 +31,7 @@ find ${base_dir} -name "${var}_day_MPI-ESM1-2-LR_r*i1p1f1_gn_*.nc" | parallel -j
 
 
 for member in {1..50}; do
+    echo "Checking ensemble member ${member}"
     # Check if all required decades are saved
     for dec in {1850..2090..10}; do
         if [ ! -f ${savedir}${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501*.nc ]; then
@@ -38,7 +39,7 @@ for member in {1..50}; do
         
             # calculate the missing dec
             echo "recalculate ${dec}"
-            anomaly.sh ${vt_daily_path}${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501-$((dec+9))0930.nc
+            ./anomaly.sh ${vt_daily_path}${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501-$((dec+9))0930.nc
         fi
     done
 done
