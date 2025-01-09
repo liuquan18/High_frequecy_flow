@@ -27,13 +27,14 @@ export base_dir
 
 Select_NA(){
     infile=$1
+    echo "Processing ${infile}"
 
     # replace 'zg_daily_ano' to 'zg_NA_daily_ano'
     outfile=${infile/zg_daily_ano/zg_NA_daily_ano}
 
-    cdo -sellevel,25000 -sellonlatbox,-90,40,20,80 ${infile} ${outfile}
+    cdo -P 10 -sellevel,25000 -sellonlatbox,-90,40,20,80 ${infile} ${outfile}
 }
 
 export -f Select_NA
 
-find ${base_dir} -name "${var}_day_MPI-ESM1-2-LR_r*i1p1f1_gn_*.nc" | parallel --jobs 25 Select_NA
+find ${base_dir} -name "${var}_day_MPI-ESM1-2-LR_r*i1p1f1_gn_*.nc" | parallel -j $SLURM_NTASKS srun --nodes=1 --ntasks=1 --cpus-per-task=10 Select_NA
