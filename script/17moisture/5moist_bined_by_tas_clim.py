@@ -152,6 +152,13 @@ first_hussat_bined_plot.plot(
     extend="max",
     cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q^* (g/ kg)$"},
 )
+first_tas_95_plot.plot(
+    color="black",
+    label="tas_diff 5th perc",
+    linestyle="--",
+    ax=axes[0, 0],
+    transform=ccrs.PlateCarree(),
+)
 axes[0, 0].set_title("1850-1859")
 axes[0, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[0, 0].set_yticks(np.arange(0, 80, 10))
@@ -165,6 +172,9 @@ last_hussat_bined_plot.plot(
     levels=np.arange(0, 2.6, 0.1) * 2,
     extend="max",
     cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q^* (g/ kg)$"},
+)
+last_tas_95_plot.plot(
+    color="black", linestyle="--", ax=axes[1, 0], transform=ccrs.PlateCarree()
 )
 axes[1, 0].set_title("2090-2099")
 axes[1, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
@@ -193,13 +203,7 @@ first_plot = first_hus_bined_plot.plot(
     extend="max",
     cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q (g/ kg)$"},
 )
-first_tas_95_plot.plot(
-    color="black",
-    label="tas_diff 5th perc",
-    linestyle="--",
-    ax=axes[0, 0],
-    transform=ccrs.PlateCarree(),
-)
+
 axes[0, 1].set_title("1850-1859")
 axes[0, 1].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[0, 1].set_yticks(np.arange(0, 80, 10))
@@ -213,9 +217,7 @@ last_plot = last_hus_bined_plot.plot(
     extend="max",
     cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q (g/ kg)$"},
 )
-last_tas_95_plot.plot(
-    color="black", linestyle="--", ax=axes[1, 0], transform=ccrs.PlateCarree()
-)
+
 axes[1, 1].set_title("2090-2099")
 axes[1, 1].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[1, 1].set_yticks(np.arange(0, 80, 10))
