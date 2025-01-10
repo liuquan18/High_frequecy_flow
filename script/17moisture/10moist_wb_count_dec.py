@@ -156,10 +156,10 @@ ax[0].set_ylabel(r'longitudinal $\Delta$ hus /$\Delta$ tas ($g \cdot kg^{-1}K^{-
 ax[1].set_ylabel('wavebreaking count (per dec per ens)')
 ax[2].set_ylabel('extreme NAO days (per dec per ens)')
 
-ax[2].set_yticks(np.arange(35, 54,5))
+ax[2].set_yticks(np.arange(35, 56,5))
 ax[2].set_ylim(32, 56)
 
 
 plt.tight_layout()
-# plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/wb_count_hus_dec.png')
+plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/wb_count_hus_dec.png')
 # %%
