@@ -136,7 +136,7 @@ NAO_merge = pd.merge(NAO_count_merge, NAO_days_merge, on='decade')
 final_merge = pd.merge(pd.merge(wb_merge, moist_merge, on='decade'), NAO_merge, on='decade')
 # %%
 # plot
-fig, ax = plt.subplots(1, 3, figsize=(11, 5))
+fig, ax = plt.subplots(1, 3, figsize=(10, 5))
 sns.lineplot(data=final_merge, x='decade', y='count_awb', ax=ax[1], label='AWB', color='k', linewidth=2)
 sns.lineplot(data=final_merge, x='decade', y='count_cwb', ax=ax[1], label='CWB', color='k', linestyle='--', linewidth=2)
 
