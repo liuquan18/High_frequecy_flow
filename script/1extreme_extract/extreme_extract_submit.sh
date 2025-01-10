@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=extreme
-#SBATCH --time=04:00:00
+#SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks=20

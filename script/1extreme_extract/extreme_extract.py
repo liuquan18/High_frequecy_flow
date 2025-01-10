@@ -6,16 +6,10 @@ import numpy as np
 import eventextreme.eventextreme as ee
 import sys
 import logging
+import os
 
 logging.basicConfig(level=logging.WARNING)
 
-
-# %%
-try:
-    node = int(sys.argv[1])
-except ValueError:
-    logging.warning("no node number provided, using default node 0")
-    node = 0
 
 # %%
 # nodes and cores
@@ -31,17 +25,20 @@ except:
     size = 1
 
 # %%
-periods = ["first10", "last10"]
-period = periods[node]
-
-tags = ["1850_1859", "2091_2100"]
-tag = tags[node]
-
+decade = sys.argv[1]  # 1850
 # %%
-projected_pc_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/projected_pc/projected_pc_{period}/"
+projected_pc_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_pc_{decade}_trop_std/"
 
-pos_extreme_save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pos_extreme_events/pos_extreme_events_{period}/"
-neg_extreme_save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/neg_extreme_events/neg_extreme_events_{period}/"
+pos_extreme_save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_trop_firstlast/pos_extreme_events/pos_extreme_events_{decade}/"
+neg_extreme_save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_trop_firstlast/neg_extreme_events/neg_extreme_events_{decade}/"
+
+if rank == 0:
+    if not os.path.exists(pos_extreme_save_path):
+        os.makedirs(pos_extreme_save_path)
+
+    if not os.path.exists(neg_extreme_save_path):
+        os.makedirs(neg_extreme_save_path)
+
 
 # %%
 members_all = list(range(1, 51))  # all members
@@ -67,12 +64,12 @@ def to_dataframe(pc):
 
 # %%
 for i, member in enumerate(members_single):
-    print(f"Period {period}: Rank {rank}, member {member}/{members_single[-1]}")
+    print(f"Period {decade}: Rank {rank}, member {member}/{members_single[-1]}")
     
     
     # read pc index
     pc = xr.open_dataset(
-        f"{projected_pc_path}/troposphere_pc_MJJAS_ano_{tag}_r{member}.nc"
+        f"{projected_pc_path}/NAO_pc_{decade}_r{member}_std.nc"
     ).pc
 
     pc = to_dataframe(pc)
@@ -106,14 +103,13 @@ for i, member in enumerate(members_single):
 
 
     positive_extremes.to_csv(
-        f"{pos_extreme_save_path}troposphere_pos_extreme_events_{tag}_r{member}.csv",
-        index=False,
+        f"{pos_extreme_save_path}/NAO_pc_{decade}_r{member}_pos_extremes.csv"
     )
 
     negative_extremes.to_csv(
-        f"{neg_extreme_save_path}troposphere_neg_extreme_events_{tag}_r{member}.csv",
-        index=False,
+        f"{neg_extreme_save_path}/NAO_pc_{decade}_r{member}_neg_extremes.csv"
     )
+    
 
 
 # %%
