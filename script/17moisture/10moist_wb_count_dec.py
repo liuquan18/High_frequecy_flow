@@ -136,30 +136,33 @@ NAO_merge = pd.merge(NAO_count_merge, NAO_days_merge, on='decade')
 final_merge = pd.merge(pd.merge(wb_merge, moist_merge, on='decade'), NAO_merge, on='decade')
 # %%
 # plot
-fig, ax = plt.subplots(1, 3, figsize=(12, 5))
-sns.lineplot(data=final_merge, x='decade', y='count_awb', ax=ax[1], label='AWB', color = 'k')
-sns.lineplot(data=final_merge, x='decade', y='count_cwb', ax=ax[1], label='CWB', color = 'k', linestyle='--')
+fig, ax = plt.subplots(1, 3, figsize=(11, 5))
+sns.lineplot(data=final_merge, x='decade', y='count_awb', ax=ax[1], label='AWB', color='k', linewidth=2)
+sns.lineplot(data=final_merge, x='decade', y='count_cwb', ax=ax[1], label='CWB', color='k', linestyle='--', linewidth=2)
 
-sns.lineplot(data=final_merge, x='decade', y='hus_NAL', ax=ax[0], label='NAL', color = sns.color_palette()[0])
-sns.lineplot(data=final_merge, x='decade', y='hus_NPO', ax=ax[0], label='NPO', color = sns.color_palette()[-1])
+sns.lineplot(data=final_merge, x='decade', y='hus_NAL', ax=ax[0], label='NAL', color=sns.color_palette()[0], linewidth=2)
+sns.lineplot(data=final_merge, x='decade', y='hus_NPO', ax=ax[0], label='NPO', color=sns.color_palette()[-1], linewidth=2)
 
-sns.lineplot(data=final_merge, x='decade', y='days_pos', ax=ax[2], label='NAO pos', color = 'k')
-sns.lineplot(data=final_merge, x='decade', y='days_neg', ax=ax[2], label='NAO neg', color = 'k', linestyle='--')
-
+sns.lineplot(data=final_merge, x='decade', y='days_pos', ax=ax[2], label='NAO pos', color='k', linewidth=2)
+sns.lineplot(data=final_merge, x='decade', y='days_neg', ax=ax[2], label='NAO neg', color='k', linestyle='--', linewidth=2)
 
 ax[0].set_title('humidity 20-60N')
 ax[1].set_title('wave breaking (NAL)')
 ax[2].set_title('extreme NAO days')
 
 
-ax[0].set_ylabel(r'longitudinal $\Delta$ hus /$\Delta$ tas ($g \cdot kg^{-1}K^{-1}$)')
+ax[0].set_ylabel(r'$\Delta q / \Delta$ T ($g \cdot kg^{-1}K^{-1}$)')
 ax[1].set_ylabel('wavebreaking count (per dec per ens)')
 ax[2].set_ylabel('extreme NAO days (per dec per ens)')
 
 ax[2].set_yticks(np.arange(35, 56,5))
 ax[2].set_ylim(32, 56)
 
+# add a,b,c
+ax[0].text(-0.1, 1.1, 'a', transform=ax[0].transAxes, fontsize=16, fontweight='bold', va='top')
+ax[1].text(-0.1, 1.1, 'b', transform=ax[1].transAxes, fontsize=16, fontweight='bold', va='top')
+ax[2].text(-0.1, 1.1, 'c', transform=ax[2].transAxes, fontsize=16, fontweight='bold', va='top')
 
 plt.tight_layout()
-plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/wb_count_hus_dec.png')
+plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/hus_wb_NAO_count_dec.pdf', dpi=300)
 # %%
