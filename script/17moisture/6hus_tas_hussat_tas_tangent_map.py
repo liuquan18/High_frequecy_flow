@@ -29,7 +29,7 @@ last_hussat_tas = xr.open_dataset(
 ).__xarray_dataarray_variable__
 # %%
 fig, axes = plt.subplots(
-    3, 3, figsize=(11, 6), subplot_kw={"projection": ccrs.PlateCarree(100)}
+    3, 3, figsize=(11, 6), subplot_kw={"projection": ccrs.PlateCarree(-90)}
 )
 
 tangent_level_seq = np.arange(-2, 2.1, 0.1)

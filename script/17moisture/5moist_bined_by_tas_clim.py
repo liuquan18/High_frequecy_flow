@@ -122,7 +122,7 @@ first_tas_95_plot = first_tas_05 * 6
 last_tas_95_plot = last_tas_05 * 6
 # %%
 fig, axes = plt.subplots(
-    3, 2, figsize=(11, 5), subplot_kw={"projection": ccrs.PlateCarree(100)}
+    3, 2, figsize=(11, 5), subplot_kw={"projection": ccrs.PlateCarree(-90)}
 )
 
 seq_data_in_the_txt_file = np.loadtxt(
