@@ -150,7 +150,7 @@ first_hussat_bined_plot.plot(
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 2.6, 0.1) * 2,
     extend="max",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q^* (g/ kg)$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q^* (g/ kg)$", 'ticks': np.arange(0, 2.6, 0.5) * 2},
 )
 first_tas_95_plot.plot(
     color="black",
@@ -171,7 +171,7 @@ last_hussat_bined_plot.plot(
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 2.6, 0.1) * 2,
     extend="max",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q^* (g/ kg)$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q^* (g/ kg)$", 'ticks': np.arange(0, 2.6, 0.5) * 2},
 )
 last_tas_95_plot.plot(
     color="black", linestyle="--", ax=axes[1, 0], transform=ccrs.PlateCarree()
@@ -188,20 +188,19 @@ diff_hussat_bined_plot.plot(
     transform=ccrs.PlateCarree(),
     levels=np.arange(-1, 1.1, 0.1) * 2,
     extend="both",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q^* (g/ kg)$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q^* (g/ kg)$", 'ticks': np.arange(-2, 2.1, 0.5) },
 )
 axes[2, 0].set_title("2090-2099 - 1850-1859")
 axes[2, 0].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
 axes[2, 0].set_yticks(np.arange(0, 80, 10))
 axes[2, 0].set_yticklabels(y_tick_labels)
-
 first_plot = first_hus_bined_plot.plot(
     ax=axes[0, 1],
     cmap=seq_prec_cm,
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 2.6, 0.1),
     extend="max",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q (g/ kg)$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q (g/ kg)$", 'ticks': np.arange(0, 2.6, 0.5)},
 )
 
 axes[0, 1].set_title("1850-1859")
@@ -215,7 +214,7 @@ last_plot = last_hus_bined_plot.plot(
     transform=ccrs.PlateCarree(),
     levels=np.arange(0, 2.6, 0.1),
     extend="max",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q (g/ kg)$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q (g/ kg)$", 'ticks': np.arange(0, 2.6, 0.5)},
 )
 
 axes[1, 1].set_title("2090-2099")
@@ -229,7 +228,7 @@ diff_plot = diff_hus_bined_plot.plot(
     transform=ccrs.PlateCarree(),
     levels=np.arange(-1, 1.1, 0.1),
     extend="both",
-    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q (g/ kg)$"},
+    cbar_kwargs={"shrink": 1.0, "label": r"$\Delta q (g/ kg)$", 'ticks': np.arange(-1, 1.1, 0.5)},
 )
 axes[2, 1].set_title("2090-2099 - 1850-1859")
 axes[2, 1].set_extent([-180, 180, 0, 60], crs=ccrs.PlateCarree())
