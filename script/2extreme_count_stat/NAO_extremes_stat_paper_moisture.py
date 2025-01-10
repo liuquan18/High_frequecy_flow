@@ -180,10 +180,10 @@ last_NAO_pos_AWB, last_NAO_neg_AWB, last_NAO_pos_CWB, last_NAO_neg_CWB = NAO_WB(
 
 # %%
 cm = 1 / 2.54  # centimeters in inches
-fig = plt.figure(figsize=(8,11))
+fig = plt.figure(figsize=(8,10))
 # adjust hratio
 plt.subplots_adjust(hspace=2 * cm, wspace=2 * cm)
-gs = fig.add_gridspec(3, 2, height_ratios=[0.6, 0.6, 0.8])
+gs = fig.add_gridspec(3, 2, height_ratios=[0.6, 0.8, 0.8])
 
 ax1 = fig.add_subplot(gs[0, :])
 
@@ -278,17 +278,17 @@ first_NAO_neg_CWB.plot(ax=line_ax1, alpha=0.5, color="k", linewidth=2, label="fi
 last_NAO_neg_CWB.plot(ax=line_ax1, alpha=0.5, color="r", linewidth=2, label="last10")
 
 smooth(first_NAO_pos_AWB).plot(
-    ax=line_ax2, color="k", linewidth=4, label="first10 5day-mean"
+    ax=line_ax2, color="k", linewidth=3, label="first10 5day-mean"
 )
 smooth(last_NAO_pos_AWB).plot(
-    ax=line_ax2, color="r", linewidth=4, label="last10 5day-mean"
+    ax=line_ax2, color="r", linewidth=3, label="last10 5day-mean"
 )
 
 smooth(first_NAO_neg_CWB).plot(
-    ax=line_ax1, color="k", linewidth=4, label="first10 5day-mean"
+    ax=line_ax1, color="k", linewidth=3, label="first10 5day-mean"
 )
 smooth(last_NAO_neg_CWB).plot(
-    ax=line_ax1, color="r", linewidth=4, label="last10 5day-mean"
+    ax=line_ax1, color="r", linewidth=3, label="last10 5day-mean"
 )
 
 
@@ -312,7 +312,7 @@ for ax in [ax1, hist_ax2, hist_ax3, line_ax1, line_ax2]:
 # add a, b, c, d,e
 ax1.text(-0.1, 1.1, "a", transform=ax1.transAxes, fontsize=14, fontweight="bold")
 
-hist_ax2.text(-0.1, 1.1, "b", transform=hist_ax2.transAxes, fontsize=14, fontweight="bold")
+hist_ax2.text(0.1, 1.1, "b", transform=hist_ax2.transAxes, fontsize=14, fontweight="bold")
 hist_ax3.text(-0.1, 1.1, "c", transform=hist_ax3.transAxes, fontsize=14, fontweight="bold")
 
 line_ax1.text(-0.1, 1.1, "d", transform=line_ax1.transAxes, fontsize=14, fontweight="bold")
