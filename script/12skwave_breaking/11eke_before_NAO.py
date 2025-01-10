@@ -54,7 +54,7 @@ def read_eke( decade, suffix = '_ano_2060N', plev = 25000, **kwargs):
 
     
 #%%
-def read_NAO_extremes(decade, phase = 'positive'):
+def read_NAO_extremes(decade, phase = 'positive', dur_threshold = 5):
     base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/{phase}_extreme_events_decades/'
     file_list = glob.glob(base_dir + f'r*i1p1f1/*{decade}*.csv')
 
@@ -72,6 +72,7 @@ def read_NAO_extremes(decade, phase = 'positive'):
 
         extremes.append(extreme)
     extremes = pd.concat(extremes)
+    extremes = extremes[extremes['extreme_duration'] >= dur_threshold]
     return extremes
 
 #%%
