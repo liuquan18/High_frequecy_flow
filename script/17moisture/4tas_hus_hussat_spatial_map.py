@@ -94,7 +94,7 @@ hus_levels_div = np.arange(-1.5,1.6,0.1)
 
 # %%
 fig, axes = plt.subplots(
-    3, 3, figsize=(12, 6), subplot_kw={"projection": ccrs.PlateCarree(100)}
+    3, 3, figsize=(12, 6), subplot_kw={"projection": ccrs.PlateCarree(-90)}
 )
 axes[0, 0].set_title("1850-1859")
 axes[0, 1].set_title("1850-1859")
@@ -218,17 +218,19 @@ axes[2, 2].coastlines()
 axes[2, 2].set_global()
 
 # latitude ticks
-for ax in axes.flatten():
-    ax.set_yticks(np.arange(-60, 76, 30), crs=ccrs.PlateCarree())
-    ax.set_ylabel("Latitude")
-    ax.yaxis.set_major_formatter(cartopy.mpl.ticker.LatitudeFormatter())
-    # Set longitude ticks and labels
-    ax.set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
-    ax.set_xticklabels(['180°', '120°W', '60°W', '0°', '60°E', '120°E'])
-    ax.set_yticks(np.arange(-60, 76, 30), crs=ccrs.PlateCarree())
-    ax.set_yticklabels(['60°S', '30°S', '0°', '30°N', '60°N'])
-    ax.set_ylabel("Latitude")
-    ax.yaxis.set_major_formatter(cartopy.mpl.gridliner.LATITUDE_FORMATTER)
+for i, ax in enumerate(axes.flatten()):
+    if i % 3 == 0:
+        ax.set_yticks(np.arange(-60, 76, 30), crs=ccrs.PlateCarree())
+        ax.set_ylabel("Latitude")
+        ax.yaxis.set_major_formatter(cartopy.mpl.ticker.LatitudeFormatter())
+    else:
+        ax.set_yticks([])
+    
+    if i // 3 == 2:
+        ax.set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
+        ax.set_xticklabels(['180°', '120°W', '60°W', '0°', '60°E', '120°E'])
+    else:
+        ax.set_xticks([])
 
 axes[1, 1].set_xlabel("Longitude")
 
