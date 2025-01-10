@@ -34,7 +34,7 @@ for i, member in enumerate(members_single):
     print(f"Rank {rank}, member {member}/{members_single[-1]}")
     daily_file=glob.glob(f"{daily_field_path}/r{member}i1p1f1/*{decade}*.nc")[0]
     daily_field = xr.open_dataset(daily_file).zg
-    eof = xr.open_dataset(eof_path).eof.sel(mode = 'NAO', decade = decade).squeeze()
+    eof = xr.open_dataset(eof_path).eof.sel(mode = 'NAO', decade = str(decade)).squeeze()
     
     projected_pcs = project_field_to_pattern(daily_field, eof, standard=False)
 
