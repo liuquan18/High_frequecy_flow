@@ -106,8 +106,8 @@ def NAO_extremes(return_days = False, threshold = 7):
         NAO_neg = read_NAO_extremes(dec, 'negative')
 
         # filter only duration above 7 days
-        NAO_pos = NAO_pos[NAO_pos['extreme_duration'] > threshold]
-        NAO_neg = NAO_neg[NAO_neg['extreme_duration'] > threshold]
+        NAO_pos = NAO_pos[NAO_pos['extreme_duration'] >= threshold]
+        NAO_neg = NAO_neg[NAO_neg['extreme_duration'] >= threshold]
 
         if return_days:
             # NAO duration sum
@@ -155,8 +155,8 @@ ax[0].set_ylabel(r'$\Delta q / \Delta$ T ($g \cdot kg^{-1}K^{-1}$)')
 ax[1].set_ylabel('wavebreaking count (per dec per ens)')
 ax[2].set_ylabel('extreme NAO days (per dec per ens)')
 
-ax[2].set_yticks(np.arange(35, 56,5))
-ax[2].set_ylim(32, 56)
+# ax[2].set_yticks(np.arange(35, 56,5))
+# ax[2].set_ylim(32, 56)
 
 # add a,b,c
 ax[0].text(-0.1, 1.1, 'a', transform=ax[0].transAxes, fontsize=16, fontweight='bold', va='top')
