@@ -146,7 +146,7 @@ fig, axes = plt.subplots(
 )
 # cmap = cmocean.cm.
 cmap = slev_div
-levels = np.arange(-6, 6, 1)
+levels = np.arange(-5, 5.1, 1)
 
 first_NAO_pos_eke_plot.eke.T.plot.contourf(
     transform=ccrs.PlateCarree(),
