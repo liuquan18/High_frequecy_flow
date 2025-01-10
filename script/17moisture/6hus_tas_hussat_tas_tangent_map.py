@@ -32,8 +32,8 @@ fig, axes = plt.subplots(
     3, 3, figsize=(11, 6), subplot_kw={"projection": ccrs.PlateCarree(-90)}
 )
 
-tangent_level_seq = np.arange(-2, 2.1, 0.1)
-tangent_level_diff = np.arange(-2, 2.1, 0.1)/2
+tangent_level_seq = np.arange(-1.5, 1.6, 0.1)
+tangent_level_diff = np.arange(-0.5, 0.55, 0.05)
 
 # rows for 'slope', 'tangent', 'slope - tangent'
 # columns for 'first', 'last', 'difference'
@@ -180,9 +180,10 @@ cbar2 = fig.colorbar(plot_last, cax=cbar_ax2, orientation='vertical', label=r'$g
 cbar3 = fig.colorbar(plot_last_first, cax=cbar_ax3, orientation='vertical', label=r'$g \cdot kg^{-1}K^{-1}$')
 
 # Reduce the number of ticks
-cbar1.set_ticks(np.arange(-2, 2.1, 1))
-cbar2.set_ticks(np.arange(-2, 2.1, 1))
-cbar3.set_ticks(np.arange(-1, 1.1, 0.5))
+cbar1.set_ticks(np.arange(-1.5, 1.6, 0.5))
+cbar2.set_ticks(np.arange(-1.5, 1.6, 0.5))
+cbar3.set_ticks(np.arange(-0.5, 0.55, 0.2))
+
 
 # a, b, c labels for each subplots
 for i, ax in enumerate(axes.flatten()):

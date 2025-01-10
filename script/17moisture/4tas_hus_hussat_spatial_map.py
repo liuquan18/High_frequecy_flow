@@ -86,9 +86,9 @@ prec_cmap_div = np.loadtxt(
 prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 #%%
 temp_levels = np.arange(0,16,1)
-hus_levels = np.arange(0,6,0.5)
+hus_levels = np.arange(0,5,0.5)
 
-temp_levels_div = np.arange(-5,6,0.5)
+temp_levels_div = np.arange(-5,5.5,0.5)
 hus_levels_div = np.arange(-1.5,1.6,0.1)
 
 
@@ -112,7 +112,7 @@ first_mean.tas.plot(
     ax=axes[0, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_seq,
-    cbar_kwargs={"label": r"$\Delta T$ (K)", "shrink": 0.6},
+    cbar_kwargs={"label": r"$\Delta T$ (K)", "shrink": 0.6, 'ticks': np.arange(0, 16, 5)},
     levels=temp_levels,
     extend='max',
 )
@@ -124,7 +124,7 @@ first_mean.hussat.plot(
     ax=axes[0, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": r"$\Delta q^*$ (g/kg)", "shrink": 0.6},
+    cbar_kwargs={"label": r"$\Delta q^*$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(0, 11, 2)},
     levels=hus_levels*2,
     extend='max',
 )
@@ -136,7 +136,7 @@ first_mean.hus.plot(
     ax=axes[0, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": r"$\Delta q$ (g/kg)", "shrink": 0.6},
+    cbar_kwargs={"label": r"$\Delta q$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(0, 5, 1)},
     levels=hus_levels,
     extend='max',
 )
@@ -148,7 +148,7 @@ last_mean.tas.plot(
     ax=axes[1, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_seq,
-    cbar_kwargs={"label": r"$\Delta T$ (K)", "shrink": 0.6},
+    cbar_kwargs={"label": r"$\Delta T$ (K)", "shrink": 0.6, 'ticks': np.arange(0, 16, 5)},
     levels=temp_levels,
     extend='max',
 )
@@ -160,7 +160,7 @@ last_mean.hussat.plot(
     ax=axes[1, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": r"$\Delta q^*$ (g/kg)", "shrink": 0.6},
+    cbar_kwargs={"label": r"$\Delta q^*$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(0, 11, 2)},
     levels=hus_levels*2,
     extend='max',
 )
@@ -172,7 +172,7 @@ last_mean.hus.plot(
     ax=axes[1, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": r"$\Delta q$ (g/kg)", "shrink": 0.6},
+    cbar_kwargs={"label": r"$\Delta q$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(0, 5, 1)},
     levels=hus_levels,
     extend='max',
 )
@@ -185,7 +185,7 @@ diff_mean.tas.plot(
     ax=axes[2, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
-    cbar_kwargs={"label": r"$\Delta T$ (K)", "shrink": 0.6},
+    cbar_kwargs={"label": r"$\Delta T$ (K)", "shrink": 0.6, 'ticks': np.arange(-4, 5, 2)},
     levels=temp_levels_div,
     extend='both',
 )
@@ -197,7 +197,7 @@ diff_mean.hussat.plot(
     ax=axes[2, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_div,
-    cbar_kwargs={"label": r"$\Delta q^*$ (g/kg)", "shrink": 0.6},
+    cbar_kwargs={"label": r"$\Delta q^*$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(-3, 3.1, 1)},
     levels=hus_levels_div*2,
     extend='both',
 )
@@ -209,7 +209,7 @@ diff_mean.hus.plot(
     ax=axes[2, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_div,
-    cbar_kwargs={"label": r"$\Delta q$ (g/kg)", "shrink": 0.6},
+    cbar_kwargs={"label": r"$\Delta q$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(-1.5, 1.6, 0.5)},
     levels=hus_levels_div,
     extend='both',
 )
@@ -248,6 +248,8 @@ for i, ax in enumerate(axes.flatten()):
     )
     ax.set_ylabel('')
     ax.set_xlabel('')
+
+
 
 plt.tight_layout(w_pad=-1)
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/first_last_clim.pdf", dpi=300)
