@@ -180,21 +180,10 @@ last_NAO_pos_AWB, last_NAO_neg_AWB, last_NAO_pos_CWB, last_NAO_neg_CWB = NAO_WB(
 
 # %%
 cm = 1 / 2.54  # centimeters in inches
-fig = plt.figure(figsize=(36 * cm, 60 * cm))
+fig = plt.figure(figsize=(8,11))
 # adjust hratio
 plt.subplots_adjust(hspace=2 * cm, wspace=2 * cm)
 gs = fig.add_gridspec(3, 2, height_ratios=[0.6, 0.6, 0.8])
-
-# Set the default font size
-plt.rcParams.update(
-    {
-        "font.size": 20,
-        "xtick.labelsize": 20,
-        "ytick.labelsize": 20,
-        "axes.labelsize": 25,
-        "axes.titlesize": 25,
-    }
-)
 
 ax1 = fig.add_subplot(gs[0, :])
 
@@ -277,7 +266,7 @@ hist_ax2.set_ylabel("")
 
 for ax in [hist_ax2, hist_ax3]:
     ax.axvline(x=0, color="k", linestyle="--", linewidth=2)
-    ax.set_xlabel(r"Jet loc anomaly relative to climatology ($\degree$)", fontsize=20)
+    ax.set_xlabel(r"Jet loc anomaly relative to climatology ($\degree$)", fontsize=12)
 
 line_ax1 = fig.add_subplot(gs[2, 0])
 line_ax2 = fig.add_subplot(gs[2, 1])
@@ -311,25 +300,25 @@ line_ax1.set_ylim(0, 10)
 
 line_ax2.set_ylabel("WB occurrence", fontsize=14)
 line_ax2.set_ylabel("")
-line_ax1.set_xlabel("days relative to onset of NAO extremes", fontsize=20)
-line_ax2.set_xlabel("days relative to onset of NAO extremes", fontsize=20)
+line_ax1.set_xlabel("days relative to onset of NAO extremes", fontsize=12)
+line_ax2.set_xlabel("days relative to onset of NAO extremes", fontsize=12)
 
 line_ax1.legend(frameon=False, loc="upper right")
 line_ax1.set_ylabel("WB occurrence")
-plt.tight_layout()
-
 # no line at the top and right of the plot
 for ax in [ax1, hist_ax2, hist_ax3, line_ax1, line_ax2]:
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
+plt.tight_layout()
+
 
 # save as pdf without background
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/slides/agu/agu.pdf",
-#     dpi=500,
-#     transparent=True,
-# )
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/NAO_jet_wb_count.pdf",
+    dpi=300,
+    transparent=True,
+)
 # %%
 
 # %%
