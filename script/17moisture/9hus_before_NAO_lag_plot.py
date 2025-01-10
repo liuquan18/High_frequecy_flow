@@ -94,14 +94,14 @@ for ax in axes:
 
     ax.set_xlabel('days relative to NAO onset (days)')
 
-    ax.set_ylabel(r'$\Delta hus / \Delta tas $ ($g \cdot kg^{-1}K^{-1}$)')
+    ax.set_ylabel(r'$\Delta q / \Delta T $ ($g \cdot kg^{-1}K^{-1}$)')
 
 
 axes[0].set_title('Positive NAO')
 axes[1].set_title('Negative NAO')
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/hus_tas_ratio_NAO_lag.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/hus_tas_ratio_NAO_lag.png")
 
 
 

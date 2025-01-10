@@ -136,8 +136,8 @@ for ax in axes:
     ax.set_xlim(0.4, 1.2)
 
 for ax in axes:
-    ax.set_xlabel(r"North Atlantic $\Delta$hus / $\Delta$tas")
-    ax.set_ylabel(r"North Pacific $\Delta$hus / $\Delta$tas")
+    ax.set_xlabel(r"North Atlantic $\Delta q / \Delta T$")
+    ax.set_ylabel(r"North Pacific $\Delta q / \Delta T$")
 
 axes[0].set_title("NAO positive")
 axes[1].set_title("NAO negative")
