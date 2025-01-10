@@ -27,7 +27,7 @@ if rank == 0:
     logging.info(f"::: Running on {size} cores :::")
 
 #%%
-def read_eke( decade, suffix = '_2060N', plev = 25000, **kwargs):
+def read_eke( decade, suffix = '_ano_2060N', plev = 25000, **kwargs):
     var = 'eke'
     time_tag = f"{decade}0501-{decade+9}0930"
     data_path = (
