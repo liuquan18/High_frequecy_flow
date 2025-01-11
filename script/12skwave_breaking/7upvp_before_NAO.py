@@ -52,7 +52,7 @@ def read_upvp( decade, suffix = '_ano', plev = 25000, **kwargs):
     # change longitude from 0-360 to -180-180
     data = data.assign_coords(lon=(data.lon + 180) % 360 - 180).sortby("lon")
 
-    return data
+    return data.compute()
 
     
 #%%
