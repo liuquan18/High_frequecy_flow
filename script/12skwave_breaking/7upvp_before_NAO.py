@@ -78,8 +78,8 @@ def process_data(decade):
 
     # select data before NAO events
     logging.info (f"rank {rank} is selecting data before NAO events \n")
-    upvp_NAO_pos = sel_before_NAO(NAO_pos, data, var = 'eke')
-    upvp_NAO_neg = sel_before_NAO(NAO_neg, data, var = 'eke')
+    upvp_NAO_pos = sel_before_NAO(NAO_pos, data, var = 'ua') # the name is upvp, but the variable is ua
+    upvp_NAO_neg = sel_before_NAO(NAO_neg, data, var = 'ua')
 
     logging.info(f"rank {rank} is saving data for decade {decade} \n")
 
