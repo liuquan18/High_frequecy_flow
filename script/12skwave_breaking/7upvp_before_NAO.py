@@ -45,7 +45,7 @@ def read_upvp( decade, suffix = '_ano', plev = 25000, **kwargs):
     )
     data = data['ua']
     data = data.sel(plev = plev)
-    data = data.sel(lat = slice(30,60)).mean(dim = 'lag') # MJO-NAO paper [-100, -10, 30, 60]
+    data = data.sel(lat = slice(30,60)).mean(dim = 'lat') # MJO-NAO paper [-100, -10, 30, 60]
     data = data.drop_vars(('plev','lat'))
 
     data['ens'] = range(1, 51)
