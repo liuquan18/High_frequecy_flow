@@ -231,6 +231,6 @@ axes[1].text(1.05, 1.02, f"{NAO_neg_NPO_lt_NAL_num.loc[1850].values[0]*-1:.0f}",
 axes[1].text(0.97, 1.08, f"{NAO_neg_NPO_gt_NAL_num.loc[2090].values[0]:.0f}", fontsize=12, color='red', rotation=45)
 axes[1].text(1.08, 0.99, f"{NAO_neg_NPO_lt_NAL_num.loc[2090].values[0]*-1:.0f}", fontsize=12, color='red', rotation=45)
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/NAO_lag_mean_moist_scatter.png")
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/NAO_lag_mean_moist_scatter.pdf", dpi = 300, bbox_inches = 'tight')
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/NAO_lag_mean_moist_scatter.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/NAO_lag_mean_moist_scatter.pdf", dpi = 300, bbox_inches = 'tight')
 # %%
