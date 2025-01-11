@@ -8,6 +8,8 @@ import seaborn as sns
 import glob
 import logging
 from src.moisture.longitudinal_contrast import read_data
+from src.extremes.before_extreme import read_NAO_extremes, sel_before_NAO
+
 import re
 logging.basicConfig(level=logging.INFO)
 #%%
@@ -27,28 +29,7 @@ except:
 if rank == 0:
     logging.info(f"::: Running on {size} cores :::")
 
-#%%
-def read_NAO_extremes(decade, phase = 'positive', dur_threshold = 5):
-    base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/{phase}_extreme_events_decades/'
-    file_list = glob.glob(base_dir + f'r*i1p1f1/*{decade}*.csv')
 
-    # sort
-    file_list.sort(key=lambda x: int(x.split('/')[-2][1:].split('i')[0]))
-
-    extremes = []
-    for filename in file_list:
-        match = re.search(r"/r(\d+)i1p1f1/", filename)
-        if match:
-            ens = match.group(1)
-    
-        extreme = pd.read_csv(filename)
-        extreme['ens'] = ens
-
-        extremes.append(extreme)
-    extremes = pd.concat(extremes)
-    extremes = extremes[extremes['extreme_duration'] >= dur_threshold]
-
-    return extremes
 
 #%%
 def read_all_data(decade):
@@ -60,8 +41,9 @@ def read_all_data(decade):
     tas = read_data("tas", decade, (20,60), False, suffix='_std')
     hus = read_data("hus", decade, (20,60), False, suffix='_std')
     data = xr.Dataset({"tas": tas, "hus": hus*1000})
+    data_ratio = data.hus / data.tas
 
-    return NAO_pos, NAO_neg, data
+    return NAO_pos, NAO_neg, data_ratio
 #%%
 def ocean_sector(data):
     box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
