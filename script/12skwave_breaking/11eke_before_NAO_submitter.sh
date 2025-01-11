@@ -11,4 +11,4 @@
 #SBATCH --output=before_wb.%j.out
 
 
-mpirun -n 5 python -u 11eke_before_NAO.py
+mpirun -n 25 python -u 11eke_before_NAO.py
