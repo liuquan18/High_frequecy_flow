@@ -29,8 +29,8 @@ if rank == 0:
     logging.info(f"::: Running on {size} cores :::")
 
 #%%
-def read_eke( decade, suffix = '_ano_2060N', plev = 25000, **kwargs):
-    var = 'eke'
+def read_upvp( decade, suffix = '_ano', plev = 25000, **kwargs):
+    var = 'upvp'
     time_tag = f"{decade}0501-{decade+9}0930"
     data_path = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
@@ -43,9 +43,9 @@ def read_eke( decade, suffix = '_ano_2060N', plev = 25000, **kwargs):
         files, combine="nested", concat_dim="ens",
         chunks = {"ens": -1, "time": -1, "lat": -1, "lon": -1}
     )
-    data = data[var]
-    data.load()
-
+    data = data['ua']
+    data = data.sel(plev = plev)
+    data = data.sel(lat = slice(30,60)).mean(dim = 'lag') # MJO-NAO paper [-100, -10, 30, 60]
     data = data.drop_vars(('plev','lat'))
 
     data['ens'] = range(1, 51)
@@ -63,10 +63,10 @@ def read_all_data(decade):
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
     logging.info("reading eke")
-    eke = read_eke( decade)
+    upvp = read_upvp( decade)
     
 
-    return NAO_pos, NAO_neg, eke
+    return NAO_pos, NAO_neg, upvp
 
 
 
@@ -77,13 +77,13 @@ def process_data(decade):
 
     # select data before NAO events
     logging.info (f"rank {rank} is selecting data before NAO events \n")
-    eke_NAO_pos = sel_before_NAO(NAO_pos, data, var = 'eke')
-    eke_NAO_neg = sel_before_NAO(NAO_neg, data, var = 'eke')
+    upvp_NAO_pos = sel_before_NAO(NAO_pos, data, var = 'eke')
+    upvp_NAO_neg = sel_before_NAO(NAO_neg, data, var = 'eke')
 
     logging.info(f"rank {rank} is saving data for decade {decade} \n")
 
-    eke_NAO_pos.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_pos/eke_NAO_pos_{decade}.csv')
-    eke_NAO_neg.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_neg/eke_NAO_neg_{decade}.csv')
+    upvp_NAO_pos.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_NAO_pos/upvp_NAO_pos_{decade}.csv')
+    upvp_NAO_neg.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_NAO_neg/upvp_NAO_neg_{decade}.csv')
     
 #%%
 decades_all = np.arange(1850, 2100, 10)
