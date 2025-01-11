@@ -251,7 +251,7 @@ axes[1,1].set_title("2090-2099 neg")
 axes[2,0].set_title("2090-2099 - 1850-1859 pos")
 axes[2,1].set_title("2090-2099 - 1850-1859 neg")
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/NAO_eke_lag.png")
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/NAO_eke_lag.pdf", dpi = 300, bbox_inches = 'tight')
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/NAO_eke_lag.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/NAO_eke_lag.pdf", dpi = 300, bbox_inches = 'tight')
 
 # %%
