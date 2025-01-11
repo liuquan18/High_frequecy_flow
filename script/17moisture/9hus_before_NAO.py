@@ -59,8 +59,8 @@ def process_data(decade):
 
 
     # save the data
-    ratio_NAO_pos.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_NAO_pos/hus_tas_ratio_NAO_pos_" + str(decade) + ".csv")
-    ratio_NAO_neg.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_NAO_neg/hus_tas_ratio_NAO_neg_" + str(decade) + ".csv")   
+    ratio_NAO_pos.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos/hus_tas_ratio_NAO_pos_" + str(decade) + ".csv")
+    ratio_NAO_neg.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg/hus_tas_ratio_NAO_neg_" + str(decade) + ".csv")   
 #%%
 decades_all = np.arange(1850, 2100, 10)
 decade_single = np.array_split(decades_all, size)[rank]
