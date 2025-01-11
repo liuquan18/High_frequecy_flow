@@ -8,6 +8,8 @@ import seaborn as sns
 import glob
 import logging
 import re
+
+from src.extremes.before_extreme import read_NAO_extremes, sel_before_NAO
 logging.basicConfig(level=logging.INFO)
 #%%
 # nodes for different decades
@@ -54,28 +56,6 @@ def read_eke( decade, suffix = '_ano_2060N', plev = 25000, **kwargs):
 
     
 #%%
-def read_NAO_extremes(decade, phase = 'positive', dur_threshold = 5):
-    base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/{phase}_extreme_events_decades/'
-    file_list = glob.glob(base_dir + f'r*i1p1f1/*{decade}*.csv')
-
-    # sort
-    file_list.sort(key=lambda x: int(x.split('/')[-2][1:].split('i')[0]))
-
-    extremes = []
-    for filename in file_list:
-        match = re.search(r"/r(\d+)i1p1f1/", filename)
-        if match:
-            ens = match.group(1)
-    
-        extreme = pd.read_csv(filename)
-        extreme['ens'] = ens
-
-        extremes.append(extreme)
-    extremes = pd.concat(extremes)
-    extremes = extremes[extremes['extreme_duration'] >= dur_threshold]
-    return extremes
-
-#%%
 def read_all_data(decade):
     logging.info("reading NAO extremes")
     # wave breaking
@@ -88,53 +68,7 @@ def read_all_data(decade):
 
     return NAO_pos, NAO_neg, eke
 
-#%%
-def eke_to_df(event, ratio, lag = (-20, 10)):
-    
 
-    event = pd.DataFrame(event).transpose()
-    ratio_df = ratio.to_dataframe().reset_index()[['time','lon','eke']]
-    ratio_df = ratio_df.pivot(index = 'lon', columns = 'time', values = 'eke')
-
-    ratio_df.columns.name = None
-    # add one more multitindex to ratio_df the same index as event
-    ratio_df = pd.concat([ratio_df]*len(event), keys = event.index)
-
-    # fill the value in ratio_df to expected_ratio_df
-
- 
-    ratio_df['ens'] = event['ens'].values[0]
-    ratio_df['extreme_duration'] = event['extreme_duration'].values[0]
-    ratio_df['extreme_start_time'] = event['extreme_start_time'].values[0]
-
-    return ratio_df
-
-
-# %%
-def sel_before_NAO(NAO, data, lag = (-20, 10)):
-
-    eke_evnets = []
-    for i, event in NAO.iterrows():
-        event_ens = int(event.ens)
-        event_date = pd.to_datetime(event.extreme_start_time)
-        event_date_20before = event_date + pd.Timedelta(days=lag[0])
-        event_date_10after = event_date + pd.Timedelta(days=lag[1])
-
-        data_NAO_event = data.sel(time=slice(event_date_20before, event_date_10after), ens = event_ens)
-
-        # change the time as the difference between the event date and the date of the data
-        data_NAO_event['time'] =  pd.to_datetime(data_NAO_event['time'].values) - event_date
-        # change the difference to days
-        data_NAO_event['time'] = data_NAO_event['time'].dt.days
-
-
-        eke_df = eke_to_df(event, data_NAO_event, lag)
-
-        eke_evnets.append(eke_df)
-
-    eke_evnets = pd.concat(eke_evnets)
-
-    return eke_evnets
 
 #%%
 def process_data(decade):
@@ -142,8 +76,9 @@ def process_data(decade):
     NAO_pos, NAO_neg, data = read_all_data(decade)
 
     # select data before NAO events
-    eke_NAO_pos = sel_before_NAO(NAO_pos, data)
-    eke_NAO_neg = sel_before_NAO(NAO_neg, data)
+    logging.info (f"rank {rank} is selecting data before NAO events \n")
+    eke_NAO_pos = sel_before_NAO(NAO_pos, data, var = 'eke')
+    eke_NAO_neg = sel_before_NAO(NAO_neg, data, var = 'eke')
 
     logging.info(f"rank {rank} is saving data for decade {decade} \n")
 
