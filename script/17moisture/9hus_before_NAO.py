@@ -38,75 +38,15 @@ def read_all_data(decade):
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
 
-    tas = read_data("tas", decade, (20,60), False, suffix='_std')
-    hus = read_data("hus", decade, (20,60), False, suffix='_std')
+    tas = read_data("tas", decade, (20,60), True, suffix='_std')
+    hus = read_data("hus", decade, (20,60), True, suffix='_std')
     data = xr.Dataset({"tas": tas, "hus": hus*1000})
     data_ratio = data.hus / data.tas
+    data_ratio.name = 'hus_tas_ratio'
+    data_ratio.compute()
 
     return NAO_pos, NAO_neg, data_ratio
-#%%
-def ocean_sector(data):
-    box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
-    box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
-    data_NAL = data.sel(lon=slice(box_NAL[0], box_NAL[1])).mean(dim=("lon", "lat"))
-    data_NPO1 = data.sel(lon=slice(box_NPO[0], 180))
-    data_NPO2 = data.sel(lon=slice(-180, box_NPO[1]))
-    data_NPO = xr.concat([data_NPO1, data_NPO2], dim="lon").mean(dim=("lon", "lat"))
-    return data_NAL, data_NPO
-#%%
-def merge_event_ratio(event, ratio, lag = (-20, 10)):
-    
 
-    event = pd.DataFrame(event).transpose()
-    expected_ratio_df = pd.DataFrame(np.nan, index = event.index, columns = np.arange(lag[0], lag[1]+1))
-    ratio_df = ratio.to_dataframe(name = 'ratio')[['ratio']].transpose()
-
-    ratio_df.index.name = None
-    ratio_df.columns.name = None
-    ratio_df.index = event.index
-
-    # fill the value in ratio_df to expected_ratio_df
-    expected_ratio_df[ratio_df.columns] = ratio_df
-
-    merged = pd.concat([event, expected_ratio_df], axis = 1)
-
-    return merged
-
-
-# %%
-def sel_before_NAO(NAO, data, lag = (-20, 10)):
-
-    NAL_ratios = []
-    NPO_ratios = []
-
-    for i, event in NAO.iterrows():
-        event_ens = int(event.ens)
-        event_date = pd.to_datetime(event.extreme_start_time)
-        event_date_20before = event_date + pd.Timedelta(days=lag[0])
-        event_date_10after = event_date + pd.Timedelta(days=lag[1])
-
-        data_NAO_event = data.sel(time=slice(event_date_20before, event_date_10after), ens = event_ens)
-
-        ratio = data_NAO_event.hus / data_NAO_event.tas
-
-        # change the time as the difference between the event date and the date of the data
-        ratio['time'] =  pd.to_datetime(ratio['time'].values) - event_date
-        # change the difference to days
-        ratio['time'] = ratio['time'].dt.days
-
-        NAL_ratio, NPO_ratio = ocean_sector(ratio)
-
-        NAL_df = merge_event_ratio(event, NAL_ratio, lag)
-        NPO_df = merge_event_ratio(event, NPO_ratio, lag)
-
-        NAL_ratios.append(NAL_df)
-        NPO_ratios.append(NPO_df)
-
-    NAL_ratios = pd.concat(NAL_ratios)
-    NPO_ratios = pd.concat(NPO_ratios)
-
-
-    return NAL_ratios, NPO_ratios
 
 #%%
 def process_data(decade):
@@ -114,18 +54,13 @@ def process_data(decade):
     NAO_pos, NAO_neg, data = read_all_data(decade)
 
     # select the data before NAO
-    NAO_pos_NAL, NAO_pos_NPO = sel_before_NAO(NAO_pos, data)
-    NAO_neg_NAL, NAO_neg_NPO = sel_before_NAO(NAO_neg, data)
+    ratio_NAO_pos = sel_before_NAO(NAO_pos, data, var = 'hus_tas_ratio')
+    ratio_NAO_neg = sel_before_NAO(NAO_neg, data, var = 'hus_tas_ratio')
 
 
     # save the data
-    NAO_pos_NAL.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NAL/NAO_pos_NAL_{decade}.csv')
-    NAO_pos_NPO.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NPO/NAO_pos_NPO_{decade}.csv')
-
-    NAO_neg_NAL.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NAL/NAO_neg_NAL_{decade}.csv')
-    NAO_neg_NPO.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NPO/NAO_neg_NPO_{decade}.csv')
-
-    
+    ratio_NAO_pos.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_NAO_pos/hus_tas_ratio_NAO_pos_" + str(decade) + ".csv")
+    ratio_NAO_neg.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_NAO_neg/hus_tas_ratio_NAO_neg_" + str(decade) + ".csv")   
 #%%
 decades_all = np.arange(1850, 2100, 10)
 decade_single = np.array_split(decades_all, size)[rank]
