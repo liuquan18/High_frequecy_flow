@@ -46,7 +46,8 @@ def read_upvp( decade, suffix = '_ano', plev = 25000, **kwargs):
     data = data['ua']
     data = data.sel(plev = plev)
     data = data.sel(lat = slice(30,60)).mean(dim = 'lat') # MJO-NAO paper [-100, -10, 30, 60]
-    data = data.drop_vars(('plev','lat'))
+    data = data.squeeze()
+    data = data.drop_vars(('plev'))
 
     data['ens'] = range(1, 51)
     # change longitude from 0-360 to -180-180
@@ -62,7 +63,7 @@ def read_all_data(decade):
     NAO_pos = read_NAO_extremes(decade, 'positive')
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
-    logging.info("reading eke")
+    logging.info("reading upvp")
     upvp = read_upvp( decade)
     
 
