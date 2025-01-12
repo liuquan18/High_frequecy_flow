@@ -9,6 +9,7 @@ import glob
 import logging
 import cartopy.crs as ccrs
 import matplotlib.colors as mcolors
+import cartopy.feature as cfeature
 
 idx = pd.IndexSlice
 logging.basicConfig(level=logging.INFO)
@@ -154,7 +155,7 @@ def eke_lag_lon(first, last):
 # %%
 def to_plot_data(eke):
     eke = eke.rename({"lag": "lat"})  # fake lat to plot correctly the lon
-
+    eke['lat'] = eke['lat']*4 # fake lat to plot correctly the lon
     # Solve the problem on 180 longitude by extending the data
     eke = eke.reindex(lon=np.append(eke.lon.values, 180), method="nearest")
     lon_values = eke.lon.values
@@ -220,11 +221,19 @@ eke_cmap = np.loadtxt(
 eke_cmap = mcolors.ListedColormap(eke_cmap, name="temp_div")
 
 
+def lon2x(longitude, ax):
+    """
+    Convert longitude to corresponding x-coordinates.
+    """
+    x_coord = ax.projection.transform_point(longitude, 0, ccrs.PlateCarree())[0]
+
+    return x_coord
+
 # %%
 fig = plt.figure(figsize=(12, 8))
 
 grid = plt.GridSpec(
-    3, 3, wspace=0.4, hspace=0.3, width_ratios=[1, 2, 1], height_ratios=[1, 1, 0.3]
+    3, 3, wspace=0.1, hspace=0.3, width_ratios=[1, 2, 1], height_ratios=[1, 1, 0.3]
 )
 ratio_ax1 = fig.add_subplot(grid[0, 0])
 
@@ -266,10 +275,13 @@ NAO_pos_eke_lat_lon["eke_diff"].T.plot.contourf(
     ax=eke_ax1,
     transform=ccrs.PlateCarree(),
     cmap=eke_cmap,
-    cbar_kwargs={"label": "EKE difference"},
+    cbar_kwargs={"label": r"m$^2$/s$^2$"},
     levels=np.arange(-5, 5.1, 1),
 )
-eke_ax1.set_aspect(5)
+eke_ax1.set_aspect(2)
+eke_ax1.set_yticks(np.arange(-20,10,5)*4)
+eke_ax1.set_yticklabels('')
+eke_ax1.set_ylabel('')
 
 
 upvp_ax1 = fig.add_subplot(grid[0, 2])
@@ -329,11 +341,14 @@ NAO_neg_eke_lat_lon["eke_diff"].T.plot.contourf(
     ax=eke_ax2,
     transform=ccrs.PlateCarree(),
     cmap=eke_cmap,
-    cbar_kwargs={"label": "EKE difference"},
+    cbar_kwargs={"label": r"m$^2$/s$^2$"},
     levels=np.arange(-5, 5.1, 1),
 )
-eke_ax2.set_aspect(5)
-
+eke_ax2.set_aspect(2)
+eke_ax2.set_aspect(2)
+eke_ax2.set_yticks(np.arange(-20,10,5)*4)
+eke_ax2.set_yticklabels('')
+eke_ax2.set_ylabel('')
 
 upvp_ax2 = fig.add_subplot(grid[1, 2])
 upvp_ax2.plot(
@@ -353,5 +368,61 @@ upvp_ax2.plot(
 upvp_ax1.set_xlim(-2, 15.2)
 upvp_ax2.set_xlim(-15.2, 2)
 
+for ax in [eke_ax1, eke_ax2]:
+    ax.set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
+    ax.set_xticklabels(["180W", "120W", "60W", "0", "60E", "120E"])
+    ax.set_xlabel("")
+for ax in [ratio_ax1, ratio_ax2, upvp_ax1, upvp_ax2, eke_ax1, eke_ax2]:
+    ax.axhline(0, color="black", linewidth=1, linestyle = 'dotted')
+
+ratio_ax1.set_ylabel("Lag (days)")
+ratio_ax2.set_xlabel(r"$g \cdot kg^{-1} \cdot K^{-1}$")
+ratio_ax2.set_ylabel("Lag (days)")
+eke_ax2.set_xlabel("Longitude")
+upvp_ax2.set_xlabel(r"$m^2 \cdot s^{-2}$")
+
+ratio_ax1.set_title(r"$\Delta q / \Delta T$")
+eke_ax1.set_title(r"$1/2(u^{\prime 2} + v^{\prime 2})$ difference")
+upvp_ax1.set_title(r"$u^{\prime}v^{\prime}$")
+
+ratio_legend_ax = fig.add_subplot(grid[2, 0])
+# add custom legend for ratio_ax1
+handles, labels = ratio_ax1.get_legend_handles_labels()
+ratio_legend_ax.legend(handles, labels, loc='center', frameon=False, ncols=2)
+ratio_legend_ax.axis('off')
+
+eke_coast_ax = fig.add_subplot(grid[2, 1], projection=ccrs.PlateCarree(-90))
+eke_coast_ax.coastlines()
+eke_coast_ax.set_extent([-180, 180, 20, 60], crs=ccrs.PlateCarree())
+# add ocean feature
+eke_coast_ax.add_feature(
+    cfeature.NaturalEarthFeature(
+        "physical", "ocean", "50m", edgecolor="face", facecolor="lightblue"
+    )
+)
+    # set the position of the ax
+pos1 = eke_ax2.get_position()
+eke_coast_ax.set_position([pos1.x0, pos1.y0 - 0.32, pos1.width, pos1.width * 1.5])
+
+# vline at lon = [-70, -35] and [140, -145] 
+eke_coast_ax.axvline(lon2x(-70,eke_coast_ax), color='black', linewidth=1.5, linestyle='dotted')
+eke_coast_ax.axvline(lon2x(-35,eke_coast_ax), color='black', linewidth=1.5, linestyle='dotted')
+eke_coast_ax.axvline(lon2x(140,eke_coast_ax), color='black', linewidth=1.5, linestyle='dotted')
+eke_coast_ax.axvline(lon2x(-145,eke_coast_ax), color='black', linewidth=1.5, linestyle='dotted')
+
+# add text 'NPO' between 140 and -145, NAL between -70 and -35
+eke_coast_ax.text(lon2x(-65.,eke_coast_ax), 30, 'NAL', fontsize=12)
+eke_coast_ax.text(lon2x(145.,eke_coast_ax), 30, 'NPO', fontsize=12)
+
+
+upvp_legend_ax = fig.add_subplot(grid[2, 2])
+# add custom legend for upvp_ax1
+handles, labels = upvp_ax1.get_legend_handles_labels()
+upvp_legend_ax.legend(handles, labels, loc='center', frameon=False)
+upvp_legend_ax.axis('off')
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/first_last_before_NAO_average.pdf", dpi=300)
+
 # %%
+
  
