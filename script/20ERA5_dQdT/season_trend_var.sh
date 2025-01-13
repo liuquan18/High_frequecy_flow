@@ -10,7 +10,8 @@
 #SBATCH --account=mh0033
 #SBATCH --output=trend.%j.out
 
-
+module load cdo 
+module load parallel
 
 var=$1
 var_num=$2
