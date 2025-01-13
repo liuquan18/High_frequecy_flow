@@ -30,11 +30,12 @@ name = MPI.Get_processor_name()
 if rank == 0:
     if not os.path.exists(pc_dir):
         os.makedirs(pc_dir)
+    logging.info(f"size is {size}")
 #%%
 daily_files_single = np.array_split(daily_files, size)[rank]  # years on this core
 # %%
 for i, daily_file in enumerate(daily_files_single):
-    print(f"Rank {rank}, file {daily_file} {i}/{len(daily_files_single)}")
+    logging.info(f"Rank {rank}, file {daily_file} {i}/{len(daily_files_single)}")
     daily_field = xr.open_dataset(daily_file).var129.squeeze()
     eof = xr.open_dataset(eof_file).eof.sel(mode = 'NAO').squeeze()
     eof['plev'] = 50000
