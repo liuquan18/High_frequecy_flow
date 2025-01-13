@@ -17,7 +17,7 @@ to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/zg_monthly_stat/
 # # seasonal cycle
 # cdo -f nc -P 10 -setgridtype,regular -divc,9.80665 -ymonmean -selmon,5/9 -mergetime -apply,sellevel,50000 [ ${monthly_files[@]} ] ${to_dir}zg_50000_seasonal_cyc_05_09.nc
 
-
+# monthly data pre-process
 # cdo -f nc -O -P 8 -divc,9.80665 -sellonlatbox,-90,40,20,80 -setgridtype,regular -selmon,5/9 -mergetime -apply,-sellevel,50000 [ ${monthly_files[@]} ] ${to_dir}zg_50000_monthly_05_09.nc
 
 # export zg_sesonal_dir monthly_files to_dir
