@@ -155,6 +155,11 @@ ax[0].set_ylabel(r'$\Delta q / \Delta$ T ($g \cdot kg^{-1}K^{-1}$)')
 ax[1].set_ylabel('wavebreaking count (per dec per ens)')
 ax[2].set_ylabel('extreme NAO days (per dec per ens)')
 
+ax[0].set_xticks (np.arange(1850, 2101, 50))
+ax[1].set_xticks (np.arange(1850, 2101, 50))
+ax[2].set_xticks (np.arange(1850, 2101, 50))
+
+
 # ax[2].set_yticks(np.arange(35, 56,5))
 # ax[2].set_ylim(32, 56)
 
