@@ -23,17 +23,18 @@ daily_tmp_dir=/scratch/m/m300883/ERA5/${var}_daily_pre/
 export daily_dir to_dir daily_tmp_dir var
 mkdir -p $to_dir $daily_tmp_dir
 
-Mayfiles=($(find $daily_dir -name "*.grb" -print | grep '\-05_129\.grb$'))
-Junfiles=($(find $daily_dir -name "*.grb" -print | grep '\-06_129\.grb$'))
-Julfiles=($(find $daily_dir -name "*.grb" -print | grep '\-07_129\.grb$'))
-Augfiles=($(find $daily_dir -name "*.grb" -print | grep '\-08_129\.grb$'))
-Sepfiles=($(find $daily_dir -name "*.grb" -print | grep '\-09_129\.grb$'))
+Mayfiles=($(find $daily_dir -name "*.grb" -print | grep "\-05_${var_num}\.grb$"))
+Junfiles=($(find $daily_dir -name "*.grb" -print | grep "\-06_${var_num}\.grb$"))
+Julfiles=($(find $daily_dir -name "*.grb" -print | grep "\-07_${var_num}\.grb$"))
+Augfiles=($(find $daily_dir -name "*.grb" -print | grep "\-08_${var_num}\.grb$"))
+Sepfiles=($(find $daily_dir -name "*.grb" -print | grep "\-09_${var_num}\.grb$"))
 
 daily_files=(${Mayfiles[@]} ${Junfiles[@]} ${Julfiles[@]} ${Augfiles[@]} ${Sepfiles[@]})
 
 Remove_trend(){
 
     infile=$1
+    echo Processing $(basename $infile)
     tmpfile=${daily_tmp_dir}$(basename $infile .grb).nc
 
     month=$(basename "$infile" | sed -E 's/.*_([0-9]{4})-([0-9]{2})_.*/\2/')
