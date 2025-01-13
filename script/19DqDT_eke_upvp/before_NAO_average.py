@@ -462,7 +462,7 @@ def lon2x(longitude, ax):
 
 
 # %%
-fig = plt.figure(figsize=(10, 10))
+fig = plt.figure(figsize=(10, 12))
 
 grid = plt.GridSpec(6, 4, height_ratios=[1, 0.2, 1, 1, 1, 0.3], hspace=0)
 
