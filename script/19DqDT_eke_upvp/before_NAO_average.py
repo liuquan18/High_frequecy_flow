@@ -499,12 +499,14 @@ ratio_ax1.plot(
     first_NAO_pos_ratio_NAL["lag"],
     label="first_NAL",
     color=sns.color_palette("Paired")[0],
+    linewidth=2,
 )
 ratio_ax1.plot(
     last_NAO_pos_ratio_NAL["ratio"],
     last_NAO_pos_ratio_NAL["lag"],
     label="last_NAL",
     color=sns.color_palette("Paired")[1],
+    linewidth=2,
 )
 
 ratio_ax1.plot(
@@ -513,6 +515,7 @@ ratio_ax1.plot(
     label="first_NPO",
     color=sns.color_palette("Paired")[0],
     linestyle="--",
+    linewidth=2,
 )
 
 ratio_ax1.plot(
@@ -521,6 +524,7 @@ ratio_ax1.plot(
     label="last_NPO",
     color=sns.color_palette("Paired")[1],
     linestyle="--",
+    linewidth=2,
 )
 
 # upvp positive
@@ -529,6 +533,7 @@ upvp_ax1.plot(
     first_NAO_pos_upvp_NA["lag"],
     label="first",
     color=sns.color_palette("Paired")[2],
+    linewidth=2,
 )
 
 upvp_ax1.plot(
@@ -536,6 +541,7 @@ upvp_ax1.plot(
     last_NAO_pos_upvp_NA["lag"],
     label="last",
     color=sns.color_palette("Paired")[3],
+    linewidth=2,
 )
 
 
@@ -595,12 +601,14 @@ ratio_ax2.plot(
     first_NAO_neg_ratio_NAL["lag"],
     label="first_NAL",
     color=sns.color_palette("Paired")[0],
+    linewidth=2,
 )
 ratio_ax2.plot(
     last_NAO_neg_ratio_NAL["ratio"],
     last_NAO_neg_ratio_NAL["lag"],
     label="last_NAL",
     color=sns.color_palette("Paired")[1],
+    linewidth=2,
 )
 
 ratio_ax2.plot(
@@ -609,6 +617,7 @@ ratio_ax2.plot(
     label="first_NPO",
     color=sns.color_palette("Paired")[0],
     linestyle="--",
+    linewidth=2,
 )
 
 ratio_ax2.plot(
@@ -617,6 +626,7 @@ ratio_ax2.plot(
     label="last_NPO",
     color=sns.color_palette("Paired")[1],
     linestyle="--",
+    linewidth=2,
 )
 
 # upvp negative
@@ -625,6 +635,7 @@ upvp_ax2.plot(
     first_NAO_neg_upvp_NA["lag"],
     label="first",
     color=sns.color_palette("Paired")[2],
+    linewidth=2,
 )
 
 upvp_ax2.plot(
@@ -632,6 +643,7 @@ upvp_ax2.plot(
     last_NAO_neg_upvp_NA["lag"],
     label="last",
     color=sns.color_palette("Paired")[3],
+    linewidth=2,
 )
 
 # eke first negative
@@ -703,11 +715,11 @@ for ax in [
 
 ratio_ax1.set_ylabel("Lag (days)")
 ratio_ax1.set_xlabel(r"$\Delta q / \Delta T$ (g $\cdot$ kg$^{-1}$ $\cdot$ K$^{-1}$)")
-upvp_ax1.set_xlabel(r"$u^{\prime}v^{\prime}$ (m$^2$ $\cdot$ s$^{-2}$)")
+upvp_ax1.set_xlabel(r"$u^{'}v^{'}$ (m$^2$ $\cdot$ s$^{-2}$)")
 
 
 ratio_ax2.set_xlabel(r"$\Delta q / \Delta T$ (g $\cdot$ kg$^{-1}$ $\cdot$ K$^{-1}$)")
-upvp_ax2.set_xlabel(r"$u^{\prime}v^{\prime}$ (m$^2$ $\cdot$ s$^{-2}$)")
+upvp_ax2.set_xlabel(r"$u^{'}v^{'}$ (m$^2$ $\cdot$ s$^{-2}$)")
 
 ratio_ax1.set_yticks(np.arange(-20, 11, 5))
 
@@ -780,7 +792,7 @@ handles_ratio, labels = ratio_ax1.get_legend_handles_labels()
 labels = [r"$\Delta q / \Delta T$ _first_NAL", r"$\Delta q / \Delta T$_last_NAL", r"$\Delta q / \Delta T$ _first_NPO", r"$\Delta q / \Delta T$ _last_NPO"]
 # add legend of upvp to legend_ax
 handles_upvp, labels_upvp = upvp_ax1.get_legend_handles_labels()
-labels_upvp = ["$u^{\prime}v^{\prime}$ _first", "$u^{\prime}v^{\prime}$ _last"]
+labels_upvp = ["$u^{'}v^{'}$ _first", "$u^{'}v^{'}$ _last"]
 
 handles_together = handles_ratio + handles_upvp
 labels_together = labels + labels_upvp
