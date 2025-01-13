@@ -27,6 +27,7 @@ daily_files=(${Mayfiles[@]} ${Junfiles[@]} ${Julfiles[@]} ${Augfiles[@]} ${Sepfi
 
 Remove_seasonal_cyc() {
     infile=$1
+    echo Processing $(basename $infile)
     outfile=${to_dir}$(basename $infile .grb)_rm_seacyc.nc
     cdo -f nc -O -P 8 -divc,9.80665 -ymonsub -sellevel,50000 -sellonlatbox,-90,40,20,80 -setgridtype,regular $infile -sellonlatbox,-90,40,20,80 -setgridtype,regular $season_cyc $outfile
 }
