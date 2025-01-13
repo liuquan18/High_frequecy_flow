@@ -44,4 +44,4 @@ trend(){
 
 export -f trend
 
-parallel --jobs 5 trend ::: {5..9}
+parallel --jobs 5 trend ::: {05..09}
