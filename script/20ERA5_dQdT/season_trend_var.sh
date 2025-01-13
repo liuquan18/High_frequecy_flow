@@ -39,8 +39,8 @@ trend(){
 
     mon=$1
     echo "Processing month $mon"
-    afile=${to_dir}${var}_50000_trend_${mon}_a.nc
-    bfile=${to_dir}${var}_50000_trend_${mon}_b.nc
+    afile=${to_dir}${var}_1000_850hpa_trend_${mon}_a.nc
+    bfile=${to_dir}${var}_1000_850hpa_trend_${mon}_b.nc
 
     # monthly data pre-process
     # trend
