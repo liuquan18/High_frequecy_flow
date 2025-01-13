@@ -747,6 +747,15 @@ for ax in [eke_diff_ax1, eke_diff_ax2]:
     ax.set_xticklabels(["180W", "120W", "60W", "0", "60E", "120E"])
     ax.set_xlabel("")
 
+eke_first_ax1.set_title("1850-1859 pos")
+eke_last_ax1.set_title("2090-2099 pos")
+
+eke_first_ax2.set_title("1850-1859 neg")
+eke_last_ax2.set_title("2090-2099 neg")
+
+eke_diff_ax1.set_title("2090-2099 - 1850-1859 pos")
+eke_diff_ax2.set_title("2090-2099 - 1850-1859 neg")
+
 row2 = [eke_first_ax1, eke_first_ax2]
 row3 = [eke_last_ax1, eke_last_ax2]
 row4 = [eke_diff_ax1, eke_diff_ax2]
@@ -840,11 +849,11 @@ eke_first_ax1.text(
 )
 
 eke_last_ax1.text(
-    0.0, 1.05, "f", transform=eke_last_ax1.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "g", transform=eke_last_ax1.transAxes, fontsize=12, fontweight="bold"
 )
 
 eke_first_ax2.text(
-    0.0, 1.05, "g", transform=eke_first_ax2.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "f", transform=eke_first_ax2.transAxes, fontsize=12, fontweight="bold"
 )
 
 eke_last_ax2.text(
