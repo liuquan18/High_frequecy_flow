@@ -40,6 +40,13 @@ for i, daily_file in enumerate(daily_files_single):
     eof = xr.open_dataset(eof_file).eof.sel(mode = 'NAO').squeeze()
     eof['plev'] = 50000
 
+    try:
+        daily_field['time'] = pd.to_datetime(daily_field.time.values)
+
+    except:
+        logging.info("Time already in datetime format")
+        pass
+
     projected_pcs = project_field_to_pattern(daily_field, eof, standard=False, plev = None)
     projected_pcs.name = "pc"
     projected_pcs.to_netcdf(f"{pc_dir}{os.path.basename(daily_file).replace('rm_trend','NAO')}")
