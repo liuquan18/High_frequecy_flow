@@ -16,7 +16,7 @@ module load parallel
 var=$1
 var_num=$2
 
-daily_dir=/pool/data/ERA5/E5/pl/an/1D/var_num/
+daily_dir=/pool/data/ERA5/E5/pl/an/1D/${var_num}/
 to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_daily_rm_trend/
 daily_tmp_dir=/scratch/m/m300883/ERA5/${var}_daily_pre/
 
