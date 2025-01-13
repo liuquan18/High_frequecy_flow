@@ -155,7 +155,7 @@ def eke_lag_lon(first, last):
 # %%
 def to_plot_data(eke):
     eke = eke.rename({"lag": "lat"})  # fake lat to plot correctly the lon
-    eke['lat'] = eke['lat']*4 # fake lat to plot correctly the lon
+    eke["lat"] = eke["lat"] * 4  # fake lat to plot correctly the lon
     # Solve the problem on 180 longitude by extending the data
     eke = eke.reindex(lon=np.append(eke.lon.values, 180), method="nearest")
     lon_values = eke.lon.values
@@ -229,13 +229,270 @@ def lon2x(longitude, ax):
 
     return x_coord
 
-# %%
-fig = plt.figure(figsize=(12, 8))
 
-grid = plt.GridSpec(
-    3, 3, wspace=0.1, hspace=0.3, width_ratios=[1, 2, 1], height_ratios=[1, 1, 0.3]
-)
+# # %%
+# fig = plt.figure(figsize=(12, 8))
+
+# grid = plt.GridSpec(
+#     3, 3, wspace=0.1, hspace=0.3, width_ratios=[1, 2, 1], height_ratios=[1, 1, 0.3]
+# )
+# ratio_ax1 = fig.add_subplot(grid[0, 0])
+
+# ratio_ax1.plot(
+#     first_NAO_pos_ratio_NAL["ratio"],
+#     first_NAO_pos_ratio_NAL["lag"],
+#     label="first_NAL",
+#     color=sns.color_palette("Paired")[0],
+# )
+# ratio_ax1.plot(
+#     last_NAO_pos_ratio_NAL["ratio"],
+#     last_NAO_pos_ratio_NAL["lag"],
+#     label="last_NAL",
+#     color=sns.color_palette("Paired")[1],
+# )
+
+# ratio_ax1.plot(
+#     first_NAO_pos_ratio_NPO["ratio"],
+#     first_NAO_pos_ratio_NPO["lag"],
+#     label="first_NPO",
+#     color=sns.color_palette("Paired")[0],
+#     linestyle="--",
+# )
+
+# ratio_ax1.plot(
+#     last_NAO_pos_ratio_NPO["ratio"],
+#     last_NAO_pos_ratio_NPO["lag"],
+#     label="last_NPO",
+#     color=sns.color_palette("Paired")[1],
+#     linestyle="--",
+# )
+
+
+# eke_diff_ax1 = fig.add_subplot(grid[0, 1], projection=ccrs.PlateCarree(-90))
+
+# NAO_pos_eke_lat_lon["eke_diff"].T.plot.contourf(
+#     x="lon",
+#     y="lat",
+#     ax=eke_diff_ax1,
+#     transform=ccrs.PlateCarree(),
+#     cmap=eke_cmap,
+#     cbar_kwargs={"label": r"m$^2$/s$^2$"},
+#     levels=np.arange(-5, 5.1, 1),
+# )
+# eke_diff_ax1.set_aspect(2)
+# eke_diff_ax1.set_yticks(np.arange(-20, 10, 5) * 4)
+# eke_diff_ax1.set_yticklabels("")
+# eke_diff_ax1.set_ylabel("")
+
+
+# upvp_ax1 = fig.add_subplot(grid[0, 2])
+# upvp_ax1.plot(
+#     first_NAO_pos_upvp_NA["upvp"],
+#     first_NAO_pos_upvp_NA["lag"],
+#     label="first",
+#     color=sns.color_palette("Paired")[2],
+# )
+
+# upvp_ax1.plot(
+#     last_NAO_pos_upvp_NA["upvp"],
+#     last_NAO_pos_upvp_NA["lag"],
+#     label="last",
+#     color=sns.color_palette("Paired")[3],
+# )
+
+
+# # Second row for neg
+# ratio_ax2 = fig.add_subplot(grid[1, 0])
+
+# ratio_ax2.plot(
+#     first_NAO_neg_ratio_NAL["ratio"],
+#     first_NAO_neg_ratio_NAL["lag"],
+#     label="first_NAL",
+#     color=sns.color_palette("Paired")[0],
+# )
+# ratio_ax2.plot(
+#     last_NAO_neg_ratio_NAL["ratio"],
+#     last_NAO_neg_ratio_NAL["lag"],
+#     label="last_NAL",
+#     color=sns.color_palette("Paired")[1],
+# )
+
+# ratio_ax2.plot(
+#     first_NAO_neg_ratio_NPO["ratio"],
+#     first_NAO_neg_ratio_NPO["lag"],
+#     label="first_NPO",
+#     color=sns.color_palette("Paired")[0],
+#     linestyle="--",
+# )
+
+# ratio_ax2.plot(
+#     last_NAO_neg_ratio_NPO["ratio"],
+#     last_NAO_neg_ratio_NPO["lag"],
+#     label="last_NPO",
+#     color=sns.color_palette("Paired")[1],
+#     linestyle="--",
+# )
+
+
+# eke_ax2 = fig.add_subplot(grid[1, 1], projection=ccrs.PlateCarree(-90))
+
+# NAO_neg_eke_lat_lon["eke_diff"].T.plot.contourf(
+#     x="lon",
+#     y="lat",
+#     ax=eke_ax2,
+#     transform=ccrs.PlateCarree(),
+#     cmap=eke_cmap,
+#     cbar_kwargs={"label": r"m$^2$/s$^2$"},
+#     levels=np.arange(-5, 5.1, 1),
+# )
+# eke_ax2.set_aspect(2)
+# eke_ax2.set_aspect(2)
+# eke_ax2.set_yticks(np.arange(-20, 10, 5) * 4)
+# eke_ax2.set_yticklabels("")
+# eke_ax2.set_ylabel("")
+
+# upvp_ax2 = fig.add_subplot(grid[1, 2])
+# upvp_ax2.plot(
+#     first_NAO_neg_upvp_NA["upvp"],
+#     first_NAO_neg_upvp_NA["lag"],
+#     label="first",
+#     color=sns.color_palette("Paired")[2],
+# )
+
+# upvp_ax2.plot(
+#     last_NAO_neg_upvp_NA["upvp"],
+#     last_NAO_neg_upvp_NA["lag"],
+#     label="last",
+#     color=sns.color_palette("Paired")[3],
+# )
+
+# upvp_ax1.set_xlim(-2, 15.2)
+# upvp_ax2.set_xlim(-15.2, 2)
+
+# for ax in [eke_diff_ax1, eke_ax2]:
+#     ax.set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
+#     ax.set_xticklabels(["180W", "120W", "60W", "0", "60E", "120E"])
+#     ax.set_xlabel("")
+# for ax in [ratio_ax1, ratio_ax2, upvp_ax1, upvp_ax2, eke_diff_ax1, eke_ax2]:
+#     ax.axhline(0, color="black", linewidth=1, linestyle="dotted")
+
+# ratio_ax2.set_xlabel(r"$g \cdot kg^{-1} \cdot K^{-1}$")
+# eke_ax2.set_xlabel("Longitude")
+# upvp_ax2.set_xlabel(r"$m^2 \cdot s^{-2}$")
+
+# ratio_ax1.set_title(r"$\Delta q / \Delta T$")
+# eke_diff_ax1.set_title(r"$1/2(u^{\prime 2} + v^{\prime 2})$ difference")
+# upvp_ax1.set_title(r"$u^{\prime}v^{\prime}$")
+
+# ratio_legend_ax = fig.add_subplot(grid[2, 0])
+# # add custom legend for ratio_ax1
+# handles, labels = ratio_ax1.get_legend_handles_labels()
+# ratio_legend_ax.legend(handles, labels, loc="center", frameon=False, ncols=2)
+# ratio_legend_ax.axis("off")
+
+# eke_coast_ax = fig.add_subplot(grid[2, 1], projection=ccrs.PlateCarree(-90))
+# eke_coast_ax.coastlines()
+# eke_coast_ax.set_extent([-180, 180, 20, 60], crs=ccrs.PlateCarree())
+# # add ocean feature
+# eke_coast_ax.add_feature(
+#     cfeature.NaturalEarthFeature(
+#         "physical", "ocean", "50m", edgecolor="face", facecolor="lightblue"
+#     )
+# )
+# # set the position of the ax
+# pos1 = eke_ax2.get_position()
+# eke_coast_ax.set_position([pos1.x0, pos1.y0 - 0.32, pos1.width, pos1.width * 1.5])
+
+# # vline at lon = [-70, -35] and [140, -145]
+# eke_coast_ax.axvline(
+#     lon2x(-70, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+# )
+# eke_coast_ax.axvline(
+#     lon2x(-35, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+# )
+# eke_coast_ax.axvline(
+#     lon2x(140, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+# )
+# eke_coast_ax.axvline(
+#     lon2x(-145, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+# )
+
+# # add text 'NPO' between 140 and -145, NAL between -70 and -35
+# eke_coast_ax.text(lon2x(-65.0, eke_coast_ax), 30, "NAL", fontsize=12)
+# eke_coast_ax.text(lon2x(145.0, eke_coast_ax), 30, "NPO", fontsize=12)
+
+
+# upvp_legend_ax = fig.add_subplot(grid[2, 2])
+# # add custom legend for upvp_ax1
+# handles, labels = upvp_ax1.get_legend_handles_labels()
+# upvp_legend_ax.legend(handles, labels, loc="center", frameon=False)
+# upvp_legend_ax.axis("off")
+
+# # add a,b,c,d
+# ratio_ax1.text(
+#     -0.1, 1.05, "a", transform=ratio_ax1.transAxes, fontsize=12, fontweight="bold"
+# )
+# eke_diff_ax1.text(
+#     -0.1, 1.05, "b", transform=eke_diff_ax1.transAxes, fontsize=12, fontweight="bold"
+# )
+# upvp_ax1.text(
+#     -0.1, 1.05, "c", transform=upvp_ax1.transAxes, fontsize=12, fontweight="bold"
+# )
+# ratio_ax2.text(
+#     -0.1, 1.05, "d", transform=ratio_ax2.transAxes, fontsize=12, fontweight="bold"
+# )
+# eke_ax2.text(
+#     -0.1, 1.05, "e", transform=eke_ax2.transAxes, fontsize=12, fontweight="bold"
+# )
+# upvp_ax2.text(
+#     -0.1, 1.05, "f", transform=upvp_ax2.transAxes, fontsize=12, fontweight="bold"
+# )
+
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/first_last_before_NAO_average.pdf", dpi=300)
+
+# %%
+
+
+
+
+
+
+
+
+
+
+# %%
+fig = plt.figure(figsize=(10, 10))
+
+grid = plt.GridSpec(6, 4, height_ratios=[1, 0.2, 1, 1, 1, 0.3], hspace=0)
+
+grid.update(hspace=0.3)
+# ratio positive
 ratio_ax1 = fig.add_subplot(grid[0, 0])
+ratio_ax2 = fig.add_subplot(grid[0, 2])
+
+upvp_ax1 = fig.add_subplot(grid[0, 1])
+upvp_ax2 = fig.add_subplot(grid[0, 3])
+
+legend_ax = fig.add_subplot(grid[1, :])
+
+# second row
+eke_first_ax1 = fig.add_subplot(grid[2, :2], projection=ccrs.PlateCarree(-90))
+eke_first_ax2 = fig.add_subplot(grid[2, 2:], projection=ccrs.PlateCarree(-90))
+
+# third row
+eke_last_ax1 = fig.add_subplot(grid[3, :2], projection=ccrs.PlateCarree(-90))
+eke_last_ax2 = fig.add_subplot(grid[3, 2:], projection=ccrs.PlateCarree(-90))
+
+# forth row
+eke_diff_ax1 = fig.add_subplot(grid[4, :2], projection=ccrs.PlateCarree(-90))
+eke_diff_ax2 = fig.add_subplot(grid[4, 2:], projection=ccrs.PlateCarree(-90))
+
+# fifth row
+eke_coast_ax = fig.add_subplot(grid[5, :2], projection=ccrs.PlateCarree(-90))
+
+cbar_ax = fig.add_subplot(grid[5, 2:])
+
 
 ratio_ax1.plot(
     first_NAO_pos_ratio_NAL["ratio"],
@@ -266,25 +523,7 @@ ratio_ax1.plot(
     linestyle="--",
 )
 
-
-eke_ax1 = fig.add_subplot(grid[0, 1], projection=ccrs.PlateCarree(-90))
-
-NAO_pos_eke_lat_lon["eke_diff"].T.plot.contourf(
-    x="lon",
-    y="lat",
-    ax=eke_ax1,
-    transform=ccrs.PlateCarree(),
-    cmap=eke_cmap,
-    cbar_kwargs={"label": r"m$^2$/s$^2$"},
-    levels=np.arange(-5, 5.1, 1),
-)
-eke_ax1.set_aspect(2)
-eke_ax1.set_yticks(np.arange(-20,10,5)*4)
-eke_ax1.set_yticklabels('')
-eke_ax1.set_ylabel('')
-
-
-upvp_ax1 = fig.add_subplot(grid[0, 2])
+# upvp positive
 upvp_ax1.plot(
     first_NAO_pos_upvp_NA["upvp"],
     first_NAO_pos_upvp_NA["lag"],
@@ -300,8 +539,56 @@ upvp_ax1.plot(
 )
 
 
-# Second row for neg
-ratio_ax2 = fig.add_subplot(grid[1, 0])
+# eke first positive
+
+NAO_pos_eke_lat_lon["eke_first"].T.plot.contourf(
+    x="lon",
+    y="lat",
+    ax=eke_first_ax1,
+    transform=ccrs.PlateCarree(),
+    cmap=eke_cmap,
+    levels=np.arange(-5, 5.1, 1),
+    add_colorbar=False,
+)
+# eke_first_ax1.set_aspect(2)
+eke_first_ax1.set_yticks(np.arange(-20, 10, 5) * 4)
+eke_first_ax1.set_yticklabels("")
+eke_first_ax1.set_ylabel("")
+
+# eke last positive
+NAO_pos_eke_lat_lon["eke_last"].T.plot.contourf(
+    x="lon",
+    y="lat",
+    ax=eke_last_ax1,
+    transform=ccrs.PlateCarree(),
+    cmap=eke_cmap,
+    add_colorbar=False,
+    levels=np.arange(-5, 5.1, 1),
+)
+
+# eke_last_ax1.set_aspect(2)
+eke_last_ax1.set_yticks(np.arange(-20, 10, 5) * 4)
+eke_last_ax1.set_yticklabels("")
+eke_last_ax1.set_ylabel("")
+
+# eke diff positive
+
+NAO_pos_eke_lat_lon["eke_diff"].T.plot.contourf(
+    x="lon",
+    y="lat",
+    ax=eke_diff_ax1,
+    transform=ccrs.PlateCarree(),
+    cmap=eke_cmap,
+    add_colorbar=False,
+    levels=np.arange(-5, 5.1, 1),
+)
+# eke_diff_ax1.set_aspect(2)
+eke_diff_ax1.set_yticks(np.arange(-20, 10, 5) * 4)
+eke_diff_ax1.set_yticklabels("")
+eke_diff_ax1.set_ylabel("")
+
+
+# ratio negative
 
 ratio_ax2.plot(
     first_NAO_neg_ratio_NAL["ratio"],
@@ -332,25 +619,7 @@ ratio_ax2.plot(
     linestyle="--",
 )
 
-
-eke_ax2 = fig.add_subplot(grid[1, 1], projection=ccrs.PlateCarree(-90))
-
-NAO_neg_eke_lat_lon["eke_diff"].T.plot.contourf(
-    x="lon",
-    y="lat",
-    ax=eke_ax2,
-    transform=ccrs.PlateCarree(),
-    cmap=eke_cmap,
-    cbar_kwargs={"label": r"m$^2$/s$^2$"},
-    levels=np.arange(-5, 5.1, 1),
-)
-eke_ax2.set_aspect(2)
-eke_ax2.set_aspect(2)
-eke_ax2.set_yticks(np.arange(-20,10,5)*4)
-eke_ax2.set_yticklabels('')
-eke_ax2.set_ylabel('')
-
-upvp_ax2 = fig.add_subplot(grid[1, 2])
+# upvp negative
 upvp_ax2.plot(
     first_NAO_neg_upvp_NA["upvp"],
     first_NAO_neg_upvp_NA["lag"],
@@ -365,33 +634,161 @@ upvp_ax2.plot(
     color=sns.color_palette("Paired")[3],
 )
 
+# eke first negative
+
+NAO_neg_eke_lat_lon["eke_first"].T.plot.contourf(
+    x="lon",
+    y="lat",
+    ax=eke_first_ax2,
+    transform=ccrs.PlateCarree(),
+    cmap=eke_cmap,
+    add_colorbar=False,
+    levels=np.arange(-5, 5.1, 1),
+)
+# eke_first_ax2.set_aspect(2)
+eke_first_ax2.set_yticks(np.arange(-20, 10, 5) * 4)
+eke_first_ax2.set_yticklabels("")
+eke_first_ax2.set_ylabel("")
+
+# eke last negative
+NAO_neg_eke_lat_lon["eke_last"].T.plot.contourf(
+    x="lon",
+    y="lat",
+    ax=eke_last_ax2,
+    transform=ccrs.PlateCarree(),
+    cmap=eke_cmap,
+    add_colorbar=False,
+    levels=np.arange(-5, 5.1, 1),
+)
+
+# eke_last_ax2.set_aspect(2)
+eke_last_ax2.set_yticks(np.arange(-20, 10, 5) * 4)
+eke_last_ax2.set_yticklabels("")
+eke_last_ax2.set_ylabel("")
+
+# eke diff negative
+
+NAO_neg_eke_lat_lon["eke_diff"].T.plot.contourf(
+    x="lon",
+    y="lat",
+    ax=eke_diff_ax2,
+    transform=ccrs.PlateCarree(),
+    cmap=eke_cmap,
+    add_colorbar=False,
+    levels=np.arange(-5, 5.1, 1),
+)
+# eke_diff_ax2.set_aspect(2)
+eke_diff_ax2.set_yticks(np.arange(-20, 10, 5) * 4)
+eke_diff_ax2.set_yticklabels("")
+eke_diff_ax2.set_ylabel("")
+
+
 upvp_ax1.set_xlim(-2, 15.2)
 upvp_ax2.set_xlim(-15.2, 2)
 
-for ax in [eke_ax1, eke_ax2]:
+
+for ax in [
+    ratio_ax1,
+    ratio_ax2,
+    upvp_ax1,
+    upvp_ax2,
+    eke_diff_ax1,
+    eke_diff_ax2,
+    eke_first_ax1,
+    eke_first_ax2,
+    eke_last_ax1,
+    eke_last_ax2,
+]:
+    ax.axhline(0, color="black", linewidth=2, linestyle="dotted")
+
+ratio_ax1.set_ylabel("Lag (days)")
+ratio_ax1.set_xlabel(r"$\Delta q / \Delta T$ (g $\cdot$ kg$^{-1}$ $\cdot$ K$^{-1}$)")
+upvp_ax1.set_xlabel(r"$u^{\prime}v^{\prime}$ (m$^2$ $\cdot$ s$^{-2}$)")
+
+
+ratio_ax2.set_xlabel(r"$\Delta q / \Delta T$ (g $\cdot$ kg$^{-1}$ $\cdot$ K$^{-1}$)")
+upvp_ax2.set_xlabel(r"$u^{\prime}v^{\prime}$ (m$^2$ $\cdot$ s$^{-2}$)")
+
+ratio_ax1.set_yticks(np.arange(-20, 11, 5))
+
+for ax in [ratio_ax2, upvp_ax1, upvp_ax2]:
+    ax.set_yticks(np.arange(-20, 11, 5) )
+    ax.set_yticklabels("")
+
+for ax in [
+    ratio_ax1,
+    ratio_ax2,
+    upvp_ax1,
+    upvp_ax2,]:
+    
+    # remove the top and right spines
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+for ax in [eke_diff_ax1, eke_diff_ax2]:
+    ax.set_ylabel("")
+
+for ax in [eke_first_ax1, eke_last_ax1, eke_diff_ax1]:
+    ax.set_ylabel("Lag (days)")
+    ax.set_yticks(np.arange(-20, 11, 5) * 4)
+    ax.set_yticklabels(np.arange(-20, 11, 5))
+
+for ax in [
+    eke_first_ax1,
+    eke_first_ax2,
+    eke_last_ax1,
+    eke_last_ax2,]:
+    ax.set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
+    ax.set_xticklabels("")
+    ax.set_xlabel("")
+
+for ax in [eke_diff_ax1, eke_diff_ax2]:
     ax.set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
     ax.set_xticklabels(["180W", "120W", "60W", "0", "60E", "120E"])
     ax.set_xlabel("")
-for ax in [ratio_ax1, ratio_ax2, upvp_ax1, upvp_ax2, eke_ax1, eke_ax2]:
-    ax.axhline(0, color="black", linewidth=1, linestyle = 'dotted')
 
-ratio_ax1.set_ylabel("Lag (days)")
-ratio_ax2.set_xlabel(r"$g \cdot kg^{-1} \cdot K^{-1}$")
-ratio_ax2.set_ylabel("Lag (days)")
-eke_ax2.set_xlabel("Longitude")
-upvp_ax2.set_xlabel(r"$m^2 \cdot s^{-2}$")
+row2 = [eke_first_ax1, eke_first_ax2]
+row3 = [eke_last_ax1, eke_last_ax2]
+row4 = [eke_diff_ax1, eke_diff_ax2]
 
-ratio_ax1.set_title(r"$\Delta q / \Delta T$")
-eke_ax1.set_title(r"$1/2(u^{\prime 2} + v^{\prime 2})$ difference")
-upvp_ax1.set_title(r"$u^{\prime}v^{\prime}$")
+# Adjust positions
+for ax in row2:
+    pos = ax.get_position()
+    ax.set_position([pos.x0, pos.y0 - 0.04, pos.width, pos.height])  # Move second row down slightly
 
-ratio_legend_ax = fig.add_subplot(grid[2, 0])
+for ax in row3:
+    pos = ax.get_position()
+    ax.set_position([pos.x0, pos.y0 - 0.02, pos.width, pos.height])  # Move third row down less
+
+for ax in row4:
+    pos = ax.get_position()
+    ax.set_position([pos.x0, pos.y0 , pos.width, pos.height])  # Move fourth row down less
+
+
 # add custom legend for ratio_ax1
-handles, labels = ratio_ax1.get_legend_handles_labels()
-ratio_legend_ax.legend(handles, labels, loc='center', frameon=False, ncols=2)
-ratio_legend_ax.axis('off')
+handles_ratio, labels = ratio_ax1.get_legend_handles_labels()
 
-eke_coast_ax = fig.add_subplot(grid[2, 1], projection=ccrs.PlateCarree(-90))
+labels = [r"$\Delta q / \Delta T$ _first_NAL", r"$\Delta q / \Delta T$_last_NAL", r"$\Delta q / \Delta T$ _first_NPO", r"$\Delta q / \Delta T$ _last_NPO"]
+# add legend of upvp to legend_ax
+handles_upvp, labels_upvp = upvp_ax1.get_legend_handles_labels()
+labels_upvp = ["$u^{\prime}v^{\prime}$ _first", "$u^{\prime}v^{\prime}$ _last"]
+
+handles_together = handles_ratio + handles_upvp
+labels_together = labels + labels_upvp
+
+legend_ax.legend(handles_together, labels_together, loc="center", frameon=False, ncol = 4)
+legend_ax.axis("off")
+legend_pos = legend_ax.get_position()
+legend_ax.set_position([legend_pos.x0, legend_pos.y0 - 0.04, legend_pos.width, legend_pos.height])
+
+# add colorbar of eke
+cbar = plt.colorbar(
+    mappable=eke_diff_ax1.collections[0], cax=cbar_ax, orientation="horizontal", aspect=30,
+    label = r"EKE (m$^2$ s$^{-2}$)"
+)
+cbar_ax.set_aspect(0.05)
+
+# eke region
 eke_coast_ax.coastlines()
 eke_coast_ax.set_extent([-180, 180, 20, 60], crs=ccrs.PlateCarree())
 # add ocean feature
@@ -400,29 +797,71 @@ eke_coast_ax.add_feature(
         "physical", "ocean", "50m", edgecolor="face", facecolor="lightblue"
     )
 )
-    # set the position of the ax
-pos1 = eke_ax2.get_position()
-eke_coast_ax.set_position([pos1.x0, pos1.y0 - 0.32, pos1.width, pos1.width * 1.5])
+# set the position of the ax
+pos1 = eke_diff_ax1.get_position()
+eke_coast_ax.set_position([pos1.x0, pos1.y0 - 0.36, pos1.width, pos1.width * 1.5])
 
-# vline at lon = [-70, -35] and [140, -145] 
-eke_coast_ax.axvline(lon2x(-70,eke_coast_ax), color='black', linewidth=1.5, linestyle='dotted')
-eke_coast_ax.axvline(lon2x(-35,eke_coast_ax), color='black', linewidth=1.5, linestyle='dotted')
-eke_coast_ax.axvline(lon2x(140,eke_coast_ax), color='black', linewidth=1.5, linestyle='dotted')
-eke_coast_ax.axvline(lon2x(-145,eke_coast_ax), color='black', linewidth=1.5, linestyle='dotted')
+
+# vline at lon = [-70, -35] and [140, -145]
+eke_coast_ax.axvline(
+    lon2x(-70, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+)
+eke_coast_ax.axvline(
+    lon2x(-35, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+)
+eke_coast_ax.axvline(
+    lon2x(140, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+)
+eke_coast_ax.axvline(
+    lon2x(-145, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+)
 
 # add text 'NPO' between 140 and -145, NAL between -70 and -35
-eke_coast_ax.text(lon2x(-65.,eke_coast_ax), 30, 'NAL', fontsize=12)
-eke_coast_ax.text(lon2x(145.,eke_coast_ax), 30, 'NPO', fontsize=12)
+eke_coast_ax.text(lon2x(-65.0, eke_coast_ax), 30, "NAL", fontsize=12)
+eke_coast_ax.text(lon2x(145.0, eke_coast_ax), 30, "NPO", fontsize=12)
 
 
-upvp_legend_ax = fig.add_subplot(grid[2, 2])
-# add custom legend for upvp_ax1
-handles, labels = upvp_ax1.get_legend_handles_labels()
-upvp_legend_ax.legend(handles, labels, loc='center', frameon=False)
-upvp_legend_ax.axis('off')
+# add a,b,c,d
+ratio_ax1.text(
+    -0.1, 1.05, "a", transform=ratio_ax1.transAxes, fontsize=12, fontweight="bold"
+)
+upvp_ax1.text(
+    -0.1, 1.05, "b", transform=upvp_ax1.transAxes, fontsize=12, fontweight="bold"
+)
+ratio_ax2.text(
+    -0.1, 1.05, "c", transform=ratio_ax2.transAxes, fontsize=12, fontweight="bold"
+)
+upvp_ax2.text(
+    -0.1, 1.05, "d", transform=upvp_ax2.transAxes, fontsize=12, fontweight="bold"
+)
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/first_last_before_NAO_average.pdf", dpi=300)
+eke_first_ax1.text(
+    0.0, 1.05, "e", transform=eke_first_ax1.transAxes, fontsize=12, fontweight="bold"
+)
+
+eke_last_ax1.text(
+    0.0, 1.05, "f", transform=eke_last_ax1.transAxes, fontsize=12, fontweight="bold"
+)
+
+eke_first_ax2.text(
+    0.0, 1.05, "g", transform=eke_first_ax2.transAxes, fontsize=12, fontweight="bold"
+)
+
+eke_last_ax2.text(
+    0.0, 1.05, "h", transform=eke_last_ax2.transAxes, fontsize=12, fontweight="bold"
+)
+
+eke_diff_ax1.text(
+    0.0, 1.05, "i", transform=eke_diff_ax1.transAxes, fontsize=12, fontweight="bold"
+)
+
+eke_diff_ax2.text(
+    0.0, 1.05, "j", transform=eke_diff_ax2.transAxes, fontsize=12, fontweight="bold"
+)
+
+
+
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_togher.pdf", dpi=300)
 
 # %%
-
- 
