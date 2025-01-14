@@ -9,4 +9,4 @@
 #SBATCH --account=mh0033
 #SBATCH --output=proj.%j.out
 
-mpirun -n 30 python -u index_generate.py
+mpirun -n 30 python -u 2index_generate.py
