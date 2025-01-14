@@ -33,4 +33,8 @@ pc_files = np.array_split(daily_files, size)[rank]  # years on this core
 for i, pc_file in enumerate(pc_files):
     logging.info(f"Rank {rank}, file {pc_file} {i}/{len(pc_files)}")
     pc = xr.open_dataset(pc_file).pc
-    pc_mean - 
+    pc_mean = pc.mean(dim = 'time')
+    pc_std = pc.std(dim = 'time')
+    pc_stded = (pc - pc_mean) / pc_std
+
+    pc_stded.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/pc_std/{os.path.basename(pc_file)}")
