@@ -14,10 +14,11 @@ var=$1
 var_num=$2
 
 daily_dir=/pool/data/ERA5/E5/pl/an/1D/${var_num}/
+tmp_dir=/scratch/m/m300883/ERA5/${var}_daily/
 to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_daily/
 
-export daily_dir to_dir var
-mkdir -p $to_dir 
+export daily_dir tmp_dir to_dir var
+mkdir -p $tmp_dir $to_dir
 
 Mayfiles=($(find $daily_dir -name "*.grb" -print | grep "\-05_${var_num}\.grb$"))
 Junfiles=($(find $daily_dir -name "*.grb" -print | grep "\-06_${var_num}\.grb$"))
@@ -30,11 +31,21 @@ daily_files=(${Mayfiles[@]} ${Junfiles[@]} ${Julfiles[@]} ${Augfiles[@]} ${Sepfi
 pre_process(){
     infile=$1
     echo Processing $(basename $infile)
-    outfile=${to_dir}$(basename $infile .grb).nc
-    cdo -f nc -O -P 10 -setgridtype,regular -vertmean -sellevel,85000,87500,90000,92500,95000,97500,100000 $infile $outfile
+    tmpfile=${tmp_dir}$(basename $infile .grb).nc
+    cdo -f nc -O -P 10 -setgridtype,regular -vertmean -sellevel,85000,87500,90000,92500,95000,97500,100000 $infile $tmpfile
 
 }
 
-export -f pre_process
+merge_year(){
+    year=$1
+    echo "Merging year ${year}"
+    year_files=$(find ${tmp_dir} -name "*.nc" | grep ${year})
+    cdo -O mergetime ${year_files} ${to_dir}E5pl00_1D_${var}_daily_${year}-05-01_${year}-09-31.nc
+}
+
+export -f pre_process 
+export -f merge_year
 
 parallel --jobs 25 pre_process ::: ${daily_files[@]}
+
+parallel --jobs 10 merge_year ::: {1979..2024}
