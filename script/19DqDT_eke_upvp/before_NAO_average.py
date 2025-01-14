@@ -150,7 +150,11 @@ def eke_lag_lon(first, last):
     eke_eventmean_xr = eke_eventmean.to_xarray()
 
     return eke_eventmean_xr
-
+#%%
+def remove_zonalmean(eke):
+    zonal_mean = eke.mean(dim="lon")
+    eke = eke - zonal_mean
+    return eke
 
 # %%
 def to_plot_data(eke):
@@ -201,6 +205,9 @@ last_NAO_neg_ratio_NPO = event_mean(last_NAO_neg_ratio_NPO, "ratio")
 NAO_pos_eke_lag_lon = eke_lag_lon(first_NAO_pos_eke, last_NAO_pos_eke)
 NAO_neg_eke_lag_lon = eke_lag_lon(first_NAO_neg_eke, last_NAO_neg_eke)
 # %%
+NAO_pos_eke_lag_lon = remove_zonalmean(NAO_pos_eke_lag_lon)
+NAO_neg_eke_lag_lon = remove_zonalmean(NAO_neg_eke_lag_lon)
+#%%
 # for plotting
 NAO_pos_eke_lat_lon = to_plot_data(NAO_pos_eke_lag_lon)
 NAO_neg_eke_lat_lon = to_plot_data(NAO_neg_eke_lag_lon)
