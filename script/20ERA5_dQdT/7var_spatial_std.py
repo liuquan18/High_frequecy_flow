@@ -39,7 +39,7 @@ files_core = np.array_split(all_files, size)[rank]
 # %%
 for i, file in enumerate(files_core):
     logging.info(f"rank {rank} Processing {i+1}/{len(files_core)}")
-    ds = xr.open_dataset(file, chunks = {'time': 5})
+    ds = xr.open_dataset(file, chunks = {'time': 1})
     if var == 'tas':
         var_code = 'var130'
     elif var == 'hus':
@@ -48,8 +48,8 @@ for i, file in enumerate(files_core):
     ds = ds[var_code]
     # lon interval 0.28125 deg, lat interval 0.27
     # 
-    lon_window = 210 # 60/0.28125
-    lat_window = 37 # 10/0.27
+    lon_window = 200 # 60/0.28125
+    lat_window = 30 # 10/0.27
     ds_std = lc.rolling_lon_periodic(ds, lon_window, lat_window, stat = 'std')
     ds_std.to_netcdf(to_path + file.split('/')[-1])
     ds.close()
