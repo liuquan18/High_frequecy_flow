@@ -31,7 +31,7 @@ pre_process(){
     infile=$1
     echo Processing $(basename $infile)
     outfile=${to_dir}$(basename $infile .grb).nc
-    cdo -f nc -O -P 10 -setgridtype,regular -vertmean -sellevel,85000,87500,90000,92500,95000,97500,100000 $infile $pre_file
+    cdo -f nc -O -P 10 -setgridtype,regular -vertmean -sellevel,85000,87500,90000,92500,95000,97500,100000 $infile $outfile
 
 }
 
