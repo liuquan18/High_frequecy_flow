@@ -18,10 +18,10 @@ var_num=$2
 
 daily_dir=/pool/data/ERA5/E5/pl/an/1D/${var_num}/
 to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_daily_rm_trend/
-daily_tmp_dir=/scratch/m/m300883/ERA5/${var}_daily_pre/
+daily_pre_dir=/scratch/m/m300883/ERA5/${var}_daily/
 
-export daily_dir to_dir daily_tmp_dir var
-mkdir -p $to_dir $daily_tmp_dir
+export daily_dir to_dir daily_pre_dir var
+mkdir -p $to_dir $daily_pre_dir
 
 Mayfiles=($(find $daily_dir -name "*.grb" -print | grep "\-05_${var_num}\.grb$"))
 Junfiles=($(find $daily_dir -name "*.grb" -print | grep "\-06_${var_num}\.grb$"))
@@ -35,17 +35,17 @@ Remove_trend(){
 
     infile=$1
     echo Processing $(basename $infile)
-    tmpfile=${daily_tmp_dir}$(basename $infile .grb).nc
+    pre_file=${daily_pre_dir}$(basename $infile .grb).nc
 
     month=$(basename "$infile" | sed -E 's/.*_([0-9]{4})-([0-9]{2})_.*/\2/')
     afile=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_monthly_stat/${var}_1000_850hpa_trend_${month}_a.nc
     bfile=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_monthly_stat/${var}_1000_850hpa_trend_${month}_b.nc
 
     # daily data pre-process
-    cdo -f nc -O -P 10 -setgridtype,regular -vertmean -mergetime -apply,-sellevel,85000,87500,90000,92500,95000,97500,100000 $infile $tmpfile
+    cdo -f nc -O -P 10 -setgridtype,regular -vertmean -sellevel,85000,87500,90000,92500,95000,97500,100000 $infile $pre_file
 
     # subtract trend from daily data
-    cdo -O -P 10 -subtrend $tmpfile $afile $bfile ${to_dir}$(basename $infile .grb)_rm_trend.nc
+    cdo -O -P 10 -subtrend $pre_file $afile $bfile ${to_dir}$(basename $infile .grb)_rm_trend.nc
 
 }
 
