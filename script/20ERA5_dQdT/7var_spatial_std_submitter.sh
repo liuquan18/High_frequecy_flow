@@ -4,7 +4,7 @@
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --mem=500G
+#SBATCH --mem=900G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
 #SBATCH --output=std.%j.out
