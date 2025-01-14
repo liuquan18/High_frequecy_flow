@@ -18,7 +18,7 @@ var_num=$2
 
 daily_dir=/pool/data/ERA5/E5/pl/an/1D/${var_num}/
 to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_daily_rm_trend/
-daily_pre_dir=/scratch/m/m300883/ERA5/${var}_daily/
+daily_pre_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_daily/
 
 export daily_dir to_dir daily_pre_dir var
 mkdir -p $to_dir $daily_pre_dir
