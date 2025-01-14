@@ -66,7 +66,23 @@ def zonal_mean(df):
 
     return df_final
 
+def _rm_zonalmean(df, df_zonalmean):
+    value_columns = df.columns.difference(['event_id', 'ens', 'lon', 'extreme_duration', 'extreme_start_time'])
+    df_values = df[value_columns]
+    df_zonalmean_values = df_zonalmean[value_columns]
+    df_rm = df_values - df_zonalmean_values.values
+    df[value_columns] = df_rm
+    return df
+    
 
+
+
+def rm_zonalmean(eke):
+    eke = eke.reset_index() 
+    eke = eke.rename(columns = {'level_0': 'event_id'})
+    eke_zonalmean = zonal_mean(eke)
+    eke_rm = eke.groupby('lon').apply(_rm_zonalmean, df_zonalmean = eke_zonalmean)
+    return eke_rm
 # %%
 # hus_tas_ratio basin mean
 def ratio_basin_mean(ratio):
@@ -74,8 +90,11 @@ def ratio_basin_mean(ratio):
     box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
     box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
 
-    ratio = ratio.reset_index()
-    ratio = ratio.rename(columns={"level_0": "event_id"})
+    if 'event_id' in ratio.columns:
+        ratio = ratio
+    else:
+        ratio = ratio.reset_index()
+        ratio = ratio.rename(columns={"level_0": "event_id"})
 
     # sel lon
     ratio_NAL = ratio.loc[(ratio["lon"] >= box_NAL[0]) & (ratio["lon"] <= box_NAL[1])]
@@ -156,17 +175,33 @@ last_NAO_neg_ratio_NPO_lagmean = lag_mean(last_NAO_neg_ratio_NPO)
 
 # %%
 # eke
-first_NAO_pos_eke_zonalmean = eke_2060_mean(first_NAO_pos_eke)
-first_NAO_neg_eke_zonalmean = eke_2060_mean(first_NAO_neg_eke)
+# remove zonal mean
+first_NAO_pos_eke_rm = rm_zonalmean(first_NAO_pos_eke)
+first_NAO_neg_eke_rm = rm_zonalmean(first_NAO_neg_eke)
 
-last_NAO_pos_eke_zonalmean = eke_2060_mean(last_NAO_pos_eke)
-last_NAO_neg_eke_zonalmean = eke_2060_mean(last_NAO_neg_eke)
-# %%
-first_NAO_pos_eke_zonalmean_lagmean = lag_mean(first_NAO_pos_eke_zonalmean, name="eke")
-first_NAO_neg_eke_zonalmean_lagmean = lag_mean(first_NAO_neg_eke_zonalmean, name="eke")
+last_NAO_pos_eke_rm = rm_zonalmean(last_NAO_pos_eke)
+last_NAO_neg_eke_rm = rm_zonalmean(last_NAO_neg_eke)
 
-last_NAO_pos_eke_zonalmean_lagmean = lag_mean(last_NAO_pos_eke_zonalmean, name="eke")
-last_NAO_neg_eke_zonalmean_lagmean = lag_mean(last_NAO_neg_eke_zonalmean, name="eke")
+
+#%%
+first_NAO_pos_eke_NAL, first_NAO_pos_eke_NPO = ratio_basin_mean(first_NAO_pos_eke_rm)
+first_NAO_neg_eke_NAL, first_NAO_neg_eke_NPO = ratio_basin_mean(first_NAO_neg_eke_rm)
+
+last_NAO_pos_eke_NAL, last_NAO_pos_eke_NPO = ratio_basin_mean(last_NAO_pos_eke_rm)
+last_NAO_neg_eke_NAL, last_NAO_neg_eke_NPO = ratio_basin_mean(last_NAO_neg_eke_rm)
+
+#%%
+first_NAO_pos_eke_NAL_lagmean = lag_mean(first_NAO_pos_eke_NAL, name="eke")
+first_NAO_pos_eke_NPO_lagmean = lag_mean(first_NAO_pos_eke_NPO, name="eke")
+
+first_NAO_neg_eke_NAL_lagmean = lag_mean(first_NAO_neg_eke_NAL, name="eke")
+first_NAO_neg_eke_NPO_lagmean = lag_mean(first_NAO_neg_eke_NPO, name="eke")
+
+last_NAO_pos_eke_NAL_lagmean = lag_mean(last_NAO_pos_eke_NAL, name="eke")
+last_NAO_pos_eke_NPO_lagmean = lag_mean(last_NAO_pos_eke_NPO, name="eke")
+
+last_NAO_neg_eke_NAL_lagmean = lag_mean(last_NAO_neg_eke_NAL, name="eke")
+last_NAO_neg_eke_NPO_lagmean = lag_mean(last_NAO_neg_eke_NPO, name="eke")
 
 # %%
 # upvp in NA mean
@@ -217,15 +252,16 @@ def merge_ratio_eke_upvp(ratio, eke, upvp, period, phase, region):
 # %%
 first_NAO_pos_NPO = merge_ratio_eke_upvp(
     first_NAO_pos_ratio_NPO_lagmean,
-    first_NAO_pos_eke_zonalmean_lagmean,
+    first_NAO_pos_eke_NPO_lagmean,
     first_NAO_pos_upvp_NA_lagmean,
     "first",
     "pos",
     "NPO",
 )
+
 first_NAO_neg_NPO = merge_ratio_eke_upvp(
     first_NAO_neg_ratio_NPO_lagmean,
-    first_NAO_neg_eke_zonalmean_lagmean,
+    first_NAO_neg_eke_NPO_lagmean,
     first_NAO_neg_upvp_NA_lagmean,
     "first",
     "neg",
@@ -234,15 +270,16 @@ first_NAO_neg_NPO = merge_ratio_eke_upvp(
 
 last_NAO_pos_NPO = merge_ratio_eke_upvp(
     last_NAO_pos_ratio_NPO_lagmean,
-    last_NAO_pos_eke_zonalmean_lagmean,
+    last_NAO_pos_eke_NPO_lagmean,
     last_NAO_pos_upvp_NA_lagmean,
     "last",
     "pos",
     "NPO",
 )
+
 last_NAO_neg_NPO = merge_ratio_eke_upvp(
     last_NAO_neg_ratio_NPO_lagmean,
-    last_NAO_neg_eke_zonalmean_lagmean,
+    last_NAO_neg_eke_NPO_lagmean,
     last_NAO_neg_upvp_NA_lagmean,
     "last",
     "neg",
@@ -251,15 +288,16 @@ last_NAO_neg_NPO = merge_ratio_eke_upvp(
 
 first_NAO_pos_NAL = merge_ratio_eke_upvp(
     first_NAO_pos_ratio_NAL_lagmean,
-    first_NAO_pos_eke_zonalmean_lagmean,
+    first_NAO_pos_eke_NAL_lagmean,
     first_NAO_pos_upvp_NA_lagmean,
     "first",
     "pos",
     "NAL",
 )
+
 first_NAO_neg_NAL = merge_ratio_eke_upvp(
     first_NAO_neg_ratio_NAL_lagmean,
-    first_NAO_neg_eke_zonalmean_lagmean,
+    first_NAO_neg_eke_NAL_lagmean,
     first_NAO_neg_upvp_NA_lagmean,
     "first",
     "neg",
@@ -268,20 +306,24 @@ first_NAO_neg_NAL = merge_ratio_eke_upvp(
 
 last_NAO_pos_NAL = merge_ratio_eke_upvp(
     last_NAO_pos_ratio_NAL_lagmean,
-    last_NAO_pos_eke_zonalmean_lagmean,
+    last_NAO_pos_eke_NAL_lagmean,
     last_NAO_pos_upvp_NA_lagmean,
     "last",
     "pos",
     "NAL",
 )
+
 last_NAO_neg_NAL = merge_ratio_eke_upvp(
     last_NAO_neg_ratio_NAL_lagmean,
-    last_NAO_neg_eke_zonalmean_lagmean,
+    last_NAO_neg_eke_NAL_lagmean,
     last_NAO_neg_upvp_NA_lagmean,
     "last",
     "neg",
     "NAL",
 )
+
+
+
 
 # %%
 df_NPO_pos = pd.concat([first_NAO_pos_NPO, last_NAO_pos_NPO])
@@ -372,4 +414,114 @@ axes[1,0].set_ylim(-25, 45)
 axes[1,1].set_ylim(-25, 45)
 
 
+# %%
+fig, axes = plt.subplots(2, 2, figsize=(10, 10))
+sns.scatterplot(
+    data=df_NPO_pos,
+    x="upvp_lag_mean",
+    y="eke_lag_mean",
+    hue="ratio_lag_mean",
+    style='period',
+    size = 'extreme_duration',
+    sizes = (5, 300),
+    ax=axes[0,0],
+    legend=False,
+    alpha=0.7,
+)
+
+# %%
+fig, axes = plt.subplots(2, 2, figsize=(10, 10))
+sns.scatterplot(
+    data=df_NPO_pos,
+    x="ratio_lag_mean",
+    y="eke_lag_mean",
+    hue="period",
+    # style='period',
+    size = 'extreme_duration',
+    sizes = (5, 300),
+    ax=axes[0,0],
+    legend=False,
+    alpha=0.7,
+)
+
+sns.scatterplot(
+    data=df_NPO_neg,
+    x="ratio_lag_mean",
+    y="eke_lag_mean",
+    hue="period",
+    # style='period',
+    size = 'extreme_duration',
+    sizes = (5, 300),
+    ax=axes[0,1],
+    legend=False,
+    alpha=0.7,
+)
+
+sns.scatterplot(
+    data=df_NAL_pos,
+    x="ratio_lag_mean",
+    y="eke_lag_mean",
+    hue="period",
+    # style='period',
+    size = 'extreme_duration',
+    sizes = (5, 300),
+    ax=axes[1,0],
+    legend=False,
+    alpha=0.7,
+)
+
+sns.scatterplot(
+    data=df_NAL_neg,
+    x="ratio_lag_mean",
+    y="eke_lag_mean",
+    hue="period",
+    # style='period',
+    size = 'extreme_duration',
+    sizes = (5, 300),
+    ax=axes[1,1],
+    legend=False,
+    alpha=0.7,
+)
+
+for ax in axes.flat:
+    ax.set_xlim(0.4, 1.2)
+    ax.set_ylim(-25, 50)
+
+# %%
+fig, axes = plt.subplots(2, 2, figsize=(10, 10))
+sns.kdeplot(
+    data=df_NPO_pos,
+    x="ratio_lag_mean",
+    y="eke_lag_mean",
+    hue="period",
+    ax=axes[0,0],
+    common_norm=True,
+)
+
+sns.kdeplot(
+    data=df_NPO_neg,
+    x="ratio_lag_mean",
+    y="eke_lag_mean",
+    hue="period",
+    ax=axes[0,1],
+    common_norm=True,
+)
+
+sns.kdeplot(
+    data=df_NAL_pos,
+    x="ratio_lag_mean",
+    y="eke_lag_mean",
+    hue="period",
+    ax=axes[1,0],
+    common_norm=True,
+)
+
+sns.kdeplot(
+    data=df_NAL_neg,
+    x="ratio_lag_mean",
+    y="eke_lag_mean",
+    hue="period",
+    ax=axes[1,1],
+    common_norm=True,
+)
 # %%
