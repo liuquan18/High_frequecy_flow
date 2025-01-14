@@ -41,6 +41,9 @@ merge_year(){
     echo "Merging year ${year}"
     year_files=$(find ${tmp_dir} -name "*.nc" | grep ${year})
     cdo -O mergetime ${year_files} ${to_dir}E5pl00_1D_${var}_250hPa_daily_${year}-05-01_${year}-09-31.nc
+
+    # rm tmp files
+    rm ${year_files}
 }
 
 export -f pre_process 
