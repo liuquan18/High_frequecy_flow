@@ -30,5 +30,5 @@ done
 
 
 
-parallel --dryrun -j 25 cdo -P 8 -vertmean -sellevel,100000,85000 {} $save_dir{/.}_1000_850hpa.nc ::: ${daily_files[@]}
+parallel -j 25 cdo -P 8 -vertmean -sellevel,100000,85000 {} $save_dir{/.}_1000_850hpa.nc ::: ${daily_files[@]}
 
