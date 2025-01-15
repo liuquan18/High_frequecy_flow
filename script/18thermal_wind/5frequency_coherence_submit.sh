@@ -12,8 +12,10 @@
 
 
 
-
 parallel --dryrun python /work/mh0033/m300883/High_frequecy_flow/script/18thermal_wind/5frequency_coherence.py ::: {1..50} >5commands.txt
+
+
+CMD_FOUT=5commands.txt
 
 # run parallel for each node
 driver_fn () {
