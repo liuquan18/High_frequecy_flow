@@ -179,5 +179,5 @@ data/*
 docs/*.md
 
 # commands for parallel
-*commands.txt
+*commands*.txt
 
