@@ -177,3 +177,7 @@ data/*
 
 # markdown files under docs
 docs/*.md
+
+# commands for parallel
+*commands.txt
+
