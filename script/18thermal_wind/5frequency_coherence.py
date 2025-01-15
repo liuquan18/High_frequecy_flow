@@ -17,7 +17,7 @@ if not os.path.exists(coherence_path):
     os.makedirs(coherence_path)
 
 #%%
-va= xr.open_mfdataset(f"{va_path}*.nc", combine='by_coords')
+va= xr.open_mfdataset(f"{va_path}*.nc", combine='by_coords', chunks = {'time':1530, 'lat': -1, 'lon': -1})
 # %%
 vt = xr.open_mfdataset(f"{vt_path}*.nc", combine='by_coords')
 # %%
