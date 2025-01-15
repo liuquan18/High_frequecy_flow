@@ -332,30 +332,7 @@ df_NPO_neg = pd.concat([first_NAO_neg_NPO, last_NAO_neg_NPO])
 df_NAL_pos = pd.concat([first_NAO_pos_NAL, last_NAO_pos_NAL])
 df_NAL_neg = pd.concat([first_NAO_neg_NAL, last_NAO_neg_NAL])
 
-# %%
-fig, axes = plt.subplots(2, 2, figsize=(10, 10))
-sns.scatterplot(
-    data=df_NPO_pos,
-    x="upvp_lag_mean",
-    y="eke_lag_mean",
-    hue="ratio_lag_mean",
-    style="period",
-    sizes = (5, 200),
-    ax=axes[0,0],
-)
 
-sns.scatterplot(
-    data=df_NPO[df_NPO['phase'] == 'neg'],
-    x="upvp_lag_mean",
-    y="eke_lag_mean",
-    hue="period",
-    size="ratio_lag_mean",
-    sizes = (5, 200),
-    ax=axes[0,1],
-)
-
-# axes[0,0].set_xlim(-40, 40)
-# axes[0,1].set_xlim(-40, 40)
 # %%
 fig, axes = plt.subplots(2, 2, figsize=(10, 10))
 sns.scatterplot(
