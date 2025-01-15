@@ -34,11 +34,11 @@ f, Cxy = signal.coherence(vt, va, fs = 1, nperseg=153, detrend =False, noverlap 
 #%%
 Cxy = xr.DataArray(Cxy, dims = ['frequency', 'lon'], coords = {'frequency': f, 'lon': vt.lon})
 
-f = xr.DataArray(f, dims = ['frequency'], coords = {'frequency': f})
+#%%
 
-Coh = xr.Dataset({'coherence': Cxy, 'frequency': f})
+Cxy.name = 'coherence'
 
-Coh.to_netcdf(f"{coherence_path}coherence.nc")
+Cxy.to_netcdf(f"{coherence_path}coherence.nc")
 
 # %%
 # fig, ax1 = plt.subplots()
