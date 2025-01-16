@@ -3,8 +3,9 @@
 #SBATCH --time=00:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=5
-#SBATCH --ntasks-per-node=250
-#SBATCH --ntasks=1250
+#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks=5
+#SBATCH --cpus-per-task=10
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
@@ -21,20 +22,6 @@ echo "Number of tasks per node: $SLURM_NTASKS_PER_NODE"
 
 CMD_FOUT=12commands.txt
 
-read_daily_files() {
-    local var=$1
-    local daily_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_std/r*i1p1f1/
-    local daily_file=${var}_day_MPI-ESM1-2-LR_r*i1p1f1_gn_*.nc
-    daily_files=($(find $daily_path -name $daily_file -print))
-}
-
-# Generate hus daily files
-read_daily_files "hus"
-hus_daily_files=("${daily_files[@]}")
-
-# Generate tas daily files
-read_daily_files "tas"
-tas_daily_files=("${daily_files[@]}")
 
 for member in {1..50}; do
     save_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_daily_std/r${member}i1p1f1/
@@ -44,18 +31,18 @@ done
 
 
 
-parallel --dryrun -j 25 /work/mh0033/m300883/High_frequecy_flow/script/17moisture/12hus_tas_ratio.sh {1} {2} ::: ${hus_daily_files[@]} ::: ${tas_daily_files[@]} >$CMD_FOUT
+member_start=$1
+member_end=$(($member_start+4))
+echo "Ensemble member ${member_start} to ${member_end}"
+parallel --dryrun -j 5 /work/mh0033/m300883/High_frequecy_flow/script/17moisture/12hus_tas_ratio.sh ::: $(seq ${member_start} ${member_end}) >12commands_${member_start}.txt
 
-# run parallel for each node
-driver_fn () {
-    echo "$SLURM_NODEID"
 
-    cat $CMD_FOUT | \
-    awk -v NNODE="$SLURM_NNODES" -v NODEID="$SLURM_NODEID" 'NR % NNODE == NODEID' | \
-    parallel -j $SLURM_NTASKS_PER_NODE {}
-}
+CMD_FOUT=12commands_${member_start}.txt
 
-export -f driver_fn
-# the script will be executed ${SLURM_NTASKS} times
+
 echo $SLURM_NTASKS
-srun --ntasks=$SLURM_JOB_NUM_NODES bash -c "$(declare -p CMD_FOUT); driver_fn"
+
+while IFS= read -r cmd; do
+    srun --exclusive -N1 -n1 $cmd &
+done < "$CMD_FOUT"
+wait
