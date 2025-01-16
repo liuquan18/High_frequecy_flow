@@ -1,15 +1,14 @@
 #!/bin/bash
-#SBATCH --job-name=vertmean
+#SBATCH --job-name=ratio
 #SBATCH --time=00:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=5
 #SBATCH --ntasks-per-node=250
-#SBATCH --cpus-per-task=10
 #SBATCH --ntasks=1250
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=vertmean.%j.out
+#SBATCH --output=tatio.%j.out
 
 module load cdo
 module load parallel
