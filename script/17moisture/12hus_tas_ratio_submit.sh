@@ -1,15 +1,15 @@
 #!/bin/bash
 #SBATCH --job-name=ratio
-#SBATCH --time=01:00:00
+#SBATCH --time=03:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=5
 #SBATCH --ntasks-per-node=1
 #SBATCH --ntasks=5
-#SBATCH --cpus-per-task=10
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=tatio.%j.out
+#SBATCH --output=ratio.%j.out
+
 
 module load cdo
 module load parallel
