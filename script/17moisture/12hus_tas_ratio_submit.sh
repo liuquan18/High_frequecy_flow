@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=ratio
-#SBATCH --time=00:30:00
+#SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=5
 #SBATCH --ntasks-per-node=1
