@@ -38,14 +38,13 @@ ax1.axvline(x=6, color='r', linestyle='--')
 ax1.axvline(x=12, color='r', linestyle='--')
 
 # Add double arrow lines and labels
-ax1.annotate(r'$v^{\prime}$', xy=(2, 0.05), xytext=(12, 0.05),
+ax1.annotate(r'$v^{\prime}$', xy=(2, 0.05), xytext=(12, 0.045),
              arrowprops=dict(arrowstyle='<->', color='blue'), color='blue')
-ax1.annotate(r'$v^{\prime\prime}$', xy=(2, 0.1), xytext=(6, 0.1),
+ax1.annotate(r'$v^{\prime\prime}$', xy=(2, 0.1), xytext=(6, 0.096),
              arrowprops=dict(arrowstyle='<->', color='green'), color='green')
 
 ax1.set_xlim(0, 30)
 
-ax2.set_xlim(0, 30)
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_va_coherence.png", dpi = 300)
 
