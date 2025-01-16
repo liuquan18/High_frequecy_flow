@@ -4,6 +4,7 @@
 #SBATCH --partition=compute
 #SBATCH --nodes=5
 #SBATCH --ntasks-per-node=250
+#SBATCH --cpus-per-task=10
 #SBATCH --ntasks=1250
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL

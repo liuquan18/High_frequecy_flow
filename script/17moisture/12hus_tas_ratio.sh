@@ -10,4 +10,4 @@ echo Processing $(basename $infile)
 
 # replace _ano with _ano_lowlevel
 outfile=${husfile//hus/hus_tas}
-cdo -P 8 div $husfile $tasfile $outfile
+cdo -P 10 div $husfile $tasfile $outfile
