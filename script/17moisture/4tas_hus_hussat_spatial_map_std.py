@@ -32,7 +32,8 @@ first_std = first_data.std(dim = ('time', 'ens'))
 # last_std = last_data.std(dim = ('time', 'ens'))
 
 #%%
-first_std.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/first_std.nc")
+save_name=f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/{decade}_std.nc"
+first_std.to_netcdf(save_name)
 # last_std.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/last_std.nc")
 # #%%
 # # #%%
