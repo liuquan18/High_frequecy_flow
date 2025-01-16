@@ -21,36 +21,31 @@ Cxy_5 = Cxy.quantile(0.05, dim = 'member')
 Cxy_mean = Cxy.mean(dim = 'member')
 #%%
 f = Cxy['frequency']
-#%%
-
+# %%
 fig, ax1 = plt.subplots()
-ax1.plot(f, Cxy_mean, label='mean', color='k')
-ax1.set_xlabel('frequency [cycles per day]')
+ax1.plot(1/f, Cxy_mean, label='mean', color='k')
+ax1.set_xlabel('Period [days]')
 ax1.set_ylabel('Coherence')
-ax1.set_xlim(0, 0.53)
+
+ax1.set_xticks(np.arange(0, 31, 6))
 
 # fill between
-ax1.fill_between(f, Cxy_5, Cxy_95, color='gray', alpha=0.5)
-
-# ax1.set_xscale('log')  # Set x-axis to log scale
-
-# Create a secondary x-axis on top
-ax2 = ax1.twiny()
-ax2.set_xlim(ax1.get_xlim())
-# ax2.set_xscale('log')  # Match the log scale of the primary x-axis
-
-# ticks for ax2
-ticks = [1/2, 1/5, 1/12, 1/30]
-ax2.set_xticks(ticks)
-ax2.set_xticklabels([f'{int(1/t)}' for t in ticks])
-ax2.set_xlabel('Period [days]')
-
+ax1.fill_between(1/f, Cxy_5, Cxy_95, color='gray', alpha=0.5)
 
 # Add vertical lines at days = 2 and days = 12
-x2 = 1/2
-x12 = 1/12
-ax1.axvline(x=x2, color='r', linestyle='--')
-ax1.axvline(x=x12, color='r', linestyle='--')
+ax1.axvline(x=2, color='r', linestyle='--')
+ax1.axvline(x=6, color='r', linestyle='--')
+ax1.axvline(x=12, color='r', linestyle='--')
+
+# Add double arrow lines and labels
+ax1.annotate(r'$v^{\prime}$', xy=(2, 0.05), xytext=(12, 0.05),
+             arrowprops=dict(arrowstyle='<->', color='blue'), color='blue')
+ax1.annotate(r'$v^{\prime\prime}$', xy=(2, 0.1), xytext=(6, 0.1),
+             arrowprops=dict(arrowstyle='<->', color='green'), color='green')
+
+ax1.set_xlim(0, 30)
+
+ax2.set_xlim(0, 30)
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_va_coherence.png", dpi = 300)
 
