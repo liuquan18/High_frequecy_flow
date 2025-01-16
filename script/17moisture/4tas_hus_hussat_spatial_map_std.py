@@ -13,26 +13,27 @@ from src.moisture.plot_utils import draw_box
 
 
 from src.moisture.longitudinal_contrast import read_data
-
+#%%
+decade=int(sys.argv[1]) # 1850 or 2090
 # %%
-first_tas = read_data("tas", 1850, (-90, 90), False)
-first_hus = read_data("hus", 1850, (-90, 90), False)
-first_hussat = read_data("hussat", 1850, (-90, 90), False)
+first_tas = read_data("tas", decade, (-90, 90), False)
+first_hus = read_data("hus", decade, (-90, 90), False)
+first_hussat = read_data("hussat", decade, (-90, 90), False)
 first_data = xr.Dataset({"tas": first_tas, "hus": first_hus, 'hussat': first_hussat})
 
 # %%
 
-last_tas = read_data("tas", 2090, (-90, 90), False)
-last_hus = read_data("hus", 2090, (-90, 90), False)
-last_hussat = read_data("hussat", 2090, (-90, 90), False)
-last_data = xr.Dataset({"tas": last_tas, "hus": last_hus, 'hussat': last_hussat})
+# last_tas = read_data("tas", 2090, (-90, 90), False)
+# last_hus = read_data("hus", 2090, (-90, 90), False)
+# last_hussat = read_data("hussat", 2090, (-90, 90), False)
+# last_data = xr.Dataset({"tas": last_tas, "hus": last_hus, 'hussat': last_hussat})
 # %%
 first_std = first_data.std(dim = ('time', 'ens'))
-last_std = last_data.std(dim = ('time', 'ens'))
+# last_std = last_data.std(dim = ('time', 'ens'))
 
 #%%
 first_std.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/first_std.nc")
-last_std.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/last_std.nc")
+# last_std.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_moisture_variability/last_std.nc")
 # #%%
 # # #%%
 # first_data.load()
