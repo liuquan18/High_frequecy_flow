@@ -12,9 +12,14 @@
 
 
 member_start=$1
+var1=$2
+var2=$3
+split_basin=$4
+
 member_end=$(($member_start+4))
-echo "Ensemble member ${member_start} to ${member_end}"
-parallel --dryrun -j 5 python /work/mh0033/m300883/High_frequecy_flow/script/18thermal_wind/5frequency_coherence.py ::: $(seq ${member_start} ${member_end}) >5commands_${member_start}.txt
+echo "node $SLURM_NODEID member_start $member_start member_end $member_end"
+parallel --dryrun -j 5 python /work/mh0033/m300883/High_frequecy_flow/script/18thermal_wind/5frequency_coherence.py \
+    ::: $(seq ${member_start} ${member_end}) ::: ${var1} ::: ${var2} ::: ${split_basin} >5commands_${member_start}.txt
 
 
 CMD_FOUT=5commands_${member_start}.txt
@@ -23,6 +28,6 @@ CMD_FOUT=5commands_${member_start}.txt
 echo $SLURM_NTASKS
 
 while IFS= read -r cmd; do
-    srun --exclusive -N1 -n1 $cmd &
+    srun --exclusive -N1 -n5 $cmd &
 done < "$CMD_FOUT"
 wait
