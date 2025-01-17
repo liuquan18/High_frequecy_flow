@@ -64,7 +64,7 @@ if rank == 0:
 #%%
 def coherence_analy(da, lats = (20,60)):
 
-    da = da.sel(lat = slice(lats[0], lats[1])).mean('lat')
+    da = da.sel(lat = slice(lats[0], lats[1])).mean(dim = ('lat', 'lon')) # spatial average
 
     da1 = da[list(da.data_vars)[0]]
     da2 = da[list(da.data_vars)[1]]
@@ -72,7 +72,7 @@ def coherence_analy(da, lats = (20,60)):
     # calculate coherence every year, 153 long,segement lenth 76, 50% overlap
     f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend =False, noverlap = 38, axis = 0)
 
-    Cxy = xr.DataArray(Cxy, dims = ['frequency', 'lon'], coords = {'frequency': f, 'lon': da1.lon})
+    Cxy = xr.DataArray(Cxy, dims = ['frequency'], coords = {'frequency': f})
 
     Cxy.name = 'coherence'
 
@@ -123,18 +123,21 @@ for i, decade in enumerate(decades_single):
     # merge to dataset
     var_da = xr.merge([var1_da, var2_da])
 
-    # coherence
-    coherence = var_da.resample(time = '1YE').apply(coherence_analy)
-    coherence.name = 'coherence'
 
     if split_basin:
-        coherence_NAL, coherence_NPO = sector(coherence)
 
+        # seperately for NAL and NPO for hus_std
+        var_da_NAL, var_da_NPO = sector(var_da)
+
+        coherence_NAL = var_da_NAL.resample(time = '1YE').apply(coherence_analy)
         coherence_NAL.to_netcdf(f"{coherence_path}coherence_NAL_${var1}_${var2}_{decade}0501_{decade+9}0931.nc")
+
+
+        coherence_NPO = var_da_NPO.resample(time = '1YE').apply(coherence_analy)
         coherence_NPO.to_netcdf(f"{coherence_path}coherence_NPO_${var1}_${var2}_{decade}0501_{decade+9}0931.nc")
 
     else:
-        coherence = coherence.mean(dim = 'lon')
+        coherence = var_da.resample(time = '1YE').apply(coherence_analy)
         coherence.to_netcdf(f"{coherence_path}coherence_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
 
