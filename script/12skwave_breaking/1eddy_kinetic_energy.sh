@@ -51,7 +51,7 @@ band_filter(){
 
     # split years
     cdo -O -splityear ${infile} ${tmp_dir}${fname}_year
-    # band filter, keep 2-12 days 
+    # band filter
     year_files=$(ls ${tmp_dir}${fname}_year*)
     if [ "$frequency" == "prime" ]; then
         echo "Filtering 2-12 days"
