@@ -28,6 +28,6 @@ CMD_FOUT=5commands_${member_start}.txt
 echo $SLURM_NTASKS
 
 while IFS= read -r cmd; do
-    srun --exclusive -N1 -n5 $cmd &
+    srun --exclusive -N1 -n1 $cmd &
 done < "$CMD_FOUT"
 wait

@@ -124,7 +124,7 @@ for i, decade in enumerate(decades_single):
     var_da = xr.merge([var1_da, var2_da])
 
     # coherence
-    coherence = var_da.resample(time = '1Y').apply(coherence_analy)
+    coherence = var_da.resample(time = '1YE').apply(coherence_analy)
     coherence.name = 'coherence'
 
     if split_basin:
