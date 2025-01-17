@@ -13,7 +13,6 @@ logging.basicConfig(level=logging.INFO)
 member=sys.argv[1]
 logging.info (f"Processing member {member}")
 #%%
-var1
 
 #%%
 va_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_ano_lowlevel/r{member}i1p1f1/'
