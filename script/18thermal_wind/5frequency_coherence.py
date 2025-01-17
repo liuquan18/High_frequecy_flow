@@ -148,7 +148,7 @@ for i, decade in enumerate(decades_single):
         coherence_NPO.to_netcdf(f"{coherence_path}coherence_NPO_${var1}_${var2}_{decade}0501_{decade+9}0931.nc")
 
     else:
-        coherence = var_da.resample(time = '1YE').apply(coherence_analy)
+        coherence = var_da.resample(time = '1YE').apply(coherence_analy, pixel_wise = True)
         coherence.to_netcdf(f"{coherence_path}coherence_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
 
