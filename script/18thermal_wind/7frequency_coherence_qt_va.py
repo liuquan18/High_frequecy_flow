@@ -40,7 +40,7 @@ def read_Cxy(var1 = 'hus', var2 = 'va', region = 'NAL'):
 hus_va_Cxy_NAL = read_Cxy('hus_std', 'va', 'NAL')
 hus_va_Cxy_NPO = read_Cxy('hus_std', 'va', 'NPO')
 #%%
-vt_va_Cxy = read_Cxy('_vt', 'va', None)
+vt_va_Cxy = read_Cxy('vt', 'va', None)
 #%%
 hus_va_Cxy_NAL.load()
 hus_va_Cxy_NPO.load()
@@ -63,7 +63,7 @@ def plot_coherence(f, Cxy_mean, Cxy_5, Cxy_95, ax):
 #%%
 hus_va_Cxy_NAL = hus_va_Cxy_NAL.mean(dim = 'time')
 hus_va_Cxy_NPO = hus_va_Cxy_NPO.mean(dim = 'time')
-vt_va_Cxy = vt_va_Cxy.mean(dim = 'lon')
+vt_va_Cxy = vt_va_Cxy.mean(dim = ('lat','lon', 'time'))
 
 # %%
 hus_va_Cxy_NAL_mean = hus_va_Cxy_NAL['coherence'].mean(dim = ('ens'))
@@ -83,15 +83,18 @@ vt_va_Cxy_05 = vt_va_Cxy['coherence'].quantile(0.05, dim = ('ens'))
 # plot all ensemble members
 fig, axes = plt.subplots(1,3, figsize=(15,5))
 
-plot_coherence(hus_va_Cxy_NAL['frequency'], hus_va_Cxy_NAL_mean, hus_va_Cxy_NAL_05, hus_va_Cxy_NAL_95, axes[0])
-axes[0].set_title('hus_std va NAL')
+plot_coherence(vt_va_Cxy['frequency'], vt_va_Cxy_mean, vt_va_Cxy_05, vt_va_Cxy_95, axes[0])
+axes[0].set_title('vt va')
 
-plot_coherence(hus_va_Cxy_NPO['frequency'], hus_va_Cxy_NPO_mean, hus_va_Cxy_NPO_05, hus_va_Cxy_NPO_95, axes[1])
-axes[1].set_title('hus_std va NPO')
+plot_coherence(hus_va_Cxy_NAL['frequency'], hus_va_Cxy_NAL_mean, hus_va_Cxy_NAL_05, hus_va_Cxy_NAL_95, axes[1])
+axes[1].set_title('hus_std va NAL')
 
-plot_coherence(vt_va_Cxy['frequency'], vt_va_Cxy_mean, vt_va_Cxy_05, vt_va_Cxy_95, axes[2])
-axes[2].set_title('vt va')
+plot_coherence(hus_va_Cxy_NPO['frequency'], hus_va_Cxy_NPO_mean, hus_va_Cxy_NPO_05, hus_va_Cxy_NPO_95, axes[2])
+axes[2].set_title('hus_std va NPO')
 
+axes[0].set_ylim(0.39, 0.48)
+for ax in axes[1:]:
+    ax.set_ylim(0.32, 0.41)
 
 # %%
 
