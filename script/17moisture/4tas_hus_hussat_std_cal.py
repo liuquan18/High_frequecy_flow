@@ -406,3 +406,5 @@ first_std.to_netcdf(save_name)
 # plt.tight_layout()
 # plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/first_last_clim_qu95.png")
 # # %%
+
+# %%
