@@ -28,7 +28,7 @@ ensmean(){
     to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_monthly_ensmean/
     mkdir -p $to_path
 
-    file_name=${var}_day_MPI-ESM1-2-LR_r*_gn_${decade}*.nc
+    file_name=*_day_MPI-ESM1-2-LR_r*_gn_${decade}*.nc
     out_name=${var}_monmean_ensmean_${decade}05_$((${decade}+9))09.nc
 
 
@@ -42,5 +42,5 @@ ensmean(){
 
 export -f ensmean
 
-# parallel --jobs 25 ensmean ::: {1850..2090..10}
-ensmean $decade
+parallel --jobs 25 ensmean ::: {1850..2090..10}
+# ensmean $decade
