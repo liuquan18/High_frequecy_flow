@@ -33,7 +33,7 @@ var1 = sys.argv[2] # 'vt', 'hus_std' 'hus_tas'
 var2 = sys.argv[3] if len(sys.argv) > 3 else 'va' # 'va'
 
 # true if split teh var1 into NAL and NPO
-split_basin = sys.argv[4] if len(sys.argv) > 4 else False
+split_basin = sys.argv[4].lower() == 'true' if len(sys.argv) > 4 else False
 
 
 #%%
