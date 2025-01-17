@@ -62,17 +62,28 @@ if rank == 0:
     logging.info (f"Processing member {member} between {var1} and {var2}")
 
 #%%
-def coherence_analy(da, lats = (20,60)):
+def coherence_analy(da, lats = (20,60), pixel_wise = False):
 
-    da = da.sel(lat = slice(lats[0], lats[1])).mean(dim = ('lat', 'lon')) # spatial average
+    """pixel wise for same variable, e.g., vt and va, spatial average for different variables, e.g., vt and hus_std"""
 
-    da1 = da[list(da.data_vars)[0]]
-    da2 = da[list(da.data_vars)[1]]
+    if pixel_wise:
+        da = da.sel(lat = slice(lats[0], lats[1])) # select region
+        da1 = da[list(da.data_vars)[0]]
+        da2 = da[list(da.data_vars)[1]]
 
-    # calculate coherence every year, 153 long,segement lenth 76, 50% overlap
-    f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend =False, noverlap = 38, axis = 0)
+        # calculate coherence every year, 153 long,segement lenth 76, 50% overlap
+        f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend =False, noverlap = 38, axis = 0)
+        Cxy = xr.DataArray(Cxy, dims = ['frequency', 'lat', 'lon'], coords = {'frequency': f, 'lat': da1.lat, 'lon': da1.lon})
 
-    Cxy = xr.DataArray(Cxy, dims = ['frequency'], coords = {'frequency': f})
+    else:
+        da = da.sel(lat = slice(lats[0], lats[1])).mean(dim = ('lat', 'lon')) # spatial average
+        da1 = da[list(da.data_vars)[0]]
+        da2 = da[list(da.data_vars)[1]]
+
+        # calculate coherence every year, 153 long,segement lenth 76, 50% overlap
+        f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend =False, noverlap = 38, axis = 0)
+
+        Cxy = xr.DataArray(Cxy, dims = ['frequency'], coords = {'frequency': f})
 
     Cxy.name = 'coherence'
 
