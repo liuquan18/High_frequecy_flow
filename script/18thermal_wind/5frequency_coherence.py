@@ -135,7 +135,7 @@ for i, decade in enumerate(decades_single):
 
     else:
         coherence = coherence.mean(dim = 'lon')
-        coherence.to_netcdf(f"{coherence_path}coherence_${var1}_${var2}_{decade}0501_{decade+9}0931.nc")
+        coherence.to_netcdf(f"{coherence_path}coherence_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
 
 
