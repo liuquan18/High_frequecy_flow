@@ -6,44 +6,138 @@ import matplotlib.pyplot as plt
 
 import os
 import sys
-
+import glob
 import logging
 logging.basicConfig(level=logging.INFO)
+
+#%%
+try:
+    from mpi4py import MPI
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
+    size = comm.Get_size()  # 10
+
+except:
+    logging.warning("::: Warning: Proceeding without mpi4py! :::")
+    rank = 0
+    size = 1
+
+if rank == 0:
+    logging.info(f"::: Running on {size} cores :::")
+
+
 # %%
 member=sys.argv[1]
-logging.info (f"Processing member {member}")
+var1 = sys.argv[2] # 'vt', 'hus_std' 'hus_tas'
+var2 = sys.argv[3] if len(sys.argv) > 3 else 'va' # 'va'
 
+# true if split teh var1 into NAL and NPO
+split_basin = sys.argv[4] if len(sys.argv) > 4 else False
 
-va_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_ano_lowlevel/r{member}i1p1f1/'
-vt_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily_ano/r{member}i1p1f1/'
-
-coherence_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_va_coherence/r{member}i1p1f1/'
-if not os.path.exists(coherence_path):
-    os.makedirs(coherence_path)
-
-#%%
-va= xr.open_mfdataset(f"{va_path}*.nc", combine='by_coords', chunks = {'time':1530, 'lat': -1, 'lon': -1})
-# %%
-vt = xr.open_mfdataset(f"{vt_path}*.nc", combine='by_coords', chunks = {'time':1530, 'lat': -1, 'lon': -1})
-# %%
-# lat mean
-vt = vt.sel(lat = slice(20, 60)).mean('lat')
-va = va.sel(lat = slice(20, 60)).mean('lat')
-#%%
-vt = vt['vt']
-va = va['va']
-
-# %%
-f, Cxy = signal.coherence(vt, va, fs = 1, nperseg=153, detrend =False, noverlap = 0, axis = 0)
-
-#%%
-Cxy = xr.DataArray(Cxy, dims = ['frequency', 'lon'], coords = {'frequency': f, 'lon': vt.lon})
 
 #%%
 
-Cxy.name = 'coherence'
+if var1 == 'vt':
+    var1_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily_ano/r{member}i1p1f1/'
 
-Cxy.to_netcdf(f"{coherence_path}coherence.nc")
+elif var1 == 'hus_std': # no ano because to calculate std, the mean is subtracted
+    var1_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_std/r{member}i1p1f1/'
+
+elif var1 == 'hus_tas':
+    var1_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_daily_std/r{member}i1p1f1/'
+
+if var2 == 'va':
+    var2_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_ano_lowlevel/r{member}i1p1f1/'
+else:
+    logging.error("Second variable is not va")
+
+
+coherence_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var1}_{var2}_coherence/r{member}i1p1f1/'
+
+#%%
+if rank == 0:
+    if not os.path.exists(coherence_path):
+        os.makedirs(coherence_path)
+    logging.info (f"Processing member {member} between {var1} and {var2}")
+
+#%%
+def coherence_analy(da, lats = (20,60)):
+
+    da = da.sel(lat = slice(lats[0], lats[1])).mean('lat')
+
+    da1 = da[list(da.data_vars)[0]]
+    da2 = da[list(da.data_vars)[1]]
+
+    # calculate coherence every year, 153 long,segement lenth 76, 50% overlap
+    f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend =False, noverlap = 38, axis = 0)
+
+    Cxy = xr.DataArray(Cxy, dims = ['frequency', 'lon'], coords = {'frequency': f, 'lon': da1.lon})
+
+    Cxy.name = 'coherence'
+
+    return Cxy
+#%%
+def sector(data):
+    # change lon from 0-360 to -180-180
+    data = data.assign_coords(lon=(data.lon + 180) % 360 - 180).sortby("lon")
+    box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
+    box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
+
+    data_NAL = data.sel(lon=slice(box_NAL[0], box_NAL[1])).mean(dim="lon")
+    data_NPO1 = data.sel(lon=slice(box_NPO[0], 180))
+    data_NPO2 = data.sel(lon=slice(-180, box_NPO[1]))
+    data_NPO = xr.concat([data_NPO1, data_NPO2], dim="lon").mean(dim="lon")
+
+    return data_NAL, data_NPO
+
+
+#%%
+decades = range(1850, 2100, 10)
+decades_single = np.array_split(decades, size)[rank]
+
+#%%
+for i, decade in enumerate(decades_single):
+
+    logging.info(f"rank {rank} Processing {decade} {i+1}/{len(decades_single)}")
+    var1_files = glob.glob(var1_path + f"*{decade}*.nc")[0]
+    var2_files = glob.glob(var2_path + f"*{decade}*.nc")[0]
+
+    var1_da = xr.open_dataset(var1_files, chunks = {'time': -1, 'lat': -1, 'lon': -1})
+    var2_da = xr.open_dataset(var2_files, chunks = {'time': -1, 'lat': -1, 'lon': -1})
+
+    try:
+        var1_da = var1_da[var1]
+    except KeyError:
+        var1_name = list(var1_da.data_vars)[-1]
+        var1_da = var1_da[var1_name]
+        logging.warning(f"Variable {var1} not found in the file, using {var1_name} instead")
+
+    try:
+        var2_da = var2_da[var2]
+    except KeyError:
+        var2_name = list(var2_da.data_vars)[-1]
+        var2_da = var2_da[var2_name]
+        logging.warning(f"Variable {var2} not found in the file, using {var2_name} instead")
+
+    # merge to dataset
+    var_da = xr.merge([var1_da, var2_da])
+
+    # coherence
+    coherence = var_da.resample(time = '1Y').apply(coherence_analy)
+    coherence.name = 'coherence'
+
+    if split_basin:
+        coherence_NAL, coherence_NPO = sector(coherence)
+
+        coherence_NAL.to_netcdf(f"{coherence_path}coherence_NAL_${var1}_${var2}_{decade}0501_{decade+9}0931.nc")
+        coherence_NPO.to_netcdf(f"{coherence_path}coherence_NPO_${var1}_${var2}_{decade}0501_{decade+9}0931.nc")
+
+    else:
+        coherence = coherence.mean(dim = 'lon')
+        coherence.to_netcdf(f"{coherence_path}coherence_${var1}_${var2}_{decade}0501_{decade+9}0931.nc")
+
+
 
 # %%
 # fig, ax1 = plt.subplots()
