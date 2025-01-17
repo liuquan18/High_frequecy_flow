@@ -3,70 +3,97 @@ import xarray as xr
 import numpy as np
 from scipy import signal
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 import os
 import sys
+import glob
 
 import logging
 logging.basicConfig(level=logging.INFO)
+
+#%%
+def read_Cxy(var1 = 'hus', var2 = 'va', region = 'NAL'):
+
+    members = np.arange(1, 51)
+    coherence = []
+
+    for member in members:
+        logging.info(f"Processing member {member}")
+        base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var1}_{var2}_coherence/r{member}i1p1f1/"
+
+        if region is not None:
+            files = glob.glob(base_dir + f"*{region}*.nc")
+        else:
+            logging.warning("No region specified, reading all files")
+            files = glob.glob(base_dir + "*.nc")
+
+        cxy = xr.open_mfdataset(files, combine="by_coords")
+
+        coherence.append(cxy)
+    coherence = xr.concat(coherence, dim='ens')
+    coherence['ens'] = members
+
+    return coherence
+
+#%%
+hus_va_Cxy_NAL = read_Cxy('hus_std', 'va', 'NAL')
+hus_va_Cxy_NPO = read_Cxy('hus_std', 'va', 'NPO')
+#%%
+vt_va_Cxy = read_Cxy('_vt', 'va', None)
+#%%
+hus_va_Cxy_NAL.load()
+hus_va_Cxy_NPO.load()
+vt_va_Cxy.load()
+#%%
+def plot_coherence(f, Cxy_mean, Cxy_5, Cxy_95, ax):
+    ax.plot(1/f, Cxy_mean, label='mean', color='k')
+    ax.set_xlabel('Period [days]')
+    ax.set_ylabel('Coherence')
+
+    ax.set_xticks(np.arange(0, 31, 6))
+
+    # fill between
+    ax.fill_between(1/f, Cxy_5, Cxy_95, color='gray', alpha=0.5)
+
+
+    ax.set_xlim(0, 30)
+
+    return ax
+#%%
+hus_va_Cxy_NAL = hus_va_Cxy_NAL.mean(dim = 'time')
+hus_va_Cxy_NPO = hus_va_Cxy_NPO.mean(dim = 'time')
+vt_va_Cxy = vt_va_Cxy.mean(dim = 'lon')
+
 # %%
-member=sys.argv[1]
-logging.info (f"Processing member {member}")
-#%%
+hus_va_Cxy_NAL_mean = hus_va_Cxy_NAL['coherence'].mean(dim = ('ens'))
+hus_va_Cxy_NAL_95 = hus_va_Cxy_NAL['coherence'].quantile(0.95, dim = ('ens'))
+hus_va_Cxy_NAL_05 = hus_va_Cxy_NAL['coherence'].quantile(0.05, dim = ('ens'))
 
 #%%
-va_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_ano_lowlevel/r{member}i1p1f1/'
-vt_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily_ano/r{member}i1p1f1/'
-
-coherence_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_va_coherence/r{member}i1p1f1/'
-if not os.path.exists(coherence_path):
-    os.makedirs(coherence_path)
+hus_va_Cxy_NPO_mean = hus_va_Cxy_NPO['coherence'].mean(dim = ('ens'))
+hus_va_Cxy_NPO_95 = hus_va_Cxy_NPO['coherence'].quantile(0.95, dim = ('ens'))
+hus_va_Cxy_NPO_05 = hus_va_Cxy_NPO['coherence'].quantile(0.05, dim = ('ens'))
 
 #%%
-va= xr.open_mfdataset(f"{va_path}*.nc", combine='by_coords', chunks = {'time':1530, 'lat': -1, 'lon': -1})
+vt_va_Cxy_mean = vt_va_Cxy['coherence'].mean(dim = ('ens'))
+vt_va_Cxy_95 = vt_va_Cxy['coherence'].quantile(0.95, dim = ('ens'))
+vt_va_Cxy_05 = vt_va_Cxy['coherence'].quantile(0.05, dim = ('ens'))
 # %%
-vt = xr.open_mfdataset(f"{vt_path}*.nc", combine='by_coords', chunks = {'time':1530, 'lat': -1, 'lon': -1})
-# %%
-# lat mean
-vt = vt.sel(lat = slice(20, 60)).mean('lat')
-va = va.sel(lat = slice(20, 60)).mean('lat')
-#%%
-vt = vt['vt']
-va = va['va']
+# plot all ensemble members
+fig, axes = plt.subplots(1,3, figsize=(15,5))
 
-# %%
-f, Cxy = signal.coherence(vt, va, fs = 1, nperseg=153, detrend =False, noverlap = 0, axis = 0)
+plot_coherence(hus_va_Cxy_NAL['frequency'], hus_va_Cxy_NAL_mean, hus_va_Cxy_NAL_05, hus_va_Cxy_NAL_95, axes[0])
+axes[0].set_title('hus_std va NAL')
 
-#%%
-Cxy = xr.DataArray(Cxy, dims = ['frequency', 'lon'], coords = {'frequency': f, 'lon': vt.lon})
+plot_coherence(hus_va_Cxy_NPO['frequency'], hus_va_Cxy_NPO_mean, hus_va_Cxy_NPO_05, hus_va_Cxy_NPO_95, axes[1])
+axes[1].set_title('hus_std va NPO')
 
-#%%
+plot_coherence(vt_va_Cxy['frequency'], vt_va_Cxy_mean, vt_va_Cxy_05, vt_va_Cxy_95, axes[2])
+axes[2].set_title('vt va')
 
-Cxy.name = 'coherence'
-
-Cxy.to_netcdf(f"{coherence_path}coherence.nc")
 
 # %%
-# fig, ax1 = plt.subplots()
-
-# ax1.plot(f, np.mean(Cxy, axis=1))
-# ax1.set_xlabel('frequency [Hz]')
-# ax1.set_ylabel('Coherence')
-
-# # Create a secondary x-axis on top
-# ax2 = ax1.twiny()
-# ax2.set_xlim(ax1.get_xlim())
-# ax2.set_xticks(ax1.get_xticks())
-# ax2.set_xticklabels([f'{1/x:.1f}' if x != 0 else 'inf' for x in ax1.get_xticks()])
-# ax2.set_xlabel('Period [days]')
-
-# # Add vertical lines at days = 2 and days = 12
-# days = [2, 12]
-# for day in days:
-#     freq = 1 / day
-#     ax2.axvline(freq, color='r', linestyle='--')
-
-# plt.show()
 
 
 # %%
