@@ -89,7 +89,7 @@ upvp(){
 
 export -f band_filter upvp
 # parallel band filter in to_dir
-# parallel --jobs 5 upvp ::: {1850..2090..10}
+parallel --jobs 5 upvp ::: {1850..2090..10}
 
 # Check if all required decades are saved
 for dec in {1850..2090..10}; do
