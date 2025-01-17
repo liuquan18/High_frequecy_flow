@@ -54,7 +54,7 @@ def plot_coherence(f, Cxy_mean, Cxy_5, Cxy_95, ax):
     ax.set_xticks(np.arange(0, 31, 6))
 
     # fill between
-    ax.fill_between(1/f, Cxy_5, Cxy_95, color='gray', alpha=0.5)
+    ax.fill_between(1/f, Cxy_5, Cxy_95, color='gray', alpha=0.5, label = r'5-95$\%$ ens spread')
 
 
     ax.set_xlim(0, 30)
@@ -103,7 +103,7 @@ vt_va_mean_last, vt_va_95_last, vt_va_05_last = get_plot_data(vt_va_Cxy, globe_m
 # plot all ensemble members
 fig, axes = plt.subplots(1,3, figsize=(12,5))
 
-plot_coherence(vt_va_Cxy['frequency'], vt_va_mean, vt_va_05, vt_va_95, axes[0])
+axes[0] = plot_coherence(vt_va_Cxy['frequency'], vt_va_mean, vt_va_05, vt_va_95, axes[0])
 axes[0].set_title('vt va')
 
 plot_coherence(hus_va_Cxy_NPO['frequency'], hus_va_NPO_mean, hus_va_NPO_05, hus_va_NPO_95, axes[1])
@@ -133,6 +133,8 @@ axes[0].annotate(r'$v^{\prime\prime}$', xy=(2, 0.41), xytext=(6, 0.409),
              arrowprops=dict(arrowstyle='<->', color='green'), color='green')
 
 axes[0].set_xlim(0, 30)
+axes[0].legend(frameon = False)
+
 
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_va_q_coherence.png", dpi = 300)
