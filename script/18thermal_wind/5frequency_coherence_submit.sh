@@ -3,7 +3,7 @@
 #SBATCH --time=03:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=5
-#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks-per-node=5
 #SBATCH --ntasks=5
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
