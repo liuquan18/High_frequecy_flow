@@ -20,7 +20,7 @@ echo "Ensemble member ${member} for variable ${var}"
 
 # vt daily
 vt_daily_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/r${member}i1p1f1/
-vt_daily_file=${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_*.nc
+vt_daily_file=*_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_*.nc
 daily_files=($(find $vt_daily_path -name $vt_daily_file -print))
 
 
