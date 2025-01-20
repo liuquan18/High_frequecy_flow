@@ -8,6 +8,7 @@ import seaborn as sns
 import os
 import sys
 import glob
+import matplotlib.colors as mcolors
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -42,6 +43,7 @@ hus_va_Cxy_NPO = read_Cxy('hus_std', 'va', 'NPO')
 #%%
 tas_va_Cxy_NAL = read_Cxy('tas_std', 'va', 'NAL')
 tas_va_Cxy_NPO = read_Cxy('tas_std', 'va', 'NPO')
+
 #%%
 vt_va_Cxy = read_Cxy('vt', 'va', None)
 #%%
@@ -55,15 +57,15 @@ tas_va_Cxy_NPO.load()
 vt_va_Cxy.load()
 
 #%%
-def plot_coherence(f, Cxy_mean, Cxy_5, Cxy_95, ax):
-    ax.plot(1/f, Cxy_mean, label='mean', color='k')
+def plot_coherence(f, Cxy_mean, Cxy_5, Cxy_95, ax, color_line = 'k', color_shading = 'gray', label = None):
+    ax.plot(1/f, Cxy_mean, label=label, color=color_line)
     ax.set_xlabel('Period [days]')
     ax.set_ylabel('Coherence')
 
     ax.set_xticks(np.arange(0, 31, 6))
 
     # fill between
-    ax.fill_between(1/f, Cxy_5, Cxy_95, color='gray', alpha=0.5, label = r'5-95$\%$ ens spread')
+    ax.fill_between(1/f, Cxy_5, Cxy_95, color=color_shading, alpha=0.5, label = r'5-95$\%$ ens spread')
 
 
     ax.set_xlim(0, 30)
@@ -116,6 +118,7 @@ tas_va_NPO_mean_first, tas_va_NPO_95_first, tas_va_NPO_05_first = get_plot_data(
 
 tas_va_NAL_mean_last, tas_va_NAL_95_last, tas_va_NAL_05_last = get_plot_data(tas_va_Cxy_NAL, period = 'last')
 tas_va_NPO_mean_last, tas_va_NPO_95_last, tas_va_NPO_05_last = get_plot_data(tas_va_Cxy_NPO, period = 'last')
+
 # %%
 # plot all ensemble members
 fig, axes = plt.subplots(1,3, figsize=(12,5))
@@ -156,6 +159,19 @@ axes[0].legend(frameon = False)
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_va_q_coherence.png", dpi = 300)
 # %%
+
+# %%
+temp_cmap_seq = np.loadtxt(
+    "/work/mh0033/m300883/High_frequecy_flow/data/colormaps-master/continuous_colormaps_rgb_0-1/temp_seq.txt"
+)
+temp_cmap_seq = mcolors.ListedColormap(temp_cmap_seq, name="temp_div")
+
+
+prec_cmap_seq = np.loadtxt(
+    "/work/mh0033/m300883/High_frequecy_flow/data/colormaps-master/continuous_colormaps_rgb_0-1/prec_seq.txt"
+)
+prec_cmap_seq = mcolors.ListedColormap(prec_cmap_seq, name="prec_div")
+
 # %%
 # plot all ensemble members
 fig, axes = plt.subplots(1,3, figsize=(12,5))
@@ -163,19 +179,21 @@ fig, axes = plt.subplots(1,3, figsize=(12,5))
 axes[0] = plot_coherence(vt_va_Cxy['frequency'], vt_va_mean, vt_va_05, vt_va_95, axes[0])
 axes[0].set_title('vt va')
 
-plot_coherence(tas_va_Cxy_NPO['frequency'], tas_va_NPO_mean, tas_va_NPO_05, tas_va_NPO_95, axes[1])
-axes[1].set_title('tas_std va NPO')
+# Plot hus_std va NPO and tas_std va NPO on the same axis
+plot_coherence(tas_va_Cxy_NPO['frequency'], tas_va_NPO_mean, tas_va_NPO_05, tas_va_NPO_95, axes[1], color_line = temp_cmap_seq(0.7), color_shading = temp_cmap_seq(0.5), label = r"$\Delta T_{NPO}$ ~ $va_{NPO}$ ")
+plot_coherence(hus_va_Cxy_NPO['frequency'], hus_va_NPO_mean, hus_va_NPO_05, hus_va_NPO_95, axes[1], color_line = prec_cmap_seq(0.9), color_shading = prec_cmap_seq(0.5), label = r"$\Delta q_{NPO}$ ~ $va_{NPO}$ ")
 
-plot_coherence(tas_va_Cxy_NAL['frequency'], tas_va_NAL_mean, tas_va_NAL_05, tas_va_NAL_95, axes[2])
-axes[2].set_title('tas_std va NAL')
+axes[1].set_title('hus_std and tas_std va NPO')
 
-axes[0].set_ylim(0.39, 0.48)
+# Plot hus_std va NAL and tas_std va NAL on the same axis
+plot_coherence(tas_va_Cxy_NAL['frequency'], tas_va_NAL_mean, tas_va_NAL_05, tas_va_NAL_95, axes[2], color_line = temp_cmap_seq(0.7), color_shading = temp_cmap_seq(0.5), label = r"$\Delta T_{NPO}$ ~ $va_{NPO}$ ")
+plot_coherence(hus_va_Cxy_NAL['frequency'], hus_va_NAL_mean, hus_va_NAL_05, hus_va_NAL_95, axes[2], color_line = prec_cmap_seq(0.9), color_shading = prec_cmap_seq(0.5), label = r"$\Delta q_{NAL}$ ~ $va_{NAL}$ ")
+axes[2].set_title('hus_std and tas_std va NAL')
 
 
 axes[0].set_title(r"$v_{t 20-60}$, $va_{20-60}$")
-axes[1].set_title(r"$\Delta T_{NPO}$,  $va_{NPO}$ ")
-axes[2].set_title(r"$\Delta T_{NAL}$, $va_{NAL}$")
-
+axes[1].set_title("NPO spatial mean")
+axes[2].set_title("NAL spatial mean")
 
 # Add vertical lines at days = 2 and days = 12
 axes[0].axvline(x=2, color='r', linestyle='--')
@@ -189,13 +207,20 @@ axes[0].annotate(r'$v^{\prime\prime}$', xy=(2, 0.41), xytext=(6, 0.409),
              arrowprops=dict(arrowstyle='<->', color='green'), color='green')
 
 axes[0].set_xlim(0, 30)
-# for ax in axes[1:]:
-#     ax.set_ylim(0.32, 0.41)
+axes[0].set_ylim(0.32, 0.49)
+axes[1].set_ylim(0.32, 0.49)
+axes[2].set_ylim(0.32, 0.49)
 
-axes[0].legend(frameon = False)
 
+# Set colors for the legends
+handles, labels = axes[1].get_legend_handles_labels()
+axes[1].legend(handles, labels, frameon=False)
+
+# handles, labels = axes[2].get_legend_handles_labels()
+# axes[2].legend(handles, labels, frameon=False)
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_va_T_coherence.png", dpi = 300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_q_t_va_coherence.png", dpi = 300)
+
 
 # %%
