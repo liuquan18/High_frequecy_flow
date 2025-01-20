@@ -11,27 +11,30 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.axes as maxes
 import cartopy.feature as cfeature
 import matplotlib.colors as mcolors
+#%%
+#%
+var = 'eke_high' # 'eke' or 'eke_high'
 
 # %%
 first_NAO_pos_eke = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_pos/eke_NAO_pos_1850.csv",
+    f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_NAO_pos/{var}_NAO_pos_1850.csv",
     index_col=[0, 1],
 )
 
 
 first_NAO_neg_eke = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_neg/eke_NAO_neg_1850.csv",
+    f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_NAO_neg/{var}_NAO_neg_1850.csv",
     index_col=[0, 1],
 )
 
 # %%
 last_NAO_pos_eke = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_pos/eke_NAO_pos_2090.csv",
+    f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_NAO_pos/{var}_NAO_pos_2090.csv",
     index_col=[0, 1],
 )
 
 last_NAO_neg_eke = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_neg/eke_NAO_neg_2090.csv",
+    f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_NAO_neg/{var}_NAO_neg_2090.csv",
     index_col=[0, 1],
 )
 # %%
@@ -146,7 +149,7 @@ fig, axes = plt.subplots(
 )
 # cmap = cmocean.cm.
 cmap = slev_div
-levels = np.arange(-5, 5.1, 1)
+levels = np.arange(-3, 3.1, 0.5)
 
 first_NAO_pos_eke_plot.eke.T.plot.contourf(
     transform=ccrs.PlateCarree(),
@@ -252,6 +255,6 @@ axes[2,0].set_title("2090-2099 - 1850-1859 pos")
 axes[2,1].set_title("2090-2099 - 1850-1859 neg")
 
 # plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/NAO_eke_lag.png")
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/NAO_eke_lag.pdf", dpi = 300, bbox_inches = 'tight')
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/NAO_eke_lag.pdf", dpi = 300, bbox_inches = 'tight')
 
 # %%
