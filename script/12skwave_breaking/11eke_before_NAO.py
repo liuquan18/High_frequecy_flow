@@ -72,7 +72,7 @@ def read_all_data(decade, var):
 
 
 #%%
-def process_data(decade, var = 'eke'):
+def process_data(decade, var):
     # read data
     NAO_pos, NAO_neg, data = read_all_data(decade, var = var)
 
@@ -83,8 +83,8 @@ def process_data(decade, var = 'eke'):
 
     logging.info(f"rank {rank} is saving data for decade {decade} \n")
 
-    eke_NAO_pos.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_pos/eke_NAO_pos_{decade}.csv')
-    eke_NAO_neg.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_neg/eke_NAO_neg_{decade}.csv')
+    eke_NAO_pos.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_pos/{var}_NAO_pos_{decade}.csv')
+    eke_NAO_neg.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_NAO_neg/{var}_NAO_neg_{decade}.csv')
     
 #%%
 decades_all = np.arange(1850, 2100, 10)
