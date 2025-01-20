@@ -62,8 +62,10 @@ elif var2 == 'vt':
 else:
     logging.error("Second variable is not va")
 
-
-coherence_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var1}_{var2}_coherence/r{member}i1p1f1/'
+if pixel_wise:
+    coherence_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var1}_{var2}_coherence_pixelwise/r{member}i1p1f1/'
+else:
+    coherence_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var1}_{var2}_coherence/r{member}i1p1f1/'
 
 #%%
 if rank == 0:
@@ -112,15 +114,15 @@ def sector(data, split_basin = True):
         box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
         box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
 
-        data_NAL = data.sel(lon=slice(box_NAL[0], box_NAL[1])).mean(dim=('lat','lon'))
+        data_NAL = data.sel(lon=slice(box_NAL[0], box_NAL[1]))
         data_NPO1 = data.sel(lon=slice(box_NPO[0], 180))
         data_NPO2 = data.sel(lon=slice(-180, box_NPO[1]))
-        data_NPO = xr.concat([data_NPO1, data_NPO2], dim="lon").mean(dim=('lat','lon'))
+        data_NPO = xr.concat([data_NPO1, data_NPO2], dim="lon")
 
         return data_NAL, data_NPO
 
     else:
-        data = data.mean(dim=('lat','lon'))
+        data = data
         return data
 
 
@@ -157,9 +159,11 @@ for i, decade in enumerate(decades_single):
 
 
     if split_basin:
-
-        pixel_wise = False
-
+        var_da_NAL, var_da_NPO = sector(var_da, split_basin=True)
+        if not pixel_wise:
+            var_da_NAL = var_da_NAL.mean(dim = ('lat', 'lon'))
+            var_da_NPO = var_da_NPO.mean(dim = ('lat', 'lon'))
+            
         # seperately for NAL and NPO for hus_std
         var_da_NAL, var_da_NPO = sector(var_da, split_basin=True)
 
@@ -171,10 +175,11 @@ for i, decade in enumerate(decades_single):
         coherence_NPO.to_netcdf(f"{coherence_path}coherence_NPO_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
     else:
+        var_da = sector(var_da, split_basin=False)
         if pixel_wise:
             coherence = var_da.resample(time = '1YE').apply(coherence_analy, pixel_wise = True)
         else:
-            var_da = sector(var_da, split_basin=False)
+            var_da = var_da.mean(dim = ('lat', 'lon'))
             coherence = var_da.resample(time = '1YE').apply(coherence_analy, pixel_wise = False)
         coherence.to_netcdf(f"{coherence_path}coherence_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
