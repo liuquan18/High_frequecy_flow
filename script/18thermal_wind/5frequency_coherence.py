@@ -90,7 +90,7 @@ def coherence_analy(da, pixel_wise = False):
         try:
             da = da.mean(dim = ('lat', 'lon'))
         except ValueError:
-            # logging.warning("No lat lon dimension, skipping spatial average")
+            logging.warning("No lat lon dimension, skipping spatial average")
             pass
 
         da1 = da[list(da.data_vars)[0]]
@@ -160,12 +160,6 @@ for i, decade in enumerate(decades_single):
 
     if split_basin:
         var_da_NAL, var_da_NPO = sector(var_da, split_basin=True)
-        if not pixel_wise:
-            var_da_NAL = var_da_NAL.mean(dim = ('lat', 'lon'))
-            var_da_NPO = var_da_NPO.mean(dim = ('lat', 'lon'))
-            
-        # seperately for NAL and NPO for hus_std
-        var_da_NAL, var_da_NPO = sector(var_da, split_basin=True)
 
         coherence_NAL = var_da_NAL.resample(time = '1YE').apply(coherence_analy, pixel_wise = pixel_wise)
         coherence_NAL.to_netcdf(f"{coherence_path}coherence_NAL_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
@@ -176,28 +170,25 @@ for i, decade in enumerate(decades_single):
 
     else:
         var_da = sector(var_da, split_basin=False)
-        if pixel_wise:
-            coherence = var_da.resample(time = '1YE').apply(coherence_analy, pixel_wise = True)
-        else:
-            var_da = var_da.mean(dim = ('lat', 'lon'))
-            coherence = var_da.resample(time = '1YE').apply(coherence_analy, pixel_wise = False)
+
+        coherence = var_da.resample(time = '1YE').apply(coherence_analy, pixel_wise = pixel_wise)
         coherence.to_netcdf(f"{coherence_path}coherence_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
 
 
 # %%
-# f = coherence_NAL.frequency.values
-# Cxy = coherence_NAL.mean(dim = 'time').values
+f = coherence_NAL.frequency.values
+Cxy = coherence_NAL.mean(dim = ('time', 'lat','lon')).values
 
-# fig, ax1 = plt.subplots()
+fig, ax1 = plt.subplots()
 
-# ax1.plot(1/f, Cxy)
-# ax1.set_xlabel('period (days)')
-# ax1.set_ylabel('Coherence')
+ax1.plot(1/f, Cxy)
+ax1.set_xlabel('period (days)')
+ax1.set_ylabel('Coherence')
 
 
-# ax1.set_xlim(0, 30)
-# plt.show()
+ax1.set_xlim(0, 30)
+plt.show()
 
 
 # %%
