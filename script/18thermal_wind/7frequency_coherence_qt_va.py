@@ -26,8 +26,9 @@ def read_Cxy(var1 = 'hus_std', var2 = 'va', region = 'NAL'):
         if region is not None:
             files = glob.glob(base_dir + f"*{region}*.nc")
         else:
-            logging.warning("No region specified, reading all files")
+            logging.warning("No region specified, reading all files except those with 'NAL' or 'NPO'")
             files = glob.glob(base_dir + "*.nc")
+            files = [f for f in files if 'NAL' not in f and 'NPO' not in f]
 
         cxy = xr.open_mfdataset(files, combine="by_coords")
 
