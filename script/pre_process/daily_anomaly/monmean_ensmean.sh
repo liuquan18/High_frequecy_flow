@@ -42,5 +42,7 @@ ensmean(){
 
 export -f ensmean
 
-parallel --jobs 25 ensmean ::: {1850..2090..10}
-# ensmean $decade
+# parallel --jobs 25 ensmean ::: {1850..2090..10}
+
+# use nodes to parallel
+ensmean $decade
