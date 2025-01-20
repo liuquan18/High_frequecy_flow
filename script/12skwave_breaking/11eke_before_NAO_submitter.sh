@@ -10,5 +10,5 @@
 #SBATCH --account=mh0033
 #SBATCH --output=before_wb.%j.out
 
-
-mpirun -n 25 python -u 11eke_before_NAO.py
+var=$1 # eke or eke_high
+mpirun -n 25 python -u 11eke_before_NAO.py $var
