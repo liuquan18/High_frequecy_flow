@@ -16,10 +16,11 @@
 var1=$1
 var2=$2
 split_basin=$3
+pixel_wise=$4
 
 for ens in {1..50..5}
 do
     echo "Ensemble member ${ens}"
     # run the python script
-    sbatch 5frequency_coherence_submit.sh ${ens} ${var1} ${var2} ${split_basin}
+    sbatch 5frequency_coherence_submit.sh ${ens} ${var1} ${var2} ${split_basin} ${pixel_wise}
 done
