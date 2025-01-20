@@ -149,11 +149,11 @@ for i, decade in enumerate(decades_single):
         var_da_NAL, var_da_NPO = sector(var_da, split_basin=True)
 
         coherence_NAL = var_da_NAL.resample(time = '1YE').apply(coherence_analy)
-        coherence_NAL.to_netcdf(f"{coherence_path}coherence_NAL_${var1}_${var2}_{decade}0501_{decade+9}0931.nc")
+        coherence_NAL.to_netcdf(f"{coherence_path}coherence_NAL_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
 
         coherence_NPO = var_da_NPO.resample(time = '1YE').apply(coherence_analy)
-        coherence_NPO.to_netcdf(f"{coherence_path}coherence_NPO_${var1}_${var2}_{decade}0501_{decade+9}0931.nc")
+        coherence_NPO.to_netcdf(f"{coherence_path}coherence_NPO_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
     else:
         var_da = sector(var_da, split_basin=False)
