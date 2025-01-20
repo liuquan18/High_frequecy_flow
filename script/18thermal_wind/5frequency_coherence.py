@@ -44,6 +44,9 @@ if var1 == 'vt':
 elif var1 == 'hus_std': # no ano because to calculate std, the mean is subtracted
     var1_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_std/r{member}i1p1f1/'
 
+elif var1 == 'tas_std':
+    var1_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_daily_std/r{member}i1p1f1/'
+
 elif var1 == 'hus_tas':
     var1_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_daily_std/r{member}i1p1f1/'
 
