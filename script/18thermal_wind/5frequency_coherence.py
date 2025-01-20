@@ -88,7 +88,8 @@ def coherence_analy(da, pixel_wise = False):
         try:
             da = da.mean(dim = ('lat', 'lon'))
         except ValueError:
-            logging.warning("No lat lon dimension, skipping spatial average")
+            # logging.warning("No lat lon dimension, skipping spatial average")
+            pass
 
         da1 = da[list(da.data_vars)[0]]
         da2 = da[list(da.data_vars)[1]]
