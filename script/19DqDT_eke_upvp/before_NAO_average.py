@@ -284,7 +284,7 @@ def lon2x(longitude, ax):
 #     transform=ccrs.PlateCarree(),
 #     cmap=eke_cmap,
 #     cbar_kwargs={"label": r"m$^2$/s$^2$"},
-#     levels=np.arange(-5, 5.1, 1),
+#     levels=,
 # )
 # eke_diff_ax1.set_aspect(2)
 # eke_diff_ax1.set_yticks(np.arange(-20, 10, 5) * 4)
@@ -350,7 +350,7 @@ def lon2x(longitude, ax):
 #     transform=ccrs.PlateCarree(),
 #     cmap=eke_cmap,
 #     cbar_kwargs={"label": r"m$^2$/s$^2$"},
-#     levels=np.arange(-5, 5.1, 1),
+#     levels=,
 # )
 # eke_ax2.set_aspect(2)
 # eke_ax2.set_aspect(2)
@@ -466,7 +466,7 @@ def lon2x(longitude, ax):
 
 
 
-
+eke_levels = np.arange(-4.5, 4.6, 0.5)
 
 # %%
 fig = plt.figure(figsize=(10, 12))
@@ -560,7 +560,7 @@ NAO_pos_eke_lat_lon["eke_first"].T.plot.contourf(
     ax=eke_first_ax1,
     transform=ccrs.PlateCarree(),
     cmap=eke_cmap,
-    levels=np.arange(-5, 5.1, 1),
+    levels=eke_levels,
     add_colorbar=False,
 )
 # eke_first_ax1.set_aspect(2)
@@ -576,7 +576,7 @@ NAO_pos_eke_lat_lon["eke_last"].T.plot.contourf(
     transform=ccrs.PlateCarree(),
     cmap=eke_cmap,
     add_colorbar=False,
-    levels=np.arange(-5, 5.1, 1),
+    levels=eke_levels,
 )
 
 # eke_last_ax1.set_aspect(2)
@@ -593,7 +593,7 @@ NAO_pos_eke_lat_lon["eke_diff"].T.plot.contourf(
     transform=ccrs.PlateCarree(),
     cmap=eke_cmap,
     add_colorbar=False,
-    levels=np.arange(-5, 5.1, 1),
+    levels=eke_levels,
 )
 # eke_diff_ax1.set_aspect(2)
 eke_diff_ax1.set_yticks(np.arange(-20, 10, 5) * 4)
@@ -662,7 +662,7 @@ NAO_neg_eke_lat_lon["eke_first"].T.plot.contourf(
     transform=ccrs.PlateCarree(),
     cmap=eke_cmap,
     add_colorbar=False,
-    levels=np.arange(-5, 5.1, 1),
+    levels=eke_levels,
 )
 # eke_first_ax2.set_aspect(2)
 eke_first_ax2.set_yticks(np.arange(-20, 10, 5) * 4)
@@ -677,7 +677,7 @@ NAO_neg_eke_lat_lon["eke_last"].T.plot.contourf(
     transform=ccrs.PlateCarree(),
     cmap=eke_cmap,
     add_colorbar=False,
-    levels=np.arange(-5, 5.1, 1),
+    levels=eke_levels,
 )
 
 # eke_last_ax2.set_aspect(2)
@@ -694,7 +694,7 @@ NAO_neg_eke_lat_lon["eke_diff"].T.plot.contourf(
     transform=ccrs.PlateCarree(),
     cmap=eke_cmap,
     add_colorbar=False,
-    levels=np.arange(-5, 5.1, 1),
+    levels=eke_levels,
 )
 # eke_diff_ax2.set_aspect(2)
 eke_diff_ax2.set_yticks(np.arange(-20, 10, 5) * 4)
@@ -890,6 +890,6 @@ eke_diff_ax2.text(
 
 
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_togher.pdf", dpi=300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_high_togher.pdf", dpi=300)
 
 # %%
