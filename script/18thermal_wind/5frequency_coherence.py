@@ -50,8 +50,13 @@ elif var1 == 'tas_std':
 elif var1 == 'hus_tas':
     var1_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_daily_std/r{member}i1p1f1/'
 
+
 if var2 == 'va':
     var2_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_ano_lowlevel/r{member}i1p1f1/'
+elif var2 == 'vt':
+    var2_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily_ano/r{member}i1p1f1/'
+
+    
 else:
     logging.error("Second variable is not va")
 
