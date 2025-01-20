@@ -35,6 +35,8 @@ var2 = sys.argv[3] if len(sys.argv) > 3 else 'va' # 'va'
 # true if split teh var1 into NAL and NPO
 split_basin = sys.argv[4].lower() == 'true' if len(sys.argv) > 4 else False
 
+pixel_wise = sys.argv[5].lower() == 'true' if len(sys.argv) > 5 else False
+
 
 #%%
 
@@ -56,7 +58,7 @@ if var2 == 'va':
 elif var2 == 'vt':
     var2_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily_ano/r{member}i1p1f1/'
 
-    
+
 else:
     logging.error("Second variable is not va")
 
@@ -83,6 +85,11 @@ def coherence_analy(da, pixel_wise = False):
         Cxy = xr.DataArray(Cxy, dims = ['frequency', 'lat', 'lon'], coords = {'frequency': f, 'lat': da1.lat, 'lon': da1.lon})
 
     else:
+        try:
+            da = da.mean(dim = ('lat', 'lon'))
+        except ValueError:
+            logging.warning("No lat lon dimension, skipping spatial average")
+
         da1 = da[list(da.data_vars)[0]]
         da2 = da[list(da.data_vars)[1]]
 
@@ -150,19 +157,24 @@ for i, decade in enumerate(decades_single):
 
     if split_basin:
 
+        pixel_wise = False
+
         # seperately for NAL and NPO for hus_std
         var_da_NAL, var_da_NPO = sector(var_da, split_basin=True)
 
-        coherence_NAL = var_da_NAL.resample(time = '1YE').apply(coherence_analy)
+        coherence_NAL = var_da_NAL.resample(time = '1YE').apply(coherence_analy, pixel_wise = pixel_wise)
         coherence_NAL.to_netcdf(f"{coherence_path}coherence_NAL_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
 
-        coherence_NPO = var_da_NPO.resample(time = '1YE').apply(coherence_analy)
+        coherence_NPO = var_da_NPO.resample(time = '1YE').apply(coherence_analy, pixel_wise = pixel_wise)
         coherence_NPO.to_netcdf(f"{coherence_path}coherence_NPO_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
     else:
-        var_da = sector(var_da, split_basin=False)
-        coherence = var_da.resample(time = '1YE').apply(coherence_analy, pixel_wise = True)
+        if pixel_wise:
+            coherence = var_da.resample(time = '1YE').apply(coherence_analy, pixel_wise = True)
+        else:
+            var_da = sector(var_da, split_basin=False)
+            coherence = var_da.resample(time = '1YE').apply(coherence_analy, pixel_wise = False)
         coherence.to_netcdf(f"{coherence_path}coherence_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
 
