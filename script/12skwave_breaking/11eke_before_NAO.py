@@ -77,7 +77,7 @@ def process_data(decade, var):
     NAO_pos, NAO_neg, data = read_all_data(decade, var = var)
 
     # select data before NAO events, here 'var' is only for column name
-    logging.info (f"rank {rank} is selecting data before NAO events \n")
+    logging.info (f"rank {rank} is selecting data for {decade} \n")
     eke_NAO_pos = sel_before_NAO(NAO_pos, data, var = 'eke')
     eke_NAO_neg = sel_before_NAO(NAO_neg, data, var = 'eke')
 
