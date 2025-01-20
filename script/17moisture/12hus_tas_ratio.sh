@@ -17,7 +17,7 @@ ratio(){
     local tasfile=$2
     local outfile=${husfile//hus/hus_tas}
     echo "Calculating ratio for $husfile and $tasfile"
-    cdo -P 10 div $husfile $tasfile $outfile
+    cdo -P 10 -div -mulc,1000 $husfile $tasfile $outfile # change from kg/kg to g/kg
 }
 
 export -f ratio 
