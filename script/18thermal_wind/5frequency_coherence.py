@@ -83,7 +83,7 @@ def coherence_analy(da, pixel_wise = False):
         da2 = da[list(da.data_vars)[1]]
 
         # calculate coherence every year, 153 long,segement lenth 76, 50% overlap
-        f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend ='constant', noverlap = 38, axis = 0)
+        f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend =False, noverlap = 38, axis = 0)
         Cxy = xr.DataArray(Cxy, dims = ['frequency', 'lat', 'lon'], coords = {'frequency': f, 'lat': da1.lat, 'lon': da1.lon})
 
     else:
@@ -97,7 +97,7 @@ def coherence_analy(da, pixel_wise = False):
         da2 = da[list(da.data_vars)[1]]
 
         # calculate coherence every year, 153 long,segement lenth 76, 50% overlap
-        f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend ='constant', noverlap = 38, axis = 0)
+        f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend =False, noverlap = 38, axis = 0)
 
         Cxy = xr.DataArray(Cxy, dims = ['frequency'], coords = {'frequency': f})
 
