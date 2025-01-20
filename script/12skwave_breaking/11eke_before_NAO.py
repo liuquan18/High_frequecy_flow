@@ -28,9 +28,10 @@ except:
 if rank == 0:
     logging.info(f"::: Running on {size} cores :::")
 
+
+
 #%%
-def read_eke( decade, suffix = '_ano_2060N', plev = 25000, **kwargs):
-    var = 'eke'
+def read_eke( decade, suffix = '_ano_2060N', var='eke', **kwargs):
     time_tag = f"{decade}0501-{decade+9}0930"
     data_path = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
@@ -56,14 +57,14 @@ def read_eke( decade, suffix = '_ano_2060N', plev = 25000, **kwargs):
 
     
 #%%
-def read_all_data(decade):
+def read_all_data(decade, var):
     logging.info("reading NAO extremes")
     # wave breaking
     NAO_pos = read_NAO_extremes(decade, 'positive')
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
     logging.info("reading eke")
-    eke = read_eke( decade)
+    eke = read_eke( decade, var)
     
 
     return NAO_pos, NAO_neg, eke
@@ -71,11 +72,11 @@ def read_all_data(decade):
 
 
 #%%
-def process_data(decade):
+def process_data(decade, var = 'eke'):
     # read data
-    NAO_pos, NAO_neg, data = read_all_data(decade)
+    NAO_pos, NAO_neg, data = read_all_data(decade, var = var)
 
-    # select data before NAO events
+    # select data before NAO events, here 'var' is only for column name
     logging.info (f"rank {rank} is selecting data before NAO events \n")
     eke_NAO_pos = sel_before_NAO(NAO_pos, data, var = 'eke')
     eke_NAO_neg = sel_before_NAO(NAO_neg, data, var = 'eke')
@@ -88,9 +89,9 @@ def process_data(decade):
 #%%
 decades_all = np.arange(1850, 2100, 10)
 decade_single = np.array_split(decades_all, size)[rank]
-
+var = sys.argv[1] # 'eke' or 'eke_high'
 for decade in decade_single:
     logging.info(f"rank {rank} is processing decade {decade} \n")
-    process_data(decade)
+    process_data(decade, var = var)
 
 # %%
