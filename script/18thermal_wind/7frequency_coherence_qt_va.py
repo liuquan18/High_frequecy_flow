@@ -39,6 +39,8 @@ def read_Cxy(var1 = 'hus', var2 = 'va', region = 'NAL'):
 #%%
 hus_va_Cxy_NAL = read_Cxy('hus_std', 'va', 'NAL')
 hus_va_Cxy_NPO = read_Cxy('hus_std', 'va', 'NPO')
+tas_va_Cxy_NAL = read_Cxy('tas', 'va', 'NAL')
+tas_va_Cxy_NPO = read_Cxy('tas', 'va', 'NPO')
 #%%
 vt_va_Cxy = read_Cxy('vt', 'va', None)
 #%%

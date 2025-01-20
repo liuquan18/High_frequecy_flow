@@ -65,12 +65,11 @@ if rank == 0:
     logging.info (f"Processing member {member} between {var1} and {var2}")
 
 #%%
-def coherence_analy(da, lats = (20,60), pixel_wise = False):
+def coherence_analy(da, pixel_wise = False):
 
     """pixel wise for same variable, e.g., vt and va, spatial average for different variables, e.g., vt and hus_std"""
 
     if pixel_wise:
-        da = da.sel(lat = slice(lats[0], lats[1])) # select region
         da1 = da[list(da.data_vars)[0]]
         da2 = da[list(da.data_vars)[1]]
 
@@ -79,7 +78,6 @@ def coherence_analy(da, lats = (20,60), pixel_wise = False):
         Cxy = xr.DataArray(Cxy, dims = ['frequency', 'lat', 'lon'], coords = {'frequency': f, 'lat': da1.lat, 'lon': da1.lon})
 
     else:
-        da = da.sel(lat = slice(lats[0], lats[1])).mean(dim = ('lat', 'lon')) # spatial average
         da1 = da[list(da.data_vars)[0]]
         da2 = da[list(da.data_vars)[1]]
 
@@ -92,18 +90,25 @@ def coherence_analy(da, lats = (20,60), pixel_wise = False):
 
     return Cxy
 #%%
-def sector(data):
+def sector(data, split_basin = True):
     # change lon from 0-360 to -180-180
     data = data.assign_coords(lon=(data.lon + 180) % 360 - 180).sortby("lon")
-    box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
-    box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
+    data = data.sel(lat = slice(20, 60))
+    if split_basin:
+            
+        box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
+        box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
 
-    data_NAL = data.sel(lon=slice(box_NAL[0], box_NAL[1])).mean(dim="lon")
-    data_NPO1 = data.sel(lon=slice(box_NPO[0], 180))
-    data_NPO2 = data.sel(lon=slice(-180, box_NPO[1]))
-    data_NPO = xr.concat([data_NPO1, data_NPO2], dim="lon").mean(dim="lon")
+        data_NAL = data.sel(lon=slice(box_NAL[0], box_NAL[1])).mean(dim=('lat','lon'))
+        data_NPO1 = data.sel(lon=slice(box_NPO[0], 180))
+        data_NPO2 = data.sel(lon=slice(-180, box_NPO[1]))
+        data_NPO = xr.concat([data_NPO1, data_NPO2], dim="lon").mean(dim=('lat','lon'))
 
-    return data_NAL, data_NPO
+        return data_NAL, data_NPO
+
+    else:
+        data = data.mean(dim=('lat','lon'))
+        return data
 
 
 #%%
@@ -141,7 +146,7 @@ for i, decade in enumerate(decades_single):
     if split_basin:
 
         # seperately for NAL and NPO for hus_std
-        var_da_NAL, var_da_NPO = sector(var_da)
+        var_da_NAL, var_da_NPO = sector(var_da, split_basin=True)
 
         coherence_NAL = var_da_NAL.resample(time = '1YE').apply(coherence_analy)
         coherence_NAL.to_netcdf(f"{coherence_path}coherence_NAL_${var1}_${var2}_{decade}0501_{decade+9}0931.nc")
@@ -151,6 +156,7 @@ for i, decade in enumerate(decades_single):
         coherence_NPO.to_netcdf(f"{coherence_path}coherence_NPO_${var1}_${var2}_{decade}0501_{decade+9}0931.nc")
 
     else:
+        var_da = sector(var_da, split_basin=False)
         coherence = var_da.resample(time = '1YE').apply(coherence_analy, pixel_wise = True)
         coherence.to_netcdf(f"{coherence_path}coherence_{var1}_{var2}_{decade}0501_{decade+9}0931.nc")
 
