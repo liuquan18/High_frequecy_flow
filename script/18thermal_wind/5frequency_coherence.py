@@ -74,7 +74,7 @@ def coherence_analy(da, pixel_wise = False):
         da2 = da[list(da.data_vars)[1]]
 
         # calculate coherence every year, 153 long,segement lenth 76, 50% overlap
-        f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend =False, noverlap = 38, axis = 0)
+        f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend ='constant', noverlap = 38, axis = 0)
         Cxy = xr.DataArray(Cxy, dims = ['frequency', 'lat', 'lon'], coords = {'frequency': f, 'lat': da1.lat, 'lon': da1.lon})
 
     else:
@@ -82,7 +82,7 @@ def coherence_analy(da, pixel_wise = False):
         da2 = da[list(da.data_vars)[1]]
 
         # calculate coherence every year, 153 long,segement lenth 76, 50% overlap
-        f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend =False, noverlap = 38, axis = 0)
+        f, Cxy = signal.coherence(da1, da2, fs = 1, nperseg=76, detrend ='constant', noverlap = 38, axis = 0)
 
         Cxy = xr.DataArray(Cxy, dims = ['frequency'], coords = {'frequency': f})
 
@@ -163,18 +163,18 @@ for i, decade in enumerate(decades_single):
 
 
 # %%
-f = coherence_NAL.frequency.values
-Cxy = coherence_NAL.mean(dim = 'time').values
+# f = coherence_NAL.frequency.values
+# Cxy = coherence_NAL.mean(dim = 'time').values
 
-fig, ax1 = plt.subplots()
+# fig, ax1 = plt.subplots()
 
-ax1.plot(1/f, Cxy)
-ax1.set_xlabel('period (days)')
-ax1.set_ylabel('Coherence')
+# ax1.plot(1/f, Cxy)
+# ax1.set_xlabel('period (days)')
+# ax1.set_ylabel('Coherence')
 
 
-ax1.set_xlim(0, 30)
-plt.show()
+# ax1.set_xlim(0, 30)
+# plt.show()
 
 
 # %%
