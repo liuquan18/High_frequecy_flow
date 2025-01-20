@@ -10,6 +10,8 @@
 #SBATCH --account=mh0033
 #SBATCH --output=coherence.%j.out
 
+module load parallel
+module load cdo
 
 member_start=$1
 var1=$2
