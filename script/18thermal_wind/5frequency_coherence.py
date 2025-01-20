@@ -163,26 +163,18 @@ for i, decade in enumerate(decades_single):
 
 
 # %%
-# fig, ax1 = plt.subplots()
+f = coherence_NAL.frequency.values
+Cxy = coherence_NAL.mean(dim = 'time').values
 
-# ax1.plot(f, np.mean(Cxy, axis=1))
-# ax1.set_xlabel('frequency [Hz]')
-# ax1.set_ylabel('Coherence')
+fig, ax1 = plt.subplots()
 
-# # Create a secondary x-axis on top
-# ax2 = ax1.twiny()
-# ax2.set_xlim(ax1.get_xlim())
-# ax2.set_xticks(ax1.get_xticks())
-# ax2.set_xticklabels([f'{1/x:.1f}' if x != 0 else 'inf' for x in ax1.get_xticks()])
-# ax2.set_xlabel('Period [days]')
+ax1.plot(1/f, Cxy)
+ax1.set_xlabel('period (days)')
+ax1.set_ylabel('Coherence')
 
-# # Add vertical lines at days = 2 and days = 12
-# days = [2, 12]
-# for day in days:
-#     freq = 1 / day
-#     ax2.axvline(freq, color='r', linestyle='--')
 
-# plt.show()
+ax1.set_xlim(0, 30)
+plt.show()
 
 
 # %%
