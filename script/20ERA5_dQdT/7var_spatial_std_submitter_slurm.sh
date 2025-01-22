@@ -9,13 +9,12 @@
 #SBATCH --account=mh0033
 #SBATCH --output=std.%j.out
 
+module load parallel
+
 var=$1  
 basedir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_daily/
 
-files=($(ls ${basedir}*.nc))
 
-for file in ${files[@]}; do
-    echo $file
-    python 7var_spatial_std.py $file
 
-done
+find ${basedir} -name "*.nc" | parallel python 7var_spatial_std.py {}
+
