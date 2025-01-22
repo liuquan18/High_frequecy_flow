@@ -7,6 +7,7 @@ import glob
 import pandas as pd
 # %%
 import src.moisture.longitudinal_contrast as lc
+import src. compute.slurm_cluster as scluster
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -15,8 +16,14 @@ logging.basicConfig(level=logging.INFO)
 file=sys.argv[1]
 
 logging.info(f'Processing {os.path.basename(file)}')
+#%%
+dash_board_add = int(file[-14:-10]) + int(file[-9:-3])
+#%%
+client, cluster = scluster.init_dask_slurm_cluster(scale=1, processes= 10, memory='200GB', walltime='01:00:00', dash_address=dash_board_add)
 
-
+#%
+logging.info(f'Processing {os.path.basename(file)}, dashboard: {cluster.dashboard_link}')
+#%%
 ds = xr.open_dataset(file, chunks={'time': 1, 'lat':30, 'lon':200})
 
 if 'tas' in file:
@@ -38,3 +45,5 @@ ds_std.to_netcdf(outfile)
 ds.close()
 ds_std.close()
 
+
+# %%
