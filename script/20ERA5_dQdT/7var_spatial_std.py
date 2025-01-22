@@ -19,7 +19,7 @@ logging.info(f'Processing {os.path.basename(file)}')
 #%%
 dash_board_add = int(file[-14:-10]) + int(file[-9:-3])
 #%%
-client, cluster = scluster.init_dask_slurm_cluster(scale=1, processes= 10, memory='200GB', walltime='01:00:00', dash_address=dash_board_add)
+client, cluster = scluster.init_dask_slurm_cluster(scale=1, processes= 10, memory='200GB', walltime='00:30:00', dash_address=dash_board_add)
 
 #%
 logging.info(f'Processing {os.path.basename(file)}, dashboard: {cluster.dashboard_link}')
