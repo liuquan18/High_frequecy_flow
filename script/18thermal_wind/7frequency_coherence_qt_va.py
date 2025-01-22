@@ -14,14 +14,17 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 #%%
-def read_Cxy(var1 = 'hus_std', var2 = 'va', region = 'NAL'):
+def read_Cxy(var1 = 'hus_std', var2 = 'va', region = 'NAL', pixel_wise = False):
 
     members = np.arange(1, 51)
     coherence = []
 
     for member in members:
         logging.info(f"Processing member {member}")
-        base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var1}_{var2}_coherence/r{member}i1p1f1/"
+        if pixel_wise:
+            base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var1}_{var2}_coherence_pixelwise/r{member}i1p1f1/"
+        else:
+            base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var1}_{var2}_coherence/r{member}i1p1f1/"
 
         if region is not None:
             files = glob.glob(base_dir + f"*{region}*.nc")
@@ -99,17 +102,17 @@ def get_plot_data(Cxy, globe_mean = False, period = None):
 hus_va_NAL_mean, hus_va_NAL_95, hus_va_NAL_05 = get_plot_data(hus_va_Cxy_NAL)
 hus_va_NPO_mean, hus_va_NPO_95, hus_va_NPO_05 = get_plot_data(hus_va_Cxy_NPO)
 
-vt_va_mean, vt_va_95, vt_va_05 = get_plot_data(vt_va_Cxy, globe_mean = True)
+vt_va_mean, vt_va_95, vt_va_05 = get_plot_data(vt_va_Cxy, globe_mean = False)
 #%%
 hus_va_NAL_mean_first, hus_va_NAL_95_first, hus_va_NAL_05_first = get_plot_data(hus_va_Cxy_NAL, period = 'first')
 hus_va_NPO_mean_first, hus_va_NPO_95_first, hus_va_NPO_05_first = get_plot_data(hus_va_Cxy_NPO, period = 'first')
 
-vt_va_mean_first, vt_va_95_first, vt_va_05_first = get_plot_data(vt_va_Cxy, globe_mean = True, period = 'first')
+vt_va_mean_first, vt_va_95_first, vt_va_05_first = get_plot_data(vt_va_Cxy, globe_mean = False, period = 'first')
 #%%
 hus_va_NAL_mean_last, hus_va_NAL_95_last, hus_va_NAL_05_last = get_plot_data(hus_va_Cxy_NAL, period = 'last')
 hus_va_NPO_mean_last, hus_va_NPO_95_last, hus_va_NPO_05_last = get_plot_data(hus_va_Cxy_NPO, period = 'last')
 
-vt_va_mean_last, vt_va_95_last, vt_va_05_last = get_plot_data(vt_va_Cxy, globe_mean = True, period = 'last')
+vt_va_mean_last, vt_va_95_last, vt_va_05_last = get_plot_data(vt_va_Cxy, globe_mean = False, period = 'last')
 #%%
 tas_va_NAL_mean, tas_va_NAL_95, tas_va_NAL_05 = get_plot_data(tas_va_Cxy_NAL)
 tas_va_NPO_mean, tas_va_NPO_95, tas_va_NPO_05 = get_plot_data(tas_va_Cxy_NPO)
@@ -208,9 +211,9 @@ axes[0].annotate(r'$v^{\prime\prime}$', xy=(2, 0.41), xytext=(6, 0.409),
              arrowprops=dict(arrowstyle='<->', color='green'), color='green')
 
 axes[0].set_xlim(0, 30)
-axes[0].set_ylim(0.32, 0.49)
-axes[1].set_ylim(0.32, 0.49)
-axes[2].set_ylim(0.32, 0.49)
+axes[0].set_ylim(0.32, 0.51)
+axes[1].set_ylim(0.32, 0.51)
+axes[2].set_ylim(0.32, 0.51)
 
 
 # Set colors for the legends
@@ -221,7 +224,7 @@ axes[1].legend(handles, labels, frameon=False)
 # axes[2].legend(handles, labels, frameon=False)
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_q_t_va_coherence.png", dpi = 300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_q_t_va_coherence.png", dpi = 300)
 
 
 # %%
