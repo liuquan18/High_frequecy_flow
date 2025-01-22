@@ -39,7 +39,7 @@ def init_dask_slurm_cluster(scale = 8, processes = 2, walltime="00:30:00", memor
     
     client = Client(scluster)
     scluster.scale(jobs=scale)
-    print(scluster.job_script())
+    # print(scluster.job_script())
     nworkers = scale * processes
     client.wait_for_workers(nworkers)              # waits for all workers to be ready, can be submitted now
 
