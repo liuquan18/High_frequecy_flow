@@ -33,7 +33,7 @@ def read_Cxy(var1 = 'hus_std', var2 = 'va', region = 'NAL', pixel_wise = False):
             files = glob.glob(base_dir + "*.nc")
             files = [f for f in files if 'NAL' not in f and 'NPO' not in f]
 
-        cxy = xr.open_mfdataset(files, combine="by_coords")
+        cxy = xr.open_mfdataset(files, combine="by_coords", chunks = {'time':-1, 'lat':-1,'lon':-1})
 
         coherence.append(cxy)
     coherence = xr.concat(coherence, dim='ens')
