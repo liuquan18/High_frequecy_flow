@@ -38,7 +38,10 @@ def coherence_analy(da, pixel_wise = False):
 def sector(data, split_basin = True):
     # change lon from 0-360 to -180-180
     data = data.assign_coords(lon=(data.lon + 180) % 360 - 180).sortby("lon")
-    data = data.sel(lat = slice(20, 60))
+    if data.lat[0].values > data.lat[-1].values:
+        data = data.sel(lat=slice(60, 20))
+    else:
+        data = data.sel(lat=slice(20, 60))
     if split_basin:
             
         box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
