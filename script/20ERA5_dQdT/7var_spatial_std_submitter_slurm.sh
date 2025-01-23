@@ -13,5 +13,5 @@ module load parallel
 
 var=$1
 
-parallel --jobs 10 python 7var_spatial_std.py ::: $var ::: {0..4}
+parallel --jobs 10 python 7var_spatial_std.py ::: $var ::: {0..3}
 

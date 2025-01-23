@@ -17,7 +17,7 @@ client, cluster = scluster.init_dask_slurm_cluster(scale=4, processes= 10, memor
 
 #%%
 var = sys.argv[1] # tas or hus
-task= sys.argv[2] # 0-9
+task= sys.argv[2] # 0, 1, 2, 3
 
 #%%
 base_dir=f'/work/mh0033/m300883/High_frequecy_flow/data/ERA5/{var}_daily/'
