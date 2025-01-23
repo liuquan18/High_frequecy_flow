@@ -34,3 +34,24 @@ def coherence_analy(da, pixel_wise = False):
     Cxy.name = 'coherence'
 
     return Cxy
+
+def sector(data, split_basin = True):
+    # change lon from 0-360 to -180-180
+    data = data.assign_coords(lon=(data.lon + 180) % 360 - 180).sortby("lon")
+    data = data.sel(lat = slice(20, 60))
+    if split_basin:
+            
+        box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
+        box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
+
+        data_NAL = data.sel(lon=slice(box_NAL[0], box_NAL[1]))
+        data_NPO1 = data.sel(lon=slice(box_NPO[0], 180))
+        data_NPO2 = data.sel(lon=slice(-180, box_NPO[1]))
+        data_NPO = xr.concat([data_NPO1, data_NPO2], dim="lon")
+
+        return data_NAL, data_NPO
+
+    else:
+        data = data
+        return data
+
