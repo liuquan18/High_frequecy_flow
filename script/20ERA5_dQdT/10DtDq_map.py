@@ -19,6 +19,14 @@ tas_mean = xr.open_dataset(
     "/work/mh0033/m300883/High_frequecy_flow/data/ERA5/moisture_variability_stat/tas_daily_std_mergeyear_timmean.nc"
 )
 tas_mean = tas_mean.var130.squeeze()
+#%%
+hus_mean = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/ERA5/moisture_variability_stat/hus_daily_std_mergeyear_timmean.nc"
+)
+
+hus_mean = hus_mean.var133.squeeze()
+hus_mean = hus_mean * 1000 # unit
+
 # %%
 temp_cmap_seq = np.loadtxt(
     "/work/mh0033/m300883/High_frequecy_flow/data/colormaps-master/continuous_colormaps_rgb_0-1/temp_seq.txt"
@@ -58,7 +66,17 @@ tas_mean.plot(
 )
 
 
-axes[0].set_title(r"$\Delta_{T}$")
+axes[0].set_title(r"$\Delta T$")
 axes[0].coastlines()
 
+hus_mean.plot(
+    ax=axes[1], transform=ccrs.PlateCarree(), cmap=prec_cmap_seq, levels=hus_levels,
+    cbar_kwargs={"label": r"$\Delta q$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(0, 5, 1)},
+)
+
+axes[1].set_title(r"$\Delta q$")
+axes[1].coastlines()
+
+plt.tight_layout()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ERA5_dT_dq_map.png", dpi=300)
 # %%
