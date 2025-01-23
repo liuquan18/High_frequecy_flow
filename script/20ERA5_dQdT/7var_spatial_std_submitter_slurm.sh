@@ -11,10 +11,7 @@
 
 module load parallel
 
-var=$1  
-basedir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_daily/
+var=$1
 
-
-
-find ${basedir} -name "*.nc" | parallel python 7var_spatial_std.py {}
+parallel --jobs 10 python 7var_spatial_std.py ::: $var ::: {0..4}
 

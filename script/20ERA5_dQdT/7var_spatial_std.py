@@ -13,17 +13,22 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 #%%
-client, cluster = scluster.init_dask_slurm_cluster(scale=10, processes= 10, memory='200GB', walltime='08:00:00', dash_address=8989)
+client, cluster = scluster.init_dask_slurm_cluster(scale=4, processes= 10, memory='200GB', walltime='08:00:00', dash_address=8989)
 
 #%%
 var = sys.argv[1] # tas or hus
+task= sys.argv[2] # 0-9
+
+#%%
 base_dir=f'/work/mh0033/m300883/High_frequecy_flow/data/ERA5/{var}_daily/'
 
 files = glob.glob(base_dir+'*.nc')
-
-
+files.sort()
 #%%
-for file in files:
+files_groups = np.array_split(files, 4) # 4 tasks
+files_core = files_groups[int(task)]
+#%%
+for file in files_core:
     logging.info(f'Reading {os.path.basename(file)}')
     ds = xr.open_dataset(file, chunks={'time': 1, 'lat':120, 'lon':800})
 
