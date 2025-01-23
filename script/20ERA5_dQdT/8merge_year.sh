@@ -27,8 +27,6 @@ merge_year(){
     year_files=$(find ${daily_dir} -name "*.nc" | grep ${year})
     cdo -r -O -P 8 mergetime ${year_files} ${to_dir}E5pl00_1D_${var}_250hPa_daily_${year}-05-01_${year}-09-31.nc
 
-    # rm tmp files
-    rm ${year_files}
 }
 
 export -f merge_year
