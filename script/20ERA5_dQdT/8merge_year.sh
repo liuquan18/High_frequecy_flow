@@ -14,9 +14,9 @@ module load parallel
 var=$1
 
 
-daily_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_daily_std/
-tmp_dir=/scratch/m/m300883/ERA5/${var}_daily_std/
-to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_daily_std_mergeyear/
+daily_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}/
+tmp_dir=/scratch/m/m300883/ERA5/${var}/
+to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_mergeyear/
 
 export daily_dir tmp_dir to_dir var
 mkdir -p $tmp_dir $to_dir
