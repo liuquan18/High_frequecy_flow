@@ -74,7 +74,7 @@ if rank == 0:
 years = np.arange(1979, 2024)
 #%%
 for i, year in enumerate(years):
-    logging.info(f"rank {rank} Processing {year} {i+1}/{len(years_single)}")
+    logging.info(f"rank {rank} Processing {year} {i+1}/{len(years)}")
 
     var1_files = glob.glob(var1_path + f"*{year}*.nc")[0]
     var2_files = glob.glob(var2_path + f"*{year}*.nc")[0]
