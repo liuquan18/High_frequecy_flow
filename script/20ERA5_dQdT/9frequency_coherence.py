@@ -71,7 +71,7 @@ if rank == 0:
 
 
 #%%
-years = np.arange(1979, 2024)
+years = np.arange(1979, 2025)
 
 years_single = np.array_split(years, size)[rank]
 #%%
