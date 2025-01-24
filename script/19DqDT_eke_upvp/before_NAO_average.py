@@ -476,39 +476,39 @@ grid = plt.GridSpec(6, 4, height_ratios=[1, 1, 1, 0.3, 1, 0.2], hspace=0)
 grid.update(hspace=0.3)
 # ratio positive
 # first row
-eke_first_ax1 = fig.add_subplot(grid[0, :2], projection=ccrs.PlateCarree(-90))
-eke_first_ax2 = fig.add_subplot(grid[0, 2:], projection=ccrs.PlateCarree(-90))
+eke_first_ax2 = fig.add_subplot(grid[0, :2], projection=ccrs.PlateCarree(-90))
+eke_first_ax1 = fig.add_subplot(grid[0, 2:], projection=ccrs.PlateCarree(-90))
 
 # second row
-eke_last_ax1 = fig.add_subplot(grid[1, :2], projection=ccrs.PlateCarree(-90))
-eke_last_ax2 = fig.add_subplot(grid[1, 2:], projection=ccrs.PlateCarree(-90))
+eke_last_ax2 = fig.add_subplot(grid[1, :2], projection=ccrs.PlateCarree(-90))
+eke_last_ax1 = fig.add_subplot(grid[1, 2:], projection=ccrs.PlateCarree(-90))
 
 # third row
-eke_diff_ax1 = fig.add_subplot(grid[2, :2], projection=ccrs.PlateCarree(-90))
-eke_diff_ax2 = fig.add_subplot(grid[2, 2:], projection=ccrs.PlateCarree(-90))
+eke_diff_ax2 = fig.add_subplot(grid[2, :2], projection=ccrs.PlateCarree(-90))
+eke_diff_ax1 = fig.add_subplot(grid[2, 2:], projection=ccrs.PlateCarree(-90))
 
 # forth row
 eke_coast_ax = fig.add_subplot(grid[3, :2], projection=ccrs.PlateCarree(-90))
-cbar_ax = fig.add_subplot(grid[3, 2:])
+cbar_ax = fig.add_subplot(grid[3, :2])
 
 # fifth row
-ratio_ax1 = fig.add_subplot(grid[4, 1])
-ratio_ax2 = fig.add_subplot(grid[4, 3])
+ratio_ax2 = fig.add_subplot(grid[4, 1])
+ratio_ax1 = fig.add_subplot(grid[4, 3])
 
-upvp_ax1 = fig.add_subplot(grid[4, 0])
-upvp_ax2 = fig.add_subplot(grid[4, 2])
+upvp_ax2 = fig.add_subplot(grid[4, 0])
+upvp_ax1 = fig.add_subplot(grid[4, 2])
 
 # sixth row
 legend_ax = fig.add_subplot(grid[5, :])
 
-ratio_ax1.plot(
+ratio_ax2.plot(
     first_NAO_pos_ratio_NAL["ratio"],
     first_NAO_pos_ratio_NAL["lag"],
     label="first_NAL",
     color=sns.color_palette("Paired")[0],
     linewidth=2,
 )
-ratio_ax1.plot(
+ratio_ax2.plot(
     last_NAO_pos_ratio_NAL["ratio"],
     last_NAO_pos_ratio_NAL["lag"],
     label="last_NAL",
@@ -516,7 +516,7 @@ ratio_ax1.plot(
     linewidth=2,
 )
 
-ratio_ax1.plot(
+ratio_ax2.plot(
     first_NAO_pos_ratio_NPO["ratio"],
     first_NAO_pos_ratio_NPO["lag"],
     label="first_NPO",
@@ -525,7 +525,7 @@ ratio_ax1.plot(
     linewidth=2,
 )
 
-ratio_ax1.plot(
+ratio_ax2.plot(
     last_NAO_pos_ratio_NPO["ratio"],
     last_NAO_pos_ratio_NPO["lag"],
     label="last_NPO",
@@ -535,7 +535,7 @@ ratio_ax1.plot(
 )
 
 # upvp positive
-upvp_ax1.plot(
+upvp_ax2.plot(
     first_NAO_pos_upvp_NA["upvp"],
     first_NAO_pos_upvp_NA["lag"],
     label="first",
@@ -543,7 +543,7 @@ upvp_ax1.plot(
     linewidth=2,
 )
 
-upvp_ax1.plot(
+upvp_ax2.plot(
     last_NAO_pos_upvp_NA["upvp"],
     last_NAO_pos_upvp_NA["lag"],
     label="last",
@@ -603,14 +603,14 @@ eke_diff_ax1.set_ylabel("")
 
 # ratio negative
 
-ratio_ax2.plot(
+ratio_ax1.plot(
     first_NAO_neg_ratio_NAL["ratio"],
     first_NAO_neg_ratio_NAL["lag"],
     label="first_NAL",
     color=sns.color_palette("Paired")[0],
     linewidth=2,
 )
-ratio_ax2.plot(
+ratio_ax1.plot(
     last_NAO_neg_ratio_NAL["ratio"],
     last_NAO_neg_ratio_NAL["lag"],
     label="last_NAL",
@@ -618,7 +618,7 @@ ratio_ax2.plot(
     linewidth=2,
 )
 
-ratio_ax2.plot(
+ratio_ax1.plot(
     first_NAO_neg_ratio_NPO["ratio"],
     first_NAO_neg_ratio_NPO["lag"],
     label="first_NPO",
@@ -627,7 +627,7 @@ ratio_ax2.plot(
     linewidth=2,
 )
 
-ratio_ax2.plot(
+ratio_ax1.plot(
     last_NAO_neg_ratio_NPO["ratio"],
     last_NAO_neg_ratio_NPO["lag"],
     label="last_NPO",
@@ -637,7 +637,7 @@ ratio_ax2.plot(
 )
 
 # upvp negative
-upvp_ax2.plot(
+upvp_ax1.plot(
     first_NAO_neg_upvp_NA["upvp"],
     first_NAO_neg_upvp_NA["lag"],
     label="first",
@@ -645,7 +645,7 @@ upvp_ax2.plot(
     linewidth=2,
 )
 
-upvp_ax2.plot(
+upvp_ax1.plot(
     last_NAO_neg_upvp_NA["upvp"],
     last_NAO_neg_upvp_NA["lag"],
     label="last",
@@ -702,8 +702,8 @@ eke_diff_ax2.set_yticklabels("")
 eke_diff_ax2.set_ylabel("")
 
 
-upvp_ax1.set_xlim(-2, 15.2)
-upvp_ax2.set_xlim(-15.2, 2)
+upvp_ax2.set_xlim(-2, 15.2)
+upvp_ax1.set_xlim(-15.2, 2)
 
 
 for ax in [
@@ -720,17 +720,17 @@ for ax in [
 ]:
     ax.axhline(0, color="black", linewidth=2, linestyle="dotted")
 
-ratio_ax1.set_ylabel("Lag (days)")
-ratio_ax1.set_xlabel(r"$\Delta q / \Delta T$ (g $\cdot$ kg$^{-1}$ $\cdot$ K$^{-1}$)")
-upvp_ax1.set_xlabel(r"$u^{'}v^{'}$ (m$^2$ $\cdot$ s$^{-2}$)")
-
-
+ratio_ax2.set_ylabel("Lag (days)")
 ratio_ax2.set_xlabel(r"$\Delta q / \Delta T$ (g $\cdot$ kg$^{-1}$ $\cdot$ K$^{-1}$)")
 upvp_ax2.set_xlabel(r"$u^{'}v^{'}$ (m$^2$ $\cdot$ s$^{-2}$)")
 
-ratio_ax1.set_yticks(np.arange(-20, 11, 5))
 
-for ax in [ratio_ax2, upvp_ax1, upvp_ax2]:
+ratio_ax1.set_xlabel(r"$\Delta q / \Delta T$ (g $\cdot$ kg$^{-1}$ $\cdot$ K$^{-1}$)")
+upvp_ax1.set_xlabel(r"$u^{'}v^{'}$ (m$^2$ $\cdot$ s$^{-2}$)")
+
+ratio_ax2.set_yticks(np.arange(-20, 11, 5))
+
+for ax in [ratio_ax1, upvp_ax1, upvp_ax2]:
     ax.set_yticks(np.arange(-20, 11, 5) )
     ax.set_yticklabels("")
 
@@ -747,7 +747,7 @@ for ax in [
 for ax in [eke_diff_ax1, eke_diff_ax2]:
     ax.set_ylabel("")
 
-for ax in [eke_first_ax1, eke_last_ax1, eke_diff_ax1]:
+for ax in [eke_first_ax2, eke_last_ax2, eke_diff_ax2]:
     ax.set_ylabel("Lag (days)")
     ax.set_yticks(np.arange(-20, 11, 5) * 4)
     ax.set_yticklabels(np.arange(-20, 11, 5))
@@ -794,11 +794,11 @@ for ax in row4:
 
 
 # add custom legend for ratio_ax1
-handles_ratio, labels = ratio_ax1.get_legend_handles_labels()
+handles_ratio, labels = ratio_ax2.get_legend_handles_labels()
 
 labels = [r"$\Delta q / \Delta T$ _first_NAL", r"$\Delta q / \Delta T$_last_NAL", r"$\Delta q / \Delta T$ _first_NPO", r"$\Delta q / \Delta T$ _last_NPO"]
 # add legend of upvp to legend_ax
-handles_upvp, labels_upvp = upvp_ax1.get_legend_handles_labels()
+handles_upvp, labels_upvp = upvp_ax2.get_legend_handles_labels()
 labels_upvp = ["$u^{'}v^{'}$ _first", "$u^{'}v^{'}$ _last"]
 
 handles_together = handles_ratio + handles_upvp
@@ -854,49 +854,46 @@ eke_coast_ax.text(lon2x(145.0, eke_coast_ax), 30, "NPO", fontsize=12)
 # add a,b,c,d
 
 eke_first_ax1.text(
-    0.0, 1.05, "a", transform=eke_first_ax1.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "b", transform=eke_first_ax1.transAxes, fontsize=12, fontweight="bold"
 )
 
 eke_last_ax1.text(
-    0.0, 1.05, "c", transform=eke_last_ax1.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "d", transform=eke_last_ax1.transAxes, fontsize=12, fontweight="bold"
 )
 
 eke_first_ax2.text(
-    0.0, 1.05, "b", transform=eke_first_ax2.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "a", transform=eke_first_ax2.transAxes, fontsize=12, fontweight="bold"
 )
 
 eke_last_ax2.text(
-    0.0, 1.05, "d", transform=eke_last_ax2.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "c", transform=eke_last_ax2.transAxes, fontsize=12, fontweight="bold"
 )
 
 eke_diff_ax1.text(
-    0.0, 1.05, "e", transform=eke_diff_ax1.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "f", transform=eke_diff_ax1.transAxes, fontsize=12, fontweight="bold"
 )
 
 eke_diff_ax2.text(
-    0.0, 1.05, "f", transform=eke_diff_ax2.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "e", transform=eke_diff_ax2.transAxes, fontsize=12, fontweight="bold"
 )
 
 upvp_ax1.text(
-    0.0, 1.05, "g", transform=upvp_ax1.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "i", transform=upvp_ax1.transAxes, fontsize=12, fontweight="bold"
 )
 
 ratio_ax1.text(
-    0.0, 1.05, "h", transform=ratio_ax1.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "j", transform=ratio_ax1.transAxes, fontsize=12, fontweight="bold"
 )
 
 upvp_ax2.text(
-    0.0, 1.05, "i", transform=upvp_ax2.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "g", transform=upvp_ax2.transAxes, fontsize=12, fontweight="bold"
 )
 
 ratio_ax2.text(
-    0.0, 1.05, "j", transform=ratio_ax2.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "h", transform=ratio_ax2.transAxes, fontsize=12, fontweight="bold"
 )
 
-
-
-
-
+plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_together.pdf", dpi=300)
 
 # %%
