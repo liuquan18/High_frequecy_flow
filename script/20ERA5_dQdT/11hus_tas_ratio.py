@@ -11,7 +11,7 @@ import src. compute.slurm_cluster as scluster
 logging.basicConfig(level=logging.INFO)
 
 #%%
-client, cluster = scluster.init_dask_slurm_cluster(scale=10, processes= 5, memory='200GB', walltime='08:00:00', dash_address=8989)
+client, cluster = scluster.init_dask_slurm_cluster(scale=2, processes= 1, memory='200GB', walltime='08:00:00', dash_address=8989)
 
 #%%
 hus = xr.open_mfdataset("/work/mh0033/m300883/High_frequecy_flow/data/ERA5/hus_daily_std_mergeyear/*.nc", combine = 'by_coords')
@@ -19,17 +19,18 @@ hus = hus.var133.squeeze()
 #%%
 tas = xr.open_mfdataset("/work/mh0033/m300883/High_frequecy_flow/data/ERA5/tas_daily_std_mergeyear/*.nc", combine = 'by_coords')
 tas = tas.var130.squeeze()
+
 #%%
 # rechunk
-hus = hus.chunk({"time": -1})
-tas = tas.chunk({"time": -1})
+hus.load()
+tas.load()
 #%%
 data = xr.Dataset({"tas": tas, "hus": hus*1000})
 
 # %%
 # select the data where the tas is above the 10th percentile
-tas_lim = data.tas.quantile(0.1, dim = ('time'))
-data = data.where(data.tas >= tas_lim, drop = True)
+
+data = data.where(data.tas >= 1, drop = True)
 # %%
 ratio_hus = data.hus / data.tas
 
