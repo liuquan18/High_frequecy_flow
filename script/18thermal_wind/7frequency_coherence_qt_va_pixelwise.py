@@ -314,8 +314,57 @@ axes[1, 0].tick_params(left=False, bottom=False, labelleft=False, labelbottom=Fa
 axes[1, 0].set_xlabel("")
 axes[1, 0].set_ylabel("")
 
+# add a, b, c labels for each subplots
+axes[0,0].text(
+    -0.1,
+    1.1,
+    "a",
+    transform=axes[0,0].transAxes,
+    size=12,
+    weight="bold",
+)
+
+axes[0,1].text(
+    -0.1,
+    1.1,
+    "b",
+    transform=axes[0,1].transAxes,
+    size=12,
+    weight="bold",
+)
+
+axes[0,2].text(
+    -0.1,
+    1.1,
+    "c",
+    transform=axes[0,2].transAxes,
+    size=12,
+    weight="bold",
+)
+
+axes[1,1].text(
+    -0.1,
+    1.1,
+    "d",
+    transform=axes[1,1].transAxes,
+    size=12,
+    weight="bold",
+)
+
+axes[1,2].text(
+    -0.1,
+    1.1,
+    "e",
+    transform=axes[1,2].transAxes,
+    size=12,
+    weight="bold",
+)
+
+
+
 plt.tight_layout()
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_q_t_va_coherence_pixelwise.png", dpi = 300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_q_t_va_coherence_pixelwise.png", dpi = 300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_q_t_va_coherence_pixelwise.pdf", dpi = 300)
 
 # %%
