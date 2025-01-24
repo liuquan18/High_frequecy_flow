@@ -852,18 +852,6 @@ eke_coast_ax.text(lon2x(-65.0, eke_coast_ax), 30, "NAL", fontsize=12)
 eke_coast_ax.text(lon2x(145.0, eke_coast_ax), 30, "NPO", fontsize=12)
 
 # add a,b,c,d
-ratio_ax1.text(
-    -0.1, 1.05, "i", transform=ratio_ax1.transAxes, fontsize=12, fontweight="bold"
-)
-upvp_ax1.text(
-    -0.1, 1.05, "j", transform=upvp_ax1.transAxes, fontsize=12, fontweight="bold"
-)
-ratio_ax2.text(
-    -0.1, 1.05, "k", transform=ratio_ax2.transAxes, fontsize=12, fontweight="bold"
-)
-upvp_ax2.text(
-    -0.1, 1.05, "l", transform=upvp_ax2.transAxes, fontsize=12, fontweight="bold"
-)
 
 eke_first_ax1.text(
     0.0, 1.05, "a", transform=eke_first_ax1.transAxes, fontsize=12, fontweight="bold"
@@ -888,6 +876,23 @@ eke_diff_ax1.text(
 eke_diff_ax2.text(
     0.0, 1.05, "f", transform=eke_diff_ax2.transAxes, fontsize=12, fontweight="bold"
 )
+
+upvp_ax1.text(
+    0.0, 1.05, "g", transform=upvp_ax1.transAxes, fontsize=12, fontweight="bold"
+)
+
+ratio_ax1.text(
+    0.0, 1.05, "h", transform=ratio_ax1.transAxes, fontsize=12, fontweight="bold"
+)
+
+upvp_ax2.text(
+    0.0, 1.05, "i", transform=upvp_ax2.transAxes, fontsize=12, fontweight="bold"
+)
+
+ratio_ax2.text(
+    0.0, 1.05, "j", transform=ratio_ax2.transAxes, fontsize=12, fontweight="bold"
+)
+
 
 
 
