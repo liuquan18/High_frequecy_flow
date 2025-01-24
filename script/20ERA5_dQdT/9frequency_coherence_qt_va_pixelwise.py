@@ -5,6 +5,7 @@ from scipy import signal
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from scipy.ndimage import gaussian_filter
 import os
 import sys
 import glob
@@ -74,15 +75,44 @@ hus_va_NPO_mean = hus_va_Cxy_NPO.mean(dim = ('time', 'lat','lon'))
 
 tas_va_NAL_mean = tas_va_Cxy_NAL.mean(dim = ('time', 'lat','lon'))
 tas_va_NPO_mean = tas_va_Cxy_NPO.mean(dim = ('time', 'lat','lon'))
+#%%
+def smooth_period(cxy, period = 1.5):
+
+    # smoothed_period = np.arange(0.1, 31, period)
+    # smoothed_frequency = 1 / smoothed_period
+
+    # cxy_smooth = cxy.interp(frequency = smoothed_frequency)
+
+    # cxy_smooth = cxy.rolling(frequency = period, center = True).mean()
+    cxy_smooth = gaussian_filter(cxy.coherence, sigma = period)
+
+    return cxy_smooth
+
+#%%
+hus_va_NAL_mean_smooth = smooth_period(hus_va_NAL_mean)
+hus_va_NPO_mean_smooth = smooth_period(hus_va_NPO_mean)
+
+tas_va_NAL_mean_smooth = smooth_period(tas_va_NAL_mean)
+tas_va_NPO_mean_smooth = smooth_period(tas_va_NPO_mean)
+
+
+
 # %%
 # plot all ensemble members
 fig, axes = plt.subplots(1,2, figsize=(10,5))
 f = hus_va_Cxy_NAL.frequency.values
-axes[0].plot(1/f, hus_va_NPO_mean.coherence, label = r"$\Delta q$ ~ $va$", color = prec_cmap_seq(0.9))
-axes[0].plot(1/f, tas_va_NPO_mean.coherence, label = r"$\Delta T$ ~ $va$", color = temp_cmap_seq(0.7))
+axes[0].plot(1/f, hus_va_NPO_mean.coherence, label = r"$\Delta q$ ~ $va$", color = prec_cmap_seq(0.9), linewidth = 0.5)
+axes[0].plot(1/f, tas_va_NPO_mean.coherence, label = r"$\Delta T$ ~ $va$", color = temp_cmap_seq(0.7), linewidth = 0.5)
 
-axes[1].plot(1/f, hus_va_NAL_mean.coherence, label = r"$\Delta q$ ~ $va$", color = prec_cmap_seq(0.9))
-axes[1].plot(1/f, tas_va_NAL_mean.coherence, label = r"$\Delta T$ ~ $va$", color = temp_cmap_seq(0.7))
+axes[1].plot(1/f, hus_va_NAL_mean.coherence, label = r"$\Delta q$ ~ $va$", color = prec_cmap_seq(0.9), linewidth = 0.5)
+axes[1].plot(1/f, tas_va_NAL_mean.coherence, label = r"$\Delta T$ ~ $va$", color = temp_cmap_seq(0.7), linewidth = 0.5)
+
+# smooth
+axes[0].plot(1/f, hus_va_NPO_mean_smooth, color = prec_cmap_seq(0.9), linewidth = 2, linestyle = '--')
+axes[0].plot(1/f, tas_va_NPO_mean_smooth, color = temp_cmap_seq(0.7), linewidth = 2, linestyle = '--')
+
+axes[1].plot(1/f, hus_va_NAL_mean_smooth, color = prec_cmap_seq(0.9), linewidth = 2, linestyle = '--')
+axes[1].plot(1/f, tas_va_NAL_mean_smooth, color = temp_cmap_seq(0.7), linewidth = 2, linestyle = '--')
 
 axes[0].set_title(r"$\Delta q_{NPO}$,  $va_{NPO}$ ")
 axes[1].set_title(r"$\Delta q_{NAL}$, $va_{NAL}$")
@@ -106,3 +136,5 @@ axes[0].legend(frameon = False)
 
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/coherence_ERA5.png", dpi = 300)
+
+# %%
