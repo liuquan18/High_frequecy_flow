@@ -214,27 +214,29 @@ prec_cmap_seq = mcolors.ListedColormap(prec_cmap_seq, name="prec_div")
 # %%
 # plot all ensemble members
 fig, axes = plt.subplots(2,3, figsize=(10,7))
-axes[0, 0] = plot_coherence(vt_va_Cxy['frequency'], vt_va_mean, vt_va_05, vt_va_95, axes[0, 0])
+
+# Move the first column to the last column
+axes[0, 2] = plot_coherence(vt_va_Cxy['frequency'], vt_va_mean, vt_va_05, vt_va_95, axes[0, 2])
 
 # Plot hus_std va NPO and tas_std va NPO on the same axis
-plot_coherence(tas_va_Cxy_NPO['frequency'], tas_va_NPO_mean, tas_va_NPO_05, tas_va_NPO_95, axes[0, 1], color_line = temp_cmap_seq(0.7), color_shading = temp_cmap_seq(0.5), label = r"$\Delta T$ ~ $va$ ")
-plot_coherence(hus_va_Cxy_NPO['frequency'], hus_va_NPO_mean, hus_va_NPO_05, hus_va_NPO_95, axes[0, 1], color_line = prec_cmap_seq(0.9), color_shading = prec_cmap_seq(0.5), label = r"$\Delta q$ ~ $va$ ")
+plot_coherence(tas_va_Cxy_NPO['frequency'], tas_va_NPO_mean, tas_va_NPO_05, tas_va_NPO_95, axes[0, 0], color_line = temp_cmap_seq(0.7), color_shading = temp_cmap_seq(0.5), label = r"$\Delta T$ ~ $va$ ")
+plot_coherence(hus_va_Cxy_NPO['frequency'], hus_va_NPO_mean, hus_va_NPO_05, hus_va_NPO_95, axes[0, 0], color_line = prec_cmap_seq(0.9), color_shading = prec_cmap_seq(0.5), label = r"$\Delta q$ ~ $va$ ")
 
 
 # Plot hus_std va NAL and tas_std va NAL on the same axis
-plot_coherence(tas_va_Cxy_NAL['frequency'], tas_va_NAL_mean, tas_va_NAL_05, tas_va_NAL_95, axes[0, 2], color_line = temp_cmap_seq(0.7), color_shading = temp_cmap_seq(0.5), label = r"$\Delta T$ ~ $va$ ")
-plot_coherence(hus_va_Cxy_NAL['frequency'], hus_va_NAL_mean, hus_va_NAL_05, hus_va_NAL_95, axes[0, 2], color_line = prec_cmap_seq(0.9), color_shading = prec_cmap_seq(0.5), label = r"$\Delta q$ ~ $va$ ")
+plot_coherence(tas_va_Cxy_NAL['frequency'], tas_va_NAL_mean, tas_va_NAL_05, tas_va_NAL_95, axes[0, 1], color_line = temp_cmap_seq(0.7), color_shading = temp_cmap_seq(0.5), label = r"$\Delta T$ ~ $va$ ")
+plot_coherence(hus_va_Cxy_NAL['frequency'], hus_va_NAL_mean, hus_va_NAL_05, hus_va_NAL_95, axes[0, 1], color_line = prec_cmap_seq(0.9), color_shading = prec_cmap_seq(0.5), label = r"$\Delta q$ ~ $va$ ")
 
 
 # Add vertical lines at days = 2 and days = 12
-axes[0, 0].axvline(x=2, color='r', linestyle='--')
-# axes[0, 0].axvline(x=6, color='r', linestyle='--')
-axes[0, 0].axvline(x=12, color='r', linestyle='--')
+axes[0, 2].axvline(x=2, color='r', linestyle='--')
+# axes[0, 2].axvline(x=6, color='r', linestyle='--')
+axes[0, 2].axvline(x=12, color='r', linestyle='--')
 
 # Add double arrow lines and labels
-axes[0, 0].annotate(r'$v^{\prime}$', xy=(2, 0.40), xytext=(12, 0.399),
+axes[0, 2].annotate(r'$v^{\prime}$', xy=(2, 0.40), xytext=(12, 0.399),
              arrowprops=dict(arrowstyle='<->', color='blue'), color='blue')
-# axes[0, 0].annotate(r'$v^{\prime\prime}$', xy=(2, 0.41), xytext=(6, 0.409),
+# axes[0, 2].annotate(r'$v^{\prime\prime}$', xy=(2, 0.41), xytext=(6, 0.409),
 #              arrowprops=dict(arrowstyle='<->', color='green'), color='green')
 
 
@@ -242,52 +244,52 @@ axes[0, 0].annotate(r'$v^{\prime}$', xy=(2, 0.40), xytext=(12, 0.399),
 
 #ERA5
 f = ERA5_hus_va_Cxy_NAL.frequency.values
-axes[1, 1].plot(1/f, ERA5_hus_va_NPO_mean.coherence, label = r"$\Delta q$ ~ $va$", color = prec_cmap_seq(0.9), linewidth = 0.5)
-axes[1, 1].plot(1/f, ERA5_tas_va_NPO_mean.coherence, label = r"$\Delta T$ ~ $va$", color = temp_cmap_seq(0.7), linewidth = 0.5)
+axes[1, 0].plot(1/f, ERA5_hus_va_NPO_mean.coherence, label = r"$\Delta q$ ~ $va$", color = prec_cmap_seq(0.9), linewidth = 0.5)
+axes[1, 0].plot(1/f, ERA5_tas_va_NPO_mean.coherence, label = r"$\Delta T$ ~ $va$", color = temp_cmap_seq(0.7), linewidth = 0.5)
 
-axes[1, 2].plot(1/f, ERA5_hus_va_NAL_mean.coherence, label = r"$\Delta q$ ~ $va$", color = prec_cmap_seq(0.9), linewidth = 0.5)
-axes[1, 2].plot(1/f, ERA5_tas_va_NAL_mean.coherence, label = r"$\Delta T$ ~ $va$", color = temp_cmap_seq(0.7), linewidth = 0.5)
+axes[1, 1].plot(1/f, ERA5_hus_va_NAL_mean.coherence, label = r"$\Delta q$ ~ $va$", color = prec_cmap_seq(0.9), linewidth = 0.5)
+axes[1, 1].plot(1/f, ERA5_tas_va_NAL_mean.coherence, label = r"$\Delta T$ ~ $va$", color = temp_cmap_seq(0.7), linewidth = 0.5)
 
 # smooth
-axes[1, 1].plot(1/f, ERA5_hus_va_NPO_mean_smooth, color = prec_cmap_seq(0.9), linewidth = 2, linestyle = '--')
-axes[1, 1].plot(1/f, ERA5_tas_va_NPO_mean_smooth, color = temp_cmap_seq(0.7), linewidth = 2, linestyle = '--')
+axes[1, 0].plot(1/f, ERA5_hus_va_NPO_mean_smooth, color = prec_cmap_seq(0.9), linewidth = 2, linestyle = '--')
+axes[1, 0].plot(1/f, ERA5_tas_va_NPO_mean_smooth, color = temp_cmap_seq(0.7), linewidth = 2, linestyle = '--')
 
-axes[1, 2].plot(1/f, ERA5_hus_va_NAL_mean_smooth, color = prec_cmap_seq(0.9), linewidth = 2, linestyle = '--')
-axes[1, 2].plot(1/f, ERA5_tas_va_NAL_mean_smooth, color = temp_cmap_seq(0.7), linewidth = 2, linestyle = '--')
+axes[1, 1].plot(1/f, ERA5_hus_va_NAL_mean_smooth, color = prec_cmap_seq(0.9), linewidth = 2, linestyle = '--')
+axes[1, 1].plot(1/f, ERA5_tas_va_NAL_mean_smooth, color = temp_cmap_seq(0.7), linewidth = 2, linestyle = '--')
 
 
 
+axes[1, 0].set_xlim(0, 30)
 axes[1, 1].set_xlim(0, 30)
-axes[1, 2].set_xlim(0, 30)
 
+axes[1, 0].set_ylim(0.34, 0.40)
 axes[1, 1].set_ylim(0.34, 0.40)
-axes[1, 2].set_ylim(0.34, 0.40)
+axes[1, 0].set_xticks(np.arange(0, 31, 6))
 axes[1, 1].set_xticks(np.arange(0, 31, 6))
-axes[1, 2].set_xticks(np.arange(0, 31, 6))
-axes[0, 0].set_xticks(np.arange(0, 31, 6))
+axes[0, 2].set_xticks(np.arange(0, 31, 6))
 
 
 
-axes[0, 0].set_xlim(0, 30)
-for ax in axes[0, 1:].flat:
+axes[0, 2].set_xlim(0, 30)
+for ax in axes[0, :2].flat:
     ax.set_ylim(0.34, 0.40)
 plt.tight_layout()
 # plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_q_t_va_coherence_pixelwise.png", dpi = 300)
 
 
-axes[0, 0].set_title(r"$v_{t 20-60}$, $va_{20-60}$")
-axes[0, 1].set_title("NPO pixel wise")
-axes[0, 2].set_title("NAL pixel wise")
+axes[0, 2].set_title(r"$v_{t 20-60}$, $va_{20-60}$")
+axes[0, 0].set_title("NPO pixel wise")
+axes[0, 1].set_title("NAL pixel wise")
 
 for ax in axes[0, :]:
     ax.set_xlabel("")
 for ax in axes[1, :]:
     ax.set_xlabel("Period [days]")
-axes[0,0].set_xlabel("Period [days]")
+axes[0,2].set_xlabel("Period [days]")
 
-for ax in axes[:, 1:].flat:
+for ax in axes[:, :2].flat:
     ax.set_ylabel("")
-for ax in axes[:, 0]:
+for ax in axes[:, 2]:
     ax.set_ylabel("Coherence")
 
 
@@ -307,18 +309,27 @@ custom_lines = [
 ]
 
 # Add title to the legend
-axes[1, 0].legend(handles=custom_lines, frameon=False, loc='center')
-# remove all spines, ticks, and labels from axes[1,0]
-axes[1, 0].spines[["top", "right", "bottom", "left"]].set_visible(False)
-axes[1, 0].tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
-axes[1, 0].set_xlabel("")
-axes[1, 0].set_ylabel("")
+axes[1, 2].legend(handles=custom_lines, frameon=False, loc='center')
+# remove all spines, ticks, and labels from axes[1,2]
+axes[1, 2].spines[["top", "right", "bottom", "left"]].set_visible(False)
+axes[1, 2].tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+axes[1, 2].set_xlabel("")
+axes[1, 2].set_ylabel("")
 
 # add a, b, c labels for each subplots
-axes[0,0].text(
+axes[0,2].text(
     -0.1,
     1.1,
     "a",
+    transform=axes[0,2].transAxes,
+    size=12,
+    weight="bold",
+)
+
+axes[0,0].text(
+    -0.1,
+    1.1,
+    "b",
     transform=axes[0,0].transAxes,
     size=12,
     weight="bold",
@@ -327,17 +338,17 @@ axes[0,0].text(
 axes[0,1].text(
     -0.1,
     1.1,
-    "b",
+    "c",
     transform=axes[0,1].transAxes,
     size=12,
     weight="bold",
 )
 
-axes[0,2].text(
+axes[1,0].text(
     -0.1,
     1.1,
-    "c",
-    transform=axes[0,2].transAxes,
+    "d",
+    transform=axes[1,0].transAxes,
     size=12,
     weight="bold",
 )
@@ -345,17 +356,8 @@ axes[0,2].text(
 axes[1,1].text(
     -0.1,
     1.1,
-    "d",
-    transform=axes[1,1].transAxes,
-    size=12,
-    weight="bold",
-)
-
-axes[1,2].text(
-    -0.1,
-    1.1,
     "e",
-    transform=axes[1,2].transAxes,
+    transform=axes[1,1].transAxes,
     size=12,
     weight="bold",
 )
