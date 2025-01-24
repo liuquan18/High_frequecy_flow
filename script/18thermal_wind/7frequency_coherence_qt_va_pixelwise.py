@@ -9,6 +9,10 @@ import os
 import sys
 import glob
 import matplotlib.colors as mcolors
+from scipy.ndimage import gaussian_filter
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
+
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -44,20 +48,18 @@ def read_Cxy(var1 = 'hus_std', var2 = 'va', region = 'NAL', pixel_wise = True):
 #%%
 hus_va_Cxy_NAL = read_Cxy('hus_std', 'va', 'NAL', pixel_wise = True)
 hus_va_Cxy_NPO = read_Cxy('hus_std', 'va', 'NPO', pixel_wise = True)
-#%%
+
 tas_va_Cxy_NAL = read_Cxy('tas_std', 'va', 'NAL', pixel_wise=True)
 tas_va_Cxy_NPO = read_Cxy('tas_std', 'va', 'NPO', pixel_wise=True)
 
-#%%
 vt_va_Cxy = read_Cxy('vt', 'va', None)
 #%%
 hus_va_Cxy_NAL.load()
 hus_va_Cxy_NPO.load()
-#%%
+
 tas_va_Cxy_NAL.load()
 tas_va_Cxy_NPO.load()
 
-#%%
 vt_va_Cxy.load()
 
 #%%
@@ -122,46 +124,79 @@ tas_va_NPO_mean_first, tas_va_NPO_95_first, tas_va_NPO_05_first = get_plot_data(
 
 tas_va_NAL_mean_last, tas_va_NAL_95_last, tas_va_NAL_05_last = get_plot_data(tas_va_Cxy_NAL, period = 'last')
 tas_va_NPO_mean_last, tas_va_NPO_95_last, tas_va_NPO_05_last = get_plot_data(tas_va_Cxy_NPO, period = 'last')
+#%%
+# ERA5
 
-# %%
-# plot all ensemble members
-fig, axes = plt.subplots(1,3, figsize=(12,5))
+def read_Cxy_ERA5(var1 = 'hus', var2 = 'va', region = 'NAL', pixel_wise = True):
 
-axes[0] = plot_coherence(vt_va_Cxy['frequency'], vt_va_mean, vt_va_05, vt_va_95, axes[0])
-axes[0].set_title('vt va')
+    if pixel_wise:
+        base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/{var1}_{var2}_coherence_pixelwise/"
+    else:
+        base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/{var1}_{var2}_coherence/"
 
-plot_coherence(hus_va_Cxy_NPO['frequency'], hus_va_NPO_mean, hus_va_NPO_05, hus_va_NPO_95, axes[1])
-axes[1].set_title('hus_std va NPO')
+    if region is not None:
+        files = glob.glob(base_dir + f"*{region}*.nc")
+    else:
+        logging.warning("No region specified, reading all files except those with 'NAL' or 'NPO'")
+        files = glob.glob(base_dir + "*.nc")
+        files = [f for f in files if 'NAL' not in f and 'NPO' not in f]
 
-plot_coherence(hus_va_Cxy_NAL['frequency'], hus_va_NAL_mean, hus_va_NAL_05, hus_va_NAL_95, axes[2])
-axes[2].set_title('hus_std va NAL')
+    # sort files
+    files.sort()
 
-axes[0].set_ylim(0.39, 0.48)
-for ax in axes[1:]:
-    ax.set_ylim(0.32, 0.41)
+    cxy = xr.open_mfdataset(files, combine="nested", concat_dim="time", parallel=True)
 
-axes[0].set_title(r"$v_{t 20-60}$, $va_{20-60}$")
-axes[1].set_title(r"$\Delta q_{NPO}$,  $va_{NPO}$ ")
-axes[2].set_title(r"$\Delta q_{NAL}$, $va_{NAL}$")
+    cxy['time'] = np.arange(1979, 2025, 1)
+
+    return cxy
+
+#%%
+ERA5_hus_va_Cxy_NAL = read_Cxy_ERA5('hus', 'va', 'NAL', pixel_wise = True)
+ERA5_hus_va_Cxy_NPO = read_Cxy_ERA5('hus', 'va', 'NPO', pixel_wise = True)
+#%%
+ERA5_tas_va_Cxy_NAL = read_Cxy_ERA5('tas', 'va', 'NAL', pixel_wise=True)
+ERA5_tas_va_Cxy_NPO = read_Cxy_ERA5('tas', 'va', 'NPO', pixel_wise=True)
+
+#%%
+ERA5_hus_va_Cxy_NAL.load()
+ERA5_hus_va_Cxy_NPO.load()
+#%%
+ERA5_tas_va_Cxy_NAL.load()
+ERA5_tas_va_Cxy_NPO.load()
+
+#%%
+# vt_va_Cxy.load()
+
+#%%
+#%%
+ERA5_hus_va_NAL_mean = ERA5_hus_va_Cxy_NAL.mean(dim = ('time', 'lat','lon'))
+ERA5_hus_va_NPO_mean = ERA5_hus_va_Cxy_NPO.mean(dim = ('time', 'lat','lon'))
+
+ERA5_tas_va_NAL_mean = ERA5_tas_va_Cxy_NAL.mean(dim = ('time', 'lat','lon'))
+ERA5_tas_va_NPO_mean = ERA5_tas_va_Cxy_NPO.mean(dim = ('time', 'lat','lon'))
+#%%
+def smooth_period(cxy, period = 1.5):
+
+    # smoothed_period = np.arange(0.1, 31, period)
+    # smoothed_frequency = 1 / smoothed_period
+
+    # cxy_smooth = cxy.interp(frequency = smoothed_frequency)
+
+    # cxy_smooth = cxy.rolling(frequency = period, center = True).mean()
+    cxy_smooth = gaussian_filter(cxy.coherence, sigma = period)
+
+    return cxy_smooth
+
+#%%
+ERA5_hus_va_NAL_mean_smooth = smooth_period(ERA5_hus_va_NAL_mean)
+ERA5_hus_va_NPO_mean_smooth = smooth_period(ERA5_hus_va_NPO_mean)
+
+ERA5_tas_va_NAL_mean_smooth = smooth_period(ERA5_tas_va_NAL_mean)
+ERA5_tas_va_NPO_mean_smooth = smooth_period(ERA5_tas_va_NPO_mean)
 
 
-# Add vertical lines at days = 2 and days = 12
-axes[0].axvline(x=2, color='r', linestyle='--')
-axes[0].axvline(x=6, color='r', linestyle='--')
-axes[0].axvline(x=12, color='r', linestyle='--')
-
-# Add double arrow lines and labels
-axes[0].annotate(r'$v^{\prime}$', xy=(2, 0.40), xytext=(12, 0.399),
-             arrowprops=dict(arrowstyle='<->', color='blue'), color='blue')
-axes[0].annotate(r'$v^{\prime\prime}$', xy=(2, 0.41), xytext=(6, 0.409),
-             arrowprops=dict(arrowstyle='<->', color='green'), color='green')
-
-axes[0].set_xlim(0, 30)
-axes[0].legend(frameon = False)
 
 
-plt.tight_layout()
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_va_q_coherence.png", dpi = 300)
 # %%
 
 # %%
@@ -178,51 +213,106 @@ prec_cmap_seq = mcolors.ListedColormap(prec_cmap_seq, name="prec_div")
 
 # %%
 # plot all ensemble members
-fig, axes = plt.subplots(1,3, figsize=(12,5))
-
-axes[0] = plot_coherence(vt_va_Cxy['frequency'], vt_va_mean, vt_va_05, vt_va_95, axes[0])
-axes[0].set_title('vt va')
+fig, axes = plt.subplots(2,3, figsize=(10,8), sharex = 'col', sharey =False)
+axes[0, 0] = plot_coherence(vt_va_Cxy['frequency'], vt_va_mean, vt_va_05, vt_va_95, axes[0, 0])
 
 # Plot hus_std va NPO and tas_std va NPO on the same axis
-plot_coherence(tas_va_Cxy_NPO['frequency'], tas_va_NPO_mean, tas_va_NPO_05, tas_va_NPO_95, axes[1], color_line = temp_cmap_seq(0.7), color_shading = temp_cmap_seq(0.5), label = r"$\Delta T$ ~ $va$ ")
-plot_coherence(hus_va_Cxy_NPO['frequency'], hus_va_NPO_mean, hus_va_NPO_05, hus_va_NPO_95, axes[1], color_line = prec_cmap_seq(0.9), color_shading = prec_cmap_seq(0.5), label = r"$\Delta q$ ~ $va$ ")
+plot_coherence(tas_va_Cxy_NPO['frequency'], tas_va_NPO_mean, tas_va_NPO_05, tas_va_NPO_95, axes[0, 1], color_line = temp_cmap_seq(0.7), color_shading = temp_cmap_seq(0.5), label = r"$\Delta T$ ~ $va$ ")
+plot_coherence(hus_va_Cxy_NPO['frequency'], hus_va_NPO_mean, hus_va_NPO_05, hus_va_NPO_95, axes[0, 1], color_line = prec_cmap_seq(0.9), color_shading = prec_cmap_seq(0.5), label = r"$\Delta q$ ~ $va$ ")
 
-axes[1].set_title('hus_std and tas_std va NPO')
 
 # Plot hus_std va NAL and tas_std va NAL on the same axis
-plot_coherence(tas_va_Cxy_NAL['frequency'], tas_va_NAL_mean, tas_va_NAL_05, tas_va_NAL_95, axes[2], color_line = temp_cmap_seq(0.7), color_shading = temp_cmap_seq(0.5), label = r"$\Delta T$ ~ $va$ ")
-plot_coherence(hus_va_Cxy_NAL['frequency'], hus_va_NAL_mean, hus_va_NAL_05, hus_va_NAL_95, axes[2], color_line = prec_cmap_seq(0.9), color_shading = prec_cmap_seq(0.5), label = r"$\Delta q$ ~ $va$ ")
-axes[2].set_title('hus_std and tas_std va NAL')
+plot_coherence(tas_va_Cxy_NAL['frequency'], tas_va_NAL_mean, tas_va_NAL_05, tas_va_NAL_95, axes[0, 2], color_line = temp_cmap_seq(0.7), color_shading = temp_cmap_seq(0.5), label = r"$\Delta T$ ~ $va$ ")
+plot_coherence(hus_va_Cxy_NAL['frequency'], hus_va_NAL_mean, hus_va_NAL_05, hus_va_NAL_95, axes[0, 2], color_line = prec_cmap_seq(0.9), color_shading = prec_cmap_seq(0.5), label = r"$\Delta q$ ~ $va$ ")
 
-
-axes[0].set_title(r"$v_{t 20-60}$, $va_{20-60}$")
-axes[1].set_title("NPO pixel wise")
-axes[2].set_title("NAL pixel wise")
 
 # Add vertical lines at days = 2 and days = 12
-axes[0].axvline(x=2, color='r', linestyle='--')
-# axes[0].axvline(x=6, color='r', linestyle='--')
-axes[0].axvline(x=12, color='r', linestyle='--')
+axes[0, 0].axvline(x=2, color='r', linestyle='--')
+# axes[0, 0].axvline(x=6, color='r', linestyle='--')
+axes[0, 0].axvline(x=12, color='r', linestyle='--')
 
 # Add double arrow lines and labels
-axes[0].annotate(r'$v^{\prime}$', xy=(2, 0.40), xytext=(12, 0.399),
+axes[0, 0].annotate(r'$v^{\prime}$', xy=(2, 0.40), xytext=(12, 0.399),
              arrowprops=dict(arrowstyle='<->', color='blue'), color='blue')
-# axes[0].annotate(r'$v^{\prime\prime}$', xy=(2, 0.41), xytext=(6, 0.409),
+# axes[0, 0].annotate(r'$v^{\prime\prime}$', xy=(2, 0.41), xytext=(6, 0.409),
 #              arrowprops=dict(arrowstyle='<->', color='green'), color='green')
 
-axes[0].set_xlim(0, 30)
-for ax in axes[1:].flat:
+
+
+
+#ERA5
+f = ERA5_hus_va_Cxy_NAL.frequency.values
+axes[1, 1].plot(1/f, ERA5_hus_va_NPO_mean.coherence, label = r"$\Delta q$ ~ $va$", color = prec_cmap_seq(0.9), linewidth = 0.5)
+axes[1, 1].plot(1/f, ERA5_tas_va_NPO_mean.coherence, label = r"$\Delta T$ ~ $va$", color = temp_cmap_seq(0.7), linewidth = 0.5)
+
+axes[1, 2].plot(1/f, ERA5_hus_va_NAL_mean.coherence, label = r"$\Delta q$ ~ $va$", color = prec_cmap_seq(0.9), linewidth = 0.5)
+axes[1, 2].plot(1/f, ERA5_tas_va_NAL_mean.coherence, label = r"$\Delta T$ ~ $va$", color = temp_cmap_seq(0.7), linewidth = 0.5)
+
+# smooth
+axes[1, 1].plot(1/f, ERA5_hus_va_NPO_mean_smooth, color = prec_cmap_seq(0.9), linewidth = 2, linestyle = '--')
+axes[1, 1].plot(1/f, ERA5_tas_va_NPO_mean_smooth, color = temp_cmap_seq(0.7), linewidth = 2, linestyle = '--')
+
+axes[1, 2].plot(1/f, ERA5_hus_va_NAL_mean_smooth, color = prec_cmap_seq(0.9), linewidth = 2, linestyle = '--')
+axes[1, 2].plot(1/f, ERA5_tas_va_NAL_mean_smooth, color = temp_cmap_seq(0.7), linewidth = 2, linestyle = '--')
+
+
+
+axes[1, 1].set_xlim(0, 30)
+axes[1, 2].set_xlim(0, 30)
+
+axes[1, 1].set_ylim(0.34, 0.40)
+axes[1, 2].set_ylim(0.34, 0.40)
+axes[1, 1].set_xticks(np.arange(0, 31, 6))
+axes[1, 2].set_xticks(np.arange(0, 31, 6))
+
+
+
+axes[0, 0].set_xlim(0, 30)
+for ax in axes[0, 1:].flat:
     ax.set_ylim(0.34, 0.40)
+plt.tight_layout()
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_q_t_va_coherence_pixelwise.png", dpi = 300)
 
-# Set colors for the legends
-handles, labels = axes[1].get_legend_handles_labels()
-axes[1].legend(handles, labels, frameon=False)
 
-# handles, labels = axes[2].get_legend_handles_labels()
-# axes[2].legend(handles, labels, frameon=False)
+axes[0, 0].set_title(r"$v_{t 20-60}$, $va_{20-60}$")
+axes[0, 1].set_title("NPO pixel wise")
+axes[0, 2].set_title("NAL pixel wise")
+
+for ax in axes[0, :]:
+    ax.set_xlabel("")
+for ax in axes[1, :]:
+    ax.set_xlabel("Period [days]")
+
+for ax in axes[:, 1:].flat:
+    ax.set_ylabel("")
+for ax in axes[:, 0]:
+    ax.set_ylabel("Coherence")
+
+
+# customed legend
+custom_lines = [
+    Line2D([0], [0], color='k', lw=1, label=r"$v_{t}$ ~ $va$ MPI-GE"),
+    Line2D([0], [0], color=temp_cmap_seq(0.7), lw=1, label=r"$\Delta T$ ~ $va$ MPI-GE"),
+    Line2D([0], [0], color=prec_cmap_seq(0.9), lw=1, label=r"$\Delta q$ ~ $va$ MPI-GE"),
+    # ERA5
+    Line2D([0], [0], color=temp_cmap_seq(0.7), lw=1, linestyle='--', label=r"$\Delta T$ ~ $va$ ERA5"),
+    Line2D([0], [0], color=prec_cmap_seq(0.9), lw=1, linestyle='--', label=r"$\Delta q$ ~ $va$ ERA5"),
+    # shading for 5-95% ens spread
+    Patch(facecolor='gray', edgecolor='gray', alpha=0.5, label=r'5-95$\%$ ens spread'),
+
+    Line2D([0], [0], color='r', linestyle='--', lw=1, label='Days = 2 and 12'),
+
+]
+
+# Add title to the legend
+axes[1, 0].legend(handles=custom_lines, frameon=False, loc='center')
+# remove all spines, ticks, and labels from axes[1,0]
+axes[1, 0].spines[["top", "right", "bottom", "left"]].set_visible(False)
+axes[1, 0].tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+axes[1, 0].set_xlabel("")
+axes[1, 0].set_ylabel("")
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_q_t_va_coherence_pixelwise.png", dpi = 300)
 
 
 # %%
