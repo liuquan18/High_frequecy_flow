@@ -892,6 +892,6 @@ eke_diff_ax2.text(
 
 
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_high_togher.pdf", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_together.pdf", dpi=300)
 
 # %%
