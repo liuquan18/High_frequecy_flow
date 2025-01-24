@@ -213,7 +213,7 @@ prec_cmap_seq = mcolors.ListedColormap(prec_cmap_seq, name="prec_div")
 
 # %%
 # plot all ensemble members
-fig, axes = plt.subplots(2,3, figsize=(10,8), sharex = 'col', sharey =False)
+fig, axes = plt.subplots(2,3, figsize=(10,7))
 axes[0, 0] = plot_coherence(vt_va_Cxy['frequency'], vt_va_mean, vt_va_05, vt_va_95, axes[0, 0])
 
 # Plot hus_std va NPO and tas_std va NPO on the same axis
@@ -264,6 +264,7 @@ axes[1, 1].set_ylim(0.34, 0.40)
 axes[1, 2].set_ylim(0.34, 0.40)
 axes[1, 1].set_xticks(np.arange(0, 31, 6))
 axes[1, 2].set_xticks(np.arange(0, 31, 6))
+axes[0, 0].set_xticks(np.arange(0, 31, 6))
 
 
 
@@ -282,6 +283,7 @@ for ax in axes[0, :]:
     ax.set_xlabel("")
 for ax in axes[1, :]:
     ax.set_xlabel("Period [days]")
+axes[0,0].set_xlabel("Period [days]")
 
 for ax in axes[:, 1:].flat:
     ax.set_ylabel("")
@@ -314,5 +316,6 @@ axes[1, 0].set_ylabel("")
 
 plt.tight_layout()
 
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/vt_q_t_va_coherence_pixelwise.png", dpi = 300)
 
 # %%
