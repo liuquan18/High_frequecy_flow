@@ -475,25 +475,25 @@ grid = plt.GridSpec(6, 4, height_ratios=[1, 0.2, 1, 1, 1, 0.3], hspace=0)
 
 grid.update(hspace=0.3)
 # ratio positive
-ratio_ax1 = fig.add_subplot(grid[0, 0])
-ratio_ax2 = fig.add_subplot(grid[0, 2])
+ratio_ax2 = fig.add_subplot(grid[0, 1])
+ratio_ax1 = fig.add_subplot(grid[0, 3])
 
-upvp_ax1 = fig.add_subplot(grid[0, 1])
-upvp_ax2 = fig.add_subplot(grid[0, 3])
+upvp_ax2 = fig.add_subplot(grid[0, 0])
+upvp_ax1 = fig.add_subplot(grid[0, 2])
 
 legend_ax = fig.add_subplot(grid[1, :])
 
 # second row
-eke_first_ax1 = fig.add_subplot(grid[2, :2], projection=ccrs.PlateCarree(-90))
-eke_first_ax2 = fig.add_subplot(grid[2, 2:], projection=ccrs.PlateCarree(-90))
+eke_first_ax2 = fig.add_subplot(grid[2, :2], projection=ccrs.PlateCarree(-90))
+eke_first_ax1 = fig.add_subplot(grid[2, 2:], projection=ccrs.PlateCarree(-90))
 
 # third row
-eke_last_ax1 = fig.add_subplot(grid[3, :2], projection=ccrs.PlateCarree(-90))
-eke_last_ax2 = fig.add_subplot(grid[3, 2:], projection=ccrs.PlateCarree(-90))
+eke_last_ax2 = fig.add_subplot(grid[3, :2], projection=ccrs.PlateCarree(-90))
+eke_last_ax1 = fig.add_subplot(grid[3, 2:], projection=ccrs.PlateCarree(-90))
 
 # forth row
-eke_diff_ax1 = fig.add_subplot(grid[4, :2], projection=ccrs.PlateCarree(-90))
-eke_diff_ax2 = fig.add_subplot(grid[4, 2:], projection=ccrs.PlateCarree(-90))
+eke_diff_ax2 = fig.add_subplot(grid[4, :2], projection=ccrs.PlateCarree(-90))
+eke_diff_ax1 = fig.add_subplot(grid[4, 2:], projection=ccrs.PlateCarree(-90))
 
 # fifth row
 eke_coast_ax = fig.add_subplot(grid[5, :2], projection=ccrs.PlateCarree(-90))
@@ -720,7 +720,6 @@ for ax in [
 ]:
     ax.axhline(0, color="black", linewidth=2, linestyle="dotted")
 
-ratio_ax1.set_ylabel("Lag (days)")
 ratio_ax1.set_xlabel(r"$\Delta q / \Delta T$ (g $\cdot$ kg$^{-1}$ $\cdot$ K$^{-1}$)")
 upvp_ax1.set_xlabel(r"$u^{'}v^{'}$ (m$^2$ $\cdot$ s$^{-2}$)")
 
@@ -730,7 +729,7 @@ upvp_ax2.set_xlabel(r"$u^{'}v^{'}$ (m$^2$ $\cdot$ s$^{-2}$)")
 
 ratio_ax1.set_yticks(np.arange(-20, 11, 5))
 
-for ax in [ratio_ax2, upvp_ax1, upvp_ax2]:
+for ax in [ratio_ax2, ratio_ax1, upvp_ax1, upvp_ax2]:
     ax.set_yticks(np.arange(-20, 11, 5) )
     ax.set_yticklabels("")
 
@@ -747,10 +746,14 @@ for ax in [
 for ax in [eke_diff_ax1, eke_diff_ax2]:
     ax.set_ylabel("")
 
-for ax in [eke_first_ax1, eke_last_ax1, eke_diff_ax1]:
+for ax in [eke_first_ax2, eke_last_ax2, eke_diff_ax2]:
     ax.set_ylabel("Lag (days)")
     ax.set_yticks(np.arange(-20, 11, 5) * 4)
     ax.set_yticklabels(np.arange(-20, 11, 5))
+
+upvp_ax2.set_yticklabels(np.arange(-20, 11, 5))
+upvp_ax2.set_ylabel("Lag (days)")
+
 
 for ax in [
     eke_first_ax1,
@@ -826,7 +829,7 @@ eke_coast_ax.add_feature(
     )
 )
 # set the position of the ax
-pos1 = eke_diff_ax1.get_position()
+pos1 = eke_diff_ax2.get_position()
 eke_coast_ax.set_position([pos1.x0, pos1.y0 - 0.36, pos1.width, pos1.width * 1.5])
 
 
@@ -847,49 +850,42 @@ eke_coast_ax.axvline(
 # add text 'NPO' between 140 and -145, NAL between -70 and -35
 eke_coast_ax.text(lon2x(-65.0, eke_coast_ax), 30, "NAL", fontsize=12)
 eke_coast_ax.text(lon2x(145.0, eke_coast_ax), 30, "NPO", fontsize=12)
-
-
 # add a,b,c,d
-ratio_ax1.text(
-    -0.1, 1.05, "a", transform=ratio_ax1.transAxes, fontsize=12, fontweight="bold"
-)
-upvp_ax1.text(
-    -0.1, 1.05, "b", transform=upvp_ax1.transAxes, fontsize=12, fontweight="bold"
+upvp_ax2.text(
+    -0.1, 1.05, "a", transform=upvp_ax2.transAxes, fontsize=12, fontweight="bold"
 )
 ratio_ax2.text(
-    -0.1, 1.05, "c", transform=ratio_ax2.transAxes, fontsize=12, fontweight="bold"
+    -0.1, 1.05, "b", transform=ratio_ax2.transAxes, fontsize=12, fontweight="bold"
 )
-upvp_ax2.text(
-    -0.1, 1.05, "d", transform=upvp_ax2.transAxes, fontsize=12, fontweight="bold"
+upvp_ax1.text(
+    -0.1, 1.05, "c", transform=upvp_ax1.transAxes, fontsize=12, fontweight="bold"
 )
-
-eke_first_ax1.text(
-    0.0, 1.05, "e", transform=eke_first_ax1.transAxes, fontsize=12, fontweight="bold"
-)
-
-eke_last_ax1.text(
-    0.0, 1.05, "g", transform=eke_last_ax1.transAxes, fontsize=12, fontweight="bold"
+ratio_ax1.text(
+    -0.1, 1.05, "d", transform=ratio_ax1.transAxes, fontsize=12, fontweight="bold"
 )
 
 eke_first_ax2.text(
-    0.0, 1.05, "f", transform=eke_first_ax2.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "e", transform=eke_first_ax2.transAxes, fontsize=12, fontweight="bold"
 )
-
+eke_first_ax1.text(
+    0.0, 1.05, "f", transform=eke_first_ax1.transAxes, fontsize=12, fontweight="bold"
+)
 eke_last_ax2.text(
-    0.0, 1.05, "h", transform=eke_last_ax2.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "g", transform=eke_last_ax2.transAxes, fontsize=12, fontweight="bold"
 )
-
-eke_diff_ax1.text(
-    0.0, 1.05, "i", transform=eke_diff_ax1.transAxes, fontsize=12, fontweight="bold"
+eke_last_ax1.text(
+    0.0, 1.05, "h", transform=eke_last_ax1.transAxes, fontsize=12, fontweight="bold"
 )
-
 eke_diff_ax2.text(
-    0.0, 1.05, "j", transform=eke_diff_ax2.transAxes, fontsize=12, fontweight="bold"
+    0.0, 1.05, "i", transform=eke_diff_ax2.transAxes, fontsize=12, fontweight="bold"
+)
+eke_diff_ax1.text(
+    0.0, 1.05, "j", transform=eke_diff_ax1.transAxes, fontsize=12, fontweight="bold"
 )
 
 
 
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_high_togher.pdf", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_together.pdf", dpi=300)
 
 # %%
