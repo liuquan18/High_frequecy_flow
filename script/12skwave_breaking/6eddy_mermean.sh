@@ -15,9 +15,9 @@ module load parallel
 node=$1
 member=$node
 var=$2 # eke, eke_high
-lat_min=${3:20}  # 20 or 40
-lat_max=${4:60}  # 60 
-echo "Ensemble member ${member}"
+lat_min=${3:-20}  # Default to 20 if $3 is not provided
+lat_max=${4:-60}  # Default to 60 if $4 is not provided
+echo "Ensemble member ${member} lat range ${lat_min}N to ${lat_max}N"
 
 eke_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_ano/r${member}i1p1f1/
 eke_mermean_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_ano_${lat_min}${lat_max}N/r${member}i1p1f1/
