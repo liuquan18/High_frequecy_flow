@@ -64,7 +64,7 @@ def read_all_data(decade, var):
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
     logging.info("reading eke")
-    eke = read_eke( decade, var = var)
+    eke = read_eke( decade, var = var, suffix='_ano_4060N')
     
 
     return NAO_pos, NAO_neg, eke
