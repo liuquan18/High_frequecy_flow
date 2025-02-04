@@ -22,4 +22,5 @@ eke_2060_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_d
 
 mkdir -p ${eke_2060_path}
 
-find ${eke_path} -name "eke*_r${member}i1p1f1_gn_*.nc" | parallel --jobs 25 cdo -mermean -sellonlatbox,0,360,20,60 -sellevel,25000 {} ${eke_2060_path}{/}
+# find ${eke_path} -name "eke*_r${member}i1p1f1_gn_*.nc" | parallel --jobs 25 cdo -mermean -sellonlatbox,0,360,20,60 -sellevel,25000 {} ${eke_2060_path}{/}
+find ${eke_path} -name "eke*_r${member}i1p1f1_gn_*.nc" | parallel --jobs 25 cdo -mermean -sellonlatbox,0,360,20,60 -vertmean -sellevel,100000,85000 {} ${eke_2060_path}{/}
