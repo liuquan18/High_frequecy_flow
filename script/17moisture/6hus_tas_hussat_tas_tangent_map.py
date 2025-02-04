@@ -29,15 +29,15 @@ last_hussat_tas = xr.open_dataset(
 ).__xarray_dataarray_variable__
 # %%
 fig, axes = plt.subplots(
-    3, 3, figsize=(14, 8), subplot_kw={"projection": ccrs.PlateCarree(100)}
+    3, 3, figsize=(11, 6), subplot_kw={"projection": ccrs.PlateCarree(-90)}
 )
 
-tangent_level_seq = np.arange(-2, 2.1, 0.1)
-tangent_level_diff = np.arange(-2, 2.1, 0.1)/2
+tangent_level_seq = np.arange(-1.5, 1.6, 0.1)
+tangent_level_diff = np.arange(-0.5, 0.55, 0.05)
 
 # rows for 'slope', 'tangent', 'slope - tangent'
 # columns for 'first', 'last', 'difference'
-plot_first = first_hus_tas.plot(
+first_hussat_tas.plot(
     ax=axes[0, 0],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
@@ -46,14 +46,14 @@ plot_first = first_hus_tas.plot(
     add_colorbar = False
 )
 
-first_hussat_tas.plot(
+plot_first = first_hus_tas.plot(
     ax=axes[0, 1],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
     levels=tangent_level_seq,
     extend='both',
     add_colorbar = False
-    )
+)
 
 (first_hus_tas - first_hussat_tas).plot(
     ax=axes[0, 2],
@@ -63,7 +63,8 @@ first_hussat_tas.plot(
     extend='both',
     add_colorbar = False
 )
-plot_last = last_hus_tas.plot(
+
+last_hussat_tas.plot(
     ax=axes[1, 0],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
@@ -72,7 +73,7 @@ plot_last = last_hus_tas.plot(
     add_colorbar = False
 )
 
-last_hussat_tas.plot(
+plot_last = last_hus_tas.plot(
     ax=axes[1, 1],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
@@ -90,7 +91,7 @@ last_hussat_tas.plot(
     add_colorbar = False
 )
 
-plot_last_first = (last_hus_tas - first_hus_tas).plot(
+(last_hussat_tas - first_hussat_tas).plot(
     ax=axes[2, 0],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
@@ -99,7 +100,7 @@ plot_last_first = (last_hus_tas - first_hus_tas).plot(
     add_colorbar = False
 )
 
-(last_hussat_tas - first_hussat_tas).plot(
+plot_last_first = (last_hus_tas - first_hus_tas).plot(
     ax=axes[2, 1],
     transform=ccrs.PlateCarree(),
     cmap="coolwarm",
@@ -159,31 +160,46 @@ for ax in axes[:, 0]:
     ax.yaxis.set_major_formatter(lat_formatter)
     ax.set_ylabel("")
 
-axes[0, 0].set_title("1850-1859 hus")
-axes[0, 1].set_title("1850-1859 hussat")
-axes[0, 2].set_title("hus - hussat")
-axes[1, 0].set_title("2090-2099 hus")
-axes[1, 1].set_title("2090-2099 hussat")
-axes[1, 2].set_title("hus - hussat")
-axes[2, 0].set_title("2090-2099 - 1850-1859")
-axes[2, 1].set_title("2090-2099 - 1850-1859")
-axes[2, 2].set_title("hus - hussat")
+axes[0, 0].set_title("1850-1859" +' ' + r"$\Delta q^*/\Delta T$")
+axes[0, 1].set_title("1850-1859" + ' ' + r"$\Delta q/\Delta T$")
+axes[0, 2].set_title(r"$\Delta q/\Delta T - \Delta q^*/\Delta T$")
+axes[1, 0].set_title("2090-2099" + ' ' + r"$\Delta q^*/\Delta T$")
+axes[1, 1].set_title("2090-2099" + ' ' + r"$\Delta q/\Delta T$")
+axes[1, 2].set_title(r"$\Delta q/\Delta T - \Delta q^*/\Delta T$")
+axes[2, 0].set_title("2090-2099 - 1850-1859" + ' ' + r"$\Delta q^*/\Delta T$")
+axes[2, 1].set_title("2090-2099 - 1850-1859" + ' ' + r"$\Delta q/\Delta T$")
+axes[2, 2].set_title(r"$\Delta q/\Delta T - \Delta q^*/\Delta T$")
 
 # add colorbars
-cbar_ax1 = fig.add_axes([0.92, 0.7, 0.02, 0.2])
-cbar_ax2 = fig.add_axes([0.92, 0.4, 0.02, 0.2])
-cbar_ax3 = fig.add_axes([0.92, 0.1, 0.02, 0.2])
+cbar_ax1 = fig.add_axes([0.92, 0.7, 0.01, 0.2])
+cbar_ax2 = fig.add_axes([0.92, 0.4, 0.01, 0.2])
+cbar_ax3 = fig.add_axes([0.92, 0.1, 0.01, 0.2])
 
-cbar1 = fig.colorbar(plot_first, cax=cbar_ax1, orientation='vertical', label='g/kg/K')
-cbar2 = fig.colorbar(plot_last, cax=cbar_ax2, orientation='vertical', label='g/kg/K')
-cbar3 = fig.colorbar(plot_last_first, cax=cbar_ax3, orientation='vertical', label='g/kg/K')
+cbar1 = fig.colorbar(plot_first, cax=cbar_ax1, orientation='vertical', label=r'$g \cdot kg^{-1}K^{-1}$')
+cbar2 = fig.colorbar(plot_last, cax=cbar_ax2, orientation='vertical', label=r'$g \cdot kg^{-1}K^{-1}$')
+cbar3 = fig.colorbar(plot_last_first, cax=cbar_ax3, orientation='vertical', label=r'$g \cdot kg^{-1}K^{-1}$')
 
 # Reduce the number of ticks
-cbar1.set_ticks(np.arange(-2, 2.1, 1))
-cbar2.set_ticks(np.arange(-2, 2.1, 1))
-cbar3.set_ticks(np.arange(-1, 1.1, 0.5))
+cbar1.set_ticks(np.arange(-1.5, 1.6, 0.5))
+cbar2.set_ticks(np.arange(-1.5, 1.6, 0.5))
+cbar3.set_ticks(np.arange(-0.5, 0.55, 0.2))
+
+
+# a, b, c labels for each subplots
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        -0.1,
+        1.1,
+        chr(97 + i),
+        transform=ax.transAxes,
+        size=12,
+        weight="bold",
+    )
+    ax.set_ylabel('')
+    ax.set_xlabel('')
+
 
 plt.tight_layout(rect=[0, 0, 0.9, 1])
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/tangent_hus_shus.png")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/tangent_hus_shus.pdf", dpi = 300)
 # %%

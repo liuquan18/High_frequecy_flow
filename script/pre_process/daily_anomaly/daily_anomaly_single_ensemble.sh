@@ -3,7 +3,7 @@
 #SBATCH --time=00:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=7
+#SBATCH --ntasks=5
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
@@ -20,7 +20,7 @@ echo "Ensemble member ${member} for variable ${var}"
 
 # vt daily
 vt_daily_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/r${member}i1p1f1/
-vt_daily_file=${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_*.nc
+vt_daily_file=*_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_*.nc
 daily_files=($(find $vt_daily_path -name $vt_daily_file -print))
 
 
@@ -39,9 +39,22 @@ Anomaly() {
     decade_label=$(basename "$infile" | cut -d'_' -f 6 | cut -c1-4)
     month_ens=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_monthly_ensmean/${var}_monmean_ensmean_${decade_label}05_$((${decade_label}+9))09.nc
 
-    cdo -ymonsub ${infile} ${month_ens} ${savedir}$(basename ${infile} .nc)_ano.nc
+    cdo -O -ymonsub ${infile} ${month_ens} ${savedir}$(basename ${infile} .nc)_ano.nc
 }
 
 
 export -f Anomaly
-parallel --jobs 10 Anomaly ::: ${daily_files[@]}
+parallel --jobs 5 Anomaly ::: ${daily_files[@]}
+
+
+
+# Check if all required decades are saved
+for dec in {1850..2090..10}; do
+    if [ ! -f ${savedir}${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501*.nc ]; then
+        echo "File for decade ${dec} is missing in ${savedir}"
+    
+        # calculate the missing dec
+        echo "recalculate ${dec}"
+        Anomaly ${vt_daily_path}${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501-$((dec+9))0930.nc
+    fi
+done

@@ -124,9 +124,8 @@ def process(ens, period):
         events=anticyclonic,
         time_range=24,  # time range for temporal tracking in hours
         method="by_overlap",  # method for tracking ["by_overlap", "by_distance"], optional
-        buffer=0,  # buffer in degrees for polygons overlapping, optional
-        overlap=0.5,  # minimum overlap percentage, optinal
-        distance=1000,
+        buffer=1.9,  # buffer in degrees for polygons overlapping, spatial resolution is 1.875 
+        overlap=0.3,  # minimum overlap percentage, optinal
     )  # distance in km for method "by_distance"
 
     cyc_tracked = wb.track_events(

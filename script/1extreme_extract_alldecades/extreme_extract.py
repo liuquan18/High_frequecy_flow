@@ -28,7 +28,7 @@ except:
 
 # %%
 member = node
-projected_pc_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_decade_std/r{member}i1p1f1/"
+projected_pc_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_pc_decade_std/r{member}i1p1f1/"
 
 pos_extreme_save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/positive_extreme_events_decades/r{member}i1p1f1/"
 neg_extreme_save_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/negative_extreme_events_decades/r{member}i1p1f1/"

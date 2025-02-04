@@ -2,6 +2,8 @@
 import xarray as xr
 import glob
 import logging
+import pandas as pd
+import re
 logging.basicConfig(level=logging.INFO)
 # %%
 def rolling_lon_periodic(arr, lon_window, lat_window, stat = 'std'):
@@ -24,11 +26,14 @@ def read_data(var, decade, latitude_slice = (-30,30), meridional_mean = False, s
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
     )
     files = glob.glob(data_path + "r*i1p1f1/" + f"{var}*{time_tag}*.nc")
-    chunks = kwargs.get('chunks', {"ens": 1, "time": 765, "lat": -1, "lon": -1})
+    # sort files
+    files.sort(key=lambda x: int(x.split('/')[-2][1:].split('i')[0]))
+    chunks = kwargs.get('chunks', {"ens": 1, "time": -1, "lat": -1, "lon": -1})
 
     data = xr.open_mfdataset(
         files, combine="nested", concat_dim="ens", chunks=chunks
     )
+    data['ens'] = range(1, 51)
     try:
         data = data[var]
     except KeyError:
@@ -48,3 +53,23 @@ def read_data(var, decade, latitude_slice = (-30,30), meridional_mean = False, s
     return data
 
 # %%
+#%%
+def read_NAO_extremes(decade, phase = 'positive'):
+    base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/{phase}_extreme_events_decades/'
+    file_list = glob.glob(base_dir + f'r*i1p1f1/*{decade}*.csv')
+
+    # sort
+    file_list.sort(key=lambda x: int(x.split('/')[-2][1:].split('i')[0]))
+
+    extremes = []
+    for filename in file_list:
+        match = re.search(r"/r(\d+)i1p1f1/", filename)
+        if match:
+            ens = match.group(1)
+    
+        extreme = pd.read_csv(filename)
+        extreme['ens'] = ens
+
+        extremes.append(extreme)
+    extremes = pd.concat(extremes)
+    return extremes

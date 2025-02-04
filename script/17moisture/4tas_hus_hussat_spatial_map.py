@@ -85,22 +85,34 @@ prec_cmap_div = np.loadtxt(
 )
 prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 #%%
-temp_levels = np.arange(0,21,1)
-hus_levels = np.arange(0,6,0.5)
+temp_levels = np.arange(0,16,1)
+hus_levels = np.arange(0,5,0.5)
 
-temp_levels_div = np.arange(-5,6,0.5)
+temp_levels_div = np.arange(-5,5.5,0.5)
 hus_levels_div = np.arange(-1.5,1.6,0.1)
 
 
 # %%
 fig, axes = plt.subplots(
-    3, 3, figsize=(15, 10), subplot_kw={"projection": ccrs.PlateCarree(100)}
+    3, 3, figsize=(12, 6), subplot_kw={"projection": ccrs.PlateCarree(-90)}
 )
+axes[0, 0].set_title("1850-1859")
+axes[0, 1].set_title("1850-1859")
+axes[0, 2].set_title("1850-1859")
+
+axes[1, 0].set_title("2090-2099")
+axes[1, 1].set_title("2090-2099")
+axes[1, 2].set_title("2090-2099")
+
+axes[2, 0].set_title("2090-2099 - 1850-1859")
+axes[2, 1].set_title("2090-2099 - 1850-1859")
+axes[2, 2].set_title("2090-2099 - 1850-1859")
+
 first_mean.tas.plot(
     ax=axes[0, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_seq,
-    cbar_kwargs={"label": "Temperature (K)"},
+    cbar_kwargs={"label": r"$\Delta T$ (K)", "shrink": 0.6, 'ticks': np.arange(0, 16, 5)},
     levels=temp_levels,
     extend='max',
 )
@@ -108,37 +120,35 @@ axes[0, 0].set_title("1850-1859")
 axes[0, 0].coastlines()
 axes[0, 0].set_global()
 
-first_mean.hus.plot(
+first_mean.hussat.plot(
     ax=axes[0, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "Specific Humidity (g/kg)"},
-    levels=hus_levels,
+    cbar_kwargs={"label": r"$\Delta q^*$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(0, 11, 2)},
+    levels=hus_levels*2,
     extend='max',
 )
 axes[0, 1].set_title("1850-1859")
 axes[0, 1].coastlines()
 axes[0, 1].set_global()
 
-first_mean.hussat.plot(
+first_mean.hus.plot(
     ax=axes[0, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "saturate specific Humidity (g/kg)"},
-    levels=hus_levels*2,
+    cbar_kwargs={"label": r"$\Delta q$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(0, 5, 1)},
+    levels=hus_levels,
     extend='max',
 )
-axes[0,2].set_title("1850-1859")
-axes[0,2].coastlines()
-axes[0,2].set_global()
-
-
+axes[0, 2].set_title("1850-1859")
+axes[0, 2].coastlines()
+axes[0, 2].set_global()
 
 last_mean.tas.plot(
     ax=axes[1, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_seq,
-    cbar_kwargs={"label": "Temperature (K)"},
+    cbar_kwargs={"label": r"$\Delta T$ (K)", "shrink": 0.6, 'ticks': np.arange(0, 16, 5)},
     levels=temp_levels,
     extend='max',
 )
@@ -146,38 +156,36 @@ axes[1, 0].set_title("2090-2099")
 axes[1, 0].coastlines()
 axes[1, 0].set_global()
 
-last_mean.hus.plot(
+last_mean.hussat.plot(
     ax=axes[1, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "Specific Humidity (g/kg)"},
-    levels=hus_levels,
+    cbar_kwargs={"label": r"$\Delta q^*$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(0, 11, 2)},
+    levels=hus_levels*2,
     extend='max',
 )
 axes[1, 1].set_title("2090-2099")
 axes[1, 1].coastlines()
 axes[1, 1].set_global()
 
-last_mean.hussat.plot(
+last_mean.hus.plot(
     ax=axes[1, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_seq,
-    cbar_kwargs={"label": "saturate specific Humidity (g/kg)"},
-    levels=hus_levels*2,
+    cbar_kwargs={"label": r"$\Delta q$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(0, 5, 1)},
+    levels=hus_levels,
     extend='max',
 )
-axes[1,2].set_title("2090-2099")
-axes[1,2].coastlines()
-axes[1,2].set_global()
-
-
+axes[1, 2].set_title("2090-2099")
+axes[1, 2].coastlines()
+axes[1, 2].set_global()
 
 # difference between last and first
 diff_mean.tas.plot(
     ax=axes[2, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
-    cbar_kwargs={"label": "Temperature (K)"},
+    cbar_kwargs={"label": r"$\Delta T$ (K)", "shrink": 0.6, 'ticks': np.arange(-4, 5, 2)},
     levels=temp_levels_div,
     extend='both',
 )
@@ -185,56 +193,66 @@ axes[2, 0].set_title("2090-2099 - 1850-1859")
 axes[2, 0].coastlines()
 axes[2, 0].set_global()
 
-
-diff_mean.hus.plot(
+diff_mean.hussat.plot(
     ax=axes[2, 1],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_div,
-    cbar_kwargs={"label": "Specific Humidity (g/kg)"},
-    levels=hus_levels_div,
+    cbar_kwargs={"label": r"$\Delta q^*$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(-3, 3.1, 1)},
+    levels=hus_levels_div*2,
     extend='both',
 )
-
 axes[2, 1].set_title("2090-2099 - 1850-1859")
 axes[2, 1].coastlines()
 axes[2, 1].set_global()
 
-diff_mean.hussat.plot(
+diff_mean.hus.plot(
     ax=axes[2, 2],
     transform=ccrs.PlateCarree(),
     cmap=prec_cmap_div,
-    cbar_kwargs={"label": "saturate specific Humidity (g/kg)"},
-    levels=hus_levels_div*2,
+    cbar_kwargs={"label": r"$\Delta q$ (g/kg)", "shrink": 0.6, 'ticks': np.arange(-1.5, 1.6, 0.5)},
+    levels=hus_levels_div,
     extend='both',
 )
-axes[2,2].set_title("2090-2099 - 1850-1859")
-axes[2,2].coastlines()
-axes[2,2].set_global()
-
-
-
+axes[2, 2].set_title("2090-2099 - 1850-1859")
+axes[2, 2].coastlines()
+axes[2, 2].set_global()
 
 # latitude ticks
-for ax in axes.flatten():
-    ax.set_yticks(np.arange(-60, 76, 30), crs=ccrs.PlateCarree())
-    ax.set_ylabel("Latitude")
-    ax.yaxis.set_major_formatter(cartopy.mpl.ticker.LatitudeFormatter())
-    # Set longitude ticks and labels
-    ax.set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
-    ax.set_xticklabels(['180°W', '120°W', '60°W', '0°', '60°E', '120°E'])
-    ax.set_yticks(np.arange(-60, 76, 30), crs=ccrs.PlateCarree())
-    ax.set_yticklabels(['60°S', '30°S', '0°', '30°N', '60°N'])
-    ax.set_ylabel("Latitude")
-    ax.yaxis.set_major_formatter(cartopy.mpl.gridliner.LATITUDE_FORMATTER)
+for i, ax in enumerate(axes.flatten()):
+    if i % 3 == 0:
+        ax.set_yticks(np.arange(-60, 76, 30), crs=ccrs.PlateCarree())
+        ax.set_ylabel("Latitude")
+        ax.yaxis.set_major_formatter(cartopy.mpl.ticker.LatitudeFormatter())
+    else:
+        ax.set_yticks([])
+    
+    if i // 3 == 2:
+        ax.set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
+        ax.set_xticklabels(['180°', '120°W', '60°W', '0°', '60°E', '120°E'])
+    else:
+        ax.set_xticks([])
 
 axes[1, 1].set_xlabel("Longitude")
 
-
 draw_box(axes[0, 0], (60, 30))
-plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/first_last_clim_mean.png")
+
+# a, b, c labels for each subplots
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        -0.1,
+        1.0,
+        chr(97 + i),
+        transform=ax.transAxes,
+        size=12,
+        weight="bold",
+    )
+    ax.set_ylabel('')
+    ax.set_xlabel('')
 
 
+
+plt.tight_layout(w_pad=-1)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/first_last_clim.pdf", dpi=300)
 
 #%%
 first_qu95 = xr.open_dataset(

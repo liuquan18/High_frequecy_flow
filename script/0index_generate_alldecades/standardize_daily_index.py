@@ -18,7 +18,7 @@ size = comm.Get_size()
 name = MPI.Get_processor_name()
 
 #%%
-files_tag=f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_decade_nonstd/r*i1p1f1/NAO_{start_year}-{start_year+9}_r*i1p1f1_nonstd.nc"
+files_tag=f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_pc_decade_nonstd/r*i1p1f1/NAO_{start_year}-{start_year+9}_r*i1p1f1_nonstd.nc"
 files = glob.glob(files_tag)
 #%%
 # check if files length==50
@@ -30,7 +30,7 @@ if rank == 0:
     import os
 
     # Base directory where the folders will be created
-    base_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/daily/projected_pc_decade_std"
+    base_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_pc_decade_std"
 
     # Create folders with names r{number}i1p1f1 where number ranges from 1 to 50
     for number in range(1, 51):
