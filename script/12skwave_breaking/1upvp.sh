@@ -53,10 +53,12 @@ band_filter(){
     year_files=$(ls ${tmp_dir}${fname}_year*)
     if [ "$frequency" == "prime" ]; then
         echo "Filtering 2-12 days"
-        cdo -O -mergetime -apply,bandpass,30.5,182.5 [ ${year_files} ] ${outfile}
-    elif [ "$frequency" == "high" ]; then
+        # cdo -O -mergetime -apply,bandpass,30.5,182.5 [ ${year_files} ] ${outfile}
+        cdo -O -mergetime -apply,highpass,36.5 [ ${year_files} ] ${outfile}
+        elif [ "$frequency" == "high" ]; then
         echo "Filtering 2-6 days"
-        cdo -O -mergetime -apply,bandpass,60.8,182.5 [ ${year_files} ] ${outfile}
+        # cdo -O -mergetime -apply,bandpass,60.8,182.5 [ ${year_files} ] ${outfile}
+        cdo -O -mergetime -apply,highpass,36.5 [ ${year_files} ] ${outfile}
     fi
     # remove temporary files
     rm ${tmp_dir}${fname}_year*
