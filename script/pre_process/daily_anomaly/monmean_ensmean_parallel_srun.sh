@@ -5,7 +5,6 @@
 #SBATCH --nodes=25
 #SBATCH --ntasks=25
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=5 
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
