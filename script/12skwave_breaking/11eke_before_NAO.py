@@ -47,7 +47,13 @@ def read_eke( decade, suffix = '_ano_2060N', var='eke', **kwargs):
     data = data['eke']
     data.load()
 
-    data = data.drop_vars(('plev','lat'))
+    try:
+        data = data.drop_vars(('plev','lat'))
+    except ValueError:
+        try:
+            data = data.drop_vars(('lat'))
+        except ValueError:
+            pass
 
     data['ens'] = range(1, 51)
     # change longitude from 0-360 to -180-180
