@@ -168,6 +168,14 @@ def to_plot_data(eke):
 
     return eke
 
+#%%
+def rolling(eke, lon_win = 15, lat_win = 3):
+    extended_eke = xr.concat([eke, eke], dim = "lon")
+    eke_rolling = extended_eke.rolling(lon = lon_win, lat = lat_win).mean()
+
+    original_lonsize = eke.lon.size
+    eke_rolling = eke_rolling.isel(lon = slice(original_lonsize, 2*original_lonsize))
+    return eke_rolling.sortby("lon")
 
 # %%
 first_NAO_pos_eke, first_NAO_neg_eke, last_NAO_pos_eke, last_NAO_neg_eke = read_data(
@@ -463,10 +471,17 @@ def lon2x(longitude, ax):
 
 
 
+#%%
+
+eke_levels = np.arange(-3., 3.1, 0.5)
+
+eke_smooth = True
+
+if eke_smooth:
+    NAO_pos_eke_lat_lon = rolling(NAO_pos_eke_lat_lon)
+    NAO_neg_eke_lat_lon = rolling(NAO_neg_eke_lat_lon)
 
 
-
-eke_levels = np.arange(-4.5, 4.6, 0.5)
 
 # %%
 fig = plt.figure(figsize=(10, 12))
@@ -886,6 +901,6 @@ eke_diff_ax1.text(
 
 
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_together.pdf", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_together_3060N_smooth.pdf", dpi=300)
 
 # %%
