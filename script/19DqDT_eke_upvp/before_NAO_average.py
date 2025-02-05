@@ -150,11 +150,14 @@ def eke_lag_lon(first, last):
     eke_eventmean_xr = eke_eventmean.to_xarray()
 
     return eke_eventmean_xr
-#%%
+
+
+# %%
 def remove_zonalmean(eke):
     zonal_mean = eke.mean(dim="lon")
     eke = eke - zonal_mean
     return eke
+
 
 # %%
 def to_plot_data(eke):
@@ -168,14 +171,16 @@ def to_plot_data(eke):
 
     return eke
 
-#%%
-def rolling(eke, lon_win = 15, lat_win = 3):
-    extended_eke = xr.concat([eke, eke], dim = "lon")
-    eke_rolling = extended_eke.rolling(lon = lon_win, lat = lat_win).mean()
+
+# %%
+def rolling(eke, lon_win=15, lat_win=3):
+    extended_eke = xr.concat([eke, eke], dim="lon")
+    eke_rolling = extended_eke.rolling(lon=lon_win, lat=lat_win).mean()
 
     original_lonsize = eke.lon.size
-    eke_rolling = eke_rolling.isel(lon = slice(original_lonsize, 2*original_lonsize))
+    eke_rolling = eke_rolling.isel(lon=slice(original_lonsize, 2 * original_lonsize))
     return eke_rolling.sortby("lon")
+
 
 # %%
 first_NAO_pos_eke, first_NAO_neg_eke, last_NAO_pos_eke, last_NAO_neg_eke = read_data(
@@ -215,7 +220,7 @@ NAO_neg_eke_lag_lon = eke_lag_lon(first_NAO_neg_eke, last_NAO_neg_eke)
 # %%
 NAO_pos_eke_lag_lon = remove_zonalmean(NAO_pos_eke_lag_lon)
 NAO_neg_eke_lag_lon = remove_zonalmean(NAO_neg_eke_lag_lon)
-#%%
+# %%
 # for plotting
 NAO_pos_eke_lat_lon = to_plot_data(NAO_pos_eke_lag_lon)
 NAO_neg_eke_lat_lon = to_plot_data(NAO_neg_eke_lag_lon)
@@ -468,19 +473,15 @@ def lon2x(longitude, ax):
 # %%
 
 
+# %%
 
-
-
-#%%
-
-eke_levels = np.arange(-3., 3.1, 0.5)
+eke_levels = np.arange(-3.0, 3.1, 0.5)
 
 eke_smooth = True
 
 if eke_smooth:
     NAO_pos_eke_lat_lon = rolling(NAO_pos_eke_lat_lon)
     NAO_neg_eke_lat_lon = rolling(NAO_neg_eke_lat_lon)
-
 
 
 # %%
@@ -745,18 +746,19 @@ upvp_ax2.set_xlabel(r"$u^{'}v^{'}$ (m$^2$ $\cdot$ s$^{-2}$)")
 ratio_ax1.set_yticks(np.arange(-20, 11, 5))
 
 for ax in [ratio_ax2, ratio_ax1, upvp_ax1, upvp_ax2]:
-    ax.set_yticks(np.arange(-20, 11, 5) )
+    ax.set_yticks(np.arange(-20, 11, 5))
     ax.set_yticklabels("")
 
 for ax in [
     ratio_ax1,
     ratio_ax2,
     upvp_ax1,
-    upvp_ax2,]:
-    
+    upvp_ax2,
+]:
+
     # remove the top and right spines
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
 
 for ax in [eke_diff_ax1, eke_diff_ax2]:
     ax.set_ylabel("")
@@ -774,7 +776,8 @@ for ax in [
     eke_first_ax1,
     eke_first_ax2,
     eke_last_ax1,
-    eke_last_ax2,]:
+    eke_last_ax2,
+]:
     ax.set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
     ax.set_xticklabels("")
     ax.set_xlabel("")
@@ -800,21 +803,32 @@ row4 = [eke_diff_ax1, eke_diff_ax2]
 # Adjust positions
 for ax in row2:
     pos = ax.get_position()
-    ax.set_position([pos.x0, pos.y0 - 0.04, pos.width, pos.height])  # Move second row down slightly
+    ax.set_position(
+        [pos.x0, pos.y0 - 0.04, pos.width, pos.height]
+    )  # Move second row down slightly
 
 for ax in row3:
     pos = ax.get_position()
-    ax.set_position([pos.x0, pos.y0 - 0.02, pos.width, pos.height])  # Move third row down less
+    ax.set_position(
+        [pos.x0, pos.y0 - 0.02, pos.width, pos.height]
+    )  # Move third row down less
 
 for ax in row4:
     pos = ax.get_position()
-    ax.set_position([pos.x0, pos.y0 , pos.width, pos.height])  # Move fourth row down less
+    ax.set_position(
+        [pos.x0, pos.y0, pos.width, pos.height]
+    )  # Move fourth row down less
 
 
 # add custom legend for ratio_ax1
 handles_ratio, labels = ratio_ax1.get_legend_handles_labels()
 
-labels = [r"$\Delta q / \Delta T$ _first_NAL", r"$\Delta q / \Delta T$_last_NAL", r"$\Delta q / \Delta T$ _first_NPO", r"$\Delta q / \Delta T$ _last_NPO"]
+labels = [
+    r"$\Delta q / \Delta T$ _first_NAL",
+    r"$\Delta q / \Delta T$_last_NAL",
+    r"$\Delta q / \Delta T$ _first_NPO",
+    r"$\Delta q / \Delta T$ _last_NPO",
+]
 # add legend of upvp to legend_ax
 handles_upvp, labels_upvp = upvp_ax1.get_legend_handles_labels()
 labels_upvp = ["$u^{'}v^{'}$ _first", "$u^{'}v^{'}$ _last"]
@@ -822,15 +836,20 @@ labels_upvp = ["$u^{'}v^{'}$ _first", "$u^{'}v^{'}$ _last"]
 handles_together = handles_ratio + handles_upvp
 labels_together = labels + labels_upvp
 
-legend_ax.legend(handles_together, labels_together, loc="center", frameon=False, ncol = 4)
+legend_ax.legend(handles_together, labels_together, loc="center", frameon=False, ncol=4)
 legend_ax.axis("off")
 legend_pos = legend_ax.get_position()
-legend_ax.set_position([legend_pos.x0, legend_pos.y0 - 0.04, legend_pos.width, legend_pos.height])
+legend_ax.set_position(
+    [legend_pos.x0, legend_pos.y0 - 0.04, legend_pos.width, legend_pos.height]
+)
 
 # add colorbar of eke
 cbar = plt.colorbar(
-    mappable=eke_diff_ax1.collections[0], cax=cbar_ax, orientation="horizontal", aspect=30,
-    label = r"EKE (m$^2$ s$^{-2}$)"
+    mappable=eke_diff_ax1.collections[0],
+    cax=cbar_ax,
+    orientation="horizontal",
+    aspect=30,
+    label=r"EKE (m$^2$ s$^{-2}$)",
 )
 cbar_ax.set_aspect(0.05)
 
@@ -899,8 +918,9 @@ eke_diff_ax1.text(
 )
 
 
-
-
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_together_3060N_smooth.pdf", dpi=300)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_together_3060N_smooth.pdf",
+    dpi=300,
+)
 
 # %%
