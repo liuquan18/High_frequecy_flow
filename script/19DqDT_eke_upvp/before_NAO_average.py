@@ -475,14 +475,15 @@ def lon2x(longitude, ax):
 
 # %%
 
-eke_levels = np.arange(-3.0, 3.1, 0.5)
 
 eke_smooth = True
 
 if eke_smooth:
     NAO_pos_eke_lat_lon = rolling(NAO_pos_eke_lat_lon)
     NAO_neg_eke_lat_lon = rolling(NAO_neg_eke_lat_lon)
+#%%
 
+eke_levels = np.arange(-2.5, 2.6, 0.5)
 
 # %%
 fig = plt.figure(figsize=(10, 12))
@@ -919,7 +920,7 @@ eke_diff_ax1.text(
 
 
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_together_3060N_smooth.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_together_2060N_smooth.pdf",
     dpi=300,
 )
 
