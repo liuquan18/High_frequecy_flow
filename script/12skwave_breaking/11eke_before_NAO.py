@@ -8,6 +8,7 @@ import seaborn as sns
 import glob
 import logging
 import re
+import os
 
 from src.extremes.before_extreme import read_NAO_extremes, sel_before_NAO
 logging.basicConfig(level=logging.INFO)
@@ -88,9 +89,16 @@ def process_data(decade, var):
     eke_NAO_neg = sel_before_NAO(NAO_neg, data, var = 'eke')
 
     logging.info(f"rank {rank} is saving data for decade {decade} \n")
+    save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_NAO_pos/'
+    save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_NAO_neg/'
 
-    eke_NAO_pos.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_NAO_pos/{var}_NAO_pos_{decade}.csv')
-    eke_NAO_neg.to_csv(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_NAO_neg/{var}_NAO_neg_{decade}.csv')
+    if not os.path.exists(save_dir_pos):
+        os.makedirs(save_dir_pos)
+    if not os.path.exists(save_dir_neg):
+        os.makedirs(save_dir_neg)
+
+    eke_NAO_pos.to_csv(f'{save_dir_pos}/{var}_NAO_pos_{decade}.csv')
+    eke_NAO_neg.to_csv(f'{save_dir_neg}/{var}_NAO_neg_{decade}.csv')
     
 #%%
 decades_all = np.arange(1850, 2100, 10)
