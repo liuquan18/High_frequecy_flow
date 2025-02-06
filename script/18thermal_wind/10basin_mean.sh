@@ -14,7 +14,7 @@ module load cdo parallel
 
 NAL(){
     infile=$1
-    fname=$(basename $infile%.nc)
+    fname=$(basename ${infile%.nc})
 
     echo "NAL $fname"
 
@@ -25,7 +25,7 @@ NAL(){
 
 NPO(){
     infile=$1
-    fname=$(basename $infile%.nc)
+    fname=$(basename ${infile%.nc})
 
     echo "NPO $fname"
 
