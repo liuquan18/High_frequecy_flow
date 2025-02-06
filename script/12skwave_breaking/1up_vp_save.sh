@@ -86,3 +86,25 @@ export -f band_filter up_vp
 # parallel band filter in to_dir
 parallel --jobs 5 up_vp ::: {1850..2090..10}
 
+# check completeness
+for dec in {1850..2090..10}; do
+
+    ufile=$(find ${u_path} -name "ua*_r${member}i1p1f1_gn_${dec}*.nc")
+    vfile=$(find ${v_path} -name "va*_r${member}i1p1f1_gn_${dec}*.nc")
+    # basename without .nc
+    fname_u=$(basename ${ufile%.nc})
+    fname_u=${up_path}${fname_u/ua/up}.nc
+    if [ ! -f ${fname_u} ]; then
+        echo "Missing ${fname_u}, reprocessing"
+        band_filter ${ufile} ${fname_u}
+    fi
+
+    
+    fname_v=$(basename ${vfile%.nc})    
+    echo "Filtering ${fname_v}"
+    fname_v=${vp_path}${fname_v/va/vp}.nc
+    if [ ! -f ${fname_v} ]; then
+        echo "Missing ${fname_v}, reprocessing"
+        band_filter ${vfile} ${fname_v}
+
+done
