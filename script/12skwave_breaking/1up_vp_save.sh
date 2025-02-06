@@ -101,7 +101,6 @@ for dec in {1850..2090..10}; do
 
     
     fname_v=$(basename ${vfile%.nc})    
-    echo "Filtering ${fname_v}"
     fname_v=${vp_path}${fname_v/va/vp}.nc
     if [ ! -f ${fname_v} ]; then
         echo "Missing ${fname_v}, reprocessing"

@@ -16,5 +16,5 @@ do
     echo "Ensemble member ${ens}"
     # run the python script
     sbatch 1up_vp_save.sh ${ens} ${frequency}
-    # ./1upvp.sh ${ens}
+    # ./1up_vp_save.sh ${ens} ${frequency}
 done
