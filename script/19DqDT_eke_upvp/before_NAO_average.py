@@ -929,9 +929,9 @@ eke_diff_ax1.text(
 )
 
 
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_together_2060N_smooth.pdf",
-#     dpi=300,
-# )
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/ratio_eke_together_2060N_smooth.pdf",
+    dpi=300,
+)
 
 # %%
