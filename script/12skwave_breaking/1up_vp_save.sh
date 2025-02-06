@@ -106,5 +106,6 @@ for dec in {1850..2090..10}; do
     if [ ! -f ${fname_v} ]; then
         echo "Missing ${fname_v}, reprocessing"
         band_filter ${vfile} ${fname_v}
+    fi
 
 done
