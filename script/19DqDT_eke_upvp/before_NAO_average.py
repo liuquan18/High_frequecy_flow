@@ -173,7 +173,7 @@ def to_plot_data(eke):
 
 
 # %%
-def rolling(eke, lon_win=15, lat_win=3):
+def rolling(eke, lon_win=25, lat_win=3):
     extended_eke = xr.concat([eke, eke], dim="lon")
     eke_rolling = extended_eke.rolling(lon=lon_win, lat=lat_win).mean()
 
@@ -483,7 +483,7 @@ if eke_smooth:
     NAO_neg_eke_lat_lon = rolling(NAO_neg_eke_lat_lon)
 #%%
 
-eke_levels = np.arange(-2.5, 2.6, 0.5)
+eke_levels = np.arange(-2., 2.1, 0.4)
 
 # %%
 fig = plt.figure(figsize=(10, 12))
@@ -885,11 +885,11 @@ eke_coast_ax.axvline(
 
 # add tilted line for eke eke_first_ax1 from  120E to 60E
 eke_first_ax1.plot(
-    [lon2x(180, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.1*4, -5.1*4], color="black",
+    [lon2x(180, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
     linestyle=(0, (5, 10)), linewidth=1.2)
 
 eke_last_ax1.plot(
-    [lon2x(120, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.2*4, -5.2*4], color="black",
+    [lon2x(120, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
     linestyle=(0, (5, 10)), linewidth=1.2)
 
 # add text 'NPO' between 140 and -145, NAL between -70 and -35
