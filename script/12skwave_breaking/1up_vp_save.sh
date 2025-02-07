@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=upvp
+#SBATCH --job-name=eddy
 #SBATCH --time=01:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
@@ -7,37 +7,37 @@
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=upvp.%j.out
+#SBATCH --output=eddy.%j.out
 
 module load cdo
 module load parallel
 
 node=$1
 member=$node
-echo "Ensemble member ${member}"
 
 frequency=${2:-prime} # prime (2-12 days) or high (2-6 days), default prime
+
+echo "Ensemble member ${member}"
 
 u_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily/r${member}i1p1f1/
 v_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily/r${member}i1p1f1/
 
+# save path
 if [ "$frequency" == "prime" ]; then
-    up_path=/scratch/m/m300883/up/r${member}i1p1f1/
-    vp_path=/scratch/m/m300883/vp/r${member}i1p1f1/
-    upvp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily/r${member}i1p1f1/
+    up_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/up/r${member}i1p1f1/
+    vp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vp/r${member}i1p1f1/
 else
     up_path=/scratch/m/m300883/upp/r${member}i1p1f1/
     vp_path=/scratch/m/m300883/vpp/r${member}i1p1f1/
-    upvp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_high_daily/r${member}i1p1f1/
 fi
 
 tmp_dir=/scratch/m/m300883/upvp/r${member}i1p1f1/
 
-mkdir -p ${upvp_path} ${up_path} ${vp_path} ${tmp_dir}
+mkdir -p ${eddy_path} ${up_path} ${vp_path} ${tmp_dir}
 
 export u_path up_path 
 export v_path vp_path 
-export upvp_path member tmp_dir
+export eddy_path member tmp_dir
 export frequency
 
 # function to band filter
@@ -55,52 +55,56 @@ band_filter(){
         echo "Filtering 2-12 days"
         # cdo -O -mergetime -apply,bandpass,30.5,182.5 [ ${year_files} ] ${outfile}
         cdo -O -mergetime -apply,highpass,36.5 [ ${year_files} ] ${outfile}
-        elif [ "$frequency" == "high" ]; then
+    elif [ "$frequency" == "high" ]; then
         echo "Filtering 2-6 days"
         # cdo -O -mergetime -apply,bandpass,60.8,182.5 [ ${year_files} ] ${outfile}
-        cdo -O -mergetime -apply,highpass,36.5 [ ${year_files} ] ${outfile}
+        cdo -O -mergetime -apply,highpass,72 [ ${year_files} ] ${outfile}  # use highpass instead of bandpass
     fi
     # remove temporary files
     rm ${tmp_dir}${fname}_year*
 }
 
-# function to band filter
-upvp(){
+# function to eddy kinetic energy
+up_vp(){
     dec=$1
     ufile=$(find ${u_path} -name "ua*_r${member}i1p1f1_gn_${dec}*.nc")
     vfile=$(find ${v_path} -name "va*_r${member}i1p1f1_gn_${dec}*.nc")
     # basename without .nc
     fname_u=$(basename ${ufile%.nc})
-    echo "Processing ${fname_u}"
+    echo "Filtering ${fname_u}"
     fname_u=${up_path}${fname_u/ua/up}.nc
     band_filter ${ufile} ${fname_u}
     
     fname_v=$(basename ${vfile%.nc})    
-    echo "Processing ${fname_v}"
+    echo "Filtering ${fname_v}"
     fname_v=${vp_path}${fname_v/va/vp}.nc
     band_filter ${vfile} ${fname_v}
 
-    #momentum fluxes
-    fname_upvp=$(basename ${ufile%.nc})
-    fname_upvp=${upvp_path}${fname_upvp/ua/upvp}.nc
-    cdo -O -mul ${fname_u} ${fname_v} ${fname_upvp}
-
-    # remove temporary files
-    rm ${fname_u} ${fname_v}
 }
 
-export -f band_filter upvp
+export -f band_filter up_vp
 # parallel band filter in to_dir
-parallel --jobs 5 upvp ::: {1850..2090..10}
+parallel --jobs 5 up_vp ::: {1850..2090..10}
 
-# Check if all required decades are saved
+# check completeness
 for dec in {1850..2090..10}; do
-    if [ ! -f ${upvp_path}upvp_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501-$((dec+9))0930.nc ]; then
-        echo "File for decade ${dec} is missing in ${upvp_path}"
-    
-        # calculate the missing dec
-        echo "recalculate ${dec}"
-        upvp ${dec}
 
+    ufile=$(find ${u_path} -name "ua*_r${member}i1p1f1_gn_${dec}*.nc")
+    vfile=$(find ${v_path} -name "va*_r${member}i1p1f1_gn_${dec}*.nc")
+    # basename without .nc
+    fname_u=$(basename ${ufile%.nc})
+    fname_u=${up_path}${fname_u/ua/up}.nc
+    if [ ! -f ${fname_u} ]; then
+        echo "Missing ${fname_u}, reprocessing"
+        band_filter ${ufile} ${fname_u}
     fi
+
+    
+    fname_v=$(basename ${vfile%.nc})    
+    fname_v=${vp_path}${fname_v/va/vp}.nc
+    if [ ! -f ${fname_v} ]; then
+        echo "Missing ${fname_v}, reprocessing"
+        band_filter ${vfile} ${fname_v}
+    fi
+
 done
