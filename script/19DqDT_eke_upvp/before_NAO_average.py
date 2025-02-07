@@ -662,14 +662,14 @@ eke_coast_ax.axvline(
 )
 
 
-# # add tilted line for eke eke_first_ax1 from  120E to 60E
-# eke_first_ax1.plot(
-#     [lon2x(180, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
-#     linestyle=(0, (5, 10)), linewidth=1.2)
+# add tilted line for eke eke_first_ax1 from  120E to 60E
+eke_first_ax1.plot(
+    [lon2x(180, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
+    linestyle=(0, (5, 10)), linewidth=1.2)
 
-# eke_last_ax1.plot(
-#     [lon2x(120, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
-#     linestyle=(0, (5, 10)), linewidth=1.2)
+eke_last_ax1.plot(
+    [lon2x(120, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
+    linestyle=(0, (5, 10)), linewidth=1.2)
 
 # add text 'NPO' between 140 and -145, NAL between -70 and -35
 eke_coast_ax.text(lon2x(-65.0, eke_coast_ax), 30, "NAL", fontsize=12)
@@ -956,6 +956,9 @@ eke_diff_ax1.text(
     0.0, 1.05, "f", transform=eke_diff_ax1.transAxes, fontsize=12, fontweight="bold"
 )
 
-
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/eke_2060N_500hPa_smooth.pdf",
+    dpi=300,
+)
 
 # %%
