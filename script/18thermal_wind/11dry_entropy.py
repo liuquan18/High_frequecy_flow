@@ -27,7 +27,7 @@ except:
 
 # %%
 temp_path=f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ta_daily/r{member}i1p1f1/"
-to_path=f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/sd_daily/r{member}i1p1f1/"
+to_path=f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/sd_daily/r{member}i1p1f1/"
 
 if rank == 0:
     if not os.path.exists(to_path):
