@@ -43,7 +43,11 @@ files_core = np.array_split(all_files, size)[rank]
 for i, file in enumerate(files_core):
     logging.info(f"rank {rank} Processing {i+1}/{len(files_core)}")
     ds = xr.open_dataset(file, chunks = {'time': 10})
-    ds = ds[var]
+    try:
+        ds = ds[var]
+    except KeyError:
+        logging.info(f"Variable {var} not found in {file}")
+        ds = ds['ta']  # for tas
     lon_window = 33
     lat_window = 5
     ds_std = lc.rolling_lon_periodic(ds, lon_window, lat_window, stat = 'std')
