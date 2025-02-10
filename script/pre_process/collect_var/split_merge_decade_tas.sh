@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=ano
-#SBATCH --time=00:30:00
+#SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=7
+#SBATCH --ntasks=10
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
