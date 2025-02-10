@@ -80,7 +80,7 @@ def calc_malr_1d(temp, p):
 
     return dtemp_dp_ma.magnitude
 
-def calc_malr(arr):
+def malr(arr):
     """
     Calculates the moist adiabatic lapse rate.
 
@@ -170,7 +170,7 @@ def calc_moisture_thermal_wind(ta):
 
     """
     # Calculate moist adiabatic lapse rate
-    malr = calc_malr(ta)
+    malr = malr(ta)
     # units
     malr = malr * units.kelvin / units.pascal
     
