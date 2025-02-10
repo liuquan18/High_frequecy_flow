@@ -50,7 +50,7 @@ for i, file in enumerate(files_core):
     sd = mwt.dry_entropy(ds)
 
     # plev mean
-    sd = sd.sel(plev = [100000, 85000]).mean('plev')
+    sd = sd.sel(plev = [100000, 85000])
 
     # copy attributes
     sd.attrs = ds.attrs
