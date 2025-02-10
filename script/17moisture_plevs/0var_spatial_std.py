@@ -27,8 +27,8 @@ except:
     rank = 0
     size = 1
 #%%
-from_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily/r{member}i1p1f1/'
-to_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_std/r{member}i1p1f1/'
+from_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{var}_daily/r{member}i1p1f1/'
+to_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{var}_daily_std/r{member}i1p1f1/'
 
 if rank == 0:
     if not os.path.exists(to_path):
@@ -43,7 +43,7 @@ files_core = np.array_split(all_files, size)[rank]
 # %%
 for i, file in enumerate(files_core):
     logging.info(f"rank {rank} Processing {i+1}/{len(files_core)}")
-    ds = xr.open_dataset(file, chunks = {'time': 10})
+    ds = xr.open_dataset(file, chunks = {'time': 10, 'plev': 1})
 
     ds = ds[name]
     lon_window = 33
@@ -62,7 +62,7 @@ def process_single_dec(var, member, dec, name):
     file = glob.glob(from_path + f"*{dec}*.nc")[0]
     to_file = to_path + file.split('/')[-1]
 
-    ds = xr.open_dataset(file, chunks = {'time': 10})
+    ds = xr.open_dataset(file, chunks = {'time': 5, 'plev': 1})
     ds = ds[name]
     lon_window = 33
     lat_window = 5
