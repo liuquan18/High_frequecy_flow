@@ -14,75 +14,38 @@
 module load cdo
 module load parallel
 
-# get the ensemble member from the command line
-member=$1
-var='tas'
-echo "Ensemble member ${member}"
+ta_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ta_daily/
+tas_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_daily/
 
-historical_path=/pool/data/CMIP6/data/CMIP/MPI-M/MPI-ESM1-2-LR/historical/r${member}i1p1f1/day/${var}/gn/v????????/
-ssp585_path=/work/ik1017/CMIP6/data/CMIP6/ScenarioMIP/MPI-M/MPI-ESM1-2-LR/ssp585/r${member}i1p1f1/day/${var}/gn/v????????/
-# Find files for both scenarios and combine the lists
-file_list=$(find $historical_path -name "*.nc" -print; find $ssp585_path -name "*.nc" -print)
+# create all member folders in tas_dir
+for member in {1..50}; do
+    mkdir -p ${tas_dir}r${member}i1p1f1/
+done
 
 
-to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/r${member}i1p1f1/
-tmp_path=/scratch/m/m300883/$var/r${member}i1p1f1/
+ta_files=$(find $ta_dir -name "*.nc" -print)
 
-mkdir -p $to_path $tmp_path
 
-export to_path tmp_path
-
-# define function split
-split() {
+low_level(){
     infile=$1
-    # Get the filename
-    filename=$(basename $infile)
-    echo "Processing $filename"
+    outfile=${infile/ta_/tas_}
 
-    name_prefix=${filename:0:-20}
-
-    cdo -splityear $infile $tmp_path$name_prefix
-
+    cdo -O -vertmean -sellevel,100000,85000 $infile $outfile
 }
 
-export -f split
+
+export -f low_level
+
+parallel --jobs 10 low_level ::: ${ta_files[@]}
 
 
-echo "$file_list" | parallel --jobs 14 split
+# check completeness
+for member in {1..50}; do
+    ta_files=$(find $ta_dir -name "ta_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_*.nc" -print)
+    tas_files=$(find $tas_dir -name "tas_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_*.nc" -print)
 
-# define function merge, merge each decade from 1850 to 2100
-merge() {
-    start_year=$1
-    end_year=$((start_year+9))
-
-    echo "merging files from ${start_year} to ${end_year}"
-
-    # Construct a regex pattern to match all years from start_year to end_year
-    regex=""
-    for year in $(seq $start_year $end_year); do
-        if [ -z "$regex" ]; then
-            regex="_${year}"
-        else
-            regex="${regex}|_${year}"
-        fi
-    done
-    regex="${regex}\.nc"
-
-    # Find files with name ending within start_year and end_year
-    files=$(find $tmp_path -type f -name "*_r${member}i1p1f1_gn_*.nc" | grep -E "$regex")
-
-    if [ -n "$files" ]; then
-        outfile="${to_path}${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${start_year}0501-${end_year}0930.nc"
-        cdo -O -mergetime -apply,-selmonth,5/9 [ $files ] $outfile
-        echo "Created $outfile"
-    else
-        echo "No files found for the decade ${start_year}-${end_year}"
+    if [ ${#ta_files[@]} -ne ${#tas_files[@]} ]; then
+        echo "r${member}i1p1f1 is incomplete, reproduce tas files"
+        parallel --jobs 10 low_level ::: ${ta_files[@]}
     fi
-}
-
-export -f merge
-
-# Loop through decades from 1850 to 2100
-for year in $(seq 1850 10 2090); do
-    merge $year
 done
