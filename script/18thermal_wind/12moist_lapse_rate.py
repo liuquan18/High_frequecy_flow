@@ -27,7 +27,7 @@ except:
 
 # %%
 temp_path=f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ta_daily/r{member}i1p1f1/"
-to_path=f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/malr_daily/r{member}i1p1f1/"
+to_path=f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/malr_daily/r{member}i1p1f1/"
 
 if rank == 0:
     if not os.path.exists(to_path):
@@ -50,7 +50,7 @@ for i, file in enumerate(files_core):
 
     moist_lp = mwt.malr(ds)
 
-    moist_lp = moist_lp.sel(plev = [100000, 85000]).mean('plev')
+    moist_lp = moist_lp.sel(plev = [100000, 85000])
 
     moist_lp.name = 'malr'
 
