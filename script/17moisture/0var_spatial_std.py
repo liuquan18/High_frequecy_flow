@@ -54,3 +54,24 @@ for i, file in enumerate(files_core):
     ds_std.close()
     
 # %%
+def process_single_dec(var, member, dec, name):
+    logging.info(f"Processing {var} ensemble member {member} for {dec}")
+    from_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily/r{member}i1p1f1/'
+    to_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily_std/r{member}i1p1f1/'
+
+    file = glob.glob(from_path + f"*{dec}*.nc")[0]
+    to_file = to_path + file.split('/')[-1]
+
+    ds = xr.open_dataset(file, chunks = {'time': 10})
+    ds = ds[name]
+    lon_window = 33
+    lat_window = 5
+
+    ds_std = lc.rolling_lon_periodic(ds, lon_window, lat_window, stat = 'std')
+    ds_std.to_netcdf(to_file)
+    ds.close()
+    ds_std.close()
+
+
+
+# %%
