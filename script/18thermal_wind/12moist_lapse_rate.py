@@ -50,6 +50,8 @@ for i, file in enumerate(files_core):
 
     moist_lp = mwt.malr(ds)
 
+    moist_lp = moist_lp.sel(plev = [100000, 85000]).mean('plev')
+
     moist_lp.name = 'malr'
 
     fname = file.split('/')[-1]

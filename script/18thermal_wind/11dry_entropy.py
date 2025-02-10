@@ -45,10 +45,19 @@ for i, file in enumerate(files_core):
     ds = xr.open_dataset(file, chunks = {'time': -1})
 
     ds = ds.ta
-
     ds.load()
 
     sd = mwt.dry_entropy(ds)
+
+    # plev mean
+    sd = sd.sel(plev = [100000, 85000]).mean('plev')
+
+    # copy attributes
+    sd.attrs = ds.attrs
+    # change the standard name and long_name in attributes
+    sd.attrs['standard_name'] = 'dry_entropy'
+    sd.attrs['long_name'] = 'dry entropy'
+    sd.attrs['units'] = 'J/kg/K'
 
     sd.name = 'sd'
 
