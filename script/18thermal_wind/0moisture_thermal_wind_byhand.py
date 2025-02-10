@@ -8,17 +8,17 @@ from metpy.units import units
 import metpy.constants as mpconstants
 
 # %%
-def calc_factor(arr):
+def factor(arr):
     """
     calculate 1/fa
 
     """
     lat = arr.lat
+    cosine = np.cos(lat)
     f = mpcalc.coriolis_parameter(lat * units.degree_north)
     a = mpconstants.earth_avg_radius
 
-    return 1 / (f * a) 
-
+    return 1 / (f * a * cosine)  # units second/meter
 #%%
 def calc_malr_1d(temp, p):
     """
@@ -91,7 +91,9 @@ def calc_malr(arr):
         arr.plev,
         input_core_dims=[["plev"], ["plev"]],
         output_core_dims=[["plev"]],
-    )
+    )  
+    # units.kelvin / units.pascal
+
 #%%
 def s_entropy_1d(temp, p, relative_humidity=1.0):
     """
