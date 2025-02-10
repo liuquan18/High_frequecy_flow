@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=ano
+#SBATCH --job-name=low
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
@@ -7,7 +7,7 @@
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=ano.%j.out
+#SBATCH --output=low.%j.out
 
 module load cdo
 module load parallel
