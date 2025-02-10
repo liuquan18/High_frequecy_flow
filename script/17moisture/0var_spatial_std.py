@@ -13,6 +13,7 @@ logging.basicConfig(level=logging.INFO)
 # nodes for different ensemble members
 node = sys.argv[1]
 var = sys.argv[2] # 'tas' or 'hur'
+name = sys.argv[3] if len(sys.argv) > 3 else var
 member = node
 #%%
 try:
@@ -43,11 +44,8 @@ files_core = np.array_split(all_files, size)[rank]
 for i, file in enumerate(files_core):
     logging.info(f"rank {rank} Processing {i+1}/{len(files_core)}")
     ds = xr.open_dataset(file, chunks = {'time': 10})
-    try:
-        ds = ds[var]
-    except KeyError:
-        logging.info(f"Variable {var} not found in {file}")
-        ds = ds['ta']  # for tas
+
+    ds = ds[name]
     lon_window = 33
     lat_window = 5
     ds_std = lc.rolling_lon_periodic(ds, lon_window, lat_window, stat = 'std')
