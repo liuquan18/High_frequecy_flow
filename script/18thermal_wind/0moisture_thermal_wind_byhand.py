@@ -10,7 +10,7 @@ import metpy.constants as mpconstants
 # %%
 def factor(arr):
     """
-    calculate 1/fa
+    calculate 1/facos(lat) for a given latitude
 
     """
     lat = arr.lat
