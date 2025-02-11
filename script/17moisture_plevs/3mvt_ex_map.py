@@ -45,3 +45,16 @@ axes[3].set_title("Meridional Wind (500 hPa)")
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/regression_2_vp/meridional_mvt_va_2090.png")
 
 # %%
+upvp = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily/r1i1p1f1/upvp_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc")
+# %%
+upvp = upvp.ua
+# %%
+fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree(-90)})
+upvp.isel(time = 0).sel(plev = 50000).plot(levels = np.arange(-25, 26, 5), cmap = 'RdBu_r', cbar_kwargs = {'label': 'm/s'})
+ax.coastlines()
+
+ax.set_extent([-90, 40, 20, 90], crs=ccrs.PlateCarree())
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/regression_2_vp/meridional_upvp_1850.png")
+
+# %%
