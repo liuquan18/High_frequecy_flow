@@ -14,7 +14,7 @@ def factor(arr):
 
     """
     lat = arr.lat
-    cosine = np.cos(lat)
+    cosine = np.cos(np.deg2rad(lat))
     f = mpcalc.coriolis_parameter(lat * units.degree_north)
     a = mpconstants.earth_avg_radius
 
