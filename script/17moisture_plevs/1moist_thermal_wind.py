@@ -66,6 +66,8 @@ for i, dec in enumerate(decs_single):
     vtm_plev = factor * malr * sd_std + factor * malr * Lv_T * hus_std
     vtm = vtm_plev.integrate("plev")
 
+    vtm.name = 'vtm'
+
     outfile_basename = T_file.split('/')[-1].replace('ta', 'vtm')
     vtm.to_netcdf(mtw_path + outfile_basename)
     T.close()
