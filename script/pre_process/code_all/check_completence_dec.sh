@@ -18,7 +18,7 @@ for i in {1..50}; do
     next=$((dec + 9))
     fname="${var}_day_MPI-ESM1-2-LR_r${i}i1p1f1_gn_${dec}0501-${next}0930"
     if [ ! -f "${BASE_DIR}/${dir}/${fname}.nc" ] && [ ! -f "${BASE_DIR}/${dir}/${fname}_ano.nc" ]; then
-      echo "Missing file: ${dir}/${fname}.nc"
+      echo "${BASE_DIR}${dir}/${fname}.nc"
       missing=1
     fi
   done
