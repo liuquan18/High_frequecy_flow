@@ -72,8 +72,8 @@ missing_files = [
 # %%
 missing_files_single = np.array_split(missing_files, size)[rank]
 
-for i, file in enumerate(missing_files):
-    logging.info(f"rank {rank} Processing {i+1}/{len(missing_files)}")
+for i, file in enumerate(missing_files_single):
+    logging.info(f"rank {rank} Processing {i+1}/{len(missing_files_single)}")
 
     to_file = file.replace('hus_daily', 'hus_daily_std')
     
