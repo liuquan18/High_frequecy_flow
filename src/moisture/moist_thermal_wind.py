@@ -18,7 +18,21 @@ def factor(arr):
     f = mpcalc.coriolis_parameter(lat * units.degree_north)
     a = mpconstants.earth_avg_radius
 
-    return 1 / (f * a * cosine)  # units second/meter
+    return 1 / (f * a * cosine).metpy.dequantify() # units second/meter
+
+def Lv_T(temp):
+    
+    # Saturation vapor pressure [Pa]
+    Tc = temp - 273.15
+    es = 611.20 * np.exp(17.67 * Tc / (Tc + 243.5))  # Bolton 1980 equation 10
+
+    es = es
+
+    # Latent heat of condensation [J/kg]
+    L = (2.501 - 0.00237 * Tc) * 1e6 # Bolton 1980 equation 2
+
+    return L / temp 
+
 #%%
 def calc_malr_1d(temp, p):
     """
