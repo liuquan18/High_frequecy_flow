@@ -57,7 +57,7 @@ for i, dec in enumerate(decs_single):
     hus_std = xr.open_dataset(hus_file).hus
 
     # factor
-    factor = mtw.factor(T)
+    factor = -1 * mtw.factor(T)
 
     # Lv/T
     Lv_T = mtw.Lv_T(T)
