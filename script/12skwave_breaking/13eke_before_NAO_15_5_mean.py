@@ -81,7 +81,7 @@ def before_NAO_mean(NAO, data, lag = (-15, -5)):
 
         data_before_NAO.append(data_NAO_event)
 
-    data_before_NAO = xr.concat(data_before_NAO)
+    data_before_NAO = xr.concat(data_before_NAO, dim='event')
 
     return data_before_NAO
 
@@ -97,25 +97,21 @@ def process_data(decade, var):
     eke_NAO_neg = before_NAO_mean(NAO_neg, data)
 
     logging.info(f"rank {rank} is saving data for decade {decade} \n")
-    save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_NAO_pos/'
-    save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_NAO_neg/'
+    save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/eke_NAO_pos_15_5_mean_{decade}.nc'
+    save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/eke_NAO_neg_15_5_mean_{decade}.nc'
 
-    if not os.path.exists(save_dir_pos):
-        os.makedirs(save_dir_pos)
-    if not os.path.exists(save_dir_neg):
-        os.makedirs(save_dir_neg)
 
-    eke_NAO_pos.to_csv(f'{save_dir_pos}/{var}_NAO_pos_{decade}.csv')
-    eke_NAO_neg.to_csv(f'{save_dir_neg}/{var}_NAO_neg_{decade}.csv')
-    
-#%%
-decades_all = np.arange(1850, 2100, 10)
-decade_single = np.array_split(decades_all, size)[rank]
-var = sys.argv[1] # 'eke' or 'eke_high'
+    eke_NAO_pos.to_netcdf(save_dir_pos)
+    eke_NAO_neg.to_netcdf(save_dir_neg)
+
 
 #%%
-for decade in decade_single:
-    logging.info(f"rank {rank} is processing decade {decade} \n")
-    process_data(decade, var = var)
+
+decades = [1850, 2090]
+decade = decades[rank]
+logging.info(f"rank {rank} is processing decade {decade} \n")
+process_data(decade, 'eke')
+
+
 
 # %%
