@@ -10,4 +10,5 @@
 #SBATCH --output=std.%j.out
 
 
-mpirun -n 5 python -u 0var_spatial_std.py $1 $2 $3 # node, var, name
+# mpirun -n 5 python -u 0var_spatial_std.py $1 $2 $3 # node, var, name
+mpirun -n 5 python -u 0var_spatial_std_missingfiles.py
