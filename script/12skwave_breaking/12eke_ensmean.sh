@@ -11,7 +11,9 @@
 
 decade=$1
 
-base_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_daily_ano/
+# base_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_daily_ano/
+base_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_daily/
+
 to_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/
 
 eke_files=$(ls ${base_dir}r*i1p1f1/*${decade}*.nc)
