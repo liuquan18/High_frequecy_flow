@@ -30,9 +30,9 @@ except:
     size = 1
 # %%
 T_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ta_daily/r{member}i1p1f1/"
-sd_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/sd_daily_std/r{member}i1p1f1/"
+sd_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/sd_daily/r{member}i1p1f1/"
 malr_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/malr_daily/r{member}i1p1f1/"
-hus_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/hus_daily_std/r{member}i1p1f1/"
+hus_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/hus_daily/r{member}i1p1f1/"
 #%%
 mtw_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/mtw_daily/r{member}i1p1f1/"
 if rank == 0:
@@ -52,9 +52,9 @@ for i, dec in enumerate(decs_single):
     hus_file = glob.glob(hus_path + f"*{dec}*.nc")[0]
 
     T = xr.open_dataset(T_file).ta
-    sd_std = xr.open_dataset(sd_file).sd
+    sd = xr.open_dataset(sd_file).sd
     malr = xr.open_dataset(malr_file).malr
-    hus_std = xr.open_dataset(hus_file).hus
+    hus = xr.open_dataset(hus_file).hus
 
     # factor
     factor = -1 * mtw.factor(T)
@@ -63,7 +63,12 @@ for i, dec in enumerate(decs_single):
     Lv_T = mtw.Lv_T(T)
 
     # equation
-    vtm_plev = factor * malr * sd_std + factor * malr * Lv_T * hus_std
+    sd_lamda = sd.differentiate("lon")
+
+    hus_lamda = hus.differentiate("lon")
+
+    #
+    vtm_plev = factor * malr * sd_lamda + factor * malr * Lv_T * hus_lamda
     vtm = vtm_plev.integrate("plev")
 
     vtm.name = 'vtm'
@@ -71,8 +76,8 @@ for i, dec in enumerate(decs_single):
     outfile_basename = T_file.split('/')[-1].replace('ta', 'vtm')
     vtm.to_netcdf(mtw_path + outfile_basename)
     T.close()
-    sd_std.close()
+    sd_lamda.close()
     malr.close()
-    hus_std.close()
+    hus_lamda.close()
     vtm.close()
 # %%
