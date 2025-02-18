@@ -34,7 +34,8 @@ sd_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/sd
 malr_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/malr_daily/r{member}i1p1f1/"
 hus_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/hus_daily/r{member}i1p1f1/"
 #%%
-mtw_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/mtw_daily/r{member}i1p1f1/"
+# mtw_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/mtw_daily/r{member}i1p1f1/"
+mtw_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vtm_daily/r{member}i1p1f1/"
 if rank == 0:
     if not os.path.exists(mtw_path):
         os.makedirs(mtw_path)
@@ -71,6 +72,9 @@ for i, dec in enumerate(decs_single):
     vtm_plev = factor * malr * sd_lamda + factor * malr * Lv_T * hus_lamda
     vtm = vtm_plev.integrate("plev")
 
+    vtm = vtm.transpose('time','lon', 'lat') # time, lon, lat
+    vtm.attrs = T.attrs
+    vtm.attrs['standard_name'] = 'moist_thermal_wind'
     vtm.name = 'vtm'
 
     outfile_basename = T_file.split('/')[-1].replace('ta', 'vtm')
