@@ -15,7 +15,7 @@ import glob
 logging.basicConfig(level=logging.INFO)
 #%%
 def thermal_wind(zg, plev = (100000, 85000)):
-    zg = zg.sel(plev=slice(plev[0], plev[1]))
+    # zg = zg.sel(plev=slice(plev[0], plev[1])) # 1000 - 250 hPa
     zg = zg.metpy.assign_crs(
     grid_mapping_name='latitude_longitude',
     earth_radius=6371229.0
