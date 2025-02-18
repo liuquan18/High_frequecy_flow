@@ -40,7 +40,4 @@ function dtemp_dp_ma = calc_malr(p, temp)
  % (neglects small contribution from vertical variations of exponent)
  dtemp_dp_ma  = malr/g./rho;
 
-
-
-
-
+end
