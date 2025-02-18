@@ -117,3 +117,53 @@ plt.figtext(0.68, 0.31, "i", fontsize=12, fontweight='bold')
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/eke_maps.pdf", dpi = 300)
 # %%
+fig, axes = plt.subplots(3, 2, figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree(-90)})
+
+
+# ens mean
+ensmean_first.plot.contourf(ax=axes[0, 0], transform=ccrs.PlateCarree(), cmap='Reds', levels=np.arange(0, 35, 5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+ensmean_last.plot.contourf(ax=axes[1, 0], transform=ccrs.PlateCarree(), cmap='Reds', levels=np.arange(0, 35, 5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+cbar = (ensmean_last - ensmean_first).plot.contourf(ax=axes[2, 0], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-15, 20, 5),extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+
+
+
+(NAO_pos_first - NAO_neg_first).plot.contourf(ax=axes[0, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+(NAO_pos_last - NAO_neg_last).plot.contourf(ax=axes[1, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+((NAO_pos_last - NAO_neg_last) - (NAO_pos_first - NAO_neg_first)).plot.contourf(ax=axes[2, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+
+for ax in axes.flatten():
+    ax.coastlines()
+    ax.set_extent([-180, 180, 0, 90], crs=ccrs.PlateCarree())
+    ax.axhline(20, color='k', lw=0.5, ls='dotted')
+    ax.axhline(60, color='k', lw=0.5, ls='dotted')
+
+# latitude ticks
+for i, ax in enumerate(axes.flatten()):
+    ax.set_xticks(np.arange(-180, 180, 60), crs=ccrs.PlateCarree())
+
+    if i % 2 == 0:
+        ax.set_yticks([20, 60], crs=ccrs.PlateCarree())
+        ax.set_ylabel("Latitude")
+        ax.yaxis.set_major_formatter(cartopy.mpl.ticker.LatitudeFormatter())
+    else:
+        ax.set_yticks([])
+    
+    if i // 2 == 2:
+        ax.set_xticklabels(['180°', '120°W', '60°W', '0°', '60°E', '120°E'])
+    else:
+        ax.set_xticks([])
+
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+# add a, b, c, d
+plt.figtext(0.04, 0.95, "a", fontsize=12, fontweight='bold')
+plt.figtext(0.04, 0.63, "b", fontsize=12, fontweight='bold')
+plt.figtext(0.04, 0.31, "c", fontsize=12, fontweight='bold')
+
+plt.figtext(0.36, 0.95, "d", fontsize=12, fontweight='bold')
+plt.figtext(0.36, 0.63, "e", fontsize=12, fontweight='bold')
+plt.figtext(0.36, 0.31, "f", fontsize=12, fontweight='bold')
+
+plt.tight_layout(w_pad = 0.5, h_pad = 1.1)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/eke_NAO_diff_maps.pdf", dpi = 300)
+# %%
