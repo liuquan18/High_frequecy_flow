@@ -205,5 +205,5 @@ plt.figtext(0.52, 0.63, "e", fontsize=12, fontweight='bold')
 plt.figtext(0.52, 0.31, "f", fontsize=12, fontweight='bold')
 
 plt.tight_layout(w_pad = 0.5, h_pad = 1.1)
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/eke_NAO_diff_maps.pdf", dpi = 300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/eke_NAO_diff_maps.pdf", dpi = 300)
 # %%
