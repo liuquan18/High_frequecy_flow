@@ -88,7 +88,7 @@ def zonal_mean(df):
 # hus_tas_ratio basin mean
 def ratio_basin_mean(ratio):
 
-    box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
+    box_NAL = [-70, -30, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
     box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
 
     ratio = ratio.reset_index()
@@ -647,12 +647,12 @@ pos1 = eke_diff_ax2.get_position()
 eke_coast_ax.set_position([pos1.x0, pos1.y0 - 0.36, pos1.width, pos1.width * 1.5])
 
 
-# vline at lon = [-70, -35] and [140, -145]
+# vline at lon = [-70, -30] and [140, -145]
 eke_coast_ax.axvline(
     lon2x(-70, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
 )
 eke_coast_ax.axvline(
-    lon2x(-35, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+    lon2x(-30, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
 )
 eke_coast_ax.axvline(
     lon2x(140, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
@@ -671,7 +671,7 @@ eke_last_ax1.plot(
     [lon2x(120, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
     linestyle=(0, (5, 10)), linewidth=1.2)
 
-# add text 'NPO' between 140 and -145, NAL between -70 and -35
+# add text 'NPO' between 140 and -145, NAL between -70 and -30
 eke_coast_ax.text(lon2x(-65.0, eke_coast_ax), 30, "NAL", fontsize=12)
 eke_coast_ax.text(lon2x(145.0, eke_coast_ax), 30, "NPO", fontsize=12)
 # add a,b,c,d
@@ -909,12 +909,12 @@ eke_coast_ax.add_feature(
 pos1 = eke_diff_ax2.get_position()
 eke_coast_ax.set_position([pos1.x0, pos1.y0 - 0.36, pos1.width, pos1.width * 1.5])
 
-# vline at lon = [-70, -35] and [140, -145]
+# vline at lon = [-70, -30] and [140, -145]
 eke_coast_ax.axvline(
     lon2x(-70, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
 )
 eke_coast_ax.axvline(
-    lon2x(-35, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+    lon2x(-30, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
 )
 eke_coast_ax.axvline(
     lon2x(140, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
@@ -932,7 +932,7 @@ eke_last_ax1.plot(
     [lon2x(120, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
     linestyle=(0, (5, 10)), linewidth=1.2)
 
-# add text 'NPO' between 140 and -145, NAL between -70 and -35
+# add text 'NPO' between 140 and -145, NAL between -70 and -30
 eke_coast_ax.text(lon2x(-65.0, eke_coast_ax), 30, "NAL", fontsize=12)
 eke_coast_ax.text(lon2x(145.0, eke_coast_ax), 30, "NPO", fontsize=12)
 

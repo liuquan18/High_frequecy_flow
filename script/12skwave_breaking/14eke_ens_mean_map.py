@@ -158,7 +158,7 @@ for ax in axes.flatten():
 
 axes[2,1].axvline(x=lon2x(-145, axes[2,1]), ymin=0.22, ymax=0.65, color='k', lw=0.5, ls='dotted')
 axes[2,1].axvline(x=lon2x(140, axes[2,1]), ymin=0.22, ymax=0.65, color='k', lw=0.5, ls='dotted')
-axes[2,1].axvline(x=lon2x(-35, axes[2,1]), ymin=0.22, ymax=0.65, color='k', lw=0.5, ls='dotted')
+axes[2,1].axvline(x=lon2x(-30, axes[2,1]), ymin=0.22, ymax=0.65, color='k', lw=0.5, ls='dotted')
 axes[2,1].axvline(x=lon2x(-70, axes[2,1]), ymin=0.22, ymax=0.65, color='k', lw=0.5, ls='dotted')
 
 # latitude ticks
@@ -189,5 +189,5 @@ plt.figtext(0.52, 0.63, "e", fontsize=12, fontweight='bold')
 plt.figtext(0.52, 0.31, "f", fontsize=12, fontweight='bold')
 
 plt.tight_layout(w_pad = 0.5, h_pad = 1.1)
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/eke_NAO_diff_maps.pdf", dpi = 300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/eke_NAO_diff_maps.pdf", dpi = 300)
 # %%

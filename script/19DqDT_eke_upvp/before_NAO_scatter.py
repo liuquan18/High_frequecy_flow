@@ -87,7 +87,7 @@ def rm_zonalmean(eke):
 # hus_tas_ratio basin mean
 def ratio_basin_mean(ratio):
 
-    box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
+    box_NAL = [-70, -30, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
     box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
 
     if 'event_id' in ratio.columns:

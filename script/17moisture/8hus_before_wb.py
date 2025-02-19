@@ -41,7 +41,7 @@ def read_all_data(decade):
     return awb_dec, cwb_dec, data
 #%%
 def ocean_sector(data):
-    box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
+    box_NAL = [-70, -30, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
     box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
     data_NAL = data.sel(lon=slice(box_NAL[0], box_NAL[1])).mean(dim=("lon", "lat"))
     data_NPO1 = data.sel(lon=slice(box_NPO[0], 180))

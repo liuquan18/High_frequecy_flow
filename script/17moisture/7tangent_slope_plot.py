@@ -17,13 +17,13 @@ def read_data(decade):
 # %%
 def sector(data):
     box_EAA = [
-        -35,
+        -30,
         140,
         20,
         60,
     ]  # [lon_min, lon_max, lat_min, lat_max] Eurasia and Africa
     box_NAM = [-145, -70, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North America
-    box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
+    box_NAL = [-70, -30, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
     box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
 
     data_EAA = data.sel(lon=slice(box_EAA[0], box_EAA[1])).mean(dim=("lon", "lat"))

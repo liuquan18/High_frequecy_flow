@@ -58,7 +58,7 @@ for i, dec in enumerate(decs_single):
     hus = xr.open_dataset(hus_file).hus
 
     # factor
-    factor = -1 * mtw.factor(T)
+    factor = mtw.factor(T)
 
     # Lv/T
     Lv_T = mtw.Lv_T(T)
@@ -72,7 +72,7 @@ for i, dec in enumerate(decs_single):
     vtm_plev = factor * malr * sd_lamda + factor * malr * Lv_T * hus_lamda
     vtm = vtm_plev.integrate("plev")
 
-    vtm = vtm.transpose('time','lon', 'lat') # time, lon, lat
+    vtm = vtm.transpose('time','lat', 'lon') # time, lon, lat
     vtm.attrs = T.attrs
     vtm.attrs['standard_name'] = 'moist_thermal_wind'
     vtm.name = 'vtm'
