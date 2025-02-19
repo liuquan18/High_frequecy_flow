@@ -17,7 +17,6 @@ def factor(arr):
     cosine = np.cos(np.deg2rad(lat))
     f = mpcalc.coriolis_parameter(lat * units.degree_north)
     a = mpconstants.earth_avg_radius
-
     return 1 / (f * a * cosine).metpy.dequantify() # units second/meter
 
 def Lv_T(temp):
