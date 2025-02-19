@@ -36,10 +36,10 @@ def read_Cxy(var1="hus_std", var2="va", region="NAL", pixel_wise=True):
             files = glob.glob(base_dir + f"*{region}*.nc")
         else:
             logging.warning(
-                "No region specified, reading all files except those with 'NAL' or 'NPO'"
+                "No region specified, reading all files except those with 'NAL' or 'NPC'"
             )
             files = glob.glob(base_dir + "*.nc")
-            files = [f for f in files if "NAL" not in f and "NPO" not in f]
+            files = [f for f in files if "NAL" not in f and "NPC" not in f]
 
         cxy = xr.open_mfdataset(
             files, combine="by_coords", chunks={"time": -1, "lat": -1, "lon": -1}
@@ -54,18 +54,18 @@ def read_Cxy(var1="hus_std", var2="va", region="NAL", pixel_wise=True):
 
 # %%
 hus_va_Cxy_NAL = read_Cxy("hus_std", "va", "NAL", pixel_wise=True)
-hus_va_Cxy_NPO = read_Cxy("hus_std", "va", "NPO", pixel_wise=True)
+hus_va_Cxy_NPC = read_Cxy("hus_std", "va", "NPC", pixel_wise=True)
 
 tas_va_Cxy_NAL = read_Cxy("tas_std", "va", "NAL", pixel_wise=True)
-tas_va_Cxy_NPO = read_Cxy("tas_std", "va", "NPO", pixel_wise=True)
+tas_va_Cxy_NPC = read_Cxy("tas_std", "va", "NPC", pixel_wise=True)
 
 vt_va_Cxy = read_Cxy("vt", "va", None)
 # %%
 hus_va_Cxy_NAL.load()
-hus_va_Cxy_NPO.load()
+hus_va_Cxy_NPC.load()
 
 tas_va_Cxy_NAL.load()
-tas_va_Cxy_NPO.load()
+tas_va_Cxy_NPC.load()
 
 vt_va_Cxy.load()
 
@@ -120,15 +120,15 @@ def get_plot_data(Cxy, globe_mean=True, period=None):
 
 # %%
 hus_va_NAL_mean, hus_va_NAL_95, hus_va_NAL_05 = get_plot_data(hus_va_Cxy_NAL)
-hus_va_NPO_mean, hus_va_NPO_95, hus_va_NPO_05 = get_plot_data(hus_va_Cxy_NPO)
+hus_va_NPC_mean, hus_va_NPC_95, hus_va_NPC_05 = get_plot_data(hus_va_Cxy_NPC)
 
 vt_va_mean, vt_va_95, vt_va_05 = get_plot_data(vt_va_Cxy, globe_mean=True)
 # %%
 hus_va_NAL_mean_first, hus_va_NAL_95_first, hus_va_NAL_05_first = get_plot_data(
     hus_va_Cxy_NAL, period="first"
 )
-hus_va_NPO_mean_first, hus_va_NPO_95_first, hus_va_NPO_05_first = get_plot_data(
-    hus_va_Cxy_NPO, period="first"
+hus_va_NPC_mean_first, hus_va_NPC_95_first, hus_va_NPC_05_first = get_plot_data(
+    hus_va_Cxy_NPC, period="first"
 )
 
 vt_va_mean_first, vt_va_95_first, vt_va_05_first = get_plot_data(
@@ -138,8 +138,8 @@ vt_va_mean_first, vt_va_95_first, vt_va_05_first = get_plot_data(
 hus_va_NAL_mean_last, hus_va_NAL_95_last, hus_va_NAL_05_last = get_plot_data(
     hus_va_Cxy_NAL, period="last"
 )
-hus_va_NPO_mean_last, hus_va_NPO_95_last, hus_va_NPO_05_last = get_plot_data(
-    hus_va_Cxy_NPO, period="last"
+hus_va_NPC_mean_last, hus_va_NPC_95_last, hus_va_NPC_05_last = get_plot_data(
+    hus_va_Cxy_NPC, period="last"
 )
 
 vt_va_mean_last, vt_va_95_last, vt_va_05_last = get_plot_data(
@@ -147,20 +147,20 @@ vt_va_mean_last, vt_va_95_last, vt_va_05_last = get_plot_data(
 )
 # %%
 tas_va_NAL_mean, tas_va_NAL_95, tas_va_NAL_05 = get_plot_data(tas_va_Cxy_NAL)
-tas_va_NPO_mean, tas_va_NPO_95, tas_va_NPO_05 = get_plot_data(tas_va_Cxy_NPO)
+tas_va_NPC_mean, tas_va_NPC_95, tas_va_NPC_05 = get_plot_data(tas_va_Cxy_NPC)
 
 tas_va_NAL_mean_first, tas_va_NAL_95_first, tas_va_NAL_05_first = get_plot_data(
     tas_va_Cxy_NAL, period="first"
 )
-tas_va_NPO_mean_first, tas_va_NPO_95_first, tas_va_NPO_05_first = get_plot_data(
-    tas_va_Cxy_NPO, period="first"
+tas_va_NPC_mean_first, tas_va_NPC_95_first, tas_va_NPC_05_first = get_plot_data(
+    tas_va_Cxy_NPC, period="first"
 )
 
 tas_va_NAL_mean_last, tas_va_NAL_95_last, tas_va_NAL_05_last = get_plot_data(
     tas_va_Cxy_NAL, period="last"
 )
-tas_va_NPO_mean_last, tas_va_NPO_95_last, tas_va_NPO_05_last = get_plot_data(
-    tas_va_Cxy_NPO, period="last"
+tas_va_NPC_mean_last, tas_va_NPC_95_last, tas_va_NPC_05_last = get_plot_data(
+    tas_va_Cxy_NPC, period="last"
 )
 # %%
 # ERA5
@@ -177,10 +177,10 @@ def read_Cxy_ERA5(var1="hus", var2="va", region="NAL", pixel_wise=True):
         files = glob.glob(base_dir + f"*{region}*.nc")
     else:
         logging.warning(
-            "No region specified, reading all files except those with 'NAL' or 'NPO'"
+            "No region specified, reading all files except those with 'NAL' or 'NPC'"
         )
         files = glob.glob(base_dir + "*.nc")
-        files = [f for f in files if "NAL" not in f and "NPO" not in f]
+        files = [f for f in files if "NAL" not in f and "NPC" not in f]
 
     # sort files
     files.sort()
@@ -194,17 +194,17 @@ def read_Cxy_ERA5(var1="hus", var2="va", region="NAL", pixel_wise=True):
 
 # %%
 ERA5_hus_va_Cxy_NAL = read_Cxy_ERA5("hus", "va", "NAL", pixel_wise=True)
-ERA5_hus_va_Cxy_NPO = read_Cxy_ERA5("hus", "va", "NPO", pixel_wise=True)
+ERA5_hus_va_Cxy_NPC = read_Cxy_ERA5("hus", "va", "NPC", pixel_wise=True)
 # %%
 ERA5_tas_va_Cxy_NAL = read_Cxy_ERA5("tas", "va", "NAL", pixel_wise=True)
-ERA5_tas_va_Cxy_NPO = read_Cxy_ERA5("tas", "va", "NPO", pixel_wise=True)
+ERA5_tas_va_Cxy_NPC = read_Cxy_ERA5("tas", "va", "NPC", pixel_wise=True)
 
 # %%
 ERA5_hus_va_Cxy_NAL.load()
-ERA5_hus_va_Cxy_NPO.load()
+ERA5_hus_va_Cxy_NPC.load()
 # %%
 ERA5_tas_va_Cxy_NAL.load()
-ERA5_tas_va_Cxy_NPO.load()
+ERA5_tas_va_Cxy_NPC.load()
 
 # %%
 # vt_va_Cxy.load()
@@ -212,10 +212,10 @@ ERA5_tas_va_Cxy_NPO.load()
 # %%
 # %%
 ERA5_hus_va_NAL_mean = ERA5_hus_va_Cxy_NAL.mean(dim=("time", "lat", "lon"))
-ERA5_hus_va_NPO_mean = ERA5_hus_va_Cxy_NPO.mean(dim=("time", "lat", "lon"))
+ERA5_hus_va_NPC_mean = ERA5_hus_va_Cxy_NPC.mean(dim=("time", "lat", "lon"))
 
 ERA5_tas_va_NAL_mean = ERA5_tas_va_Cxy_NAL.mean(dim=("time", "lat", "lon"))
-ERA5_tas_va_NPO_mean = ERA5_tas_va_Cxy_NPO.mean(dim=("time", "lat", "lon"))
+ERA5_tas_va_NPC_mean = ERA5_tas_va_Cxy_NPC.mean(dim=("time", "lat", "lon"))
 
 
 # %%
@@ -234,10 +234,10 @@ def smooth_period(cxy, period=1.5):
 
 # %%
 ERA5_hus_va_NAL_mean_smooth = smooth_period(ERA5_hus_va_NAL_mean)
-ERA5_hus_va_NPO_mean_smooth = smooth_period(ERA5_hus_va_NPO_mean)
+ERA5_hus_va_NPC_mean_smooth = smooth_period(ERA5_hus_va_NPC_mean)
 
 ERA5_tas_va_NAL_mean_smooth = smooth_period(ERA5_tas_va_NAL_mean)
-ERA5_tas_va_NPO_mean_smooth = smooth_period(ERA5_tas_va_NPO_mean)
+ERA5_tas_va_NPC_mean_smooth = smooth_period(ERA5_tas_va_NPC_mean)
 
 
 # %%
@@ -263,22 +263,22 @@ axes[0, 2] = plot_coherence(
     vt_va_Cxy["frequency"], vt_va_mean, vt_va_05, vt_va_95, axes[0, 2]
 )
 
-# Plot hus_std va NPO and tas_std va NPO on the same axis
+# Plot hus_std va NPC and tas_std va NPC on the same axis
 plot_coherence(
-    tas_va_Cxy_NPO["frequency"],
-    tas_va_NPO_mean,
-    tas_va_NPO_05,
-    tas_va_NPO_95,
+    tas_va_Cxy_NPC["frequency"],
+    tas_va_NPC_mean,
+    tas_va_NPC_05,
+    tas_va_NPC_95,
     axes[0, 0],
     color_line=temp_cmap_seq(0.7),
     color_shading=temp_cmap_seq(0.5),
     label=r"$\Delta T$ ~ $va$ ",
 )
 plot_coherence(
-    hus_va_Cxy_NPO["frequency"],
-    hus_va_NPO_mean,
-    hus_va_NPO_05,
-    hus_va_NPO_95,
+    hus_va_Cxy_NPC["frequency"],
+    hus_va_NPC_mean,
+    hus_va_NPC_05,
+    hus_va_NPC_95,
     axes[0, 0],
     color_line=prec_cmap_seq(0.9),
     color_shading=prec_cmap_seq(0.5),
@@ -330,14 +330,14 @@ axes[0, 2].annotate(
 f = ERA5_hus_va_Cxy_NAL.frequency.values
 axes[1, 0].plot(
     1 / f,
-    ERA5_hus_va_NPO_mean.coherence,
+    ERA5_hus_va_NPC_mean.coherence,
     label=r"$\Delta q$ ~ $va$",
     color=prec_cmap_seq(0.9),
     linewidth=0.5,
 )
 axes[1, 0].plot(
     1 / f,
-    ERA5_tas_va_NPO_mean.coherence,
+    ERA5_tas_va_NPC_mean.coherence,
     label=r"$\Delta T$ ~ $va$",
     color=temp_cmap_seq(0.7),
     linewidth=0.5,
@@ -361,14 +361,14 @@ axes[1, 1].plot(
 # smooth
 axes[1, 0].plot(
     1 / f,
-    ERA5_hus_va_NPO_mean_smooth,
+    ERA5_hus_va_NPC_mean_smooth,
     color=prec_cmap_seq(0.9),
     linewidth=2,
     linestyle="--",
 )
 axes[1, 0].plot(
     1 / f,
-    ERA5_tas_va_NPO_mean_smooth,
+    ERA5_tas_va_NPC_mean_smooth,
     color=temp_cmap_seq(0.7),
     linewidth=2,
     linestyle="--",
@@ -408,7 +408,7 @@ plt.tight_layout()
 
 
 axes[0, 2].set_title(r"$v_{t 20-60}$, $va_{20-60}$")
-axes[0, 0].set_title("NPO pixel wise")
+axes[0, 0].set_title("NPC pixel wise")
 axes[0, 1].set_title("NAL pixel wise")
 
 for ax in axes[0, :]:

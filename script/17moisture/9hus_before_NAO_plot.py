@@ -11,8 +11,8 @@ first_NAO_pos_NAL = pd.read_csv(
     "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NAL/NAO_pos_NAL_1850.csv",
     index_col=0,
 )
-first_NAO_pos_NPO = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NPO/NAO_pos_NPO_1850.csv",
+first_NAO_pos_NPC = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NPC/NAO_pos_NPC_1850.csv",
     index_col=0,
 )
 
@@ -20,8 +20,8 @@ first_NAO_neg_NAL = pd.read_csv(
     "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NAL/NAO_neg_NAL_1850.csv",
     index_col=0,
 )
-first_NAO_neg_NPO = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NPO/NAO_neg_NPO_1850.csv",
+first_NAO_neg_NPC = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NPC/NAO_neg_NPC_1850.csv",
     index_col=0,
 )
 
@@ -30,8 +30,8 @@ last_NAO_pos_NAL = pd.read_csv(
     "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NAL/NAO_pos_NAL_2090.csv",
     index_col=0,
 )
-last_NAO_pos_NPO = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NPO/NAO_pos_NPO_2090.csv",
+last_NAO_pos_NPC = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_pos_NPC/NAO_pos_NPC_2090.csv",
     index_col=0,
 )
 
@@ -39,8 +39,8 @@ last_NAO_neg_NAL = pd.read_csv(
     "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NAL/NAO_neg_NAL_2090.csv",
     index_col=0,
 )
-last_NAO_neg_NPO = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NPO/NAO_neg_NPO_2090.csv",
+last_NAO_neg_NPC = pd.read_csv(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_ratio_NAO_neg_NPC/NAO_neg_NPC_2090.csv",
     index_col=0,
 )
 
@@ -51,43 +51,43 @@ lag_columns = [str(i) for i in lag]
 
 # %%
 first_NAO_pos_NAL["lag_mean"] = first_NAO_pos_NAL[lag_columns].mean(axis=1)
-first_NAO_pos_NPO["lag_mean"] = first_NAO_pos_NPO[lag_columns].mean(axis=1)
+first_NAO_pos_NPC["lag_mean"] = first_NAO_pos_NPC[lag_columns].mean(axis=1)
 
 first_NAO_neg_NAL["lag_mean"] = first_NAO_neg_NAL[lag_columns].mean(axis=1)
-first_NAO_neg_NPO["lag_mean"] = first_NAO_neg_NPO[lag_columns].mean(axis=1)
+first_NAO_neg_NPC["lag_mean"] = first_NAO_neg_NPC[lag_columns].mean(axis=1)
 
 last_NAO_pos_NAL["lag_mean"] = last_NAO_pos_NAL[lag_columns].mean(axis=1)
-last_NAO_pos_NPO["lag_mean"] = last_NAO_pos_NPO[lag_columns].mean(axis=1)
+last_NAO_pos_NPC["lag_mean"] = last_NAO_pos_NPC[lag_columns].mean(axis=1)
 
 last_NAO_neg_NAL["lag_mean"] = last_NAO_neg_NAL[lag_columns].mean(axis=1)
-last_NAO_neg_NPO["lag_mean"] = last_NAO_neg_NPO[lag_columns].mean(axis=1)
+last_NAO_neg_NPC["lag_mean"] = last_NAO_neg_NPC[lag_columns].mean(axis=1)
 
 
 # %%
-def select_columns_merge(NAO_NAL, NAO_NPO):
+def select_columns_merge(NAO_NAL, NAO_NPC):
     NAO_NAL = NAO_NAL.reset_index()
-    NAO_NPO = NAO_NPO.reset_index()
+    NAO_NPC = NAO_NPC.reset_index()
 
     NAO_df = NAO_NAL[["extreme_duration", "lag_mean"]].join(
-        NAO_NPO[["lag_mean"]],
+        NAO_NPC[["lag_mean"]],
         lsuffix="_NAL",
-        rsuffix="_NPO",
+        rsuffix="_NPC",
     )
 
     NAO_df = NAO_df[NAO_df["extreme_duration"] > 5]
     # dropna
-    NAO_df = NAO_df.dropna(subset=["lag_mean_NAL", "lag_mean_NPO"])
+    NAO_df = NAO_df.dropna(subset=["lag_mean_NAL", "lag_mean_NPC"])
 
     return NAO_df
 
 
 # %%
 
-first_NAO_pos = select_columns_merge(first_NAO_pos_NAL, first_NAO_pos_NPO)
-first_NAO_neg = select_columns_merge(first_NAO_neg_NAL, first_NAO_neg_NPO)
+first_NAO_pos = select_columns_merge(first_NAO_pos_NAL, first_NAO_pos_NPC)
+first_NAO_neg = select_columns_merge(first_NAO_neg_NAL, first_NAO_neg_NPC)
 
-last_NAO_pos = select_columns_merge(last_NAO_pos_NAL, last_NAO_pos_NPO)
-last_NAO_neg = select_columns_merge(last_NAO_neg_NAL, last_NAO_neg_NPO)
+last_NAO_pos = select_columns_merge(last_NAO_pos_NAL, last_NAO_pos_NPC)
+last_NAO_neg = select_columns_merge(last_NAO_neg_NAL, last_NAO_neg_NPC)
 # %%
 first_NAO_pos["dec"] = 1850
 first_NAO_neg["dec"] = 1850
@@ -105,12 +105,12 @@ fig, axes = plt.subplots(1, 2, figsize=(10, 5))
 sns.kdeplot(
     data=NAO_pos,
     x="lag_mean_NAL",
-    y="lag_mean_NPO",
+    y="lag_mean_NPC",
     hue="dec",
     ax=axes[0],
     common_norm=True,
     weights="extreme_duration",
-    palette=['k','r'],
+    palette=["k", "r"],
     alpha=0.7,
 )
 
@@ -118,13 +118,13 @@ sns.kdeplot(
 sns.kdeplot(
     data=NAO_neg,
     x="lag_mean_NAL",
-    y="lag_mean_NPO",
+    y="lag_mean_NPC",
     hue="dec",
     ax=axes[1],
     common_norm=True,
     fill=False,
     weights="extreme_duration",
-    palette=['k','r'],
+    palette=["k", "r"],
     alpha=0.7,
 )
 # plot the 1:1 line
@@ -142,60 +142,65 @@ for ax in axes:
 axes[0].set_title("NAO positive")
 axes[1].set_title("NAO negative")
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/NAO_lag_mean_moist.png")
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/NAO_lag_mean_moist.png"
+)
 
 
 # %%
-NAO_pos['NPO_gt_NAL'] = np.where(NAO_pos['lag_mean_NPO'] > NAO_pos['lag_mean_NAL'], 1, -1)
+NAO_pos["NPC_gt_NAL"] = np.where(
+    NAO_pos["lag_mean_NPC"] > NAO_pos["lag_mean_NAL"], 1, -1
+)
 
-#%%
-NAO_neg['NPO_gt_NAL'] = np.where(NAO_neg['lag_mean_NPO'] > NAO_neg['lag_mean_NAL'], 1, -1)
+# %%
+NAO_neg["NPC_gt_NAL"] = np.where(
+    NAO_neg["lag_mean_NPC"] > NAO_neg["lag_mean_NAL"], 1, -1
+)
 
-#%%
-# weight the 'NPO_gt_NAL' with 'extreme_duration'
-NAO_pos['NPO_gt_NAL'] = NAO_pos['NPO_gt_NAL'] * NAO_pos['extreme_duration']
-NAO_neg['NPO_gt_NAL'] = NAO_neg['NPO_gt_NAL'] * NAO_neg['extreme_duration']
+# %%
+# weight the 'NPC_gt_NAL' with 'extreme_duration'
+NAO_pos["NPC_gt_NAL"] = NAO_pos["NPC_gt_NAL"] * NAO_pos["extreme_duration"]
+NAO_neg["NPC_gt_NAL"] = NAO_neg["NPC_gt_NAL"] * NAO_neg["extreme_duration"]
 
-#%%
-NAO_pos_NPO_gt_NAL = NAO_pos[NAO_pos['NPO_gt_NAL'] >0]
-NAO_pos_NPO_lt_NAL = NAO_pos[NAO_pos['NPO_gt_NAL'] <0]
+# %%
+NAO_pos_NPC_gt_NAL = NAO_pos[NAO_pos["NPC_gt_NAL"] > 0]
+NAO_pos_NPC_lt_NAL = NAO_pos[NAO_pos["NPC_gt_NAL"] < 0]
 
-NAO_neg_NPO_gt_NAL = NAO_neg[NAO_neg['NPO_gt_NAL'] >0]
-NAO_neg_NPO_lt_NAL = NAO_neg[NAO_neg['NPO_gt_NAL'] <0]
-#%%
-NAO_pos_NPO_gt_NAL_num = NAO_pos_NPO_gt_NAL.groupby('dec')[['NPO_gt_NAL']].sum()
-NAO_pos_NPO_lt_NAL_num = NAO_pos_NPO_lt_NAL.groupby('dec')[['NPO_gt_NAL']].sum()
+NAO_neg_NPC_gt_NAL = NAO_neg[NAO_neg["NPC_gt_NAL"] > 0]
+NAO_neg_NPC_lt_NAL = NAO_neg[NAO_neg["NPC_gt_NAL"] < 0]
+# %%
+NAO_pos_NPC_gt_NAL_num = NAO_pos_NPC_gt_NAL.groupby("dec")[["NPC_gt_NAL"]].sum()
+NAO_pos_NPC_lt_NAL_num = NAO_pos_NPC_lt_NAL.groupby("dec")[["NPC_gt_NAL"]].sum()
 
-NAO_neg_NPO_gt_NAL_num = NAO_neg_NPO_gt_NAL.groupby('dec')[['NPO_gt_NAL']].sum()
-NAO_neg_NPO_lt_NAL_num = NAO_neg_NPO_lt_NAL.groupby('dec')[['NPO_gt_NAL']].sum()
-#%%
+NAO_neg_NPC_gt_NAL_num = NAO_neg_NPC_gt_NAL.groupby("dec")[["NPC_gt_NAL"]].sum()
+NAO_neg_NPC_lt_NAL_num = NAO_neg_NPC_lt_NAL.groupby("dec")[["NPC_gt_NAL"]].sum()
+# %%
 fig, axes = plt.subplots(1, 2, figsize=(10, 5))
 
 sns.scatterplot(
     data=NAO_pos,
     x="lag_mean_NAL",
-    y="lag_mean_NPO",
+    y="lag_mean_NPC",
     hue="dec",
     size="extreme_duration",
     ax=axes[0],
-    palette=['k', 'r'],
+    palette=["k", "r"],
     alpha=0.7,
     legend=False,
-    sizes = (20, 200),
+    sizes=(20, 200),
 )
 
 sns.scatterplot(
     data=NAO_neg,
     x="lag_mean_NAL",
-    y="lag_mean_NPO",
+    y="lag_mean_NPC",
     hue="dec",
     size="extreme_duration",
     ax=axes[1],
-    palette=['k', 'r'],
+    palette=["k", "r"],
     alpha=0.7,
     legend=False,
-    sizes = (20, 200),
-
+    sizes=(20, 200),
 )
 
 # plot the 1:1 line
@@ -211,31 +216,95 @@ for ax in axes:
     ax.set_ylabel(r"North Pacific $\Delta q / \Delta T$")
 
 # add legend 'red' for 2090 and 'black' for 1850
-axes[0].scatter([], [], c='r', label='2090-2099')
-axes[0].scatter([], [], c='k', label='1850-1859')
-axes[0].legend(loc = 'lower right')
+axes[0].scatter([], [], c="r", label="2090-2099")
+axes[0].scatter([], [], c="k", label="1850-1859")
+axes[0].legend(loc="lower right")
 
 axes[0].set_title("NAO positive")
 axes[1].set_title("NAO negative")
 
-# text annotation, black font for 1850 and red font for 2090, plot value of NAO_pos_NPO_gt_NAL_num and NAO_pos_NPO_lt_NAL_num, 
+# text annotation, black font for 1850 and red font for 2090, plot value of NAO_pos_NPC_gt_NAL_num and NAO_pos_NPC_lt_NAL_num,
 # respectively above slope line and below slope line
 
-axes[0].text(1.0, 1.05, f"{NAO_pos_NPO_gt_NAL_num.loc[1850].values[0]:.0f}", fontsize=12, color='black', rotation=45)
-axes[0].text(1.05, 1.02, f"{NAO_pos_NPO_lt_NAL_num.loc[1850].values[0]*-1:.0f}", fontsize=12, color='black', rotation=45)
-axes[0].text(0.97, 1.08, f"{NAO_pos_NPO_gt_NAL_num.loc[2090].values[0]:.0f}", fontsize=12, color='red', rotation=45)
-axes[0].text(1.08, 0.99, f"{NAO_pos_NPO_lt_NAL_num.loc[2090].values[0]*-1:.0f}", fontsize=12, color='red', rotation=45)
+axes[0].text(
+    1.0,
+    1.05,
+    f"{NAO_pos_NPC_gt_NAL_num.loc[1850].values[0]:.0f}",
+    fontsize=12,
+    color="black",
+    rotation=45,
+)
+axes[0].text(
+    1.05,
+    1.02,
+    f"{NAO_pos_NPC_lt_NAL_num.loc[1850].values[0]*-1:.0f}",
+    fontsize=12,
+    color="black",
+    rotation=45,
+)
+axes[0].text(
+    0.97,
+    1.08,
+    f"{NAO_pos_NPC_gt_NAL_num.loc[2090].values[0]:.0f}",
+    fontsize=12,
+    color="red",
+    rotation=45,
+)
+axes[0].text(
+    1.08,
+    0.99,
+    f"{NAO_pos_NPC_lt_NAL_num.loc[2090].values[0]*-1:.0f}",
+    fontsize=12,
+    color="red",
+    rotation=45,
+)
 
-axes[1].text(1.0, 1.05, f"{NAO_neg_NPO_gt_NAL_num.loc[1850].values[0]:.0f}", fontsize=12, color='black', rotation=45)
-axes[1].text(1.05, 1.02, f"{NAO_neg_NPO_lt_NAL_num.loc[1850].values[0]*-1:.0f}", fontsize=12, color='black', rotation=45)
-axes[1].text(0.97, 1.08, f"{NAO_neg_NPO_gt_NAL_num.loc[2090].values[0]:.0f}", fontsize=12, color='red', rotation=45)
-axes[1].text(1.08, 0.99, f"{NAO_neg_NPO_lt_NAL_num.loc[2090].values[0]*-1:.0f}", fontsize=12, color='red', rotation=45)
+axes[1].text(
+    1.0,
+    1.05,
+    f"{NAO_neg_NPC_gt_NAL_num.loc[1850].values[0]:.0f}",
+    fontsize=12,
+    color="black",
+    rotation=45,
+)
+axes[1].text(
+    1.05,
+    1.02,
+    f"{NAO_neg_NPC_lt_NAL_num.loc[1850].values[0]*-1:.0f}",
+    fontsize=12,
+    color="black",
+    rotation=45,
+)
+axes[1].text(
+    0.97,
+    1.08,
+    f"{NAO_neg_NPC_gt_NAL_num.loc[2090].values[0]:.0f}",
+    fontsize=12,
+    color="red",
+    rotation=45,
+)
+axes[1].text(
+    1.08,
+    0.99,
+    f"{NAO_neg_NPC_lt_NAL_num.loc[2090].values[0]*-1:.0f}",
+    fontsize=12,
+    color="red",
+    rotation=45,
+)
 
 # add a, b
-axes[0].text(-0.1, 1.05, "a", transform=axes[0].transAxes, fontsize=12, fontweight='bold')
-axes[1].text(-0.1, 1.05, "b", transform=axes[1].transAxes, fontsize=12, fontweight='bold')
+axes[0].text(
+    -0.1, 1.05, "a", transform=axes[0].transAxes, fontsize=12, fontweight="bold"
+)
+axes[1].text(
+    -0.1, 1.05, "b", transform=axes[1].transAxes, fontsize=12, fontweight="bold"
+)
 
 
 # plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/NAO_lag_mean_moist_scatter.png")
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/NAO_lag_mean_moist_scatter.pdf", dpi = 300, bbox_inches = 'tight')
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/NAO_lag_mean_moist_scatter.pdf",
+    dpi=300,
+    bbox_inches="tight",
+)
 # %%
