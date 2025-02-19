@@ -100,14 +100,14 @@ NAO_neg_last = remove_zonalmean(NAO_neg_last)
 
 
 # # NAO neg
-# NAO_neg_first.plot.contourf(ax=axes[0, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
-# NAO_neg_last.plot.contourf(ax=axes[1, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6 })
-# cbar = (NAO_neg_last - NAO_neg_first).plot.contourf(ax=axes[2, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+# NAO_neg_first.plot.contourf(ax=axes[0, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-2.5, 2.6, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+# NAO_neg_last.plot.contourf(ax=axes[1, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-2.5, 2.6, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6 })
+# cbar = (NAO_neg_last - NAO_neg_first).plot.contourf(ax=axes[2, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-2.5, 2.6, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
 
 # # NAO pos
-# NAO_pos_first.plot.contourf(ax=axes[0, 2], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
-# NAO_pos_last.plot.contourf(ax=axes[1, 2], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
-# (NAO_pos_last - NAO_pos_first).plot.contourf(ax=axes[2, 2], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+# NAO_pos_first.plot.contourf(ax=axes[0, 2], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-2.5, 2.6, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+# NAO_pos_last.plot.contourf(ax=axes[1, 2], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-2.5, 2.6, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+# (NAO_pos_last - NAO_pos_first).plot.contourf(ax=axes[2, 2], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-2.5, 2.6, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
 
 # for ax in axes.flatten():
 #     ax.coastlines()
@@ -162,9 +162,9 @@ cbar = (ensmean_last - ensmean_first).plot.contourf(ax=axes[2, 0], transform=ccr
 
 
 
-(NAO_pos_first - NAO_neg_first).plot.contourf(ax=axes[0, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
-(NAO_pos_last - NAO_neg_last).plot.contourf(ax=axes[1, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
-((NAO_pos_last - NAO_neg_last) - (NAO_pos_first - NAO_neg_first)).plot.contourf(ax=axes[2, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-3, 3.5, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+(NAO_pos_first - NAO_neg_first).plot.contourf(ax=axes[0, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-2.5, 2.6, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+(NAO_pos_last - NAO_neg_last).plot.contourf(ax=axes[1, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-2.5, 2.6, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
+((NAO_pos_last - NAO_neg_last) - (NAO_pos_first - NAO_neg_first)).plot.contourf(ax=axes[2, 1], transform=ccrs.PlateCarree(), cmap='RdBu_r', levels=np.arange(-2.5, 2.6, 0.5), extend = 'both', cbar_kwargs={'label': r'$m^2/s^2$', 'orientation': 'horizontal', 'shrink':0.6})
 
 for ax in axes.flatten():
     ax.coastlines()
@@ -205,5 +205,5 @@ plt.figtext(0.52, 0.63, "e", fontsize=12, fontweight='bold')
 plt.figtext(0.52, 0.31, "f", fontsize=12, fontweight='bold')
 
 plt.tight_layout(w_pad = 0.5, h_pad = 1.1)
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/eke_NAO_diff_maps.pdf", dpi = 300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/eke_NAO_diff_maps.pdf", dpi = 300)
 # %%
