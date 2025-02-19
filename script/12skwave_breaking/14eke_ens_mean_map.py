@@ -57,9 +57,9 @@ NAO_neg_first.compute()
 NAO_pos_last.compute()
 NAO_neg_last.compute()
 #%%
-def smooth(arr, lat_window = 3, lon_window = 12):
+def smooth(arr, lat_window = 3, lon_window = 9):
 
-    arr = lc.rolling_lon_periodic(arr, lon_window, lat_window, stat = 'median')
+    arr = lc.rolling_lon_periodic(arr, lon_window, lat_window, stat = 'mean')
     return arr
 #%%
 def remove_zonalmean(arr):
