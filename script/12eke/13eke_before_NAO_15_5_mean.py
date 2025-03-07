@@ -10,32 +10,12 @@ import logging
 import re
 import os
 
-from src.extremes.before_extreme import read_NAO_extremes, sel_before_NAO
+from src.extremes.before_extreme import read_NAO_extremes
+from src.composite.composite import before_NAO_mean
+from src.prime.prime_data import read_prime
 logging.basicConfig(level=logging.INFO)
 #%%
 
-
-#%%
-def read_eke( decade, suffix = '_ano', var='eke', **kwargs):
-    time_tag = f"{decade}0501-{decade+9}0930"
-    data_path = (
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
-    )
-    files = glob.glob(data_path + "r*i1p1f1/" + f"eke*{time_tag}*.nc")
-    # sort files
-    files.sort(key=lambda x: int(x.split('/')[-2][1:].split('i')[0]))
-
-    data = xr.open_mfdataset(
-        files, combine="nested", concat_dim="ens",
-        chunks = {"ens": 1, "time": -1, "lat": -1, "lon": -1, "plev": 1}
-    )
-    data = data['eke']
-    data = data.sel(plev = 50000)
-
-
-    data['ens'] = range(1, 51)
-
-    return data
 
     
 #%%
@@ -46,29 +26,10 @@ def read_all_data(decade, var):
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
     logging.info("reading eke")
-    eke = read_eke( decade, var = var, suffix='_ano')  # change the suffix to read different data
+    eke = read_prime( decade, var = var, suffix='_ano')  # change the suffix to read different data
     
 
     return NAO_pos, NAO_neg, eke
-#%%
-def before_NAO_mean(NAO, data, lag = (-15, -5)):
-
-    data_before_NAO = []
-    for i, event in NAO.iterrows():
-        event_ens = int(event.ens)
-        event_date = pd.to_datetime(event.extreme_start_time)
-        event_date_before_start = event_date + pd.Timedelta(days=lag[0])
-        event_date_before_end = event_date + pd.Timedelta(days=lag[1])
-
-        # -15 to -5 days before the event average
-        data_NAO_event = data.sel(time=slice(event_date_before_start, event_date_before_end), ens = event_ens).mean(dim = 'time')
-
-        data_before_NAO.append(data_NAO_event)
-
-    data_before_NAO = xr.concat(data_before_NAO, dim='event')
-
-    return data_before_NAO
-
 
 #%%
 def process_data(decade, var):
