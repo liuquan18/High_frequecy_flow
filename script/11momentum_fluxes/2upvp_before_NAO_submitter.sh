@@ -11,4 +11,4 @@
 #SBATCH --output=before_wb.%j.out
 
 
-mpirun -n 25 python -u 7upvp_before_NAO.py
+mpirun -n 25 python -u 2upvp_before_NAO.py
