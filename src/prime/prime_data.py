@@ -8,7 +8,7 @@ def read_prime( decade, suffix = '_ano', var='eke', **kwargs):
     """
     
     name = kwargs.get('name', var) # default name is the same as var
-    plev = kwargs.get('plev', 50000)
+    plev = kwargs.get('plev', None)
 
     time_tag = f"{decade}0501-{decade+9}0930"
     data_path = (
@@ -24,7 +24,8 @@ def read_prime( decade, suffix = '_ano', var='eke', **kwargs):
         parallel=True,
     )
     data = data[name]
-    data = data.sel(plev = plev)
+    if plev is not None:
+        data = data.sel(plev = plev)
 
     data['ens'] = range(1, 51)
 
