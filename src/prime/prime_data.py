@@ -20,7 +20,8 @@ def read_prime( decade, suffix = '_ano', var='eke', **kwargs):
 
     data = xr.open_mfdataset(
         files, combine="nested", concat_dim="ens",
-        chunks = {"ens": 1, "time": -1, "lat": -1, "lon": -1, "plev": 1}
+        chunks = {"ens": 1, "time": -1, "lat": -1, "lon": -1, "plev": 1},
+        parallel=True,
     )
     data = data[name]
     data = data.sel(plev = plev)
