@@ -34,7 +34,7 @@ def read_all_data(decade, var, **kwargs):
 #%%
 def process_data(decade, var):
     # read data
-    NAO_pos, NAO_neg, data = read_all_data(decade, var = var, kwargs={'name': 'ua', 'plev': 25000})
+    NAO_pos, NAO_neg, data = read_all_data(decade, var = var, name = 'ua', plev = 25000)
 
     # select data before NAO events, here 'var' is only for column name
     logging.info (f"selecting data for {decade} \n")
