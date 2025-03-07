@@ -17,22 +17,22 @@ def read_data(decade):
 # %%
 def sector(data):
     box_EAA = [
-        -35,
+        -30,
         140,
         20,
         60,
     ]  # [lon_min, lon_max, lat_min, lat_max] Eurasia and Africa
     box_NAM = [-145, -70, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North America
-    box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
-    box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
+    box_NAL = [-70, -30, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
+    box_NPC = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
 
     data_EAA = data.sel(lon=slice(box_EAA[0], box_EAA[1])).mean(dim=("lon", "lat"))
     data_NAM = data.sel(lon=slice(box_NAM[0], box_NAM[1])).mean(dim=("lon", "lat"))
     data_NAL = data.sel(lon=slice(box_NAL[0], box_NAL[1])).mean(dim=("lon", "lat"))
-    data_NPO1 = data.sel(lon=slice(box_NPO[0], 180))
-    data_NPO2 = data.sel(lon=slice(-180, box_NPO[1]))
-    data_NPO = xr.concat([data_NPO1, data_NPO2], dim="lon").mean(dim=("lon", "lat"))
-    return data_EAA, data_NAM, data_NAL, data_NPO
+    data_NPC1 = data.sel(lon=slice(box_NPC[0], 180))
+    data_NPC2 = data.sel(lon=slice(-180, box_NPC[1]))
+    data_NPC = xr.concat([data_NPC1, data_NPC2], dim="lon").mean(dim=("lon", "lat"))
+    return data_EAA, data_NAM, data_NAL, data_NPC
 
 
 # %%
@@ -40,7 +40,7 @@ dfs = []
 
 for i in range(1850, 2100, 10):
     data = read_data(i)
-    EAA, NAM, NAL, NPO = sector(data)
+    EAA, NAM, NAL, NPC = sector(data)
 
     dfs.append(
         {
@@ -69,9 +69,9 @@ for i in range(1850, 2100, 10):
     dfs.append(
         {
             "decade": i,
-            "hus": NPO.hus.values.item(),
-            "hussat": NPO.hussat.values.item(),
-            "region": "NPO",
+            "hus": NPC.hus.values.item(),
+            "hussat": NPC.hussat.values.item(),
+            "region": "NPC",
         }
     )
 
@@ -241,7 +241,16 @@ axes[0].text(
 )
 
 # Add 'a' at the left corner of the first subplot
-axes[0].text(-0.05, 1.05, 'a', transform=axes[0].transAxes, fontsize=16, fontweight='bold', va='top', ha='right')
+axes[0].text(
+    -0.05,
+    1.05,
+    "a",
+    transform=axes[0].transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 
 ## plot the ratio
 # Update the region labels
@@ -250,7 +259,7 @@ df["region"] = df["region"].replace(
         "EAA": "Eurasia_North_Africa",
         "NAM": "North_America",
         "NAL": "North_Atlantic",
-        "NPO": "North_Pacific",
+        "NPC": "North_Pacific",
     }
 )
 
@@ -321,9 +330,21 @@ for handle in axes[1].get_legend().legendHandles[:4]:
 axes[1].set_ylim(0.39, 1.05)
 
 # Add 'b' at the left corner of the second subplot
-axes[1].text(-0.05, 1.05, 'b', transform=axes[1].transAxes, fontsize=16, fontweight='bold', va='top', ha='right')
+axes[1].text(
+    -0.05,
+    1.05,
+    "b",
+    transform=axes[1].transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 
 plt.tight_layout()
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/CC_moisture_tangent_slope.pdf", dpi = 300)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/CC_moisture_tangent_slope.pdf",
+    dpi=300,
+)
 # %%

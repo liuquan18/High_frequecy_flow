@@ -23,18 +23,18 @@ NAL(){
     cdo -P 8 -fldmean -sellonlatbox,290,325,20,60 $infile $outfile  
 }
 
-NPO(){
+NPC(){
     infile=$1
     fname=$(basename ${infile%.nc})
 
-    echo "NPO $fname"
+    echo "NPC $fname"
 
-    outfile=$NPOdir$fname.nc
+    outfile=$NPCdir$fname.nc
 
     cdo -P 8 -fldmean -sellonlatbox,290,325,20,60 $infile $outfile  
 }
 
-export -f NAL NPO
+export -f NAL NPC
 
 var=$1
 export var
@@ -45,16 +45,16 @@ process(){
 
     basedir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/$var/r${member}i1p1f1/
     NALdir=/scratch/m/m300883/NAL/${var}/r${member}i1p1f1/
-    NPOdir=/scratch/m/m300883/NPO/${var}/r${member}i1p1f1/
+    NPCdir=/scratch/m/m300883/NPC/${var}/r${member}i1p1f1/
 
-    export basedir NALdir NPOdir
+    export basedir NALdir NPCdir
 
 
-    mkdir -p $NALdir $NPOdir
+    mkdir -p $NALdir $NPCdir
 
     # parallel
     find "$basedir" -name "*.nc" | parallel -j 25 NAL 
-    find "$basedir" -name "*.nc" | parallel -j 25 NPO
+    find "$basedir" -name "*.nc" | parallel -j 25 NPC
 }
 
 for member in {1..50}

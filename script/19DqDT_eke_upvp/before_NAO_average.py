@@ -88,8 +88,8 @@ def zonal_mean(df):
 # hus_tas_ratio basin mean
 def ratio_basin_mean(ratio):
 
-    box_NAL = [-70, -35, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
-    box_NPO = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
+    box_NAL = [-70, -30, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
+    box_NPC = [140, -145, 20, 60]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
 
     ratio = ratio.reset_index()
     ratio = ratio.rename(columns={"level_0": "event_id"})
@@ -98,13 +98,13 @@ def ratio_basin_mean(ratio):
     ratio_NAL = ratio.loc[(ratio["lon"] >= box_NAL[0]) & (ratio["lon"] <= box_NAL[1])]
     ratio_NAL_zonmean = zonal_mean(ratio_NAL)
 
-    ratio_NPO = ratio.loc[
-        (ratio["lon"] >= box_NPO[0]) & (ratio["lon"] <= 180)
-        | (ratio["lon"] >= -180) & (ratio["lon"] <= box_NPO[1])
+    ratio_NPC = ratio.loc[
+        (ratio["lon"] >= box_NPC[0]) & (ratio["lon"] <= 180)
+        | (ratio["lon"] >= -180) & (ratio["lon"] <= box_NPC[1])
     ]
-    ratio_NPO_zonmean = zonal_mean(ratio_NPO)
+    ratio_NPC_zonmean = zonal_mean(ratio_NPC)
 
-    return ratio_NAL_zonmean, ratio_NPO_zonmean
+    return ratio_NAL_zonmean, ratio_NPC_zonmean
 
 
 # %%
@@ -194,23 +194,23 @@ first_NAO_pos_ratio, first_NAO_neg_ratio, last_NAO_pos_ratio, last_NAO_neg_ratio
 )
 # %%
 # ratio
-first_NAO_pos_ratio_NAL, first_NAO_pos_ratio_NPO = ratio_basin_mean(first_NAO_pos_ratio)
-first_NAO_neg_ratio_NAL, first_NAO_neg_ratio_NPO = ratio_basin_mean(first_NAO_neg_ratio)
+first_NAO_pos_ratio_NAL, first_NAO_pos_ratio_NPC = ratio_basin_mean(first_NAO_pos_ratio)
+first_NAO_neg_ratio_NAL, first_NAO_neg_ratio_NPC = ratio_basin_mean(first_NAO_neg_ratio)
 
-last_NAO_pos_ratio_NAL, last_NAO_pos_ratio_NPO = ratio_basin_mean(last_NAO_pos_ratio)
-last_NAO_neg_ratio_NAL, last_NAO_neg_ratio_NPO = ratio_basin_mean(last_NAO_neg_ratio)
+last_NAO_pos_ratio_NAL, last_NAO_pos_ratio_NPC = ratio_basin_mean(last_NAO_pos_ratio)
+last_NAO_neg_ratio_NAL, last_NAO_neg_ratio_NPC = ratio_basin_mean(last_NAO_neg_ratio)
 
 first_NAO_pos_ratio_NAL = event_mean(first_NAO_pos_ratio_NAL, "ratio")
-first_NAO_pos_ratio_NPO = event_mean(first_NAO_pos_ratio_NPO, "ratio")
+first_NAO_pos_ratio_NPC = event_mean(first_NAO_pos_ratio_NPC, "ratio")
 
 first_NAO_neg_ratio_NAL = event_mean(first_NAO_neg_ratio_NAL, "ratio")
-first_NAO_neg_ratio_NPO = event_mean(first_NAO_neg_ratio_NPO, "ratio")
+first_NAO_neg_ratio_NPC = event_mean(first_NAO_neg_ratio_NPC, "ratio")
 
 last_NAO_pos_ratio_NAL = event_mean(last_NAO_pos_ratio_NAL, "ratio")
-last_NAO_pos_ratio_NPO = event_mean(last_NAO_pos_ratio_NPO, "ratio")
+last_NAO_pos_ratio_NPC = event_mean(last_NAO_pos_ratio_NPC, "ratio")
 
 last_NAO_neg_ratio_NAL = event_mean(last_NAO_neg_ratio_NAL, "ratio")
-last_NAO_neg_ratio_NPO = event_mean(last_NAO_neg_ratio_NPO, "ratio")
+last_NAO_neg_ratio_NPC = event_mean(last_NAO_neg_ratio_NPC, "ratio")
 
 
 # %%
@@ -249,6 +249,7 @@ def lon2x(longitude, ax):
 
     return x_coord
 
+
 # %%
 
 
@@ -260,7 +261,7 @@ eke_smooth = True
 if eke_smooth:
     NAO_pos_eke_lat_lon = rolling(NAO_pos_eke_lat_lon)
     NAO_neg_eke_lat_lon = rolling(NAO_neg_eke_lat_lon)
-#%%
+# %%
 
 eke_levels = np.arange(-0.6, 0.65, 0.1)
 
@@ -313,18 +314,18 @@ ratio_ax1.plot(
 )
 
 ratio_ax1.plot(
-    first_NAO_pos_ratio_NPO["ratio"],
-    first_NAO_pos_ratio_NPO["lag"],
-    label="first_NPO",
+    first_NAO_pos_ratio_NPC["ratio"],
+    first_NAO_pos_ratio_NPC["lag"],
+    label="first_NPC",
     color=sns.color_palette("Paired")[0],
     linestyle="--",
     linewidth=2,
 )
 
 ratio_ax1.plot(
-    last_NAO_pos_ratio_NPO["ratio"],
-    last_NAO_pos_ratio_NPO["lag"],
-    label="last_NPO",
+    last_NAO_pos_ratio_NPC["ratio"],
+    last_NAO_pos_ratio_NPC["lag"],
+    label="last_NPC",
     color=sns.color_palette("Paired")[1],
     linestyle="--",
     linewidth=2,
@@ -415,18 +416,18 @@ ratio_ax2.plot(
 )
 
 ratio_ax2.plot(
-    first_NAO_neg_ratio_NPO["ratio"],
-    first_NAO_neg_ratio_NPO["lag"],
-    label="first_NPO",
+    first_NAO_neg_ratio_NPC["ratio"],
+    first_NAO_neg_ratio_NPC["lag"],
+    label="first_NPC",
     color=sns.color_palette("Paired")[0],
     linestyle="--",
     linewidth=2,
 )
 
 ratio_ax2.plot(
-    last_NAO_neg_ratio_NPO["ratio"],
-    last_NAO_neg_ratio_NPO["lag"],
-    label="last_NPO",
+    last_NAO_neg_ratio_NPC["ratio"],
+    last_NAO_neg_ratio_NPC["lag"],
+    label="last_NPC",
     color=sns.color_palette("Paired")[1],
     linestyle="--",
     linewidth=2,
@@ -606,8 +607,8 @@ handles_ratio, labels = ratio_ax1.get_legend_handles_labels()
 labels = [
     r"$\Delta q / \Delta T$ _first_NAL",
     r"$\Delta q / \Delta T$_last_NAL",
-    r"$\Delta q / \Delta T$ _first_NPO",
-    r"$\Delta q / \Delta T$ _last_NPO",
+    r"$\Delta q / \Delta T$ _first_NPC",
+    r"$\Delta q / \Delta T$ _last_NPC",
 ]
 # add legend of upvp to legend_ax
 handles_upvp, labels_upvp = upvp_ax1.get_legend_handles_labels()
@@ -647,12 +648,12 @@ pos1 = eke_diff_ax2.get_position()
 eke_coast_ax.set_position([pos1.x0, pos1.y0 - 0.36, pos1.width, pos1.width * 1.5])
 
 
-# vline at lon = [-70, -35] and [140, -145]
+# vline at lon = [-70, -30] and [140, -145]
 eke_coast_ax.axvline(
     lon2x(-70, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
 )
 eke_coast_ax.axvline(
-    lon2x(-35, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+    lon2x(-30, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
 )
 eke_coast_ax.axvline(
     lon2x(140, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
@@ -664,16 +665,24 @@ eke_coast_ax.axvline(
 
 # add tilted line for eke eke_first_ax1 from  120E to 60E
 eke_first_ax1.plot(
-    [lon2x(180, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
-    linestyle=(0, (5, 10)), linewidth=1.2)
+    [lon2x(180, eke_first_ax1), lon2x(60, eke_first_ax1)],
+    [-15.5 * 4, -5.5 * 4],
+    color="black",
+    linestyle=(0, (5, 10)),
+    linewidth=1.2,
+)
 
 eke_last_ax1.plot(
-    [lon2x(120, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
-    linestyle=(0, (5, 10)), linewidth=1.2)
+    [lon2x(120, eke_first_ax1), lon2x(60, eke_first_ax1)],
+    [-15.5 * 4, -5.5 * 4],
+    color="black",
+    linestyle=(0, (5, 10)),
+    linewidth=1.2,
+)
 
-# add text 'NPO' between 140 and -145, NAL between -70 and -35
+# add text 'NPC' between 140 and -145, NAL between -70 and -30
 eke_coast_ax.text(lon2x(-65.0, eke_coast_ax), 30, "NAL", fontsize=12)
-eke_coast_ax.text(lon2x(145.0, eke_coast_ax), 30, "NPO", fontsize=12)
+eke_coast_ax.text(lon2x(145.0, eke_coast_ax), 30, "NPC", fontsize=12)
 # add a,b,c,d
 upvp_ax2.text(
     -0.1, 1.05, "a", transform=upvp_ax2.transAxes, fontsize=12, fontweight="bold"
@@ -909,12 +918,12 @@ eke_coast_ax.add_feature(
 pos1 = eke_diff_ax2.get_position()
 eke_coast_ax.set_position([pos1.x0, pos1.y0 - 0.36, pos1.width, pos1.width * 1.5])
 
-# vline at lon = [-70, -35] and [140, -145]
+# vline at lon = [-70, -30] and [140, -145]
 eke_coast_ax.axvline(
     lon2x(-70, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
 )
 eke_coast_ax.axvline(
-    lon2x(-35, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
+    lon2x(-30, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
 )
 eke_coast_ax.axvline(
     lon2x(140, eke_coast_ax), color="black", linewidth=1.5, linestyle="dotted"
@@ -925,16 +934,24 @@ eke_coast_ax.axvline(
 
 # add tilted line for eke eke_first_ax1 from  120E to 60E
 eke_first_ax1.plot(
-    [lon2x(180, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
-    linestyle=(0, (5, 10)), linewidth=1.2)
+    [lon2x(180, eke_first_ax1), lon2x(60, eke_first_ax1)],
+    [-15.5 * 4, -5.5 * 4],
+    color="black",
+    linestyle=(0, (5, 10)),
+    linewidth=1.2,
+)
 
 eke_last_ax1.plot(
-    [lon2x(120, eke_first_ax1), lon2x(60, eke_first_ax1)], [-15.5*4, -5.5*4], color="black",
-    linestyle=(0, (5, 10)), linewidth=1.2)
+    [lon2x(120, eke_first_ax1), lon2x(60, eke_first_ax1)],
+    [-15.5 * 4, -5.5 * 4],
+    color="black",
+    linestyle=(0, (5, 10)),
+    linewidth=1.2,
+)
 
-# add text 'NPO' between 140 and -145, NAL between -70 and -35
+# add text 'NPC' between 140 and -145, NAL between -70 and -30
 eke_coast_ax.text(lon2x(-65.0, eke_coast_ax), 30, "NAL", fontsize=12)
-eke_coast_ax.text(lon2x(145.0, eke_coast_ax), 30, "NPO", fontsize=12)
+eke_coast_ax.text(lon2x(145.0, eke_coast_ax), 30, "NPC", fontsize=12)
 
 # add a,b,c,d
 eke_first_ax2.text(

@@ -141,7 +141,7 @@ axes[2,2].axhline(y=lat2y(60), color='black', linestyle='dotted')
 
 axes[2,2].axvline(x=lon2x(-145), ymin=0.62, ymax=0.86, color='black', linestyle='dotted')
 axes[2,2].axvline(x=lon2x(140), ymin=0.62, ymax=0.86, color='black', linestyle='dotted')
-axes[2,2].axvline(x=lon2x(-35), ymin=0.62, ymax=0.86, color='black', linestyle='dotted')
+axes[2,2].axvline(x=lon2x(-30), ymin=0.62, ymax=0.86, color='black', linestyle='dotted')
 axes[2,2].axvline(x=lon2x(-70), ymin=0.62, ymax=0.86, color='black', linestyle='dotted')
 
 for ax in axes.flat:

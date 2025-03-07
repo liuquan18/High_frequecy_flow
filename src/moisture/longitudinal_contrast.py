@@ -14,6 +14,8 @@ def rolling_lon_periodic(arr, lon_window, lat_window, stat = 'std'):
         rolled_result = extended_arr.rolling(lon=lon_window, lat=lat_window, center=True).std()
     elif stat == 'var':
         rolled_result = extended_arr.rolling(lon=lon_window, lat=lat_window, center=True).var()
+    elif stat == 'median':
+        rolled_result = extended_arr.rolling(lon=lon_window, lat=lat_window, center=True).median()
     else:
         raise ValueError(f"Unsupported stat: {stat}")
     original_size = arr.sizes['lon']

@@ -1,5 +1,6 @@
 from cartopy.util import add_cyclic_point
 import xarray as xr
+import cartopy.crs as ccrs
 
 # function to erase the white line
 def erase_white_line(data):
@@ -25,3 +26,20 @@ def erase_white_line(data):
     new_data = xr.DataArray(data_value, coords=new_coords, name=data.name)
 
     return new_data
+
+def lat2y(latitude, ax):
+    """
+    Convert latitude to corresponding y-coordinates.
+    """
+    y_coord = ax.projection.transform_point(0, latitude, ccrs.PlateCarree())[1]
+
+    return y_coord
+
+
+def lon2x(longitude, ax):
+    """
+    Convert longitude to corresponding x-coordinates.
+    """
+    x_coord = ax.projection.transform_point(longitude, 0, ccrs.PlateCarree())[0]
+
+    return x_coord
