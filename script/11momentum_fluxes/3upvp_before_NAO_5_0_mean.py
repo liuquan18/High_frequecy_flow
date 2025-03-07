@@ -38,8 +38,8 @@ def process_data(decade, var):
 
     # select data before NAO events, here 'var' is only for column name
     logging.info (f"selecting data for {decade} \n")
-    upvp_NAO_pos = before_NAO_mean(NAO_pos, data, -5, 0)
-    upvp_NAO_neg = before_NAO_mean(NAO_neg, data, -5, 0)
+    upvp_NAO_pos = before_NAO_mean(NAO_pos, data, (-5, 0))
+    upvp_NAO_neg = before_NAO_mean(NAO_neg, data, (-5, 0))
 
     logging.info(f"saving data for decade {decade} \n")
     save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/upvp_NAO_pos_5_0_mean_{decade}.nc'
