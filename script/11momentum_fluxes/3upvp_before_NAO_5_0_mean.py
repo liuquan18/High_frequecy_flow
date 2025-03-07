@@ -38,16 +38,16 @@ def process_data(decade, var):
 
     # select data before NAO events, here 'var' is only for column name
     logging.info (f"selecting data for {decade} \n")
-    eke_NAO_pos = before_NAO_mean(NAO_pos, data)
-    eke_NAO_neg = before_NAO_mean(NAO_neg, data)
+    upvp_NAO_pos = before_NAO_mean(NAO_pos, data)
+    upvp_NAO_neg = before_NAO_mean(NAO_neg, data)
 
     logging.info(f"saving data for decade {decade} \n")
     save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/upvp_NAO_pos_5_0_mean_{decade}.nc'
     save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/upvp_NAO_neg_5_0_mean_{decade}.nc'
 
 
-    eke_NAO_pos.to_netcdf(save_dir_pos)
-    eke_NAO_neg.to_netcdf(save_dir_neg)
+    upvp_NAO_pos.to_netcdf(save_dir_pos)
+    upvp_NAO_neg.to_netcdf(save_dir_neg)
 
 
 #%%
@@ -57,5 +57,5 @@ if __name__ == "__main__":
     decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
 
     logging.info(f"processing decade {decade} \n")
-    process_data(decade, 'eke')
+    process_data(decade, 'upvp')
 
