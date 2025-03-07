@@ -2,12 +2,12 @@ import xarray as xr
 import numpy as np
 import glob
 
-def read_prime( decade, suffix = '_ano', var='eke', name = None, **kwargs):
+def read_prime( decade, suffix = '_ano', var='eke', **kwargs):
     """
     read high frequency data
     """
-    if name is None:
-        name = kwargs.get('name', var) # default name is the same as var
+    
+    name = kwargs.get('name', var) # default name is the same as var
     plev = kwargs.get('plev', 50000)
 
     time_tag = f"{decade}0501-{decade+9}0930"
