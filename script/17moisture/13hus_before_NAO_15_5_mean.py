@@ -44,8 +44,8 @@ def process_data(decade, var):
     hus_NAO_neg = before_NAO_mean(NAO_neg, data)
 
     logging.info(f"saving data for decade {decade} \n")
-    save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/hus_NAO_pos_5_0_mean_{decade}.nc'
-    save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/hus_NAO_neg_5_0_mean_{decade}.nc'
+    save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/hus_NAO_pos_15_5_mean_{decade}.nc'
+    save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/hus_NAO_neg_15_5_mean_{decade}.nc'
 
 
     hus_NAO_pos.to_netcdf(save_dir_pos)
