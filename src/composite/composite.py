@@ -215,3 +215,22 @@ def composite_variable(variable, plev, freq_label, period, stat="mean"):
         neg_comps = neg_comps.count(dim="event")
 
     return pos_comps, neg_comps
+
+#%%
+def before_NAO_mean(NAO, data, lag = (-15, -5)):
+
+    data_before_NAO = []
+    for i, event in NAO.iterrows():
+        event_ens = int(event.ens)
+        event_date = pd.to_datetime(event.extreme_start_time)
+        event_date_before_start = event_date + pd.Timedelta(days=lag[0])
+        event_date_before_end = event_date + pd.Timedelta(days=lag[1])
+
+        # -15 to -5 days before the event average
+        data_NAO_event = data.sel(time=slice(event_date_before_start, event_date_before_end), ens = event_ens).mean(dim = 'time')
+
+        data_before_NAO.append(data_NAO_event)
+
+    data_before_NAO = xr.concat(data_before_NAO, dim='event')
+
+    return data_before_NAO
