@@ -22,7 +22,7 @@ except:
     size = 1
 #%%
 from_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/vke_daily/r{member}i1p1f1/'
-to_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ivke_daily/r{member}i1p1f1/'
+to_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ivke_daily/r{member}i1p1f1/'
 
 if rank == 0:
     if not os.path.exists(to_path):
@@ -47,5 +47,7 @@ for i, file in enumerate(files_core):
     ds = ds.sortby('plev', ascending=True)
 
     ds = ivke(ds['vke'])
+    
     ds.to_netcdf(file.replace('vke', 'ivke'))
     ds.close()
+# %%
