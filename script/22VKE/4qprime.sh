@@ -70,3 +70,17 @@ q_prime(){
     echo " band filter ${qfile_name}"
     band_filter ${qfile} ${qpfile_name}
 }
+
+export -f band_filter
+export -f q_prime
+
+parallel -j 5 q_prime ::: {1850..2090..10}
+
+# check completion
+for dec in {1850..2090..10}; do
+    if [! -f ${qp_path}/*${dec}*.nc]; then
+        echo "Decade ${dec} is missing"
+        echo "Recalculate decade ${dec}"
+        q_prime ${dec}
+    fi
+done
