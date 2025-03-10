@@ -18,7 +18,7 @@ member=$node
 echo "Ensemble member ${member}"
 
 eke_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_daily/r${member}i1p1f1/
-q_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/hus_daily/r${member}i1p1f1/
+q_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/hus_prime_daily/r${member}i1p1f1/
 
 to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/vke_daily/r${member}i1p1f1/
 tmp_dir=/scratch/m/m300883/VKE/r${member}i1p1f1/
@@ -44,7 +44,7 @@ VKE(){
 export -f VKE
 
 # calculate VKE
-# parallel -j 5 VKE ::: {1850..2090..10}
+parallel -j 5 VKE ::: {1850..2090..10}
 
 # check if all files are created
 for dec in {1850..2090..10}; do
