@@ -18,9 +18,9 @@ member=$node
 echo "Ensemble member ${member}"
 
 eke_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_daily/r${member}i1p1f1/
-q_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/hus_prime_daily/r${member}i1p1f1/
+q_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_prime_daily/r${member}i1p1f1/
 
-to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/vke_daily/r${member}i1p1f1/
+to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vke_daily/r${member}i1p1f1/
 tmp_dir=/scratch/m/m300883/VKE/r${member}i1p1f1/
 
 mkdir -p ${to_path} ${tmp_dir}
