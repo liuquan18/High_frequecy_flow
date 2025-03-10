@@ -18,7 +18,7 @@ echo "Ensemble member ${member}"
 
 frequency=${2:-prime} # prime (2-12 days) or high (2-6 days), default prime
 
-q_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily/r${member}i1p1f1/
+q_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/hus_daily/r${member}i1p1f1/
 
 
 if [ "$frequency" == "prime" ]; then
