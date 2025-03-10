@@ -44,20 +44,15 @@ VKE(){
 export -f VKE
 
 # calculate VKE
-parallel -j 5 VKE ::: {1850..2090..10}
+# parallel -j 5 VKE ::: {1850..2090..10}
 
 # check if all files are created
-n_files=$(ls ${to_path} | wc -l)
-n_files_exp=$(( (2090-1850)/10 + 1 ))
-if [ $n_files -ne $n_files_exp ]; then
-    echo "Not all files created"
+for dec in {1850..2090..10}; do
+    if [ ! -f ${to_path}vke_day_MPI-ESM1-2-LR_*_${dec}*.nc ]; then
+        echo "File for ${dec} not created"
+        echo "recalculate"
+        VKE $dec
+    fi
+done
 
-    for dec in {1850..2090..10}; do
-        if [ ! -f ${to_path}vke_daily_MPI-GE_*.nc ]; then
-            echo "File for ${dec} not created"
-            echo "recalculate"
-            VKE $dec
-        fi
-    done
 
-fi
