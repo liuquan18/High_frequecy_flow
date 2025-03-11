@@ -162,7 +162,6 @@ uhat_diff = (uhat_NAO_last - uhat_NAO_first).plot.contourf(
     extend="both",
     add_colorbar=False,
 )
-cbar_uhat.set_label(r"$m/s$")
 
 
 # second column for upvp
@@ -190,7 +189,6 @@ upvp_diff = (upvp_NAO_last - upvp_NAO_first).plot.contourf(
     extend="both",
     add_colorbar=False,
 )
-cbar_upvp.set_label(r"$m^2/s^2$")
 
 # third column for eke
 ivke_NAO_first.plot(
@@ -217,7 +215,6 @@ eke_diff = (ivke_NAO_last - ivke_NAO_first).plot(
     extend="both",
     add_colorbar=False,
 )
-cbar_eke.set_label(r"$m^2/s^2$")
 
 for ax in axes.flatten():
     ax.coastlines()
@@ -238,6 +235,9 @@ cbar_upvp = fig.colorbar(upvp_diff, cax=cbar_ax_upvp, orientation="horizontal")
 cbar_eke = fig.colorbar(
     eke_diff, cax=cbar_ax_eke, orientation="horizontal", format="%.1e"
 )
+cbar_upvp.set_label(r"$m^2/s^2$")
+cbar_uhat.set_label(r"$m/s$")
+cbar_eke.set_label(r"$m^2/s^2$")
 
 cbar_eke.formatter = ScalarFormatter()
 cbar_eke.formatter.set_scientific(True)
@@ -248,9 +248,9 @@ cbar_upvp.set_label(r"$m^2/s^2$")
 cbar_eke.set_label(r"$m^2/s^2$")
 
 
-axes[0, 0].set_title(r"$\bar{u}$ during")
-axes[0, 1].set_title(r"$u'v'$ [-5,0] days before")
-axes[0, 2].set_title(r"IVKE [-15,-5] days before")
+# axes[0, 0].set_title(r"$\bar{u}$ during")
+# axes[0, 1].set_title(r"$u'v'$ [-5,0] days before")
+# axes[0, 2].set_title(r"$[(q'u')^2 + (q'v')^2]/2$ [-15,-5] days before")
 
 # add a, b, c
 for i, ax in enumerate(axes.flatten()):
