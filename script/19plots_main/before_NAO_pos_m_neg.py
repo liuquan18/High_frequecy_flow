@@ -400,7 +400,7 @@ for i, ax in enumerate(axes.flatten()):
         fontweight="bold",
     )
 
-plt.tight_layout(w_pad=2.5, h_pad=0.1)
+plt.tight_layout(w_pad=.5, h_pad=0.1)
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/transients_meachnism.pdf", dpi=300)
 
 # %%
