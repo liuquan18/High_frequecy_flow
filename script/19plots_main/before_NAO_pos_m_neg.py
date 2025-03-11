@@ -360,9 +360,9 @@ for ax in axes.flatten():
     ax.set_ylabel("")
 
 # Define three axes at the bottom to hold the three colorbars
-cbar_ax_uhat = fig.add_axes([0.05, 0.01, 0.27, 0.01])
-cbar_ax_upvp = fig.add_axes([0.37, 0.01, 0.27, 0.01])
-cbar_ax_eke = fig.add_axes([0.69, 0.01, 0.27, 0.01])
+cbar_ax_uhat = fig.add_axes([0.05, 0.06, 0.27, 0.01])
+cbar_ax_upvp = fig.add_axes([0.37, 0.06, 0.27, 0.01])
+cbar_ax_eke = fig.add_axes([0.69, 0.06, 0.27, 0.01])
 
 cbar_uhat = fig.colorbar(uhat_diff, cax=cbar_ax_uhat, orientation="horizontal")
 cbar_upvp = fig.colorbar(upvp_diff, cax=cbar_ax_upvp, orientation="horizontal")
@@ -379,28 +379,22 @@ cbar_upvp.set_label(r"$m^2/s^2$")
 cbar_eke.set_label(r"$m^2/s^2$")
 
 
-axes[0, 0].set_title(r"1850 $\bar{u}$ (during)")
-axes[0, 1].set_title(r"1850 $u'v'$ (-5,0)")
-axes[0, 2].set_title(r"1850 IVKE (-15,-5)")
-axes[1, 0].set_title(r"2090 $\bar{u}$ (during)")
-axes[1, 1].set_title(r"2090 $u'v'$ (-5,0)")
-axes[1, 2].set_title(r"2090 IVKE (-15,-5)")
-axes[2, 0].set_title(r"$\Delta \bar{u}$ (during)")
-axes[2, 1].set_title(r"$\Delta u'v'$ (-5,0)")
-axes[2, 2].set_title(r"$\Delta$ IVKE (-15,-5)")
+axes[0, 0].set_title(r"$\bar{u}$ during")
+axes[0, 1].set_title(r"$u'v'$ [-5,0] days before")
+axes[0, 2].set_title(r"IVKE [-15,-5] days before")
 
 # add a, b, c
 for i, ax in enumerate(axes.flatten()):
     ax.text(
         0.02,
-        1.0,
+        0.95,
         f"{chr(97+i)}",
         transform=ax.transAxes,
         fontsize=12,
         fontweight="bold",
     )
 
-plt.tight_layout(w_pad=.5, h_pad=0.1)
+plt.tight_layout(w_pad=.5, h_pad=-6)
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/transients_meachnism.pdf", dpi=300)
 
 # %%
