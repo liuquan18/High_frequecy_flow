@@ -269,6 +269,6 @@ for i, ax in enumerate(axes.flatten()):
     )
 
 plt.tight_layout(w_pad=0.5, h_pad=-6)
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/transients_meachnism.pdf", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/transients_meachnism.pdf", dpi=300)
 
 # %%
