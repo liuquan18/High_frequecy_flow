@@ -107,8 +107,13 @@ ivke_NAO_first = ivke_NAO_pos_first - ivke_NAO_neg_first
 ivke_NAO_last = ivke_NAO_pos_last - ivke_NAO_neg_last
 # %%
 # change unit from kg/kg to g/kg
-ivke_NAO_first = ivke_NAO_first * 1e6 # q^2
-ivke_NAO_last = ivke_NAO_last * 1e6 # q^2
+ivke_NAO_first = ivke_NAO_first * 1e6  # q^2
+ivke_NAO_last = ivke_NAO_last * 1e6  # q^2
+
+##!!!!!!!!!!!!!!!!!##
+# divide by g if not yet
+# ivke_NAO_first = ivke_NAO_first / 9.81
+# ivke_NAO_last = ivke_NAO_last / 9.81
 
 # %%
 temp_cmap_seq = np.loadtxt(
@@ -131,7 +136,7 @@ prec_cmap_div = np.loadtxt(
 )
 prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 # %%
-eke_levels_div = np.arange(-1.2, 1.3, 0.2) * 1e2
+eke_levels_div = np.arange(-12, 13, 2)
 upvp_levels_div = np.arange(-25, 26, 5)
 uhat_levels_div = np.arange(-12, 13, 2)
 
@@ -234,20 +239,18 @@ cbar_ax_eke = fig.add_axes([0.69, 0.06, 0.27, 0.01])
 
 cbar_uhat = fig.colorbar(uhat_diff, cax=cbar_ax_uhat, orientation="horizontal")
 cbar_upvp = fig.colorbar(upvp_diff, cax=cbar_ax_upvp, orientation="horizontal")
-cbar_eke = fig.colorbar(
-    eke_diff, cax=cbar_ax_eke, orientation="horizontal", format="%.1e"
-)
+cbar_eke = fig.colorbar(eke_diff, cax=cbar_ax_eke, orientation="horizontal")
 cbar_upvp.set_label(r"$m^2/s^2$")
 cbar_uhat.set_label(r"$m/s$")
 cbar_eke.set_label(r"$m^2/s^2$")
 
-cbar_eke.formatter = ScalarFormatter()
-cbar_eke.formatter.set_scientific(True)
-cbar_eke.formatter.set_powerlimits((0, 0))
+# cbar_eke.formatter = ScalarFormatter()
+# cbar_eke.formatter.set_scientific(True)
+# cbar_eke.formatter.set_powerlimits((0, 0))
 
 cbar_uhat.set_label(r"$m s^{-1}$")
 cbar_upvp.set_label(r"$m^2 s^{-2}$")
-cbar_eke.set_label(r"$g kg ^{-1} m^2 s^{-2}$")
+cbar_eke.set_label(r"$g^2 kg ^{-2} m^2 s^{-2}$")
 
 
 # axes[0, 0].set_title(r"$\bar{u}$ during")
@@ -265,7 +268,7 @@ for i, ax in enumerate(axes.flatten()):
         fontweight="bold",
     )
 
-plt.tight_layout(w_pad=.5, h_pad=-6)
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/transients_meachnism.pdf", dpi=300)
+plt.tight_layout(w_pad=0.5, h_pad=-6)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/transients_meachnism.pdf", dpi=300)
 
 # %%
