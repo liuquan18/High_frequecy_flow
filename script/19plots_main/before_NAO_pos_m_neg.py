@@ -106,7 +106,9 @@ upvp_NAO_last = upvp_NAO_pos_last - upvp_NAO_neg_last
 ivke_NAO_first = ivke_NAO_pos_first - ivke_NAO_neg_first
 ivke_NAO_last = ivke_NAO_pos_last - ivke_NAO_neg_last
 # %%
-# for plotting
+# change unit from kg/kg to g/kg
+ivke_NAO_first = ivke_NAO_first * 1e6 # q^2
+ivke_NAO_last = ivke_NAO_last * 1e6 # q^2
 
 # %%
 temp_cmap_seq = np.loadtxt(
@@ -129,7 +131,7 @@ prec_cmap_div = np.loadtxt(
 )
 prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 # %%
-eke_levels_div = np.arange(-1.2, 1.3, 0.2) * 1e-4
+eke_levels_div = np.arange(-1.2, 1.3, 0.2) * 1e2
 upvp_levels_div = np.arange(-25, 26, 5)
 uhat_levels_div = np.arange(-12, 13, 2)
 
@@ -243,9 +245,9 @@ cbar_eke.formatter = ScalarFormatter()
 cbar_eke.formatter.set_scientific(True)
 cbar_eke.formatter.set_powerlimits((0, 0))
 
-cbar_uhat.set_label(r"$m/s$")
-cbar_upvp.set_label(r"$m^2/s^2$")
-cbar_eke.set_label(r"$m^2/s^2$")
+cbar_uhat.set_label(r"$m s^{-1}$")
+cbar_upvp.set_label(r"$m^2 s^{-2}$")
+cbar_eke.set_label(r"$g kg ^{-1} m^2 s^{-2}$")
 
 
 # axes[0, 0].set_title(r"$\bar{u}$ during")
