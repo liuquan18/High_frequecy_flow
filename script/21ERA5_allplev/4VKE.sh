@@ -9,7 +9,7 @@
 #SBATCH --account=mh0033
 #SBATCH --output=VKE.%j.out
 
-module load cdo
+module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
 eke_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/eke_daily/
@@ -26,6 +26,8 @@ export eke_path qp_path vke_path
 
 VKE(){
     year=$1
+    echo "Calculating VKE for ${year}"
+
     eke_file=$(find ${eke_path} -name "*${year}*.nc")
     q_file=$(find ${qp_path} -name "*${year}*.nc")
     # basename without .nc
@@ -38,6 +40,9 @@ VKE(){
 
 export -f VKE
 
+start_year=${1:-1979}
+end_year=${2:-2024}
+
 # calculate VKE
-parallel -j 5 VKE ::: {1979..2024}
+parallel -j 5 VKE ::: {$start_year..$end_year}
 
