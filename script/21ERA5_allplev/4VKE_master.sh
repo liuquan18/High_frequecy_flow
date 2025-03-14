@@ -9,5 +9,7 @@ do
         end_year=2024
     fi
 
-    echo "Calculating VKE for ${start_year} to ${end_year}"
+    echo "This node is calculating VKE for ${start_year} to ${end_year}"
+
+    sbatch 4VKE.sh $start_year $end_year
 done
