@@ -12,6 +12,8 @@
 module load cdo
 module load parallel
 
+year_node=$1 # each node process one year
+
 u_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/ua_daily/
 
 uhat_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/ua_hat_daily/
@@ -52,4 +54,5 @@ export -f perform
 
 export -f band_filter
 
-parallel --jobs 5 perform ::: {1979..2024}
+# parallel --jobs 5 perform ::: {1979..2024}
+perform $year_node
