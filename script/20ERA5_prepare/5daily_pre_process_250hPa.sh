@@ -10,8 +10,8 @@
 #SBATCH --output=pre_process.%j.out
 module load cdo
 module load parallel
-var=$1
-var_num=$2
+var=$1           # u       v   q (hus)  ta
+var_num=$2       # 131   132    133     130
 
 daily_dir=/pool/data/ERA5/E5/pl/an/1D/${var_num}/
 tmp_dir=/scratch/m/m300883/ERA5/${var}_daily/
