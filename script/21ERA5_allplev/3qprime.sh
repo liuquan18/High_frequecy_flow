@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=eddy
+#SBATCH --job-name=qprime
 #SBATCH --time=01:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
@@ -7,7 +7,7 @@
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=eddy.%j.out
+#SBATCH --output=qprime.%j.out
 
 module load cdo
 module load parallel
