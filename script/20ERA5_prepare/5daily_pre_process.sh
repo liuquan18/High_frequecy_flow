@@ -32,7 +32,7 @@ pre_process(){
     infile=$1
     echo Processing $(basename $infile)
     tmpfile=${tmp_dir}$(basename $infile .grb).nc
-    cdo -f nc -O -P 10 -setgridtype,regular -vertmean -sellevel,85000,87500,90000,92500,95000,97500,100000 $infile $tmpfile
+    cdo -f nc -O -P 10 -setgridtype,regular -vertmean -sellevel,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000 $infile $tmpfile
 
 }
 
