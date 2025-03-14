@@ -32,7 +32,7 @@ band_filter(){
     # basename without .nc
     fname=$(basename ${infile%.nc})
 
-    cdo -O -lowpass,30.5 ${infile} ${outfile}
+    cdo -r -O -lowpass,30.5 ${infile} ${outfile}
 
 }
 
