@@ -10,4 +10,4 @@
 #SBATCH --output=ivke.%j.out
 
 
-mpirun -n 5 python -u 5IVKE.py $1 # node
+mpirun -n 5 python -u 5IVKE.py 
