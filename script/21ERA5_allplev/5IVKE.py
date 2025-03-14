@@ -8,6 +8,8 @@ import sys
 import logging
 
 logging.basicConfig(level=logging.INFO)
+#%%
+node=int(sys.argv[1])
 # %%
 try:
     from mpi4py import MPI
@@ -30,7 +32,8 @@ if rank == 0:
 
 # %%
 all_files = glob.glob(from_path + "*.nc")
-files_core = np.array_split(all_files, size)[rank]
+files_nodes = np.array_split(all_files, 5) # 5 nodes
+files_core = np.array_split(files_nodes[node], size)[rank] # 10 cores
 
 
 # %%
