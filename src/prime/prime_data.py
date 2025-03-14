@@ -30,3 +30,25 @@ def read_prime( decade, suffix = '_ano', var='eke', **kwargs):
     data['ens'] = range(1, 51)
 
     return data
+
+def read_prime_ERA5(var = 'eke', suffix = '', **kwargs):
+
+    name = kwargs.get('name', var) # default name is the same as var
+    plev = kwargs.get('plev', None)
+
+    data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/{var}_daily{suffix}/"
+
+    files = glob.glob(data_path + f"*{var}*.nc")
+
+    files.sort()
+
+    data = xr.open_mfdataset(
+        files, combine = 'by_coords',
+        chunks = {"time": -1, "lat": -1, "lon": -1, "plev": 1},
+        parallel = True
+    )
+    data = data[name]
+    if plev is not None:
+        data = data.sel(plev = plev)
+
+    return data
