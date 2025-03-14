@@ -43,6 +43,6 @@ export -f VKE
 start_year=${1:-1979}
 end_year=${2:-2024}
 
-# calculate VKE
-parallel -j 5 VKE ::: {$start_year..$end_year}
 
+# calculate VKE
+seq ${start_year} ${end_year} | parallel -j 5 VKE
