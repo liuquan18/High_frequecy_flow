@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=pre_process
-#SBATCH --time=00:30:00
+#SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks=25
@@ -14,8 +14,8 @@ var=$1
 var_num=$2
 
 daily_dir=/pool/data/ERA5/E5/pl/an/1D/${var_num}/
-tmp_dir=/scratch/m/m300883/ERA5/${var}_daily/
-to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/${var}_daily/
+tmp_dir=/scratch/m/m300883/ERA5_allplev/${var}_daily/
+to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/${var}_daily/
 
 export daily_dir tmp_dir to_dir var
 mkdir -p $tmp_dir $to_dir
@@ -32,7 +32,7 @@ pre_process(){
     infile=$1
     echo Processing $(basename $infile)
     tmpfile=${tmp_dir}$(basename $infile .grb).nc
-    cdo -f nc -O -P 10 -setgridtype,regular -vertmean -sellevel,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000 $infile $tmpfile
+    cdo -f nc -O -P 10 -setgridtype,regular -sellevel,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000 $infile $tmpfile
 
 }
 
