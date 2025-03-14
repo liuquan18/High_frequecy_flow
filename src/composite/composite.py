@@ -221,13 +221,18 @@ def before_NAO_mean(NAO, data, lag = (-15, -5)):
 
     data_before_NAO = []
     for i, event in NAO.iterrows():
-        event_ens = int(event.ens)
         event_date = pd.to_datetime(event.extreme_start_time)
         event_date_before_start = event_date + pd.Timedelta(days=lag[0])
         event_date_before_end = event_date + pd.Timedelta(days=lag[1])
 
         # -15 to -5 days before the event average
-        data_NAO_event = data.sel(time=slice(event_date_before_start, event_date_before_end), ens = event_ens).mean(dim = 'time')
+        
+        # if 'ens' in the column
+        if 'ens' in data.dims:
+            event_ens = int(event.ens)
+            data_NAO_event = data.sel(time=slice(event_date_before_start, event_date_before_end), ens = event_ens).mean(dim = 'time')
+        else:
+            data_NAO_event = data.sel(time=slice(event_date_before_start, event_date_before_end)).mean(dim = 'time')
 
         data_before_NAO.append(data_NAO_event)
 
