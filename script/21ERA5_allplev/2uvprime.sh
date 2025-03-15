@@ -12,15 +12,17 @@
 module load cdo
 module load parallel
 
-u_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/ua_daily/
-v_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/va_daily/
+model=ERA5_ano
 
-up_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/up_daily/
-vp_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/vp_daily/
+u_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/ua_daily/
+v_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/va_daily/
 
-tmp_dir=/scratch/m/m300883/ERA5_allplev/upvp/
-eddy_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/eke_daily/
-upvp_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/upvp_daily/
+up_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/up_daily/
+vp_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/vp_daily/
+
+tmp_dir=/scratch/m/m300883/${model}/upvp/
+eddy_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/eke_daily/
+upvp_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/upvp_daily/
 
 mkdir -p ${eddy_path} ${up_path} ${vp_path} ${tmp_dir} ${upvp_path}
 
