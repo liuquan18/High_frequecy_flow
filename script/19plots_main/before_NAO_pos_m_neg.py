@@ -47,7 +47,7 @@ def postprocess(ds, do_smooth=False, remove_zonal=False):
 # %%
 
 
-def read_composite(var, name, decade):
+def read_composite_MPI(var, name, decade):
     pos_file = glob.glob(
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_pos_*_mean_{decade}.nc"
     )
@@ -67,53 +67,90 @@ def read_composite(var, name, decade):
     NAO_pos = postprocess(NAO_pos)
     NAO_neg = postprocess(NAO_neg)
 
-    return NAO_pos.compute(), NAO_neg.compute()
+    diff = NAO_pos - NAO_neg
+
+    return diff.compute()
+
+#%%
+def read_composite_ERA5(var, name):
+    pos_file=glob.glob(
+        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/{var}_NAO_pos_*_mean.nc"
+    )
+    neg_file=glob.glob(
+        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/{var}_NAO_neg_*_mean.nc"
+    )
+    if len(pos_file) == 0 or len(neg_file) == 0:
+        raise ValueError(f"no file found for {var}")
+    NAO_pos = xr.open_dataset(pos_file[0])
+    NAO_neg = xr.open_dataset(neg_file[0])
+    NAO_pos = NAO_pos[name]
+    NAO_neg = NAO_neg[name]
+
+    try:
+        NAO_pos = NAO_pos.mean(dim="event").squeeze()
+        NAO_neg = NAO_neg.mean(dim="event").squeeze()
+    except ValueError:
+        NAO_pos = NAO_pos.squeeze()
+        NAO_neg = NAO_neg.squeeze()
 
 
-# %%
-uhat_composiste = (
+    NAO_pos = postprocess(NAO_pos)
+    NAO_neg = postprocess(NAO_neg)
+
+    diff = NAO_pos - NAO_neg
+
+    return diff.compute()
+#%%
+def read_MPI_GE_uhat():
+    uhat_composiste = (
     "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/"
 )
-uhat_pos_first10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_first10_pos.nc")
-uhat_neg_first10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_first10_neg.nc")
+    uhat_pos_first10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_first10_pos.nc")
+    uhat_neg_first10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_first10_neg.nc")
 
-uhat_pos_last10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_last10_pos.nc")
-uhat_neg_last10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_last10_neg.nc")
-# %%
-uhat_NAO_first = uhat_pos_first10 - uhat_neg_first10
-uhat_NAO_last = uhat_pos_last10 - uhat_neg_last10
-# %%
-uhat_NAO_first = postprocess(uhat_NAO_first)
-uhat_NAO_last = postprocess(uhat_NAO_last)
+    uhat_pos_last10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_last10_pos.nc")
+    uhat_neg_last10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_last10_neg.nc")
 
-# %%
-eke_NAO_pos_first, eke_NAO_neg_first = read_composite("eke", "eke", 1850)
-eke_NAO_pos_last, eke_NAO_neg_last = read_composite("eke", "eke", 2090)
-# %%
-upvp_NAO_pos_first, upvp_NAO_neg_first = read_composite("upvp", "ua", 1850)
-upvp_NAO_pos_last, upvp_NAO_neg_last = read_composite("upvp", "ua", 2090)
-# %%
-ivke_NAO_pos_first, ivke_NAO_neg_first = read_composite("ivke", "ivke", 1850)
-ivke_NAO_pos_last, ivke_NAO_neg_last = read_composite("ivke", "ivke", 2090)
+    uhat_NAO_first = uhat_pos_first10 - uhat_neg_first10
+    uhat_NAO_last = uhat_pos_last10 - uhat_neg_last10
 
+    uhat_NAO_first = postprocess(uhat_NAO_first)
+    uhat_NAO_last = postprocess(uhat_NAO_last)
+    return uhat_NAO_first,uhat_NAO_last
+#%%
+def read_NAO_pattern(model):
+    if model == 'ERA5':
+        eof_path = "/work/mh0033/m300883/High_frequecy_flow/data/ERA5/EOF_result/eof_result_Z500_1979_2024.nc"
+        eof = xr.open_dataset(eof_path).eof.sel(mode = 'NAO').squeeze()
+
+    elif model == 'first':
+        eof_path = "/work/mh0033/m300883/Tel_MMLE/data/MPI_GE_CMIP6/EOF_result/first_pattern_projected.nc"
+        eof = xr.open_dataset(eof_path).__xarray_dataarray_variable__
+    elif model == 'last':
+        eof_path = "/work/mh0033/m300883/Tel_MMLE/data/MPI_GE_CMIP6/EOF_result/last_pattern_projected.nc"
+        eof = xr.open_dataset(eof_path).__xarray_dataarray_variable__
+
+    return eof
+#%%
+eof_ERA5 = read_NAO_pattern('ERA5')
+eof_first = read_NAO_pattern('first')
+eof_last = read_NAO_pattern('last')
+
+#%%
+uhat_ERA5 = read_composite_ERA5("ua_hat", "var131")
+uhat_first, uhat_last = read_MPI_GE_uhat()
+#%%
+upvp_ERA5 = read_composite_ERA5("upvp", "var131")
+upvp_first = read_composite_MPI("upvp", "ua", 1850)
+upvp_last = read_composite_MPI("upvp", "ua", 2090)
 # %%
-eke_NAO_first = eke_NAO_pos_first - eke_NAO_neg_first
-eke_NAO_last = eke_NAO_pos_last - eke_NAO_neg_last
-
-upvp_NAO_first = upvp_NAO_pos_first - upvp_NAO_neg_first
-upvp_NAO_last = upvp_NAO_pos_last - upvp_NAO_neg_last
-
-ivke_NAO_first = ivke_NAO_pos_first - ivke_NAO_neg_first
-ivke_NAO_last = ivke_NAO_pos_last - ivke_NAO_neg_last
-# %%
-# change unit from kg/kg to g/kg
-ivke_NAO_first = ivke_NAO_first * 1e6  # q^2
-ivke_NAO_last = ivke_NAO_last * 1e6  # q^2
-
-##!!!!!!!!!!!!!!!!!##
-# divide by g if not yet
-# ivke_NAO_first = ivke_NAO_first / 9.81
-# ivke_NAO_last = ivke_NAO_last / 9.81
+ivke_ERA5 = read_composite_ERA5("ivke",'ivke')
+ivke_first = read_composite_MPI("ivke", "ivke", 1850)
+ivke_last = read_composite_MPI("ivke", "ivke", 2090)
+# %% change units
+ivke_ERA5 = ivke_ERA5 * 1e6
+ivke_first = ivke_first * 1e6
+ivke_last = ivke_last * 1e6
 
 # %%
 temp_cmap_seq = np.loadtxt(
@@ -136,6 +173,7 @@ prec_cmap_div = np.loadtxt(
 )
 prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 # %%
+zg_levels = np.arange(-30, 31, 5)
 eke_levels_div = np.arange(-12, 13, 2)
 upvp_levels_div = np.arange(-25, 26, 5)
 uhat_levels_div = np.arange(-12, 13, 2)
@@ -143,8 +181,122 @@ uhat_levels_div = np.arange(-12, 13, 2)
 
 # %%
 fig, axes = plt.subplots(
-    3, 3, figsize=(8, 10), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
+    4, 3, figsize=(8, 12), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
 )
+eof_ERA5.plot.contourf(
+    ax=axes[0, 0],
+    transform=ccrs.PlateCarree(),
+    levels = zg_levels,
+    add_colorbar=False,
+    extend="both",
+)
+
+eof_first.plot.contourf(
+    ax=axes[0, 1],
+    transform=ccrs.PlateCarree(),
+    levels = zg_levels,
+    add_colorbar=False,
+    extend="both",
+)
+
+eof_pattern = eof_last.plot.contourf(
+    ax=axes[0, 2],
+    transform=ccrs.PlateCarree(),
+    levels = zg_levels,
+    add_colorbar=False,
+    extend="both",
+)
+
+uhat_ERA5.plot.contourf(
+    ax=axes[1, 0],
+    transform=ccrs.PlateCarree(),
+    cmap=temp_cmap_div,
+    levels=uhat_levels_div,
+    extend="both",
+    add_colorbar=False,
+)
+uhat_first.plot.contourf(
+    ax=axes[1, 1],
+    transform=ccrs.PlateCarree(),
+    cmap=temp_cmap_div,
+    levels=uhat_levels_div,
+    extend="both",
+    add_colorbar=False,
+)
+uhat_last.plot.contourf(
+    ax=axes[1, 2],
+    transform=ccrs.PlateCarree(),
+    cmap=temp_cmap_div,
+    levels=uhat_levels_div,
+    extend="both",
+    add_colorbar=False,
+)
+
+upvp_ERA5.plot.contourf(    
+    ax=axes[2, 0],
+    transform=ccrs.PlateCarree(),
+    cmap=temp_cmap_div,
+    levels=upvp_levels_div,
+    extend="both",
+    add_colorbar=False,
+)
+upvp_first.plot.contourf(
+    ax=axes[2, 1],
+    transform=ccrs.PlateCarree(),
+    cmap=temp_cmap_div,
+    levels=upvp_levels_div,
+    extend="both",
+    add_colorbar=False,
+)
+upvp_last.plot.contourf(
+    ax=axes[2, 2],
+    transform=ccrs.PlateCarree(),
+    cmap=temp_cmap_div,
+    levels=upvp_levels_div,
+    extend="both",
+    add_colorbar=False,
+)
+
+
+ivke_ERA5.plot(
+    ax=axes[3, 0],
+    transform=ccrs.PlateCarree(),
+    cmap="RdBu_r",
+    levels=eke_levels_div,
+    extend="both",
+    add_colorbar=False,
+)
+ivke_first.plot(
+    ax=axes[3, 1],
+    transform=ccrs.PlateCarree(),
+    cmap="RdBu_r",
+    levels=eke_levels_div,
+    extend="both",
+    add_colorbar=False,
+)
+ivke_last.plot(
+    ax=axes[3, 2],  
+    transform=ccrs.PlateCarree(),
+    cmap="RdBu_r",
+    levels=eke_levels_div,
+    extend="both",
+    add_colorbar=False,
+)
+
+
+for ax in axes.flatten():
+    ax.coastlines()
+    # add gidlines at lat every 20 degree, and lon every 60 degree
+    ax.gridlines(draw_labels=False, linewidth=0.5, linestyle="dotted")
+    ax.set_global()
+
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.set_title("")
+#%%
+
+
+
 uhat_NAO_first.plot.contourf(
     ax=axes[0, 0],
     transform=ccrs.PlateCarree(),
