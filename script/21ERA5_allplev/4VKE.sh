@@ -34,7 +34,7 @@ VKE(){
     fname=$(basename ${eke_file} .nc | sed 's/eke/vke/')
     to_file=${vke_path}${fname}.nc
 
-    cdo -O -expr,'vke=var133*var133*eke' -merge ${q_file} ${eke_file} $to_file
+    cdo -r -O -expr,'vke=var133*var133*eke' -merge ${q_file} ${eke_file} $to_file
 
 }
 
