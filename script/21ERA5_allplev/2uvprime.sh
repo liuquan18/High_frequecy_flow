@@ -67,7 +67,8 @@ EKE(){
     cdo -O -expr,'eke=0.5*(var131*var131 + var132*var132)' -merge ${upfile} ${vpfile} ${eddyfile}
 
     echo "Calculating upvp"
-    cdo -O  -mul ${upfile} ${vpfile} ${upvpfile}
+    # cdo -O  -mul ${upfile} ${vpfile} ${upvpfile}
+    cdo -r -O -expr,'upvp=var131*var132' -merge ${upfile} ${vpfile} ${upvpfile}
 }
 
 export -f EKE
