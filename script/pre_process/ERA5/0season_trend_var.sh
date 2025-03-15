@@ -10,7 +10,7 @@
 #SBATCH --account=mh0033
 #SBATCH --output=trend.%j.out
 
-module load cdo 
+# module load cdo 
 module load parallel
 
 var=$1
@@ -26,7 +26,7 @@ mkdir -p $to_dir
 export var_month_dir monthly_files to_dir var
 
 # monthly data pre-process
-cdo -f nc -O -P 10 -setgridtype,regular -selmon,5/9 -vertmean -mergetime -apply,-sellevel,85000,87500,90000,92500,95000,97500,100000 [ ${monthly_files[@]} ] ${to_dir}${var}_monthly_05_09.nc
+cdo -r -f nc -O -P 10 -setgridtype,regular -mergetime -apply,-selmon,5/9 [ ${monthly_files[@]} ] ${to_dir}${var}_monthly_05_09.nc
 
 # export var_month_dir monthly_files to_dir
 
