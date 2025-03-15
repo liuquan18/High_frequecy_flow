@@ -20,8 +20,8 @@ logging.basicConfig(level=logging.INFO)
 #%%
 def read_all_data( var, **kwargs):
     logging.info("reading NAO extremes")
-    NAO_pos = read_NAO_extreme_ERA5('pos', 3) # the number is too small for 5 days
-    NAO_neg = read_NAO_extreme_ERA5('neg', 3)
+    NAO_pos = read_NAO_extreme_ERA5('pos', 5) # the number is too small for 5 days
+    NAO_neg = read_NAO_extreme_ERA5('neg', 5)
 
     logging.info("reading ivke")
     hf_data = read_prime_ERA5( var = var, **kwargs)  # change the suffix to read different data
@@ -52,4 +52,9 @@ def process_data(var, name = 'ivke', plev = None, window = (-15, -5)):
 
 #%%
 if __name__ == "__main__":
-    process_data('ivke')
+    process_data('ivke', name = 'ivke', plev = None, window = (-15, -5))
+    process_data('upvp', name = 'var131', plev = 20000, window = (-5, 0))
+    
+
+# %%
+process_data('upvp', name = 'var131', plev = 20000, window = (-5, 0))
