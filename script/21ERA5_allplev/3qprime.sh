@@ -12,9 +12,11 @@
 module load cdo
 module load parallel
 
-q_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/hus_daily/
+model=ERA5_ano
 
-qp_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/hus_prime_daily/
+q_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/hus_daily/
+
+qp_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/hus_prime_daily/
 
 
 mkdir -p ${qp_path} 

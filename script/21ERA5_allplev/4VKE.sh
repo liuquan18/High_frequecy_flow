@@ -12,10 +12,12 @@
 module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
-eke_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/eke_daily/
-qp_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/hus_prime_daily/
+model=ERA5_ano
 
-vke_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/vke_daily/
+eke_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/eke_daily/
+qp_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/hus_prime_daily/
+
+vke_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/vke_daily/
 
 
 mkdir -p ${vke_path} ${tmp_dir}
