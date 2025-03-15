@@ -9,7 +9,6 @@
 #SBATCH --account=mh0033
 #SBATCH --output=eddy.%j.out
 
-module load cdo
 module load parallel
 
 model=ERA5_ano
@@ -45,8 +44,8 @@ band_filter(){
 
 EKE(){
     year=$1
-    ufile=$(find ${u_path} -name "E5pl00_1D_ua_daily_${year}*.nc")
-    vfile=$(find ${v_path} -name "E5pl00_1D_va_daily_${year}*.nc")
+    ufile=$(find ${u_path} -name "*${year}*.nc")
+    vfile=$(find ${v_path} -name "*${year}*.nc")
 
     fname_u=$(basename ${ufile%.nc})
     fname_v=$(basename ${vfile%.nc})
@@ -55,7 +54,7 @@ EKE(){
     vpfile=${vp_path}${fname_v/va/vp}.nc
 
     eddyfile=${eddy_path}E5pl00_1D_eke_daily_${year}.nc
-    upvpfile=${upvp_path}${fname_u/ua/upvp}.nc
+    upvpfile=${upvp_path}E5pl00_1D_upvp_daily_${year}.nc
     
 
     echo "Filtering ${fname_u}"

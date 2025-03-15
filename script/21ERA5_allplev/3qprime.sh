@@ -38,7 +38,7 @@ band_filter(){
 
 perform(){
     year=$1
-    husfile=$(find ${q_path} -name "E5pl00_1D_hus_daily_${year}*.nc")
+    husfile=$(find ${q_path} -name "*${year}*.nc")
 
     fname_hus=$(basename ${husfile%.nc})
 
