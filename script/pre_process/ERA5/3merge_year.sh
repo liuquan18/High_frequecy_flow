@@ -27,4 +27,4 @@ merge_year(){
 
 export -f merge_year
 
-parallel -j 5 merge_year ::: {1979..2019}
+parallel -j 5 merge_year ::: {1979..2024}
