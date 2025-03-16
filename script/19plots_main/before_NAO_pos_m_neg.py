@@ -181,7 +181,7 @@ uhat_levels_div = np.arange(-12, 13, 2)
 
 # %%
 fig, axes = plt.subplots(
-    4, 3, figsize=(8, 12), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
+    4, 3, figsize=(11, 12), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
 )
 eof_ERA5.plot.contourf(
     ax=axes[0, 0],
@@ -223,7 +223,7 @@ uhat_first.plot.contourf(
     extend="both",
     add_colorbar=False,
 )
-uhat_last.plot.contourf(
+uhat_map = uhat_last.plot.contourf(
     ax=axes[1, 2],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
@@ -248,7 +248,7 @@ upvp_first.plot.contourf(
     extend="both",
     add_colorbar=False,
 )
-upvp_last.plot.contourf(
+upvp_map = upvp_last.plot.contourf(
     ax=axes[2, 2],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
@@ -274,7 +274,7 @@ ivke_first.plot(
     extend="both",
     add_colorbar=False,
 )
-ivke_last.plot(
+ivke_map = ivke_last.plot(
     ax=axes[3, 2],  
     transform=ccrs.PlateCarree(),
     cmap="RdBu_r",
@@ -293,121 +293,23 @@ for ax in axes.flatten():
     ax.set_xlabel("")
     ax.set_ylabel("")
     ax.set_title("")
-#%%
 
 
+# define four axes at the right of last column to hold the four colorbars
+cbar_ax_eof = fig.add_axes([0.92, 0.78, 0.01, 0.18])
+cbar_ax_uhat = fig.add_axes([0.92, 0.54, 0.01, 0.18])
+cbar_ax_upvp = fig.add_axes([0.92, 0.28, 0.01, 0.18])
+cbar_ax_eke = fig.add_axes([0.92, 0.04, 0.01, 0.18])
 
-uhat_NAO_first.plot.contourf(
-    ax=axes[0, 0],
-    transform=ccrs.PlateCarree(),
-    cmap=temp_cmap_div,
-    levels=uhat_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
-uhat_NAO_last.plot.contourf(
-    ax=axes[1, 0],
-    transform=ccrs.PlateCarree(),
-    cmap=temp_cmap_div,
-    levels=uhat_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
-uhat_diff = (uhat_NAO_last - uhat_NAO_first).plot.contourf(
-    ax=axes[2, 0],
-    transform=ccrs.PlateCarree(),
-    cmap=temp_cmap_div,
-    levels=uhat_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
+cbar_eof = fig.colorbar(eof_pattern, cax=cbar_ax_eof, orientation="vertical")
+cbar_uhat = fig.colorbar(uhat_map, cax=cbar_ax_uhat, orientation="vertical")
+cbar_upvp = fig.colorbar(upvp_map, cax=cbar_ax_upvp, orientation="vertical")
+cbar_eke = fig.colorbar(ivke_map, cax=cbar_ax_eke, orientation="vertical")
 
-
-# second column for upvp
-upvp_NAO_first.plot.contourf(
-    ax=axes[0, 1],
-    transform=ccrs.PlateCarree(),
-    cmap=temp_cmap_div,
-    levels=upvp_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
-upvp_NAO_last.plot.contourf(
-    ax=axes[1, 1],
-    transform=ccrs.PlateCarree(),
-    cmap=temp_cmap_div,
-    levels=upvp_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
-upvp_diff = (upvp_NAO_last - upvp_NAO_first).plot.contourf(
-    ax=axes[2, 1],
-    transform=ccrs.PlateCarree(),
-    cmap=temp_cmap_div,
-    levels=upvp_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
-
-# third column for eke
-ivke_NAO_first.plot(
-    ax=axes[0, 2],
-    transform=ccrs.PlateCarree(),
-    cmap="RdBu_r",
-    levels=eke_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
-ivke_NAO_last.plot(
-    ax=axes[1, 2],
-    transform=ccrs.PlateCarree(),
-    cmap="RdBu_r",
-    levels=eke_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
-eke_diff = (ivke_NAO_last - ivke_NAO_first).plot(
-    ax=axes[2, 2],
-    transform=ccrs.PlateCarree(),
-    cmap="RdBu_r",
-    levels=eke_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
-
-for ax in axes.flatten():
-    ax.coastlines()
-    # add gidlines at lat every 20 degree, and lon every 60 degree
-    ax.gridlines(draw_labels=False, linewidth=0.5, linestyle="dotted")
-    ax.set_global()
-
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-
-# Define three axes at the bottom to hold the three colorbars
-cbar_ax_uhat = fig.add_axes([0.05, 0.06, 0.27, 0.01])
-cbar_ax_upvp = fig.add_axes([0.37, 0.06, 0.27, 0.01])
-cbar_ax_eke = fig.add_axes([0.69, 0.06, 0.27, 0.01])
-
-cbar_uhat = fig.colorbar(uhat_diff, cax=cbar_ax_uhat, orientation="horizontal")
-cbar_upvp = fig.colorbar(upvp_diff, cax=cbar_ax_upvp, orientation="horizontal")
-cbar_eke = fig.colorbar(eke_diff, cax=cbar_ax_eke, orientation="horizontal")
-cbar_upvp.set_label(r"$m^2/s^2$")
-cbar_uhat.set_label(r"$m/s$")
-cbar_eke.set_label(r"$m^2/s^2$")
-
-# cbar_eke.formatter = ScalarFormatter()
-# cbar_eke.formatter.set_scientific(True)
-# cbar_eke.formatter.set_powerlimits((0, 0))
-
-cbar_uhat.set_label(r"$m s^{-1}$")
-cbar_upvp.set_label(r"$m^2 s^{-2}$")
-cbar_eke.set_label(r"$g^2 kg ^{-2} m^2 s^{-2}$")
-
-
-# axes[0, 0].set_title(r"$\bar{u}$ during")
-# axes[0, 1].set_title(r"$u'v'$ [-5,0] days before")
-# axes[0, 2].set_title(r"$[(q'u')^2 + (q'v')^2]/2$ [-15,-5] days before")
+cbar_eof.set_label(r"$Z500 \, / \, m$")
+cbar_uhat.set_label(r"$\bar{u} \, / \, m \, s^{-1}$")
+cbar_upvp.set_label(r"$u'v' \, / \, m^2 \, s^{-2}$")
+cbar_eke.set_label(r"$q'^2 \, eke \, / \, g^2 \, kg^{-2} \, m^2 \, s^{-2}$")
 
 # add a, b, c
 for i, ax in enumerate(axes.flatten()):
@@ -420,7 +322,8 @@ for i, ax in enumerate(axes.flatten()):
         fontweight="bold",
     )
 
-plt.tight_layout(w_pad=0.5, h_pad=-6)
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/transients_meachnism.pdf", dpi=300)
+plt.tight_layout(w_pad=-7, h_pad=1)
+
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/transients_meachnism.pdf", dpi=300)
 
 # %%
