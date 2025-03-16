@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for year in {2000..2024..5}
+for year in {2005..2024..5}
 do
     start_year=$year
     end_year=$((year+4))

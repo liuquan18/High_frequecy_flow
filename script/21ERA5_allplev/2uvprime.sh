@@ -80,4 +80,4 @@ end_year=${2:-2024}
 
 
 # calculate EKE
-seq ${start_year} ${end_year} | parallel --dryrun -j 5 EKE
+seq ${start_year} ${end_year} | parallel --dryrun -j 2 EKE
