@@ -17,7 +17,7 @@ echo ensemble mean for ${decade}
 # base_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily_ano/
 base_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ivke_daily/
 
-to_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/
+to_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ivke_ensmean/
 
 upvp_files=$(ls ${base_dir}r*i1p1f1/*${decade}*.nc)
 
