@@ -44,6 +44,7 @@ band_filter(){
 
 EKE(){
     year=$1
+    echo "Calculating EKE for ${year}"
     ufile=$(find ${u_path} -name "*${year}*.nc")
     vfile=$(find ${v_path} -name "*${year}*.nc")
 
@@ -80,4 +81,4 @@ end_year=${2:-2024}
 
 
 # calculate EKE
-seq ${start_year} ${end_year} | parallel --dryrun -j 2 EKE
+seq ${start_year} ${end_year} | parallel -j 2 EKE
