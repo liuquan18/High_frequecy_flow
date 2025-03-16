@@ -22,8 +22,8 @@ except:
     size = 1
 # %%
 model="ERA5_ano"
-from_path = "/work/mh0033/m300883/High_frequecy_flow/data/${model}/vke_daily/"
-to_path = "/work/mh0033/m300883/High_frequecy_flow/data/${model}/ivke_daily/"
+from_path = f"/work/mh0033/m300883/High_frequecy_flow/data/{model}/vke_daily/"
+to_path = f"/work/mh0033/m300883/High_frequecy_flow/data/{model}/ivke_daily/"
 
 if rank == 0:
     if not os.path.exists(to_path):
