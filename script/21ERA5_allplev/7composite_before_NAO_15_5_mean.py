@@ -31,9 +31,9 @@ def read_all_data( var, **kwargs):
 
 
 #%%
-def process_data(var, name = 'ivke', plev = None, window = (-15, -5)):
+def process_data(var, name = 'ivke', plev = None, window = (-15, -5), model = 'ERA5_ano'):
     # read data
-    NAO_pos, NAO_neg, data = read_all_data(var = var, name = name, plev = plev)
+    NAO_pos, NAO_neg, data = read_all_data(var = var, name = name, plev = plev, model = model)
 
     # select the NAO_pos and NAO_neg from 1979 on
     NAO_pos = NAO_pos.where(pd.to_datetime(NAO_pos.extreme_start_time).dt.year >= 1979).dropna(axis = 0)
@@ -45,8 +45,8 @@ def process_data(var, name = 'ivke', plev = None, window = (-15, -5)):
     ivke_NAO_neg = before_NAO_mean(NAO_neg, data, window)
 
     logging.info(f"saving data for {var}")
-    save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/{var}_NAO_pos_{abs(window[0])}_{abs(window[1])}_mean.nc'
-    save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/{var}_NAO_neg_{abs(window[0])}_{abs(window[1])}_mean.nc'
+    save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/{model}_{var}_NAO_pos_{abs(window[0])}_{abs(window[1])}_mean.nc'
+    save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/{model}_{var}_NAO_neg_{abs(window[0])}_{abs(window[1])}_mean.nc'
 
 
     ivke_NAO_pos.to_netcdf(save_dir_pos)
@@ -57,7 +57,7 @@ def process_data(var, name = 'ivke', plev = None, window = (-15, -5)):
 #%%
 if __name__ == "__main__":
     process_data('ivke', name = 'ivke', plev = None, window = (-15, -5))
-    process_data('upvp', name = 'var131', plev = 20000, window = (-5, 0))
+    process_data('upvp', name = 'upvp', plev = 20000, window = (-5, 0))
     
 
 # %%
