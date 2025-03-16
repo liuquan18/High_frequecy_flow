@@ -31,12 +31,12 @@ def read_prime( decade, suffix = '_ano', var='eke', **kwargs):
 
     return data
 
-def read_prime_ERA5(var = 'eke', suffix = '', **kwargs):
+def read_prime_ERA5(var = 'eke', suffix = '', model = 'ERA5_allplev', **kwargs):
 
     name = kwargs.get('name', var) # default name is the same as var
     plev = kwargs.get('plev', None)
 
-    data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/{var}_daily{suffix}/"
+    data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/{model}/{var}_daily{suffix}/"
 
     files = glob.glob(data_path + f"*{var}*.nc")
 
