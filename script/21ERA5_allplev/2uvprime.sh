@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=eddy
-#SBATCH --time=01:30:00
+#SBATCH --time=07:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks=5
@@ -74,4 +74,10 @@ EKE(){
 export -f EKE
 export -f band_filter
 
-parallel --jobs 5 EKE ::: {1979..2024}
+
+start_year=${1:-1979}
+end_year=${2:-2024}
+
+
+# calculate EKE
+seq ${start_year} ${end_year} | parallel --dryrun -j 5 EKE
