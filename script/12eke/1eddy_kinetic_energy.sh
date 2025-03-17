@@ -24,8 +24,8 @@ v_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily/r${mem
 
 # save path
 if [ "$frequency" == "prime" ]; then
-    up_path=/scratch/m/m300883/up/r${member}i1p1f1/
-    vp_path=/scratch/m/m300883/vp/r${member}i1p1f1/
+    up_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/up_daily/r${member}i1p1f1/
+    vp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vp_daily/r${member}i1p1f1/
     eddy_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/eke_daily/r${member}i1p1f1/
 else
     up_path=/scratch/m/m300883/upp/r${member}i1p1f1/
