@@ -39,14 +39,14 @@ def ivke(vke):
     # vke = vke.sortby('plev', ascending=False) # make sure plev is in descending order, p_B is larger than p_T
     d_vke_dp = vke.differentiate('plev')
     ivke = d_vke_dp.integrate('plev')
-    ivke = ivke / 9.81
+    ivke = -1 * ivke / 9.81
     ivke.name = 'ivke'
     return ivke
 # %%
 for i, file in enumerate(files_core):
     logging.info(f"rank {rank} Processing {i+1}/{len(files_core)}")
     ds = xr.open_dataset(file)
-    ds = ds.sortby('plev', ascending=True)
+    ds = ds.sortby('plev', ascending=False)
 
     ds = ivke(ds['vke'])
     
