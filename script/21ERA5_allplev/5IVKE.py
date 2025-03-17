@@ -49,6 +49,8 @@ for i, file in enumerate(files_core):
     ds = xr.open_dataset(file, chunks={"time": 1})
     ds = ds.sortby("plev", ascending=True)
 
+    ds = ds.sel(plev = slice(25000, 100000))
+
     ds = ivke(ds["vke"])
 
     ds.to_netcdf(file.replace("vke", "ivke"))
