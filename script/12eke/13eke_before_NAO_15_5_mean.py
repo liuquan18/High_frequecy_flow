@@ -19,22 +19,22 @@ logging.basicConfig(level=logging.INFO)
 
     
 #%%
-def read_all_data(decade, var):
+def read_all_data(decade, var, name = 'eke'):
     logging.info("reading NAO extremes")
     # wave breaking
     NAO_pos = read_NAO_extremes(decade, 'positive')
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
-    logging.info("reading eke")
-    eke = read_prime( decade, var = var, suffix='_ano')  # change the suffix to read different data
+    logging.info(f"reading {var}")
+    eke = read_prime( decade, var = var, suffix='_ano', name = name)  # change the suffix to read different data
     
 
     return NAO_pos, NAO_neg, eke
 
 #%%
-def process_data(decade, var):
+def process_data(decade, var, name = 'eke'):
     # read data
-    NAO_pos, NAO_neg, data = read_all_data(decade, var = var)
+    NAO_pos, NAO_neg, data = read_all_data(decade, var = var, name = name)
 
     # select data before NAO events, here 'var' is only for column name
     logging.info (f"selecting data for {decade} \n")
@@ -61,3 +61,4 @@ process_data(decade, 'eke')
 
 
 # %%
+process_data(1850, 'ieke', 'ieke')
