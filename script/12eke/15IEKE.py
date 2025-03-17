@@ -39,7 +39,7 @@ def ieke(vke):
     # vke = vke.sortby('plev', ascending=False) # make sure plev is in descending order, p_B is larger than p_T
     d_vke_dp = vke.differentiate('plev')
     ieke = d_vke_dp.integrate('plev')
-    ieke = ieke / 9.81
+    ieke = -1 * ieke / 9.81
     ieke.name = 'ieke'
     return ieke
 # %%
