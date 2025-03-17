@@ -50,6 +50,6 @@ for i, file in enumerate(files_core):
 
     ds = ieke(ds['eke'])
     
-    ds.to_netcdf(file.replace('vke', 'ieke'))
+    ds.to_netcdf(file.replace('eke', 'ieke'))
     ds.close()
 # %%
