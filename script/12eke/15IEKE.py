@@ -38,7 +38,7 @@ files_core = np.array_split(all_files, size)[rank]
 def IEKE(vke):
     d_vke_dp = vke.differentiate('plev')
     ieke = d_vke_dp.integrate('plev')
-    ieke = -1 * ieke / 9.81
+    ieke = ieke / 9.81
     ieke.name = 'ieke'
     return ieke
 # %%
