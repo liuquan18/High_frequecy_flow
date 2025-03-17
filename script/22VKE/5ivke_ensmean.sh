@@ -12,15 +12,18 @@
 module load cdo/2.5.0-gcc-11.2.0
 
 decade=$1
-echo ensemble mean for ${decade}
+var=$2
+echo ensemble mean for ${decade} ${var}
 
 # base_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily_ano/
-base_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ivke_daily/
+base_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/
 
-to_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ivke_ensmean/
+to_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_ensmean/
+
+mkdir -p ${to_dir}
 
 upvp_files=$(ls ${base_dir}r*i1p1f1/*${decade}*.nc)
 
 # ensemble mean
 
-cdo -P 20 -ensmean -apply,timmean [ ${upvp_files} ] ${to_dir}ivke_ensmean_${decade}.nc
+cdo -P 20 -ensmean -apply,timmean [ ${upvp_files} ] ${to_dir}${var}_ensmean_${decade}.nc
