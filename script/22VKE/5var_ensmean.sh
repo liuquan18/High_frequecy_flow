@@ -26,4 +26,4 @@ upvp_files=$(ls ${base_dir}r*i1p1f1/*${decade}*.nc)
 
 # ensemble mean
 
-cdo -P 20 -ensmean -apply,timmean [ ${upvp_files} ] ${to_dir}${var}_ensmean_${decade}.nc
+cdo -O -P 20 -ensmean -apply,timmean [ ${upvp_files} ] ${to_dir}${var}_ensmean_${decade}.nc
