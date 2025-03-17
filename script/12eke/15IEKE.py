@@ -35,8 +35,7 @@ all_files = glob.glob(from_path + "*.nc")
 files_core = np.array_split(all_files, size)[rank]
 
 # %%
-def ieke(vke):
-    # vke = vke.sortby('plev', ascending=False) # make sure plev is in descending order, p_B is larger than p_T
+def IEKE(vke):
     d_vke_dp = vke.differentiate('plev')
     ieke = d_vke_dp.integrate('plev')
     ieke = -1 * ieke / 9.81
@@ -46,9 +45,9 @@ def ieke(vke):
 for i, file in enumerate(files_core):
     logging.info(f"rank {rank} Processing {i+1}/{len(files_core)}")
     ds = xr.open_dataset(file)
-    ds = ds.sortby('plev', ascending=True)
+    ds = ds.sortby('plev', ascending=False)
 
-    ds = ieke(ds['eke'])
+    ds = IEKE(ds['eke'])
     
     ds.to_netcdf(file.replace('eke', 'ieke'))
     ds.close()
