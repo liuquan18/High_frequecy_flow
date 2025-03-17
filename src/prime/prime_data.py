@@ -15,7 +15,7 @@ def read_prime( decade, var='eke', **kwargs):
     data_path = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
     )
-    files = glob.glob(data_path + "r*i1p1f1/" + f"{var}*{time_tag}*.nc")
+    files = glob.glob(data_path + "r*i1p1f1/" + f"*{time_tag}*.nc")
     # sort files
     files.sort(key=lambda x: int(x.split('/')[-2][1:].split('i')[0]))
 
