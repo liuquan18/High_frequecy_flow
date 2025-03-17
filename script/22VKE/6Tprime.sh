@@ -27,12 +27,12 @@ else
     Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ta_prime_high_daily/r${member}i1p1f1/
 fi
 
-tmp_dir=/scratch/m/m300883/qp/r${member}i1p1f1/
+tmp_dir=/scratch/m/m300883/Tp/r${member}i1p1f1/
 
 mkdir -p ${Tp_path} ${tmp_dir}
 
 
-export Tp_path member tmp_dir
+export T_path Tp_path member tmp_dir
 export frequency
 
 # function to band filter
@@ -78,7 +78,7 @@ parallel -j 5 T_prime ::: {1850..2090..10}
 
 # check completion
 for dec in {1850..2090..10}; do
-    if [! -f ${Tp_path}/*${dec}*.nc]; then
+    if [ ! -f ${Tp_path}/*${dec}*.nc ]; then
         echo "Decade ${dec} is missing"
         echo "Recalculate decade ${dec}"
         T_prime ${dec}
