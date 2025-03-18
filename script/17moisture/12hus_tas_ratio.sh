@@ -7,9 +7,8 @@ member=$1
 read_daily_files() {
     local var=$1
     local member=$2
-    local daily_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_std/r${member}i1p1f1/
-    local daily_file=${var}_day_MPI-ESM1-2-LR_r*i1p1f1_gn_*.nc
-    daily_files=($(find $daily_path -name $daily_file -print))
+    local daily_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/r${member}i1p1f1/
+    daily_files=($(find $daily_path -name *.nc -print))
 }
 
 ratio(){
@@ -23,16 +22,19 @@ ratio(){
 export -f ratio 
 export -f read_daily_files
 
+# mkdir to path
+mkdir -p /work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_prime_daily/r${member}i1p1f1/
+
 
 # Generate hus daily files
-read_daily_files hus $member
+read_daily_files hus_prime $member
 echo Read daily hus files for member $member
 hus_daily_files=("${daily_files[@]}")
 # sort the list
 hus_daily_files=($(echo ${hus_daily_files[@]} | tr ' ' '\n' | sort -n))
 
 # Generate tas daily files
-read_daily_files "tas" $member
+read_daily_files tas_prime $member
 echo Read daily tas files for member $member
 tas_daily_files=("${daily_files[@]}")
 # sort the list
