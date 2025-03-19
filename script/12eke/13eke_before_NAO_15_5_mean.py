@@ -59,5 +59,5 @@ process_data(decade, 'eke')
 
 
 # %%
-process_data(1850, 'ieke', name = 'ieke', suffix = '', plev = None)
+process_data(1850, 'ieke', name = 'ieke', plev = None)
 # %%
