@@ -182,11 +182,10 @@ prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 
 # %%
 zg_levels = np.arange(-30, 31, 5)
-vke_levels_div = np.arange(-12, 13, 2)
-eke_levels_div = np.arange(-12, 13, 2)
-upvp_levels_div = np.arange(-25, 26, 5)
 uhat_levels_div = np.arange(-12, 13, 2)
-
+upvp_levels_div = np.arange(-25, 26, 5)
+eke_levels_div = np.arange(-10, 11, 2)
+vke_levels_div = np.arange(-12, 13, 2)
 
 
 #%%
