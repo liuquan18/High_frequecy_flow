@@ -146,7 +146,7 @@ upvp_last = read_composite_MPI("upvp", "ua", 2090)
 #%%
 upvp_ERA5 = smooth(upvp_ERA5, lat_window=40, lon_window=80) # smooth the data
 # %%
-ieke_ERA5 = read_composite_ERA5("ivke",'ivke') # change
+ieke_ERA5 = read_composite_ERA5("ieke",'ieke') 
 ieke_first = read_composite_MPI("ieke", "ieke", 1850)
 ieke_last = read_composite_MPI("ieke", "ieke", 2090)
 # %%
