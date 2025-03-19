@@ -58,6 +58,6 @@ def process_data(var, name = 'ivke', plev = None, window = (-15, -5), model = 'E
 if __name__ == "__main__":
     process_data('ivke', name = 'ivke', plev = None, window = (-15, -5))
     process_data('upvp', name = 'var131', plev = 25000, window = (-5, 0))
-    
+    process_data('ieke', name = 'ieke', plev = None, window = (-15, -5))
 
 # %%
