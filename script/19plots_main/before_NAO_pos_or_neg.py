@@ -186,15 +186,42 @@ uhat_levels_div = np.arange(-12, 13, 2)
 
 
 # %%
-index = 0  # Change this to 1 to plot the second element in the tuples
+index = 1  # Change this to 1 to plot the second element in the tuples
+phases = ['pos', 'neg']
+phase = phases[index]
 
+#%%
 fig, axes = plt.subplots(
-    4, 3, figsize=(11, 12), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
+    5, 3, figsize=(11, 15), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
+)
+
+eof_ERA5.plot.contourf(
+    ax=axes[0, 0],
+    transform=ccrs.PlateCarree(),
+    levels = zg_levels,
+    add_colorbar=False,
+    extend="both",
+)
+
+eof_first.plot.contourf(
+    ax=axes[0, 1],
+    transform=ccrs.PlateCarree(),
+    levels = zg_levels,
+    add_colorbar=False,
+    extend="both",
+)
+
+eof_pattern = eof_last.plot.contourf(
+    ax=axes[0, 2],
+    transform=ccrs.PlateCarree(),
+    levels = zg_levels,
+    add_colorbar=False,
+    extend="both",
 )
 
 
 uhat_ERA5[index].plot.contourf(
-    ax=axes[0, 0],
+    ax=axes[1, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
     levels=uhat_levels_div,
@@ -202,7 +229,7 @@ uhat_ERA5[index].plot.contourf(
     add_colorbar=False,
 )
 uhat_first[index].plot.contourf(
-    ax=axes[0, 1],
+    ax=axes[1, 1],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
     levels=uhat_levels_div,
@@ -210,7 +237,7 @@ uhat_first[index].plot.contourf(
     add_colorbar=False,
 )
 uhat_map = uhat_last[index].plot.contourf(
-    ax=axes[0, 2],
+    ax=axes[1, 2],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
     levels=uhat_levels_div,
@@ -221,7 +248,7 @@ uhat_map = uhat_last[index].plot.contourf(
 
 
 upvp_ERA5[index].plot.contourf(
-    ax=axes[1, 0],
+    ax=axes[2, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
     levels=upvp_levels_div,
@@ -229,7 +256,7 @@ upvp_ERA5[index].plot.contourf(
     add_colorbar=False,
 )
 upvp_first[index].plot.contourf(
-    ax=axes[1, 1],
+    ax=axes[2, 1],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
     levels=upvp_levels_div,
@@ -237,7 +264,7 @@ upvp_first[index].plot.contourf(
     add_colorbar=False,
 )
 upvp_map = upvp_last[index].plot.contourf(
-    ax=axes[1, 2],
+    ax=axes[2, 2],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
     levels=upvp_levels_div,
@@ -247,7 +274,7 @@ upvp_map = upvp_last[index].plot.contourf(
 
 
 ieke_ERA5[index].plot.contourf(
-    ax=axes[2, 0],
+    ax=axes[3, 0],
     transform=ccrs.PlateCarree(),
     cmap="RdBu_r",
     levels=eke_levels_div,
@@ -255,7 +282,7 @@ ieke_ERA5[index].plot.contourf(
     add_colorbar=False,
 )
 ieke_first[index].plot.contourf(
-    ax=axes[2, 1],
+    ax=axes[3, 1],
     transform=ccrs.PlateCarree(),
     cmap="RdBu_r",
     levels=eke_levels_div,
@@ -263,7 +290,7 @@ ieke_first[index].plot.contourf(
     add_colorbar=False,
 )
 ieke_map = ieke_last[index].plot.contourf(
-    ax=axes[2, 2],
+    ax=axes[3, 2],
     transform=ccrs.PlateCarree(),
     cmap="RdBu_r",
     levels=eke_levels_div,
@@ -274,7 +301,7 @@ ieke_map = ieke_last[index].plot.contourf(
 
 
 ivke_ERA5[index].plot(
-    ax=axes[3, 0],
+    ax=axes[4, 0],
     transform=ccrs.PlateCarree(),
     cmap="RdBu_r",
     levels=vke_levels_div / 2,
@@ -282,7 +309,7 @@ ivke_ERA5[index].plot(
     add_colorbar=False,
 )
 ivke_first[index].plot(
-    ax=axes[3, 1],
+    ax=axes[4, 1],
     transform=ccrs.PlateCarree(),
     cmap="RdBu_r",
     levels=vke_levels_div,
@@ -290,7 +317,7 @@ ivke_first[index].plot(
     add_colorbar=False,
 )
 ivke_map = ivke_last[index].plot(
-    ax=axes[3, 2],
+    ax=axes[4, 2],
     transform=ccrs.PlateCarree(),
     cmap="RdBu_r",
     levels=vke_levels_div,
@@ -311,17 +338,21 @@ for ax in axes.flatten():
     ax.set_title("")
 
 
-# define four axes at the right of last column to hold the four colorbars
-cbar_ax_uhat = fig.add_axes([0.92, 0.78, 0.01, 0.18])
-cbar_ax_upvp= fig.add_axes([0.92, 0.54, 0.01, 0.18])
-cbar_ax_eke = fig.add_axes([0.92, 0.28, 0.01, 0.18])
-cbar_ax_vke = fig.add_axes([0.92, 0.04, 0.01, 0.18])
 
+# define four axes at the right of last column to hold the four colorbars
+cbar_ax_eof = fig.add_axes([0.92, 0.80, 0.01, 0.18])
+cbar_ax_uhat = fig.add_axes([0.92, 0.60, 0.01, 0.18])
+cbar_ax_upvp = fig.add_axes([0.92, 0.40, 0.01, 0.18])
+cbar_ax_eke = fig.add_axes([0.92, 0.20, 0.01, 0.18])
+cbar_ax_vke = fig.add_axes([0.92, 0.00, 0.01, 0.18])
+
+cbar_eof = fig.colorbar(eof_pattern, cax=cbar_ax_eof, orientation="vertical")
 cbar_uhat = fig.colorbar(uhat_map, cax=cbar_ax_uhat, orientation="vertical")
 cbar_upvp = fig.colorbar(upvp_map, cax=cbar_ax_upvp, orientation="vertical")
 cbar_eke = fig.colorbar(ieke_map, cax=cbar_ax_eke, orientation="vertical")
 cbar_vke = fig.colorbar(ivke_map, cax=cbar_ax_vke, orientation="vertical")
 
+cbar_eof.set_label(r"$Z500 \, / \, m$")
 cbar_uhat.set_label(r"$\bar{u} \, / \, m \, s^{-1}$")
 cbar_upvp.set_label(r"$u'v' \, / \, m^2 \, s^{-2}$")
 cbar_eke.set_label(r"$eke \, / \, m^2 \, s^{-2}$")
@@ -340,6 +371,6 @@ for i, ax in enumerate(axes.flatten()):
 
 plt.tight_layout(w_pad=-7, h_pad=1)
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/transients_meachnism_anoERA5.pdf", dpi=300)
+# plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/transients_meachnism_{phase}.pdf", dpi=300)
 
 # %%
