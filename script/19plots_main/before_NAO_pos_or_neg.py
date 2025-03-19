@@ -73,10 +73,10 @@ def read_composite_MPI(var, name, decade):
 #%%
 def read_composite_ERA5(var, name):
     pos_file=glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/ERA5_ano_{var}_NAO_pos_*_mean.nc"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/ERA5_allplev_{var}_NAO_pos_*_mean.nc"
     )
     neg_file=glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/ERA5_ano_{var}_NAO_neg_*_mean.nc"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/ERA5_allplev_{var}_NAO_neg_*_mean.nc"
     )
     if len(pos_file) == 0 or len(neg_file) == 0:
         raise ValueError(f"no file found for {var}")
@@ -138,7 +138,7 @@ eof_last = read_NAO_pattern('last')
 uhat_ERA5 = read_composite_ERA5("ua_hat", "var131")
 uhat_first, uhat_last = read_MPI_GE_uhat()
 #%%
-upvp_ERA5 = read_composite_ERA5("upvp", "upvp")
+upvp_ERA5 = read_composite_ERA5("upvp", "var131")
 upvp_first = read_composite_MPI("upvp", "ua", 1850)
 upvp_last = read_composite_MPI("upvp", "ua", 2090)
 #%%
@@ -153,10 +153,11 @@ ivke_first = [ivke * 1e6 for ivke in ivke_first]
 ivke_last = [ivke * 1e6 for ivke in ivke_last]
 #%%
 # ieke_ERA5 = read_composite_ERA5("ieke",'ieke')
-ieke_ERA5 = ivke_ERA5
+ieke_ERA5 = read_composite_ERA5("ieke", "ieke")
 ieke_first = read_composite_MPI("ieke", "ieke", 1850)
 ieke_last = read_composite_MPI("ieke", "ieke", 2090)
 
+ieke_ERA5 = [smooth(ieke, lat_window=40, lon_window=80) for ieke in ieke_ERA5] # smooth the data
 # %%
 temp_cmap_seq = np.loadtxt(
     "/work/mh0033/m300883/High_frequecy_flow/data/colormaps-master/continuous_colormaps_rgb_0-1/temp_seq.txt"
@@ -180,7 +181,7 @@ prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 # %%
 zg_levels = np.arange(-30, 31, 5)
 vke_levels_div = np.arange(-12, 13, 2)
-eke_levels_div = np.arange(-12, 13, 2)
+eke_levels_div = np.arange(-10, 11, 2)
 upvp_levels_div = np.arange(-25, 26, 5)
 uhat_levels_div = np.arange(-12, 13, 2)
 
@@ -371,6 +372,6 @@ for i, ax in enumerate(axes.flatten()):
 
 plt.tight_layout(w_pad=-7, h_pad=1)
 
-# plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/transients_meachnism_{phase}.pdf", dpi=300)
+plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/transient_eddy_forcing/transient_{phase}.pdf", dpi=300)
 
 # %%
