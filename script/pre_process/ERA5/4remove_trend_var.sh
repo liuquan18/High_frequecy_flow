@@ -10,6 +10,7 @@
 #SBATCH --account=mh0033
 #SBATCH --output=detrend.%j.out
 
+module unload cdo
 module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 var=$1
