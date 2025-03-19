@@ -10,4 +10,4 @@
 #SBATCH --output=ieke.%j.out
 
 
-mpirun -n 5 python -u 5IVKE.py 
+mpirun -n 5 python -u 6IEKE.py 
