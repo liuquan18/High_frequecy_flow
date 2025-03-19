@@ -24,16 +24,16 @@ def read_all_data( var, **kwargs):
     NAO_neg = read_NAO_extreme_ERA5('neg', 4)
 
     logging.info("reading ivke")
-    hf_data = read_prime_ERA5( var = var, **kwargs)  # change the suffix to read different data
+    hf_data = read_prime_ERA5( var = var, model = 'ERA5_allplev', **kwargs)  # change the suffix to read different data
 
 
     return NAO_pos, NAO_neg, hf_data
 
 
 #%%
-def process_data(var, name = 'ivke', plev = None, window = (-15, -5), model = 'ERA5_ano'):
+def process_data(var, name = 'ivke', plev = None, window = (-15, -5), model = 'ERA5_allplev'):
     # read data
-    NAO_pos, NAO_neg, data = read_all_data(var = var, name = name, plev = plev, model = model)
+    NAO_pos, NAO_neg, data = read_all_data(var = var, name = name, plev = plev, suffix = '_ano')
 
     # select the NAO_pos and NAO_neg from 1979 on
     NAO_pos = NAO_pos.where(pd.to_datetime(NAO_pos.extreme_start_time).dt.year >= 1979).dropna(axis = 0)
@@ -57,7 +57,7 @@ def process_data(var, name = 'ivke', plev = None, window = (-15, -5), model = 'E
 #%%
 if __name__ == "__main__":
     process_data('ivke', name = 'ivke', plev = None, window = (-15, -5))
-    process_data('upvp', name = 'upvp', plev = 20000, window = (-5, 0))
+    process_data('upvp', name = 'upvp', plev = 25000, window = (-5, 0))
     
 
 # %%
