@@ -26,6 +26,8 @@ def read_all_data( var, **kwargs):
     logging.info("reading ivke")
     hf_data = read_prime_ERA5( var = var, model = 'ERA5_allplev', **kwargs)  # change the suffix to read different data
 
+    # anomaly
+    hf_data = hf_data - hf_data.mean(dim = 'time')
 
     return NAO_pos, NAO_neg, hf_data
 
