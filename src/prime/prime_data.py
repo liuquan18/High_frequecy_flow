@@ -40,7 +40,7 @@ def read_prime_ERA5(var = 'eke', model = 'ERA5_allplev', **kwargs):
 
     data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/{model}/{var}_daily{suffix}/"
 
-    files = glob.glob(data_path + f"*{var}*.nc")
+    files = glob.glob(data_path + "*.nc")
 
     files.sort()
 
