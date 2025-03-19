@@ -1,8 +1,6 @@
 #%%
 import numpy as np
 import matplotlib.pyplot as plt
-
-
 def calculate_saturation_specific_humidity(T):
     """
     Calculate saturation specific humidity using Clausius-Clapeyron relation
@@ -76,30 +74,36 @@ q_tangent = [q + dq*(T_line - T) for T, q, dq, T_line in
              zip(T_tangent, q_s_tangent, dqs_dT_tangent, T_range_tangent)]
 
 # Create the plot
-plt.figure(figsize=(12, 8))
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 16))
 
 # Plot main curve
-plt.plot(T_kelvin, q_s, 'b-', linewidth=2, label='q*(T)')
+ax1.plot(T_kelvin, q_s, 'b-', linewidth=2, label='q*(T)')
 
 # Plot tangent lines
 colors = ['C0', 'C1']
 for i, (T, T_line, q_line) in enumerate(zip(T_tangent, T_range_tangent, q_tangent)):
-    plt.plot(T_line, q_line, f'{colors[i]}--', 
+    ax1.plot(T_line, q_line, f'{colors[i]}--', 
              label=f'Tangent at T={T}K\n(dq*/dT={dqs_dT_tangent[i]:.2e})')
-    plt.plot(T, calculate_saturation_specific_humidity(T), f'{colors[i]}o')
+    ax1.plot(T, calculate_saturation_specific_humidity(T), f'{colors[i]}o')
 
-# plt.grid(True)
-plt.xlabel('Temperature (K)')
-plt.ylabel('Saturation Specific Humidity (kg/kg)')
-plt.title('Saturation Specific Humidity and Tangent Lines')
-plt.legend()
-plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+ax1.set_xlabel('Temperature (K)')
+ax1.set_ylabel('Saturation Specific Humidity (kg/kg)')
+ax1.set_title('Saturation Specific Humidity and Tangent Lines')
+ax1.legend()
+ax1.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
 # text 'first10' and 'last10' at the T_tangent[0] and T_tangent[1] points
-plt.text(T_tangent[0], calculate_saturation_specific_humidity(T_tangent[0]), 'first10', fontsize=12, ha='right')
-plt.text(T_tangent[1], calculate_saturation_specific_humidity(T_tangent[1]), 'last10', fontsize=12, ha='right')
+ax1.text(T_tangent[0], calculate_saturation_specific_humidity(T_tangent[0]), 'first10', fontsize=12, ha='right')
+ax1.text(T_tangent[1], calculate_saturation_specific_humidity(T_tangent[1]), 'last10', fontsize=12, ha='right')
 
+# Plot derivative of saturation specific humidity
+ax2.plot(T_kelvin, dqs_dT, 'r-', linewidth=2, label='dq*/dT')
 
+ax2.set_xlabel('Temperature (K)')
+ax2.set_ylabel('Derivative of Saturation Specific Humidity (kg/(kg·K))')
+ax2.set_title('Derivative of Saturation Specific Humidity with Respect to Temperature')
+ax2.legend()
+ax2.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/CC_relation.png")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/moisture/CC_relation_with_derivative.png")
 # %%
