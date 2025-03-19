@@ -23,7 +23,7 @@ def read_all_data( var, **kwargs):
     NAO_pos = read_NAO_extreme_ERA5('pos', 4) # the number is too small for 5 days
     NAO_neg = read_NAO_extreme_ERA5('neg', 4)
 
-    logging.info("reading ivke")
+    logging.info(f"reading {var}")
     hf_data = read_prime_ERA5( var = var, model = 'ERA5_allplev', **kwargs)  # change the suffix to read different data
 
     # anomaly
