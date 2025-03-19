@@ -49,7 +49,7 @@ for i, file in enumerate(files_core):
     ds = xr.open_dataset(file, chunks={"time": 1})
     ds = ds.sortby("plev", ascending=False)
 
-    ds = ds.sel(plev = slice(25000, 100000))
+    ds = ds.sel(plev = slice(100000, 25000))
 
     ds = ivke(ds["vke"])
 
