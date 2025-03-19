@@ -38,7 +38,7 @@ files_core = np.array_split(all_files, size)[rank]
 def ivke(vke):
     d_vke_dp = vke.differentiate("plev")
     ivke = d_vke_dp.integrate("plev")
-    ivke =  ivke / 9.81
+    ivke = -1* ivke / 9.81
     ivke.name = "ivke"
     return ivke
 
@@ -47,7 +47,7 @@ def ivke(vke):
 for i, file in enumerate(files_core):
     logging.info(f"rank {rank} Processing {i+1}/{len(files_core)}")
     ds = xr.open_dataset(file, chunks={"time": 1})
-    ds = ds.sortby("plev", ascending=True)
+    ds = ds.sortby("plev", ascending=False)
 
     ds = ds.sel(plev = slice(25000, 100000))
 
