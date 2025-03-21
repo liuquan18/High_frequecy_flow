@@ -146,19 +146,19 @@ upvp_last = read_composite_MPI("upvp", "ua", 2090)
 #%%
 upvp_ERA5 = smooth(upvp_ERA5, lat_window=40, lon_window=80) # smooth the data
 # %%
-ieke_ERA5 = read_composite_ERA5("ieke",'ieke') 
-ieke_first = read_composite_MPI("ieke", "ieke", 1850)
-ieke_last = read_composite_MPI("ieke", "ieke", 2090)
-#%%
-ieke_ERA5 = smooth(ieke_ERA5, lat_window=40, lon_window=80) # smooth the data
-# %%
-ivke_ERA5 = read_composite_ERA5("ivke", "ivke")
-ivke_first = read_composite_MPI("ivke", "ivke", 1850)
-ivke_last = read_composite_MPI("ivke", "ivke", 2090)
+# ieke_ERA5 = read_composite_ERA5("ieke",'ieke') 
+# ieke_first = read_composite_MPI("ieke", "ieke", 1850)
+# ieke_last = read_composite_MPI("ieke", "ieke", 2090)
+# #%%
+# ieke_ERA5 = smooth(ieke_ERA5, lat_window=40, lon_window=80) # smooth the data
+# # %%
+# ivke_ERA5 = read_composite_ERA5("ivke", "ivke")
+# ivke_first = read_composite_MPI("ivke", "ivke", 1850)
+# ivke_last = read_composite_MPI("ivke", "ivke", 2090)
 
-ivke_ERA5 = ivke_ERA5 * 1e6  # kg/kg to g/kg
-ivke_first = ivke_first * 1e6  # kg/kg to g/kg
-ivke_last = ivke_last * 1e6  # kg/kg to g/kg
+# ivke_ERA5 = ivke_ERA5 * 1e6  # kg/kg to g/kg
+# ivke_first = ivke_first * 1e6  # kg/kg to g/kg
+# ivke_last = ivke_last * 1e6  # kg/kg to g/kg
 
 
 # %%
@@ -186,13 +186,11 @@ prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 zg_levels = np.arange(-30, 31, 5)
 uhat_levels_div = np.arange(-12, 13, 2)
 upvp_levels_div = np.arange(-25, 26, 5)
-eke_levels_div = np.arange(-10, 11, 2)
-vke_levels_div = np.arange(-12, 13, 2)
 
 
 #%%
 fig, axes = plt.subplots(
-    5, 3, figsize=(11, 15), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
+    3, 3, figsize=(12, 10), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
 )
 
 eof_ERA5.plot.contourf(
@@ -273,57 +271,57 @@ upvp_map = upvp_last.plot.contourf(
 )
 
 
-ieke_ERA5.plot.contourf(
-    ax=axes[3, 0],
-    transform=ccrs.PlateCarree(),
-    cmap="RdBu_r",
-    levels=eke_levels_div*2,
-    extend="both",
-    add_colorbar=False,
-)
-ieke_first.plot.contourf(
-    ax=axes[3, 1],
-    transform=ccrs.PlateCarree(),
-    cmap="RdBu_r",
-    levels=eke_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
-ieke_map = ieke_last.plot.contourf(
-    ax=axes[3, 2],
-    transform=ccrs.PlateCarree(),
-    cmap="RdBu_r",
-    levels=eke_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
+# ieke_ERA5.plot.contourf(
+#     ax=axes[3, 0],
+#     transform=ccrs.PlateCarree(),
+#     cmap="RdBu_r",
+#     levels=eke_levels_div*2,
+#     extend="both",
+#     add_colorbar=False,
+# )
+# ieke_first.plot.contourf(
+#     ax=axes[3, 1],
+#     transform=ccrs.PlateCarree(),
+#     cmap="RdBu_r",
+#     levels=eke_levels_div,
+#     extend="both",
+#     add_colorbar=False,
+# )
+# ieke_map = ieke_last.plot.contourf(
+#     ax=axes[3, 2],
+#     transform=ccrs.PlateCarree(),
+#     cmap="RdBu_r",
+#     levels=eke_levels_div,
+#     extend="both",
+#     add_colorbar=False,
+# )
 
 
 
-ivke_ERA5.plot(
-    ax=axes[4, 0],
-    transform=ccrs.PlateCarree(),
-    cmap="RdBu_r",
-    levels=vke_levels_div ,
-    extend="both",
-    add_colorbar=False,
-)
-ivke_first.plot(
-    ax=axes[4, 1],
-    transform=ccrs.PlateCarree(),
-    cmap="RdBu_r",
-    levels=vke_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
-ivke_map = ivke_last.plot(
-    ax=axes[4, 2],
-    transform=ccrs.PlateCarree(),
-    cmap="RdBu_r",
-    levels=vke_levels_div,
-    extend="both",
-    add_colorbar=False,
-)
+# ivke_ERA5.plot(
+#     ax=axes[4, 0],
+#     transform=ccrs.PlateCarree(),
+#     cmap="RdBu_r",
+#     levels=vke_levels_div ,
+#     extend="both",
+#     add_colorbar=False,
+# )
+# ivke_first.plot(
+#     ax=axes[4, 1],
+#     transform=ccrs.PlateCarree(),
+#     cmap="RdBu_r",
+#     levels=vke_levels_div,
+#     extend="both",
+#     add_colorbar=False,
+# )
+# ivke_map = ivke_last.plot(
+#     ax=axes[4, 2],
+#     transform=ccrs.PlateCarree(),
+#     cmap="RdBu_r",
+#     levels=vke_levels_div,
+#     extend="both",
+#     add_colorbar=False,
+# )
 
 
 
@@ -340,23 +338,18 @@ for ax in axes.flatten():
 
 
 # define four axes at the right of last column to hold the four colorbars
-cbar_ax_eof = fig.add_axes([0.92, 0.80, 0.01, 0.18])
-cbar_ax_uhat = fig.add_axes([0.92, 0.60, 0.01, 0.18])
-cbar_ax_upvp = fig.add_axes([0.92, 0.40, 0.01, 0.18])
-cbar_ax_eke = fig.add_axes([0.92, 0.20, 0.01, 0.18])
-cbar_ax_vke = fig.add_axes([0.92, 0.00, 0.01, 0.18])
-
+cbar_ax_eof = fig.add_axes([0.92, 0.74, 0.01, 0.2])
+cbar_ax_uhat = fig.add_axes([0.92, 0.41, 0.01, 0.2])
+cbar_ax_upvp = fig.add_axes([0.92, 0.05, 0.01, 0.2])
+# 
 cbar_eof = fig.colorbar(eof_pattern, cax=cbar_ax_eof, orientation="vertical")
 cbar_uhat = fig.colorbar(uhat_map, cax=cbar_ax_uhat, orientation="vertical")
 cbar_upvp = fig.colorbar(upvp_map, cax=cbar_ax_upvp, orientation="vertical")
-cbar_eke = fig.colorbar(ieke_map, cax=cbar_ax_eke, orientation="vertical")
-cbar_vke = fig.colorbar(ivke_map, cax=cbar_ax_vke, orientation="vertical")
+
 
 cbar_eof.set_label(r"$Z500 \, / \, m$")
 cbar_uhat.set_label(r"$\bar{u} \, / \, m \, s^{-1}$")
 cbar_upvp.set_label(r"$u'v' \, / \, m^2 \, s^{-2}$")
-cbar_eke.set_label(r"$eke \, / \, m^2 \, s^{-2}$")
-cbar_vke.set_label(r"$q'^2 \, eke \, / \, g^2 \, kg^{-2} \, m^2 \, s^{-2}$")
 
 # add a, b, c
 for i, ax in enumerate(axes.flatten()):
@@ -369,8 +362,8 @@ for i, ax in enumerate(axes.flatten()):
         fontweight="bold",
     )
 
-plt.tight_layout(w_pad=-7, h_pad=1)
+plt.tight_layout(w_pad=-9, h_pad=1)
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/transient_eddy_forcing/transient_diff.pdf", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/transient_eddy_forcing/transient_diff.pdf", dpi=300, bbox_inches="tight")
 
 # %%
