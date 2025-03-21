@@ -338,9 +338,9 @@ for ax in axes.flatten():
 
 
 # define four axes at the right of last column to hold the four colorbars
-cbar_ax_eof = fig.add_axes([0.92, 0.74, 0.01, 0.2])
-cbar_ax_uhat = fig.add_axes([0.92, 0.41, 0.01, 0.2])
-cbar_ax_upvp = fig.add_axes([0.92, 0.05, 0.01, 0.2])
+cbar_ax_eof = fig.add_axes([0.92, 0.73, 0.01, 0.2])
+cbar_ax_uhat = fig.add_axes([0.92, 0.4, 0.01, 0.2])
+cbar_ax_upvp = fig.add_axes([0.92, 0.06, 0.01, 0.2])
 # 
 cbar_eof = fig.colorbar(eof_pattern, cax=cbar_ax_eof, orientation="vertical")
 cbar_uhat = fig.colorbar(uhat_map, cax=cbar_ax_uhat, orientation="vertical")
