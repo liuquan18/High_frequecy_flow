@@ -8,11 +8,22 @@ import seaborn as sns
 
 
 # %%
-def read_data(decade):
-    base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/husDBtas_hussatDBtas_dec/moist_tas_ratio_{decade}.nc"
-    data = xr.open_dataset(base_dir)
-    return data
+def read_data():
+    ratio_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_prime_ensmean/hus_tas_prime_ensmean_*.nc"
 
+    ratio = xr.open_mfdataset(
+        ratio_dir,
+        combine="by_coords",
+    )
+    ratio = ratio["hus"]
+
+    return ratio.compute()
+#%%
+ratio = read_data()
+#%%
+ratio_NPC = ratio.sel(lat=slice(30, 60), lon=slice(120, 220)).mean(dim=["lat", "lon"])
+ratio_NAL = ratio.sel(lat=slice(0, 30), lon=slice(285, 345)).mean(dim=["lat", "lon"])
+#%%
 
 # %%
 def sector(data):
@@ -202,14 +213,14 @@ axes[0].plot(
 axes[0].text(
     T_tangent[0] + 4.5,
     calculate_saturation_specific_humidity(T_tangent[0]) - 0.003,
-    r"$\Delta T$",
+    r"$T'$",
     fontsize=12,
     ha="center",
 )
 axes[0].text(
     T_tangent[0] + 10,
     calculate_saturation_specific_humidity(T_tangent[0] + 7) / 2 + 0.006,
-    r"$\Delta q^*$",
+    r"$q^*'$",
     fontsize=12,
     va="center",
     rotation=90,
@@ -343,8 +354,8 @@ axes[1].text(
 
 plt.tight_layout()
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/CC_moisture_tangent_slope.pdf",
-    dpi=300,
-)
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/mositure_paper_v1/CC_moisture_tangent_slope.pdf",
+#     dpi=300,
+# )
 # %%

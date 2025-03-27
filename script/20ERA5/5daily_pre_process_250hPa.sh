@@ -10,8 +10,8 @@
 #SBATCH --output=pre_process.%j.out
 module load cdo
 module load parallel
-var=$1
-var_num=$2
+var=$1           # u       v   q (hus)  ta
+var_num=$2       # 131   132    133     130
 
 daily_dir=/pool/data/ERA5/E5/pl/an/1D/${var_num}/
 tmp_dir=/scratch/m/m300883/ERA5/${var}_daily/
@@ -32,7 +32,7 @@ pre_process(){
     infile=$1
     echo Processing $(basename $infile)
     tmpfile=${tmp_dir}$(basename $infile .grb).nc
-    cdo -f nc -O -P 10 -setgridtype,regular -vertmean -sellevel,85000,87500,90000,92500,95000,97500,100000 $infile $tmpfile
+    cdo -f nc -O -P 10 -setgridtype,regular -sellevel,25000 $infile $tmpfile
 
 }
 
@@ -40,7 +40,10 @@ merge_year(){
     year=$1
     echo "Merging year ${year}"
     year_files=$(find ${tmp_dir} -name "*.nc" | grep ${year})
-    cdo -O mergetime ${year_files} ${to_dir}E5pl00_1D_${var}_daily_${year}-05-01_${year}-09-31.nc
+    cdo -r -O mergetime ${year_files} ${to_dir}E5pl00_1D_${var}_250hPa_daily_${year}-05-01_${year}-09-31.nc
+
+    # rm tmp files
+    rm ${year_files}
 }
 
 export -f pre_process 
