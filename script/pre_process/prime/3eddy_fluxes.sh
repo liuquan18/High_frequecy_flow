@@ -12,10 +12,10 @@
 module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
-node=$1
-member=$
+member=$1
 var1=$2
 var2=$3
+
 if [ "$var1" == "vp" ]; then
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_prime_daily/r${member}i1p1f1/
 elif [ "$var1" == "up" ]; then
