@@ -51,6 +51,5 @@ for dec in {1850..2090..10}; do
     
     if [ ! -f "${outfile}" ]; then
         echo "Error: ${outfile} not created"
-        exit 1
     fi
 done
