@@ -9,7 +9,7 @@
 #SBATCH --account=mh0033
 #SBATCH --output=upvp.%j.out
 
-module load cdo
+module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
 node=$1
@@ -46,6 +46,7 @@ parallel --jobs 5 flux ::: {1850..2090..10}
 for dec in {1850..2090..10}; do
     vfile=$(find ${vp_path} -name "*${dec}*.nc")
     tfile=$(find ${thetap_path} -name "*${dec}*.nc")
+    vfile_name=$(basename "${vfile}")
     outfile="${flux_path}${vfile_name//va_prime/vptp}"
     
     if [ ! -f "${outfile}" ]; then
