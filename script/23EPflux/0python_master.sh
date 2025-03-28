@@ -3,7 +3,7 @@
 
 file=$1 # python file to run
 
-for ens in {31..50}
+for ens in {1..50}
 do
     echo "Ensemble member ${ens}"
     # run the python script
