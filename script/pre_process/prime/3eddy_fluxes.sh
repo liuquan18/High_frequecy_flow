@@ -70,10 +70,8 @@ parallel --jobs 5 flux ::: {1850..2090..10}
 
 # check if all files are created
 for dec in {1850..2090..10}; do
-    vfile=$(find ${var1_path} -name "*${dec}*.nc")
-    tfile=$(find ${var2_path} -name "*${dec}*.nc")
-    vfile_name=$(basename "${vfile}")
-    outfile="${flux_path}${vfile_name//va_prime/vptp}"
+
+    outfile="${flux_path}${var1}${var2}_${dec}.nc"
     
     if [ ! -f "${outfile}" ]; then
         echo "Error: ${outfile} not created"
