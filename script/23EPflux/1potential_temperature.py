@@ -37,10 +37,15 @@ files_core = np.array_split(all_files, size)[rank]
 # %%
 for i, file in enumerate (files_core):
     logging.info(f"rank {rank} Processing {i+1}/{len(files_core)}")
+    basename = os.path.basename(file)
+    # replace the 'ta' in basename with 'theta'
+    basename = basename.replace('ta', 'theta')
+    to_file = os.path.join(to_path, basename)
+
     ds = xr.open_dataset(file)
 
     theta = EP_flux.potential_temperature(ds['ta'], p='plev', p0=1e6)
 
     # save to netcdf
-    ds.to_netcdf(file.replace('ta', 'theta'))
+    ds.to_netcdf(to_file)
     ds.close()
