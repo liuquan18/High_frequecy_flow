@@ -9,7 +9,7 @@
 #SBATCH --account=mh0033
 #SBATCH --output=prime.%j.out
 
-module load cdo
+module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
 node=$1
@@ -33,7 +33,7 @@ tmp_dir=/scratch/m/m300883/${var}_prime/r${member}i1p1f1/
 mkdir -p ${Tp_path} ${tmp_dir}
 
 
-export T_path Tp_path member tmp_dir
+export T_path Tp_path member tmp_dir var
 export frequency
 
 # function to band filter
@@ -64,11 +64,12 @@ T_prime(){
     dec=$1
     Tfile=$(find ${T_path} -name "*${dec}*.nc")
     Tfile=$(echo $Tfile | tr -d '\n')
-    echo "Processing ${Tfile}"
-    Tfile_name=$(basename ${Tfile})
-    Tpfile_name=${Tp_path}${Tfile_name//${var}/${var}_prime}
+    
+    Tfile_name=$(basename "${Tfile}")
+    Tpfile_name="${Tp_path}${Tfile_name//${var}/${var}_prime}"
 
-    echo " band filter ${Tfile_name}"
+    echo "Input file: ${Tfile}"
+    echo "Output file: ${Tpfile_name}"
     band_filter ${Tfile} ${Tpfile_name}
 }
 
