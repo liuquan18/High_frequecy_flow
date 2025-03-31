@@ -20,8 +20,7 @@ echo "Ensemble member ${member} for variable ${var}"
 
 # vt daily
 vt_daily_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/r${member}i1p1f1/
-vt_daily_file=*_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_*.nc
-daily_files=($(find $vt_daily_path -name $vt_daily_file -print))
+daily_files=($(find $vt_daily_path -name *.nc -print))
 
 
 savedir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily_ano/r${member}i1p1f1/
@@ -36,7 +35,8 @@ Anomaly() {
     infile=$1
     
     # get the decade label from $infile name
-    decade_label=$(basename "$infile" | cut -d'_' -f 6 | cut -c1-4)
+    year=$(cdo -s showyear ${infile} | head -n 1)
+    decade_label=$(echo ${year} | cut -c 1-4)
     month_ens=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_monthly_ensmean/${var}_monmean_ensmean_${decade_label}05_$((${decade_label}+9))09.nc
 
     cdo -O -ymonsub ${infile} ${month_ens} ${savedir}$(basename ${infile} .nc)_ano.nc
