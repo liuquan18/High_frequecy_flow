@@ -50,11 +50,11 @@ parallel --jobs 5 Anomaly ::: ${daily_files[@]}
 
 # Check if all required decades are saved
 for dec in {1850..2090..10}; do
-    if [ ! -f ${savedir}${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501*.nc ]; then
+    if [ ! -f ${savedir}*${dec}*.nc ]; then
         echo "File for decade ${dec} is missing in ${savedir}"
     
         # calculate the missing dec
         echo "recalculate ${dec}"
-        Anomaly ${vt_daily_path}${var}_day_MPI-ESM1-2-LR_r${member}i1p1f1_gn_${dec}0501-$((dec+9))0930.nc
+        Anomaly ${vt_daily_path}*${dec}*.nc
     fi
 done
