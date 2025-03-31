@@ -59,7 +59,7 @@ flux(){
     # prepare output file name
     outfile="${flux_path}${var1}${var2}_${dec}.nc"
 
-    echo "Calculating heat flux for ${dec}"
+    echo "Calculating eddy flux for ${dec}"
     cdo -r -O -expr,"vptp=${var1_name}*${var2_name}" -merge ${vfile} ${tfile} ${outfile}
 
 }
