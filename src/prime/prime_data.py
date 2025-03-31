@@ -11,7 +11,7 @@ def read_prime( decade, var='eke', **kwargs):
     plev = kwargs.get('plev', None)
     suffix = kwargs.get('suffix', '_ano')
 
-    time_tag = f"{decade}0501-{decade+9}0930"
+    time_tag = f"{decade}"
     data_path = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
     )
