@@ -55,7 +55,8 @@ def process_data(decade, var):
 if __name__ == "__main__":
     # nodes for different decades
     decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
+    var = str(sys.argv[2]) if len(sys.argv) > 2 else 'ivke'
 
-    logging.info(f"processing decade {decade} \n")
-    process_data(decade, 'ivke')
+    logging.info(f"processing decade {decade} of {var} \n")
+    process_data(decade, var)
 
