@@ -45,7 +45,7 @@ flux_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var1}${var
 
 mkdir -p ${flux_path}
 
-export var1_path var2_path flux_path member ${var1} ${var2}
+export var1_path var2_path flux_path member var1 var2
 
 flux(){
     dec=$1
