@@ -32,9 +32,9 @@ def read_all_data(decade, var, **kwargs):
 
 
 #%%
-def process_data(decade, var):
+def process_data(decade, var, **kwargs):
     # read data
-    NAO_pos, NAO_neg, data = read_all_data(decade, var = var, name = 'ivke', plev = None)
+    NAO_pos, NAO_neg, data = read_all_data(decade, var = var, **kwargs)
 
     # select data before NAO events, here 'var' is only for column name
     logging.info (f"selecting data for {decade} \n")
@@ -58,5 +58,5 @@ if __name__ == "__main__":
     var = str(sys.argv[2]) if len(sys.argv) > 2 else 'vptp'
 
     logging.info(f"processing decade {decade} of {var} \n")
-    process_data(decade, var)
+    process_data(decade, var, kwargs = {'name': var, 'plev': 50000})
 
