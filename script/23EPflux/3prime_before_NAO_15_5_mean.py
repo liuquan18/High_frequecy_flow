@@ -24,7 +24,7 @@ def read_all_data(decade, var, **kwargs):
     NAO_pos = read_NAO_extremes(decade, 'positive')
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
-    logging.info("reading ivke")
+    logging.info(f"reading {var} data")
     hf_data = read_prime( decade, var = var, suffix='_ano', **kwargs)  # change the suffix to read different data
     
 
@@ -42,8 +42,8 @@ def process_data(decade, var):
     ivke_NAO_neg = before_NAO_mean(NAO_neg, data, (-15, -5))
 
     logging.info(f"saving data for decade {decade} \n")
-    save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/ivke_NAO_pos_15_5_mean_{decade}.nc'
-    save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/ivke_NAO_neg_15_5_mean_{decade}.nc'
+    save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_pos_15_5_mean_{decade}.nc'
+    save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_neg_15_5_mean_{decade}.nc'
 
 
     ivke_NAO_pos.to_netcdf(save_dir_pos)
