@@ -70,5 +70,5 @@ if __name__ == "__main__":
     integrate = False
 
     logging.info(f"processing decade {decade} of {var} \n")
-    process_data(decade, var, integrate, name = var, plev = None, suffix = suffix)
+    process_data(decade, var, integrate, name = name, plev = None, suffix = suffix)
 
