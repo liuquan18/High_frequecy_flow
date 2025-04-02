@@ -10,7 +10,10 @@
 
 decade=$1
 var=$2
+name=$3
+suffix=$4
+
 
 echo " decade ${decade} for variable ${var}"
 
-python 3prime_before_NAO_15_5_mean.py ${decade} ${var}
+python 3prime_before_NAO_15_5_mean.py ${decade} ${var} ${name} ${suffix}
