@@ -12,7 +12,7 @@ import os
 
 from src.extremes.before_extreme import read_NAO_extremes
 from src.composite.composite import before_NAO_mean
-from src.prime.prime_data import read_prime
+from src.prime.prime_data import read_prime 
 from src.prime.prime_data import vert_integrate
 logging.basicConfig(level=logging.INFO)
 
@@ -26,7 +26,7 @@ def read_all_data(decade, var, **kwargs):
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
     logging.info(f"reading {var} data")
-    hf_data = read_prime( decade, var = var, suffix='_ano', **kwargs)  # change the suffix to read different data
+    hf_data = read_prime( decade, var = var, **kwargs)  # change the suffix to read different data
     
 
     return NAO_pos, NAO_neg, hf_data
@@ -62,7 +62,8 @@ if __name__ == "__main__":
     decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
     var = str(sys.argv[2]) if len(sys.argv) > 2 else 'vptp'
     integrate = bool(sys.argv[3]) if len(sys.argv) > 3 else False
+    suffix = str(sys.argv[4]) if len(sys.argv) > 4 else '_ano'
 
     logging.info(f"processing decade {decade} of {var} \n")
-    process_data(decade, var, integrate, kwargs = {'name': var, 'plev': None})
+    process_data(decade, var, integrate, name = var, plev = None, suffix = suffix)
 
