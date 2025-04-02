@@ -28,7 +28,7 @@ fi
 
 if [ "$var2" == "vp" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_prime_daily/r${member}i1p1f1/
-elif [ "$var1" == "up" ]; then
+elif [ "$var2" == "up" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_prime_daily/r${member}i1p1f1/
 elif [ "$var2" == "tp" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_prime_daily/r${member}i1p1f1/
@@ -59,7 +59,7 @@ flux(){
     # prepare output file name
     outfile="${flux_path}${var1}${var2}_${dec}.nc"
 
-    echo "Calculating eddy flux for ${dec}"
+    echo "Calculating eddy flux for ${dec} in ${var1}${var2}"
     cdo -r -O -expr,"${var1}${var2}=${var1_name}*${var2_name}" -merge ${vfile} ${tfile} ${outfile}
 
 }
