@@ -65,8 +65,8 @@ if __name__ == "__main__":
     # nodes for different decades
     decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
     var = str(sys.argv[2]) if len(sys.argv) > 2 else 'vptp'
-    integrate = bool(sys.argv[3]) if len(sys.argv) > 3 else False
-    suffix = str(sys.argv[4]) if len(sys.argv) > 4 else '_ano'
+    suffix = str(sys.argv[3]) if len(sys.argv) > 3 else '_ano'
+    integrate = False
 
     logging.info(f"processing decade {decade} of {var} \n")
     process_data(decade, var, integrate, name = var, plev = None, suffix = suffix)
