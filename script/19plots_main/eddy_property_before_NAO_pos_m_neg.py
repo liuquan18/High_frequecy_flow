@@ -189,7 +189,7 @@ fig, axes = plt.subplots(
 
 # first row first ten years
 # first column -15 - 5 days before
-vptp_first.plot(
+vptp_first.plot.contourf(
     ax=axes[0, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
