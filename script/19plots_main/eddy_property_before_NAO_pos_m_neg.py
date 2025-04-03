@@ -20,105 +20,9 @@ import src.moisture.longitudinal_contrast as lc
 import importlib
 
 importlib.reload(util)
-
-
 # %%
-def smooth(arr, lat_window=5, lon_window=5):
-
-    arr = lc.rolling_lon_periodic(arr, lon_window, lat_window, stat="median")
-    return arr
-
-
-# %%
-def remove_zonalmean(arr):
-    arr = arr - arr.mean(dim="lon")
-    return arr
-
-
-# %%
-def postprocess(ds, do_smooth=True, remove_zonal=False):
-    if do_smooth:
-        ds = smooth(ds)
-    if remove_zonal:
-        ds = remove_zonalmean(ds)
-    ds = erase_white_line(ds)
-    return ds
-
-
-# %%
-
-
-def read_composite_MPI(var, name, decade, before = '15_5'):
-    pos_file = glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_pos_{before}_mean_{decade}.nc"
-    )
-    neg_file = glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_neg_{before}_mean_{decade}.nc"
-    )
-    if len(pos_file) == 0 or len(neg_file) == 0:
-        raise ValueError(f"no file found for {var} in {decade}")
-    NAO_pos = xr.open_dataset(pos_file[0])
-    NAO_neg = xr.open_dataset(neg_file[0])
-    NAO_pos = NAO_pos[name]
-    NAO_neg = NAO_neg[name]
-
-    NAO_pos = NAO_pos.mean(dim="event").squeeze()
-    NAO_neg = NAO_neg.mean(dim="event").squeeze()
-
-    NAO_pos = postprocess(NAO_pos)
-    NAO_neg = postprocess(NAO_neg)
-
-    diff = NAO_pos - NAO_neg
-
-    return diff.compute()
-
-#%%
-def read_composite_ERA5(var, name):
-    pos_file=glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/ERA5_allplev_{var}_NAO_pos_*_mean.nc"
-    )
-    neg_file=glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/ERA5_allplev_{var}_NAO_neg_*_mean.nc"
-    )
-    if len(pos_file) == 0 or len(neg_file) == 0:
-        raise ValueError(f"no file found for {var}")
-    NAO_pos = xr.open_dataset(pos_file[0])
-    NAO_neg = xr.open_dataset(neg_file[0])
-    NAO_pos = NAO_pos[name]
-    NAO_neg = NAO_neg[name]
-
-    try:
-        NAO_pos = NAO_pos.mean(dim="event").squeeze()
-        NAO_neg = NAO_neg.mean(dim="event").squeeze()
-    except ValueError:
-        NAO_pos = NAO_pos.squeeze()
-        NAO_neg = NAO_neg.squeeze()
-
-
-    NAO_pos = postprocess(NAO_pos)
-    NAO_neg = postprocess(NAO_neg)
-
-    diff = NAO_pos - NAO_neg
-
-    return diff.compute()
-#%%
-def read_MPI_GE_uhat():
-    uhat_composiste = (
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/"
-)
-    uhat_pos_first10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_first10_pos.nc")
-    uhat_neg_first10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_first10_neg.nc")
-
-    uhat_pos_last10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_last10_pos.nc")
-    uhat_neg_last10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_last10_neg.nc")
-
-    uhat_NAO_first = uhat_pos_first10 - uhat_neg_first10
-    uhat_NAO_last = uhat_pos_last10 - uhat_neg_last10
-
-    uhat_NAO_first = postprocess(uhat_NAO_first)
-    uhat_NAO_last = postprocess(uhat_NAO_last)
-    return uhat_NAO_first,uhat_NAO_last
-
+from src.prime.prime_data import read_composite_MPI  # noqa: E402
+from src.prime.prime_data import read_MPI_GE_uhat
 #%%
 # u hat
 uhat_first, uhat_last = read_MPI_GE_uhat()
@@ -351,7 +255,7 @@ for ax in axes.flatten():
     ax.set_xlabel("")
     ax.set_ylabel("")
     ax.set_title("")
-    
+
     axes[0, 0].set_title('(-15, -5)')
     axes[0, 1].set_title('(-5, 0)')
     axes[0, 2].set_title('(event period)')
