@@ -266,7 +266,7 @@ uhat_first.plot.contourf(
 
 # second row last ten years
 # first column -15 - 5 days before
-vptp_last.plot(
+vptp_last.plot.contourf(
     ax=axes[1, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
@@ -351,8 +351,10 @@ for ax in axes.flatten():
     ax.set_xlabel("")
     ax.set_ylabel("")
     ax.set_title("")
-
-
+    
+    axes[0, 0].set_title('(-15, -5)')
+    axes[0, 1].set_title('(-5, 0)')
+    axes[0, 2].set_title('(event period)')
 
 # add a, b, c
 for i, ax in enumerate(axes.flatten()):
