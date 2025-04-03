@@ -202,22 +202,19 @@ vptp_first.plot.contourf(
         "pad": 0.05,
         "shrink": 0.8,
         "aspect": 20,
-        "ticks": np.arange(-1, 1.1, 0.2),
     },
 )
 
 # quiver
-first_flux_arrow = qflux_first.isel(lon=slice(None, None, 3), lat=slice(None, None, 3)).plot.quiver(
-    ax=axes[0, 0],
+first_flux_arrow = axes[0, 0].quiver(
+    qflux_first["lon"].values[::3],
+    qflux_first["lat"].values[::3],
+    qflux_first["u"].values[::3, ::3],
+    qflux_first["v"].values[::3, ::3],
     transform=ccrs.PlateCarree(),
-    x="lon",
-    y="lat",
-    u="u",
-    v="v",
     scale=scale_div,
     color="black",
     pivot="middle",
-    zorder = 10,
 )
 # add quiver key
 quiver_key = axes[0, 0].quiverkey(
@@ -226,6 +223,7 @@ quiver_key = axes[0, 0].quiverkey(
     0.01,
     0.05,
     r"$0.05 g kg^{-1} m s^{-1}$",
+    transform=ccrs.PlateCarree(),
     labelpos="E",
     coordinates="axes",
     fontproperties={"size": 12},
@@ -246,7 +244,6 @@ upvp_first.plot.contourf(
         "pad": 0.05,
         "shrink": 0.8,
         "aspect": 20,
-        "ticks": np.arange(-25, 26, 5),
     },
 )
 
@@ -259,12 +256,11 @@ uhat_first.plot.contourf(
     add_colorbar=True,
     extend="both",
     cbar_kwargs={
-        "label": r"$\hat{u}$",
+        "label": r"$\hat{u} / m s^{-1}$",
         "orientation": "horizontal",
         "pad": 0.05,
         "shrink": 0.8,
         "aspect": 20,
-        "ticks": np.arange(-12, 13, 2),
     },
 )
 
@@ -283,21 +279,19 @@ vptp_last.plot(
         "pad": 0.05,
         "shrink": 0.8,
         "aspect": 20,
-        "ticks": np.arange(-1, 1.1, 0.2),
     },
 )
+
 # quiver
-last_flux_arrow = qflux_last.isel(lon=slice(None, None, 3), lat=slice(None, None, 3)).plot.quiver(
-    ax=axes[1, 0],
+last_flux_arrow = axes[1, 0].quiver(
+    qflux_last["lon"].values[::3],
+    qflux_last["lat"].values[::3],
+    qflux_last["u"].values[::3, ::3],
+    qflux_last["v"].values[::3, ::3],
     transform=ccrs.PlateCarree(),
-    x="lon",
-    y="lat",
-    u="u",
-    v="v",
     scale=scale_div,
     color="black",
     pivot="middle",
-    zorder = 10,
 )
 # add quiver key
 quiver_key = axes[1, 0].quiverkey(
@@ -306,10 +300,12 @@ quiver_key = axes[1, 0].quiverkey(
     0.01,
     0.05,
     r"$0.05 g kg^{-1} m s^{-1}$",
+    transform=ccrs.PlateCarree(),
     labelpos="E",
     coordinates="axes",
     fontproperties={"size": 12},
 )
+
 # second column 5-0 days before u'v'
 
 upvp_last.plot.contourf(
@@ -325,7 +321,6 @@ upvp_last.plot.contourf(
         "pad": 0.05,
         "shrink": 0.8,
         "aspect": 20,
-        "ticks": np.arange(-25, 26, 5),
     },
 )
 # third column uhat
@@ -342,7 +337,6 @@ uhat_last.plot.contourf(
         "pad": 0.05,
         "shrink": 0.8,
         "aspect": 20,
-        "ticks": np.arange(-12, 13, 2),
     },
 )
 
@@ -372,5 +366,6 @@ for i, ax in enumerate(axes.flatten()):
     )
 
 plt.tight_layout()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/NAO_uhat_upvp_vptpMPI_GE.png", dpi=300)
 
 # %%
