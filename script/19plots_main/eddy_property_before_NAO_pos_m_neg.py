@@ -36,7 +36,7 @@ def remove_zonalmean(arr):
 
 
 # %%
-def postprocess(ds, do_smooth=False, remove_zonal=False):
+def postprocess(ds, do_smooth=True, remove_zonal=False):
     if do_smooth:
         ds = smooth(ds)
     if remove_zonal:
@@ -48,12 +48,12 @@ def postprocess(ds, do_smooth=False, remove_zonal=False):
 # %%
 
 
-def read_composite_MPI(var, name, decade):
+def read_composite_MPI(var, name, decade, before = '15_5'):
     pos_file = glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_pos_15_5_mean_{decade}.nc"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_pos_{before}_mean_{decade}.nc"
     )
     neg_file = glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_neg_15_5_mean_{decade}.nc"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_neg_{before}_mean_{decade}.nc"
     )
     if len(pos_file) == 0 or len(neg_file) == 0:
         raise ValueError(f"no file found for {var} in {decade}")
@@ -101,47 +101,47 @@ def read_composite_ERA5(var, name):
     diff = NAO_pos - NAO_neg
 
     return diff.compute()
+#%%
+def read_MPI_GE_uhat():
+    uhat_composiste = (
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/"
+)
+    uhat_pos_first10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_first10_pos.nc")
+    uhat_neg_first10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_first10_neg.nc")
+
+    uhat_pos_last10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_last10_pos.nc")
+    uhat_neg_last10 = xr.open_dataarray(f"{uhat_composiste}jetstream_MJJAS_last10_neg.nc")
+
+    uhat_NAO_first = uhat_pos_first10 - uhat_neg_first10
+    uhat_NAO_last = uhat_pos_last10 - uhat_neg_last10
+
+    uhat_NAO_first = postprocess(uhat_NAO_first)
+    uhat_NAO_last = postprocess(uhat_NAO_last)
+    return uhat_NAO_first,uhat_NAO_last
 
 #%%
-def read_NAO_pattern(model):
-    if model == 'ERA5':
-        eof_path = "/work/mh0033/m300883/High_frequecy_flow/data/ERA5/EOF_result/eof_result_Z500_1979_2024.nc"
-        eof = xr.open_dataset(eof_path).eof.sel(mode = 'NAO').squeeze()
-
-    elif model == 'first':
-        eof_path = "/work/mh0033/m300883/Tel_MMLE/data/MPI_GE_CMIP6/EOF_result/first_pattern_projected.nc"
-        eof = xr.open_dataset(eof_path).__xarray_dataarray_variable__
-    elif model == 'last':
-        eof_path = "/work/mh0033/m300883/Tel_MMLE/data/MPI_GE_CMIP6/EOF_result/last_pattern_projected.nc"
-        eof = xr.open_dataset(eof_path).__xarray_dataarray_variable__
-
-    return eof
-#%%
-eof_ERA5 = read_NAO_pattern('ERA5')
-eof_first = read_NAO_pattern('first')
-eof_last = read_NAO_pattern('last')
-
+# u hat
+uhat_first, uhat_last = read_MPI_GE_uhat()
 
 #%%
-upvp_ERA5 = None # not yet generated
-upvp_first = read_composite_MPI("vptp", "vptp", 1850)
-upvp_last = read_composite_MPI("vptp", "vptp", 2090)
+# u'v' 5-0 days before 
+upvp_first = read_composite_MPI("upvp", "ua", 1850, '5_0') # 5 days before
+upvp_last = read_composite_MPI("upvp", "ua", 2090, '5_0') # 5 days before
 #%%
-vptp_ERA5 = None # not yet generated
+# v't' -15 - 5 days before
 vptp_first = read_composite_MPI("vptp", "vptp", 1850)
 vptp_last = read_composite_MPI("vptp", "vptp", 2090)
-
+# select v't' at 850 hPa
+vptp_first = vptp_first.sel(plev=85000)
+vptp_last = vptp_last.sel(plev=85000)
 #%%
-vpqp_ERA5 = None # not yet generated
+# v'q' -15 - 5 days before
 vpqp_first = read_composite_MPI("vpqp", "vptp", 1850)
 vpqp_last = read_composite_MPI("vpqp", "vptp", 2090)
-#%%
-upqp_ERA5 = None # not yet generated
+
 upqp_first = read_composite_MPI("upqp", "upqp", 1850)
 upqp_last = read_composite_MPI("upqp", "upqp", 2090)
 
-
-#%%
 # integrate qp
 upqp_first = vert_integrate(upqp_first)
 upqp_last = vert_integrate(upqp_last)
@@ -149,40 +149,10 @@ upqp_last = vert_integrate(upqp_last)
 vpqp_first = vert_integrate(vpqp_first)
 vpqp_last = vert_integrate(vpqp_last)
 
-# select vt at 850 hPa
-vptp_first = vptp_first.sel(plev=85000)
-vptp_last = vptp_last.sel(plev=85000)
+# to flux
+qflux_first = xr.Dataset({'u': upqp_first*1e3, 'v': vpqp_first*1e3}) #g/kg m/s
+qflux_last = xr.Dataset({'u': upqp_last*1e3, 'v': vpqp_last*1e3})
 
-# select upvp at 200 hPa
-upvp_first = upvp_first.sel(plev=25000)
-upvp_last = upvp_last.sel(plev=25000)
-#%%
-qflux_first = xr.Dataset({'u': upqp_first, 'v': vpqp_first})
-qflux_last = xr.Dataset({'u': upqp_last, 'v': vpqp_last})
-# qflux_ERA5 = xr.Dataset({'u': upqp_ERA5, 'v': vpqp_ERA5})
-
-# %%
-# ieke_ERA5 = read_composite_ERA5("ieke",'ieke') 
-# ieke_first = read_composite_MPI("ieke", "ieke", 1850)
-# ieke_last = read_composite_MPI("ieke", "ieke", 2090)
-# #%%
-# ieke_ERA5 = smooth(ieke_ERA5, lat_window=40, lon_window=80) # smooth the data
-# # %%
-# ivke_ERA5 = read_composite_ERA5("ivke", "ivke")
-# ivke_first = read_composite_MPI("ivke", "ivke", 1850)
-# ivke_last = read_composite_MPI("ivke", "ivke", 2090)
-
-# ivke_ERA5 = ivke_ERA5 * 1e6  # kg/kg to g/kg
-# ivke_first = ivke_first * 1e6  # kg/kg to g/kg
-# ivke_last = ivke_last * 1e6  # kg/kg to g/kg
-#%%
-qflux_first.isel(lon=slice(None, None, 3), lat=slice(None, None, 3)).plot.quiver(
-    x='lon', 
-    y='lat', 
-    u='u', 
-    v='v', 
-    scale=0.001,
-)
 
 # %%
 temp_cmap_seq = np.loadtxt(
@@ -206,93 +176,175 @@ prec_cmap_div = np.loadtxt(
 prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 
 # %%
-zg_levels = np.arange(-30, 31, 5)
 uhat_levels_div = np.arange(-12, 13, 2)
-upvp_levels_div = np.arange(-2, 2.1, 0.5)
+upvp_levels_div = np.arange(-25, 26, 5)
 vptp_levels_div = np.arange(-1, 1.1, 0.2)
-scale=0.001
 
+scale_div = 0.5
 
 #%%
 fig, axes = plt.subplots(
-    3, 3, figsize=(12, 10), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
+    2, 3, figsize=(12, 10), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
+)
+
+# first row first ten years
+# first column -15 - 5 days before
+vptp_first.plot(
+    ax=axes[0, 0],
+    transform=ccrs.PlateCarree(),
+    cmap=temp_cmap_div,
+    levels=vptp_levels_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$ v' \theta'/ K m s^{-1}$",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "shrink": 0.8,
+        "aspect": 20,
+        "ticks": np.arange(-1, 1.1, 0.2),
+    },
+)
+
+# quiver
+first_flux_arrow = qflux_first.isel(lon=slice(None, None, 3), lat=slice(None, None, 3)).plot.quiver(
+    ax=axes[0, 0],
+    transform=ccrs.PlateCarree(),
+    x="lon",
+    y="lat",
+    u="u",
+    v="v",
+    scale=scale_div,
+    color="black",
+    pivot="middle",
+    zorder = 10,
+)
+# add quiver key
+quiver_key = axes[0, 0].quiverkey(
+    first_flux_arrow,
+    0.75,
+    0.01,
+    0.05,
+    r"$0.05 g kg^{-1} m s^{-1}$",
+    labelpos="E",
+    coordinates="axes",
+    fontproperties={"size": 12},
 )
 
 
-
-# upvp_ERA5.plot.contourf(
-#     ax=axes[0, 0],
-#     transform=ccrs.PlateCarree(),
-#     cmap=temp_cmap_div,
-#     levels=upvp_levels_div,
-#     extend="both",
-#     add_colorbar=False,
-# )
-
+# second column 5-0 days before u'v'
 upvp_first.plot.contourf(
     ax=axes[0, 1],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
     levels=upvp_levels_div,
+    add_colorbar=True,
     extend="both",
-    add_colorbar=False,
+    cbar_kwargs={
+        "label": r"$ u' v'/ m^{2} s {-2}$",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "shrink": 0.8,
+        "aspect": 20,
+        "ticks": np.arange(-25, 26, 5),
+    },
 )
-upvp_map = upvp_last.plot.contourf(
+
+# third column uhat
+uhat_first.plot.contourf(
     ax=axes[0, 2],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
-    levels=upvp_levels_div,
+    levels=uhat_levels_div,
+    add_colorbar=True,
     extend="both",
-    add_colorbar=False,
+    cbar_kwargs={
+        "label": r"$\hat{u}$",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "shrink": 0.8,
+        "aspect": 20,
+        "ticks": np.arange(-12, 13, 2),
+    },
 )
 
-# vptp_ERA5.plot.contourf(
-#     ax=axes[1, 0],
+# second row last ten years
+# first column -15 - 5 days before
+vptp_last.plot(
+    ax=axes[1, 0],
+    transform=ccrs.PlateCarree(),
+    cmap=temp_cmap_div,
+    levels=vptp_levels_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$ v' \theta'/ K m s^{-1}$",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "shrink": 0.8,
+        "aspect": 20,
+        "ticks": np.arange(-1, 1.1, 0.2),
+    },
+)
+# quiver
+last_flux_arrow = qflux_last.isel(lon=slice(None, None, 3), lat=slice(None, None, 3)).plot.quiver(
+    ax=axes[1, 0],
+    transform=ccrs.PlateCarree(),
+    x="lon",
+    y="lat",
+    u="u",
+    v="v",
+    scale=scale_div,
+    color="black",
+    pivot="middle",
+    zorder = 10,
+)
+# add quiver key
+quiver_key = axes[1, 0].quiverkey(
+    last_flux_arrow,
+    0.75,
+    0.01,
+    0.05,
+    r"$0.05 g kg^{-1} m s^{-1}$",
+    labelpos="E",
+    coordinates="axes",
+    fontproperties={"size": 12},
+)
+# second column 5-0 days before u'v'
 
-vptp_first.plot.contourf(
+upvp_last.plot.contourf(
     ax=axes[1, 1],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
-    levels=vptp_levels_div,
+    levels=upvp_levels_div,
+    add_colorbar=True,
     extend="both",
-    add_colorbar=False,
+    cbar_kwargs={
+        "label": r"$ u' v'/ m^{2} s {-2}$",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "shrink": 0.8,
+        "aspect": 20,
+        "ticks": np.arange(-25, 26, 5),
+    },
 )
-
-vptp_map = vptp_last.plot.contourf(
+# third column uhat
+uhat_last.plot.contourf(
     ax=axes[1, 2],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
-    levels=vptp_levels_div,
+    levels=uhat_levels_div,
+    add_colorbar=True,
     extend="both",
-    add_colorbar=False,
+    cbar_kwargs={
+        "label": r"$\hat{u} / m s ^{-1}$",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "shrink": 0.8,
+        "aspect": 20,
+        "ticks": np.arange(-12, 13, 2),
+    },
 )
-
-# eof
-
-qflux_first.isel(lon=slice(None, None, 3), lat=slice(None, None, 3)).plot.quiver(
-    x='lon', 
-    y='lat', 
-    u='u', 
-    v='v', 
-    ax =axes[2, 1],
-    transform=ccrs.PlateCarree(),
-    scale=scale,
-    color='black',
-
-)
-
-qflux_map = qflux_last.isel(lon=slice(None, None, 3), lat=slice(None, None, 3)).plot.quiver(
-    x='lon',
-    y='lat',
-    u='u',
-    v='v',
-    ax=axes[2, 2],
-    transform=ccrs.PlateCarree(),
-    scale=scale,
-    color='black',
-)
-
-
 
 
 
@@ -308,20 +360,6 @@ for ax in axes.flatten():
 
 
 
-# define four axes at the right of last column to hold the four colorbars
-cbar_ax_eof = fig.add_axes([0.92, 0.73, 0.01, 0.2])
-cbar_ax_uhat = fig.add_axes([0.92, 0.4, 0.01, 0.2])
-cbar_ax_upvp = fig.add_axes([0.92, 0.06, 0.01, 0.2])
-# 
-# cbar_eof = fig.colorbar(eof_pattern, cax=cbar_ax_eof, orientation="vertical")
-# cbar_uhat = fig.colorbar(uhat_map, cax=cbar_ax_uhat, orientation="vertical")
-cbar_upvp = fig.colorbar(upvp_map, cax=cbar_ax_upvp, orientation="vertical")
-
-
-# cbar_eof.set_label(r"$Z500 \, / \, m$")
-# cbar_uhat.set_label(r"$\bar{u} \, / \, m \, s^{-1}$")
-cbar_upvp.set_label(r"$u'v' \, / \, m^2 \, s^{-2}$")
-
 # add a, b, c
 for i, ax in enumerate(axes.flatten()):
     ax.text(
@@ -333,7 +371,6 @@ for i, ax in enumerate(axes.flatten()):
         fontweight="bold",
     )
 
-plt.tight_layout(w_pad=-9, h_pad=1)
-
+plt.tight_layout()
 
 # %%
