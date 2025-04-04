@@ -25,8 +25,8 @@ except:
     size = 1
 #%%
 # from temperature to potential temperature
-ta_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ta_daily/r{member}i1p1f1/'
-q_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/hus_daily/r{member}i1p1f1/'
+ta_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ta_daily/r{member}i1p1f1/'
+q_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily/r{member}i1p1f1/'
 to_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_daily/r{member}i1p1f1/'
 
 if rank == 0:
