@@ -10,7 +10,7 @@ cp 			= 1004.67 # J/kg/K Specific heat at constant pressure
 
 
 #%%
-def potential_temperature(t, p = 'plev', p0 = 1e6):
+def potential_temperature(t, p = 'plev', p0 = 1e5):
 
 	# theta = T (p0/p)**kappa       (2.44)
 
@@ -25,7 +25,7 @@ def potential_temperature(t, p = 'plev', p0 = 1e6):
     theta.attrs['standard_name'] = 'potential_temperature'
     return theta
 
-def equivalent_potential_temperature(t, q, p = 'plev', p0 = 1e6):
+def equivalent_potential_temperature(t, q, p = 'plev', p0 = 1e5):
 	theta = potential_temperature(t, p, p0)
 	# equivalent potential temperature
 	# theta_e = theta * exp ( (L*qs)/ (cp * T))      (2.70)
