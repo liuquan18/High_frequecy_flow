@@ -44,7 +44,7 @@ for i, file in enumerate (files_core):
 
     ds = xr.open_dataset(file)
 
-    theta = EP_flux.potential_temperature(ds['ta'], p='plev', p0=1e6)
+    theta = EP_flux.potential_temperature(ds['ta'], p='plev', p0=1e5)
 
     # save to netcdf
     ds.to_netcdf(to_file)

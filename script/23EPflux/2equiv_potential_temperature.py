@@ -58,7 +58,7 @@ for i, dec in enumerate (dec_core):
         continue
 
     # calculate equivalent potential temperature
-    ds = EP_flux.equivalent_potential_temperature(t, q, p='plev', p0=1e6)
+    ds = EP_flux.equivalent_potential_temperature(t, q, p='plev', p0=1e5)
     # save to netcdf
     ds.to_netcdf(to_file)
     ds.close()
