@@ -21,9 +21,9 @@ if [ "$var1" == "vp" ]; then
 elif [ "$var1" == "up" ]; then
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_prime_daily/r${member}i1p1f1/
 elif [ "$var1" == "tp" ]; then
-    # var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_prime_daily/r${member}i1p1f1/     # potential temperature
+    var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_prime_daily/r${member}i1p1f1/     # potential temperature
+elif [ "$var1" == "etp" ]; then
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_prime_daily/r${member}i1p1f1/  # equivalent potential temperature
-
 elif [ "$var1" == "qp" ]; then
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_prime_daily/r${member}i1p1f1/
 fi
@@ -33,7 +33,8 @@ if [ "$var2" == "vp" ]; then
 elif [ "$var2" == "up" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_prime_daily/r${member}i1p1f1/
 elif [ "$var2" == "tp" ]; then
-    # var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_prime_daily/r${member}i1p1f1/
+    var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_prime_daily/r${member}i1p1f1/
+elif [ "$var2" == "etp" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_prime_daily/r${member}i1p1f1/  # equivalent potential temperature
 elif [ "$var2" == "qp" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_prime_daily/r${member}i1p1f1/
