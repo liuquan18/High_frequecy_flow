@@ -47,5 +47,8 @@ for i, file in enumerate (files_core):
     theta = EP_flux.potential_temperature(ds['ta'], p='plev', p0=1e5)
 
     # save to netcdf
-    ds.to_netcdf(to_file)
+    theta.to_netcdf(to_file)
+    theta.close()
     ds.close()
+# %%
+
