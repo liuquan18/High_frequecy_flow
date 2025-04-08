@@ -25,13 +25,13 @@ def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = Fal
     - vptp: v't' data.
     - theta_ensmean: Ensemble mean of theta data.
     """
-    upvp = read_composite_MPI("upvp", "ua", decade, before, phase, ano)
+    upvp = read_composite_MPI("upvp", "ua", decade = decade, before = before, return_as=phase, ano=ano)
     if equiv_theta:
-        vptp = read_composite_MPI("vpetp", "vpetp", before, decade, phase, ano)
+        vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano)
         theta_ensmean = xr.open_dataset(
             "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc").etheta
     else:
-        vptp = read_composite_MPI("vptp", "vptp", before, decade, phase, ano)
+        vptp = read_composite_MPI("vptp", "vptp", decade = decade, before = before, return_as=phase, ano=ano)
         theta_ensmean = xr.open_dataset(
             "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc").theta
     return upvp, vptp, theta_ensmean
@@ -42,60 +42,23 @@ def NPC_mean(arr):
 def NAL_mean(arr):
     return arr.sel(lon = slice(270, 330)).mean(dim = 'lon')
 
-#%%
-first_pos_upvp, first_pos_vptp, theta_first_ensmean = read_data_all(1850, 'pos', ano = False)
-first_neg_upvp, first_neg_vptp, theta_first_ensmean = read_data_all(1850, 'neg', ano = False)
-last_pos_upvp, last_pos_vptp, theta_last_ensmean = read_data_all(2090, 'pos', ano = False)
-last_neg_upvp, last_neg_vptp, theta_last_ensmean = read_data_all(2090, 'neg', ano = False)
-#%%
-
-first_pos_upvp, first_pos_vpetp, theta_first_ensmean = read_data_all(1850, 'pos', ano = False, before = '15_5', equiv_theta = True)
-first_neg_upvp, first_neg_vpetp, theta_first_ensmean = read_data_all(1850, 'neg', ano = False, before = '15_5', equiv_theta = True)
-last_pos_upvp, last_pos_vpetp, theta_last_ensmean = read_data_all(2090, 'pos', ano = False, before = '15_5', equiv_theta = True)
-last_neg_upvp, last_neg_vpetp, theta_last_ensmean = read_data_all(2090, 'neg', ano = False, before = '15_5', equiv_theta = True)
-
-
-
 # %%
-# u'v' -15, 5 days before
-upvp_pos_first = read_composite_MPI("upvp", "ua", 1850, '15_5', 'pos', False)
-upvp_pos_last = read_composite_MPI("upvp", "ua", 2090, '15_5', 'pos', False)
-
-# neg
-upvp_neg_first = read_composite_MPI("upvp", "ua", 1850, '15_5', 'neg', False)
-upvp_neg_last = read_composite_MPI("upvp", "ua", 2090, '15_5', 'neg', False)
+equiv_theta = False
 #%%
-# v't' -15 - 5 days before
-vptp_pos_first = read_composite_MPI("vptp", "vptp", 1850, '15_5', 'pos', False)
-vptp_pos_last = read_composite_MPI("vptp", "vptp", 2090, '15_5', 'pos', False)
-
-vptp_neg_first = read_composite_MPI("vptp", "vptp", 1850, '15_5', 'neg', False)
-vptp_neg_last = read_composite_MPI("vptp", "vptp", 2090, '15_5', 'neg', False)
-# %%
-# ensmean
-# etheta_first_ensmean = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc")
-# etheta_last_ensmean = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_209005_209909.nc")
-
-# etheta_first_ensmean = etheta_first_ensmean.etheta
-# etheta_last_ensmean = etheta_last_ensmean.etheta
+first_pos_upvp, first_pos_vptp, theta_first_ensmean = read_data_all(1850, 'pos', ano = False, equiv_theta=equiv_theta)
+first_neg_upvp, first_neg_vptp, theta_first_ensmean = read_data_all(1850, 'neg', ano = False, equiv_theta=equiv_theta)
+last_pos_upvp, last_pos_vptp, theta_last_ensmean = read_data_all(2090, 'pos', ano = False, equiv_theta=equiv_theta)
+last_neg_upvp, last_neg_vptp, theta_last_ensmean = read_data_all(2090, 'neg', ano = False, equiv_theta=equiv_theta)
 
 #%%
-theta_first_ensmean = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc")
-theta_last_ensmean = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_209005_209909.nc")
-theta_first_ensmean = theta_first_ensmean.theta
-theta_last_ensmean = theta_last_ensmean.theta
-# %%
-F_phi_pos_first, F_p_pos_first, div1_pos_first, div2_pos_first = EP_flux(vptp_pos_first, upvp_pos_first, theta_first_ensmean)
-F_phi_neg_first, F_p_neg_first, div1_neg_first, div2_neg_first = EP_flux(vptp_neg_first, upvp_neg_first, theta_first_ensmean)
+# potential temperature
+F_phi_pos_first, F_p_pos_first, div_pos_first = EP_flux(first_pos_vptp, first_pos_upvp, theta_first_ensmean)
+F_phi_neg_first, F_p_neg_first, div_neg_first = EP_flux(first_neg_vptp, first_neg_upvp, theta_first_ensmean)
+F_phi_pos_last, F_p_pos_last, div_pos_last = EP_flux(last_pos_vptp, last_pos_upvp, theta_last_ensmean)
+F_phi_neg_last, F_p_neg_last, div_neg_last = EP_flux(last_neg_vptp, last_neg_upvp, theta_last_ensmean)
 
 #%%
-div1 = div1_pos_first
-div2 = div2_pos_first
-Div = div1 + div2
 
-div1_neg = div1_neg_first
-div2_neg = div2_neg_first
-Div_neg = div1_neg + div2_neg
 # %%
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
 lat = F_phi_pos_first.lat
