@@ -37,3 +37,15 @@ def equivalent_potential_temperature(t, q, p = 'plev', p0 = 1e5):
 	ept.attrs['long_name'] = 'equivalent potential temperature'
 	ept.attrs['standard_name'] = 'equivalent_potential_temperature'
 	return ept
+
+def Theta_P(theta):
+	t = theta # ensemble mean of theta
+	t_bar = t.mean('lon') # t_bar = theta_bar
+	# prepare pressure derivative
+	dthdp = t_bar.differentiate('plev',edge_order=2) # dthdp = d(theta_bar)/dp
+	dthdp = dthdp.where(dthdp != 0)
+
+	# time mean
+	dthdp_mean = dthdp.mean('time')
+
+	return dthdp_mean	
