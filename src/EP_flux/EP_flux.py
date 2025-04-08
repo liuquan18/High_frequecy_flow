@@ -110,8 +110,8 @@ def EP_flux(vptp, upvp, Th_bar):
 	div1.name = 'div1'
 	div2.name = 'div2'
 
-	return ep1_cart, ep2_cart, div1, div2
-
+	return ep1_cart.transpose('plev','lat','lon'), ep2_cart.transpose('plev','lat','lon'),\
+	div1.transpose('plev','lat','lon'), div2.transpose('plev','lat','lon')
 #%%
 ## helper function: Get actual width and height of axes
 def GetAxSize(fig,ax,dpi=False):
