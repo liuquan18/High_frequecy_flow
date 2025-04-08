@@ -57,6 +57,15 @@ def EP_flux(vptp, upvp, Th_bar):
 		upvp = u'v' [m2/s]
 		Th_bar = theta_bar [K] ensemble mean of theta
 	'''
+	# check if the 'plev' coordinate is in Pa and convert to hPa
+	if 'plev' in vptp.coords and vptp['plev'].max() > 1000:
+		vptp = vptp.assign_coords(plev=vptp['plev'] / 100)
+	if 'plev' in upvp.coords and upvp['plev'].max() > 1000:
+		upvp = upvp.assign_coords(plev=upvp['plev'] / 100)
+	if 'plev' in Th_bar.coords and Th_bar['plev'].max() > 1000:
+		Th_bar = Th_bar.assign_coords(plev=Th_bar['plev'] / 100)
+
+	# constants
 	a0    = 6371000.  # earth radius in m
 	Omega = 7.292e-5 #[1/s]
 
@@ -103,6 +112,7 @@ def EP_flux(vptp, upvp, Th_bar):
 
 	return ep1_cart, ep2_cart, div1, div2
 
+#%%
 ## helper function: Get actual width and height of axes
 def GetAxSize(fig,ax,dpi=False):
 	"""get width and height of a given axis.
