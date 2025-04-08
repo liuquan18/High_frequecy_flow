@@ -3,27 +3,58 @@ import importlib.readers
 import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
-from src.plotting.util import erase_white_line
-from src.plotting.util import lon2x
-from matplotlib.ticker import ScalarFormatter
-from src.prime.prime_data import vert_integrate
 
-import matplotlib.colors as mcolors
-import cartopy
-import glob
-
-# %%
-import src.plotting.util as util
-import src.moisture.longitudinal_contrast as lc
 from src.EP_flux.EP_flux import EP_flux, PlotEPfluxArrows
+from src.prime.prime_data import read_composite_MPI
 
 import src.EP_flux.EP_flux as EP_flux_module
 import importlib
 importlib.reload(EP_flux_module)
 
 # %%
-from src.prime.prime_data import read_composite_MPI
+def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = False):
+    """
+    Read data for the specified decade and phase.
+    Parameters:
+    - decade: Decade to read data for (e.g., 1850, 2090).
+    - phase: Phase to read data for (e.g., 'pos', 'neg').
+    - ano: Boolean indicating whether to read anomaly data.
+    - equiv_theta: Boolean indicating whether to read equivalent theta data.
+    Returns:
+    - upvp: u'v' data.
+    - vptp: v't' data.
+    - theta_ensmean: Ensemble mean of theta data.
+    """
+    upvp = read_composite_MPI("upvp", "ua", decade, before, phase, ano)
+    if equiv_theta:
+        vptp = read_composite_MPI("vpetp", "vpetp", before, decade, phase, ano)
+        theta_ensmean = xr.open_dataset(
+            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc").etheta
+    else:
+        vptp = read_composite_MPI("vptp", "vptp", before, decade, phase, ano)
+        theta_ensmean = xr.open_dataset(
+            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc").theta
+    return upvp, vptp, theta_ensmean
+
+def NPC_mean(arr):
+    return arr.sel(lon = slice(120, 240)).mean(dim = 'lon')
+
+def NAL_mean(arr):
+    return arr.sel(lon = slice(270, 330)).mean(dim = 'lon')
+
+#%%
+first_pos_upvp, first_pos_vptp, theta_first_ensmean = read_data_all(1850, 'pos', ano = False)
+first_neg_upvp, first_neg_vptp, theta_first_ensmean = read_data_all(1850, 'neg', ano = False)
+last_pos_upvp, last_pos_vptp, theta_last_ensmean = read_data_all(2090, 'pos', ano = False)
+last_neg_upvp, last_neg_vptp, theta_last_ensmean = read_data_all(2090, 'neg', ano = False)
+#%%
+
+first_pos_upvp, first_pos_vpetp, theta_first_ensmean = read_data_all(1850, 'pos', ano = False, before = '15_5', equiv_theta = True)
+first_neg_upvp, first_neg_vpetp, theta_first_ensmean = read_data_all(1850, 'neg', ano = False, before = '15_5', equiv_theta = True)
+last_pos_upvp, last_pos_vpetp, theta_last_ensmean = read_data_all(2090, 'pos', ano = False, before = '15_5', equiv_theta = True)
+last_neg_upvp, last_neg_vpetp, theta_last_ensmean = read_data_all(2090, 'neg', ano = False, before = '15_5', equiv_theta = True)
+
+
 
 # %%
 # u'v' -15, 5 days before
