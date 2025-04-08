@@ -66,7 +66,7 @@ if __name__ == "__main__":
     decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
     var = str(sys.argv[2]) if len(sys.argv) > 2 else 'vptp'
     name = str(sys.argv[3]) if len(sys.argv) > 3 else 'vptp'
-    suffix = str(sys.argv[4]) if len(sys.argv) > 4 else '_ano' # '_ano' or ''
+    suffix = str(sys.argv[4]) if len(sys.argv) > 4 else '' # '_ano' or ''
     integrate = False
 
     logging.info(f"processing decade {decade} of {var} \n")
