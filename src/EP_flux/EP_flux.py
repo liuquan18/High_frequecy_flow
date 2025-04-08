@@ -104,14 +104,14 @@ def EP_flux(vptp, upvp, Th_bar):
 	# convert to m/s/day
 	div1 = div1*86400
 	div2 = div2*86400
+	div = div1 + div2 # divergence
 
 	ep1_cart.name = 'ep1'
 	ep2_cart.name = 'ep2'
-	div1.name = 'div1'
-	div2.name = 'div2'
+	div.name = 'div'
 
 	return ep1_cart.transpose('plev','lat','lon'), ep2_cart.transpose('plev','lat','lon'),\
-	div1.transpose('plev','lat','lon'), div2.transpose('plev','lat','lon')
+	div.transpose('plev','lat','lon')
 #%%
 ## helper function: Get actual width and height of axes
 def GetAxSize(fig,ax,dpi=False):
