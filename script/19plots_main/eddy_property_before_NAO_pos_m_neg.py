@@ -33,11 +33,11 @@ upvp_first = read_composite_MPI("upvp", "ua", 1850, '5_0') # 5 days before
 upvp_last = read_composite_MPI("upvp", "ua", 2090, '5_0') # 5 days before
 #%%
 # v't' -15 - 5 days before
-vptp_first = read_composite_MPI("vptp", "vptp", 1850)
-vptp_last = read_composite_MPI("vptp", "vptp", 2090)
+vpetp_first = read_composite_MPI("vpetp", "vpetp", 1850)
+vpetp_last = read_composite_MPI("vpetp", "vpetp", 2090)
 # select v't' at 850 hPa
-vptp_first = vptp_first.sel(plev=85000)
-vptp_last = vptp_last.sel(plev=85000)
+vpetp_first = vpetp_first.sel(plev=85000)
+vpetp_last = vpetp_last.sel(plev=85000)
 #%%
 # v'q' -15 - 5 days before
 vpqp_first = read_composite_MPI("vpqp", "vptp", 1850)
@@ -82,7 +82,7 @@ prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 # %%
 uhat_levels_div = np.arange(-12, 13, 2)
 upvp_levels_div = np.arange(-25, 26, 5)
-vptp_levels_div = np.arange(-1, 1.1, 0.2)
+vptp_levels_div = np.arange(-1.4, 1.5, 0.2)
 
 scale_div = 0.5
 
@@ -93,7 +93,7 @@ fig, axes = plt.subplots(
 
 # first row first ten years
 # first column -15 - 5 days before
-vptp_first.plot.contourf(
+vpetp_first.plot.contourf(
     ax=axes[0, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
@@ -101,7 +101,7 @@ vptp_first.plot.contourf(
     add_colorbar=True,
     extend="both",
     cbar_kwargs={
-        "label": r"$ v' \theta'/ K m s^{-1}$",
+        "label": r"$ v' \theta'_e/ K m s^{-1}$",
         "orientation": "horizontal",
         "pad": 0.05,
         "shrink": 0.8,
@@ -170,7 +170,7 @@ uhat_first.plot.contourf(
 
 # second row last ten years
 # first column -15 - 5 days before
-vptp_last.plot.contourf(
+vpetp_last.plot.contourf(
     ax=axes[1, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
@@ -178,7 +178,7 @@ vptp_last.plot.contourf(
     add_colorbar=True,
     extend="both",
     cbar_kwargs={
-        "label": r"$ v' \theta'/ K m s^{-1}$",
+        "label": r"$ v' \theta_e'/ K m s^{-1}$",
         "orientation": "horizontal",
         "pad": 0.05,
         "shrink": 0.8,
@@ -272,6 +272,6 @@ for i, ax in enumerate(axes.flatten()):
     )
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/NAO_uhat_upvp_vptpMPI_GE.png", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/NAO_uhat_upvp_vpetpMPI_GE.png", dpi=300)
 
 # %%
