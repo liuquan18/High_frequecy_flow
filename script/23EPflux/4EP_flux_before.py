@@ -43,7 +43,7 @@ def NAL_mean(arr):
     return arr.sel(lon = slice(270, 330)).mean(dim = 'lon')
 
 # %%
-equiv_theta = False
+equiv_theta = True
 #%%
 first_pos_upvp, first_pos_vptp, theta_first_ensmean = read_data_all(1850, 'pos', ano = False, equiv_theta=equiv_theta)
 first_neg_upvp, first_neg_vptp, theta_first_ensmean = read_data_all(1850, 'neg', ano = False, equiv_theta=equiv_theta)
@@ -58,31 +58,62 @@ F_phi_pos_last, F_p_pos_last, div_pos_last = EP_flux(last_pos_vptp, last_pos_upv
 F_phi_neg_last, F_p_neg_last, div_neg_last = EP_flux(last_neg_vptp, last_neg_upvp, theta_last_ensmean)
 
 #%%
+# NPC
+F_phi_pos_first_NPC = NPC_mean(F_phi_pos_first)
+F_p_pos_first_NPC = NPC_mean(F_p_pos_first)
+F_phi_neg_first_NPC = NPC_mean(F_phi_neg_first)
+F_p_neg_first_NPC = NPC_mean(F_p_neg_first)
+F_phi_pos_last_NPC = NPC_mean(F_phi_pos_last)
+F_p_pos_last_NPC = NPC_mean(F_p_pos_last)
+F_phi_neg_last_NPC = NPC_mean(F_phi_neg_last)
+F_p_neg_last_NPC = NPC_mean(F_p_neg_last)
+#%%
+div_pos_first_NPC = NPC_mean(div_pos_first)
+div_neg_first_NPC = NPC_mean(div_neg_first)
+div_pos_last_NPC = NPC_mean(div_pos_last)
+div_neg_last_NPC = NPC_mean(div_neg_last)
 
+#%%
+# NAL
+F_phi_pos_first_NAL = NAL_mean(F_phi_pos_first)
+F_p_pos_first_NAL = NAL_mean(F_p_pos_first)
+F_phi_neg_first_NAL = NAL_mean(F_phi_neg_first)
+F_p_neg_first_NAL = NAL_mean(F_p_neg_first)
+F_phi_pos_last_NAL = NAL_mean(F_phi_pos_last)
+F_p_pos_last_NAL = NAL_mean(F_p_pos_last)
+F_phi_neg_last_NAL = NAL_mean(F_phi_neg_last)
+F_p_neg_last_NAL = NAL_mean(F_p_neg_last)
+#%%
+div_pos_first_NAL = NAL_mean(div_pos_first)
+div_neg_first_NAL = NAL_mean(div_neg_first)
+div_pos_last_NAL = NAL_mean(div_pos_last)
+div_neg_last_NAL = NAL_mean(div_neg_last)
 # %%
-fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+# plot NPC
+fig, axes = plt.subplots(2, 3, figsize=(12, 8))
 lat = F_phi_pos_first.lat
 plev = F_phi_pos_first.plev
-
-# Positive case
-Div.mean(dim='lon').plot.contourf(ax=axes[0, 0], levels=np.arange(-2, 2.1, 0.1), cmap='RdBu_r', add_colorbar=False)
+# first row for first decade
+div_pos_first_NPC.plot.contourf(
+    ax=axes[0, 0], levels=np.arange(-2, 2.1, 0.1), cmap='RdBu_r', add_colorbar=False
+)
 PlotEPfluxArrows(
     x=lat[::3], y=plev,
-    ep1=F_phi_pos_first.mean(dim='lon')[:, ::3],
-    ep2=F_p_pos_first.mean(dim='lon')[:, ::3],
+    ep1=F_phi_pos_first_NPC[:, ::3],
+    ep2=F_p_pos_first_NPC[:, ::3],
     xscale='linear',
     yscale='linear',
     scale=5e15,
     xlim=[0, 90],
     fig=fig, ax=axes[0, 0],
 )
-
-# Negative case
-Div_neg.mean(dim='lon').plot.contourf(ax=axes[0, 1], levels=np.arange(-2, 2.1, 0.1), cmap='RdBu_r', add_colorbar=False)
+div_neg_first_NPC.plot.contourf(
+    ax=axes[0, 1], levels=np.arange(-2, 2.1, 0.1), cmap='RdBu_r', add_colorbar=False
+)
 PlotEPfluxArrows(
     x=lat[::3], y=plev,
-    ep1=F_phi_neg_first.mean(dim='lon')[:, ::3],
-    ep2=F_p_neg_first.mean(dim='lon')[:, ::3],
+    ep1=F_phi_neg_first_NPC[:, ::3],
+    ep2=F_p_neg_first_NPC[:, ::3],
     xscale='linear',
     yscale='linear',
     scale=5e15,
@@ -90,36 +121,214 @@ PlotEPfluxArrows(
     fig=fig, ax=axes[0, 1],
 )
 
-# Difference between positive and negative
-Div_diff = Div - Div_neg
-Div_diff.mean(dim='lon').plot.contourf(ax=axes[1, 0], levels=np.arange(-0.5, 0.6, 0.05), cmap='RdBu_r', add_colorbar=False)
+# third col for difference between positive and negative
+div_diff_NPC = div_pos_first_NPC - div_neg_first_NPC
+div_diff_NPC.plot.contourf(
+    ax=axes[0, 2], levels=np.arange(-0.5, 0.6, 0.05), cmap='RdBu_r', add_colorbar=False
+)
 PlotEPfluxArrows(
     x=lat[::3], y=plev,
-    ep1=(F_phi_pos_first - F_phi_neg_first).mean(dim='lon')[:, ::3],
-    ep2=(F_p_pos_first - F_p_neg_first).mean(dim='lon')[:, ::3],
+    ep1=(F_phi_pos_first_NPC - F_phi_neg_first_NPC)[:, ::3],
+    ep2=(F_p_pos_first_NPC - F_p_neg_first_NPC)[:, ::3],
     xscale='linear',
     yscale='linear',
-    scale=1e14,
+    scale=5e14,
+    xlim=[0, 90],
+    fig=fig, ax=axes[0, 2],
+)
+
+# second row for last decade
+div_pos_last_NPC.plot.contourf(
+    ax=axes[1, 0], levels=np.arange(-2, 2.1, 0.1), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=F_phi_pos_last_NPC[:, ::3],
+    ep2=F_p_pos_last_NPC[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e15,
     xlim=[0, 90],
     fig=fig, ax=axes[1, 0],
 )
-# %%
-F_phi = F_phi_pos_first
-F_p = F_p_pos_first
-
-#%%
-F = xr.Dataset({'F_phi': F_phi, 'F_p': F_p})
-F = F.mean(dim = 'lon')
-#%%
-
-#%%
-fig, ax = plt.subplots(figsize = (12, 8))
-
-ax.quiver(
-    F.lat,
-    F.plev,
-    F.F_phi,
-    F.F_p,
+div_neg_last_NPC.plot.contourf(
+    ax=axes[1, 1], levels=np.arange(-2, 2.1, 0.1), cmap='RdBu_r', add_colorbar=False
 )
-ax.set_ylim(1000, 200)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=F_phi_neg_last_NPC[:, ::3],
+    ep2=F_p_neg_last_NPC[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e15,
+    xlim=[0, 90],
+    fig=fig, ax=axes[1, 1],
+)
+# third col for difference between positive and negative
+div_diff_NPC_last = div_pos_last_NPC - div_neg_last_NPC
+div_diff_NPC_last.plot.contourf(
+    ax=axes[1, 2], levels=np.arange(-0.5, 0.6, 0.05), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=(F_phi_pos_last_NPC - F_phi_neg_last_NPC)[:, ::3],
+    ep2=(F_p_pos_last_NPC - F_p_neg_last_NPC)[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e14,
+    xlim=[0, 90],
+    fig=fig, ax=axes[1, 2],
+)
+
+#%%
+# new plot for NAL
+fig, axes = plt.subplots(2, 3, figsize=(12, 8))
+lat = F_phi_pos_first.lat
+plev = F_phi_pos_first.plev
+# first row for first decade
+div_pos_first_NAL.plot.contourf(
+    ax=axes[0, 0], levels=np.arange(-2, 2.1, 0.1), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=F_phi_pos_first_NAL[:, ::3],
+    ep2=F_p_pos_first_NAL[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e15,
+    xlim=[0, 90],
+    fig=fig, ax=axes[0, 0],
+)
+div_neg_first_NAL.plot.contourf(
+    ax=axes[0, 1], levels=np.arange(-2, 2.1, 0.1), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=F_phi_neg_first_NAL[:, ::3],
+    ep2=F_p_neg_first_NAL[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e15,
+    xlim=[0, 90],
+    fig=fig, ax=axes[0, 1],
+)
+# third col for difference between positive and negative
+div_diff_NAL = div_pos_first_NAL - div_neg_first_NAL
+div_diff_NAL.plot.contourf(
+    ax=axes[0, 2], levels=np.arange(-0.5, 0.6, 0.05), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=(F_phi_pos_first_NAL - F_phi_neg_first_NAL)[:, ::3],
+    ep2=(F_p_pos_first_NAL - F_p_neg_first_NAL)[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e14,
+    xlim=[0, 90],
+    fig=fig, ax=axes[0, 2],
+)
+# second row for last decade
+div_pos_last_NAL.plot.contourf(
+    ax=axes[1, 0], levels=np.arange(-2, 2.1, 0.1), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=F_phi_pos_last_NAL[:, ::3],
+    ep2=F_p_pos_last_NAL[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e15,
+    xlim=[0, 90],
+    fig=fig, ax=axes[1, 0],
+)
+div_neg_last_NAL.plot.contourf(
+    ax=axes[1, 1], levels=np.arange(-2, 2.1, 0.1), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=F_phi_neg_last_NAL[:, ::3],
+    ep2=F_p_neg_last_NAL[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e15,
+    xlim=[0, 90],
+    fig=fig, ax=axes[1, 1],
+)
+# third col for difference between positive and negative
+div_diff_NAL_last = div_pos_last_NAL - div_neg_last_NAL
+div_diff_NAL_last.plot.contourf(
+    ax=axes[1, 2], levels=np.arange(-0.5, 0.6, 0.05), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=(F_phi_pos_last_NAL - F_phi_neg_last_NAL)[:, ::3],
+    ep2=(F_p_pos_last_NAL - F_p_neg_last_NAL)[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e14,
+    xlim=[0, 90],
+    fig=fig, ax=axes[1, 2],
+)
+# %%
+
+# new plot, only the difference, first row for first decade, second row for last decade
+# first col for NPC, second col for NAL
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+# first row for first decade
+div_diff_NPC.plot.contourf(
+    ax=axes[0, 0], levels=np.arange(-0.5, 0.6, 0.05), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=(F_phi_pos_first_NPC - F_phi_neg_first_NPC)[:, ::3],
+    ep2=(F_p_pos_first_NPC - F_p_neg_first_NPC)[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e14,
+    xlim=[0, 90],ylim = [1000, 500],
+    fig=fig, ax=axes[0, 0],
+)
+div_diff_NAL.plot.contourf(
+    ax=axes[0, 1], levels=np.arange(-0.5, 0.6, 0.05), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=(F_phi_pos_first_NAL - F_phi_neg_first_NAL)[:, ::3],
+    ep2=(F_p_pos_first_NAL - F_p_neg_first_NAL)[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e14,
+    xlim=[0, 90],ylim = [1000, 500],
+    fig=fig, ax=axes[0, 1],
+)
+
+# second row for last decade
+div_diff_NPC_last.plot.contourf(
+    ax=axes[1, 0], levels=np.arange(-0.5, 0.6, 0.05), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=(F_phi_pos_last_NPC - F_phi_neg_last_NPC)[:, ::3],
+    ep2=(F_p_pos_last_NPC - F_p_neg_last_NPC)[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e14,
+    xlim=[0, 90],ylim = [1000, 500],
+    fig=fig, ax=axes[1, 0],
+)
+
+div_diff_NAL_last.plot.contourf(
+    ax=axes[1, 1], levels=np.arange(-0.5, 0.6, 0.05), cmap='RdBu_r', add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=lat[::3], y=plev,
+    ep1=(F_phi_pos_last_NAL - F_phi_neg_last_NAL)[:, ::3],
+    ep2=(F_p_pos_last_NAL - F_p_neg_last_NAL)[:, ::3],
+    xscale='linear',
+    yscale='linear',
+    scale=5e14,
+    xlim=[0, 90],ylim = [1000, 500],
+    fig=fig, ax=axes[1, 1],
+)
+plt.tight_layout()
 # %%
