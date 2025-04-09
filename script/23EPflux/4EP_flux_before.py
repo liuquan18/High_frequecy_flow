@@ -43,7 +43,7 @@ def NAL_mean(arr):
     return arr.sel(lon = slice(270, 330)).mean(dim = 'lon')
 
 # %%
-equiv_theta = True
+equiv_theta = False
 #%%
 first_pos_upvp, first_pos_vptp, theta_first_ensmean = read_data_all(1850, 'pos', ano = False, equiv_theta=equiv_theta)
 first_neg_upvp, first_neg_vptp, theta_first_ensmean = read_data_all(1850, 'neg', ano = False, equiv_theta=equiv_theta)
