@@ -62,9 +62,13 @@ flux(){
 
     # prepare output file name
     outfile="${flux_path}${var1}${var2}_${dec}.nc"
-
-    echo "Calculating eddy flux for ${dec} in ${var1}${var2}"
-    cdo -r -O -expr,"${var1}${var2}=${var1_name}*${var2_name}" -merge ${vfile} ${tfile} ${outfile}
+    if [ "$var1" == "$var2" ]; then
+        echo "Calculating square for ${dec} in ${var1}${var2}"
+        cdo -r -O mul ${vfile} ${tfile} ${outfile}
+    else
+        echo "Calculating eddy flux for ${dec} in ${var1}${var2}"
+        cdo -r -O -expr,"${var1}${var2}=${var1_name}*${var2_name}" -merge ${vfile} ${tfile} ${outfile}
+    fi
 
 }
 
