@@ -72,10 +72,10 @@ div_pos_last_NAL = NAL_mean(div_pos_last)
 div_neg_last_NAL = NAL_mean(div_neg_last)
 
 #%%
-scale = 5e16
-scale_div = 5e15
-levels = np.arange(-20, 20.1, 1)
-levels_div = np.arange(-0.5, 0.51, 0.1)
+scale = 5e15
+scale_div = 1e15
+levels = np.arange(-5, 5.1, 0.5)
+levels_div = np.arange(-0.8, 0.81, 0.1)
 
 # %%
 # plot NPC
@@ -274,7 +274,7 @@ PlotEPfluxArrows(
     xscale='linear',
     yscale='linear',
     scale = scale_div,
-    xlim=[0, 90],ylim = [1000, 500],
+    xlim=[0, 90],ylim = [1000, 300],
     fig=fig, ax=axes[0, 0],
 )
 div_diff_NAL.plot.contourf(
@@ -287,7 +287,7 @@ PlotEPfluxArrows(
     xscale='linear',
     yscale='linear',
     scale = scale_div,
-    xlim=[0, 90],ylim = [1000, 500],
+    xlim=[0, 90],ylim = [1000, 300],
     fig=fig, ax=axes[0, 1],
 )
 
@@ -302,11 +302,11 @@ PlotEPfluxArrows(
     xscale='linear',
     yscale='linear',
     scale = scale_div,
-    xlim=[0, 90],ylim = [1000, 500],
+    xlim=[0, 90],ylim = [1000, 300],
     fig=fig, ax=axes[1, 0],
 )
 
-div_diff_NAL_last.plot.contourf(
+divergence = div_diff_NAL_last.plot.contourf(
     ax=axes[1, 1], levels = levels_div, cmap='RdBu_r', add_colorbar=False
 )
 PlotEPfluxArrows(
@@ -316,8 +316,29 @@ PlotEPfluxArrows(
     xscale='linear',
     yscale='linear',
     scale = scale_div,
-    xlim=[0, 90],ylim = [1000, 500],
+    xlim=[0, 90],ylim = [1000, 300],
     fig=fig, ax=axes[1, 1],
 )
-plt.tight_layout()
+
+axes[0, 0].set_title("NPC first 10")
+axes[0, 1].set_title("NAL first 10")
+
+axes[1, 0].set_title("NPC last 10")
+axes[1, 1].set_title("NAL last 10")
+
+# no xlabel
+axes[1, 0].set_xlabel("")
+axes[1, 1].set_xlabel("")
+axes[0, 0].set_xlabel("")
+axes[0, 1].set_xlabel("")
+axes[0, 0].set_ylabel("Pressure [hPa]")
+axes[1, 0].set_ylabel("Pressure [hPa]")
+axes[0, 1].set_ylabel("")
+axes[1, 1].set_ylabel("")
+
+# add new axis for colorbar at the bottom
+cbar_ax = fig.add_axes([0.2, 0.1, 0.6, 0.02])
+cbar = fig.colorbar(divergence, cax=cbar_ax, orientation='horizontal')
+cbar.set_label(r"$ hPa / K^{-1}$")
+plt.tight_layout(rect=[0, 0.15, 1, 1])  # Adjust the layout to leave space for the colorbar
 # %%
