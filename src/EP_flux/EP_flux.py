@@ -123,7 +123,7 @@ def EP_flux(vptp, upvp, dthdp):
 	compute the EP_flux following https://github.com/mjucker/aostools
 		vptp = v't' [m/s*K]
 		upvp = u'v' [m2/s]
-		Th_bar = theta_bar [K] ensemble mean of theta
+		dthdp = d(theta)/dp [K/Pa]  either from stat_stab() or eff_stat_stab_xr()
 	'''
 	# check if the 'plev' coordinate is in Pa and convert to hPa
 	if 'plev' in vptp.coords and vptp['plev'].max() > 1000:
