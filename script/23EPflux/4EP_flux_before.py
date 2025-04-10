@@ -4,22 +4,38 @@ import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
 
-from src.EP_flux.EP_flux import EP_flux, NPC_mean, NAL_mean, stat_stab, read_data_all, PlotEPfluxArrows
+from src.EP_flux.EP_flux import (
+    EP_flux,
+    NPC_mean,
+    NAL_mean,
+    stat_stab,
+    read_data_all,
+    PlotEPfluxArrows,
+)
 
 import src.EP_flux.EP_flux as EP_flux_module
 import importlib
+
 importlib.reload(EP_flux_module)
 
 
 # %%
 equiv_theta = False
-#%%
-first_pos_upvp, first_pos_vptp, theta_first_ensmean = read_data_all(1850, 'pos', ano = False, equiv_theta=equiv_theta)
-first_neg_upvp, first_neg_vptp, theta_first_ensmean = read_data_all(1850, 'neg', ano = False, equiv_theta=equiv_theta)
-last_pos_upvp, last_pos_vptp, theta_last_ensmean = read_data_all(2090, 'pos', ano = False, equiv_theta=equiv_theta)
-last_neg_upvp, last_neg_vptp, theta_last_ensmean = read_data_all(2090, 'neg', ano = False, equiv_theta=equiv_theta)
+# %%
+first_pos_upvp, first_pos_vptp, theta_first_ensmean = read_data_all(
+    1850, "pos", ano=False, equiv_theta=equiv_theta
+)
+first_neg_upvp, first_neg_vptp, theta_first_ensmean = read_data_all(
+    1850, "neg", ano=False, equiv_theta=equiv_theta
+)
+last_pos_upvp, last_pos_vptp, theta_last_ensmean = read_data_all(
+    2090, "pos", ano=False, equiv_theta=equiv_theta
+)
+last_neg_upvp, last_neg_vptp, theta_last_ensmean = read_data_all(
+    2090, "neg", ano=False, equiv_theta=equiv_theta
+)
 
-#%%
+# %%
 # dtheta / dp
 stat_stab_pos_first = stat_stab(theta_first_ensmean)
 stat_stab_neg_first = stat_stab(theta_first_ensmean)
@@ -32,14 +48,22 @@ stat_stab_neg_first = stat_stab_neg_first * 100
 stat_stab_pos_last = stat_stab_pos_last * 100
 stat_stab_neg_last = stat_stab_neg_last * 100
 
-#%%
+# %%
 # potential temperature
-F_phi_pos_first, F_p_pos_first, div_pos_first = EP_flux(first_pos_vptp, first_pos_upvp, stat_stab_pos_first)
-F_phi_neg_first, F_p_neg_first, div_neg_first = EP_flux(first_neg_vptp, first_neg_upvp, stat_stab_neg_first)
-F_phi_pos_last, F_p_pos_last, div_pos_last = EP_flux(last_pos_vptp, last_pos_upvp, stat_stab_pos_last)
-F_phi_neg_last, F_p_neg_last, div_neg_last = EP_flux(last_neg_vptp, last_neg_upvp, stat_stab_neg_last)
+F_phi_pos_first, F_p_pos_first, div_pos_first = EP_flux(
+    first_pos_vptp, first_pos_upvp, stat_stab_pos_first
+)
+F_phi_neg_first, F_p_neg_first, div_neg_first = EP_flux(
+    first_neg_vptp, first_neg_upvp, stat_stab_neg_first
+)
+F_phi_pos_last, F_p_pos_last, div_pos_last = EP_flux(
+    last_pos_vptp, last_pos_upvp, stat_stab_pos_last
+)
+F_phi_neg_last, F_p_neg_last, div_neg_last = EP_flux(
+    last_neg_vptp, last_neg_upvp, stat_stab_neg_last
+)
 
-#%%
+# %%
 # NPC
 F_phi_pos_first_NPC = NPC_mean(F_phi_pos_first)
 F_p_pos_first_NPC = NPC_mean(F_p_pos_first)
@@ -49,13 +73,13 @@ F_phi_pos_last_NPC = NPC_mean(F_phi_pos_last)
 F_p_pos_last_NPC = NPC_mean(F_p_pos_last)
 F_phi_neg_last_NPC = NPC_mean(F_phi_neg_last)
 F_p_neg_last_NPC = NPC_mean(F_p_neg_last)
-#%%
+# %%
 div_pos_first_NPC = NPC_mean(div_pos_first)
 div_neg_first_NPC = NPC_mean(div_neg_first)
 div_pos_last_NPC = NPC_mean(div_pos_last)
 div_neg_last_NPC = NPC_mean(div_neg_last)
 
-#%%
+# %%
 # NAL
 F_phi_pos_first_NAL = NAL_mean(F_phi_pos_first)
 F_p_pos_first_NAL = NAL_mean(F_p_pos_first)
@@ -65,7 +89,7 @@ F_phi_pos_last_NAL = NAL_mean(F_phi_pos_last)
 F_p_pos_last_NAL = NAL_mean(F_p_pos_last)
 F_phi_neg_last_NAL = NAL_mean(F_phi_neg_last)
 F_p_neg_last_NAL = NAL_mean(F_p_neg_last)
-#%%
+# %%
 div_pos_first_NAL = NAL_mean(div_pos_first)
 div_neg_first_NAL = NAL_mean(div_neg_first)
 div_pos_last_NAL = NAL_mean(div_pos_last)
@@ -286,10 +310,10 @@ PlotEPfluxArrows(
 
 # new plot, only the difference, first row for first decade, second row for last decade
 # first col for NPC, second col for NAL
-fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+fig, axes = plt.subplots(2, 2, figsize=(10, 8))
 # first row for first decade
 div_diff_NPC.plot.contourf(
-    ax=axes[0, 0], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+    ax=axes[0, 0], levels=levels_div, cmap="RdBu_r", add_colorbar=False, extend="both"
 )
 PlotEPfluxArrows(
     x=lat[::3],
@@ -305,7 +329,7 @@ PlotEPfluxArrows(
     ax=axes[0, 0],
 )
 div_diff_NAL.plot.contourf(
-    ax=axes[0, 1], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+    ax=axes[0, 1], levels=levels_div, cmap="RdBu_r", add_colorbar=False, extend="both"
 )
 PlotEPfluxArrows(
     x=lat[::3],
@@ -323,7 +347,7 @@ PlotEPfluxArrows(
 
 # second row for last decade
 div_diff_NPC_last.plot.contourf(
-    ax=axes[1, 0], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+    ax=axes[1, 0], levels=levels_div, cmap="RdBu_r", add_colorbar=False, extend="both"
 )
 PlotEPfluxArrows(
     x=lat[::3],
@@ -340,7 +364,7 @@ PlotEPfluxArrows(
 )
 
 divergence = div_diff_NAL_last.plot.contourf(
-    ax=axes[1, 1], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+    ax=axes[1, 1], levels=levels_div, cmap="RdBu_r", add_colorbar=False, extend="both"
 )
 PlotEPfluxArrows(
     x=lat[::3],
@@ -363,8 +387,8 @@ axes[1, 0].set_title("NPC last 10")
 axes[1, 1].set_title("NAL last 10")
 
 # no xlabel
-axes[1, 0].set_xlabel("")
-axes[1, 1].set_xlabel("")
+axes[1, 0].set_xlabel("latitude")
+axes[1, 1].set_xlabel("latitude")
 axes[0, 0].set_xlabel("")
 axes[0, 1].set_xlabel("")
 axes[0, 0].set_ylabel("Pressure [hPa]")

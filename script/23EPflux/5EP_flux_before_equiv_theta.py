@@ -310,7 +310,7 @@ PlotEPfluxArrows(
 
 # new plot, only the difference, first row for first decade, second row for last decade
 # first col for NPC, second col for NAL
-fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+fig, axes = plt.subplots(2, 2, figsize=(10, 8))
 # first row for first decade
 div_diff_NPC.plot.contourf(
     ax=axes[0, 0], levels=levels_div, cmap="RdBu_r", add_colorbar=False
@@ -387,8 +387,8 @@ axes[1, 0].set_title("NPC last 10")
 axes[1, 1].set_title("NAL last 10")
 
 # no xlabel
-axes[1, 0].set_xlabel("")
-axes[1, 1].set_xlabel("")
+axes[1, 0].set_xlabel("latitude")
+axes[1, 1].set_xlabel("latitude")
 axes[0, 0].set_xlabel("")
 axes[0, 1].set_xlabel("")
 axes[0, 0].set_ylabel("Pressure [hPa]")
