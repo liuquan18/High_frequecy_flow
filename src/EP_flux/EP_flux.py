@@ -109,7 +109,8 @@ def eff_stat_stab(p, temp, lambda_val=0.6):
     return dtheta_dp_eff
 
 def eff_stat_stab_xr(T):
-	return xr.apply_ufunc(
+	T = T.mean(dim = 'lon')
+	stat_stability =  xr.apply_ufunc(
 		eff_stat_stab,
 		T['plev'],
 		T,
@@ -118,6 +119,9 @@ def eff_stat_stab_xr(T):
 		vectorize=True,
 		dask='allowed',
 	)
+
+	stat_stability = stat_stability.mean(dim = 'time')
+	return stat_stability
 
 
 def EP_flux(vptp, upvp, dthdp):
