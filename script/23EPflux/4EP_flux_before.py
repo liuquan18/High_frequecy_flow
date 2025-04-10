@@ -399,7 +399,7 @@ axes[1, 1].set_ylabel("")
 # add new axis for colorbar at the bottom
 cbar_ax = fig.add_axes([0.2, 0.1, 0.6, 0.02])
 cbar = fig.colorbar(divergence, cax=cbar_ax, orientation="horizontal")
-cbar.set_label(r"$ hPa / K^{-1}$")
+cbar.set_label(r"$ hPa \: K^{-1}$")
 plt.tight_layout(
     rect=[0, 0.15, 1, 1]
 )  # Adjust the layout to leave space for the colorbar
