@@ -1,4 +1,3 @@
-
 #%%
 import xarray as xr
 import numpy as np
@@ -38,7 +37,7 @@ def equivalent_potential_temperature(t, q, p = 'plev', p0 = 1e5):
 	ept.attrs['standard_name'] = 'equivalent_potential_temperature'
 	return ept
 
-def Theta_P(theta):
+def stat_stab(theta):
 	t = theta # ensemble mean of theta
 	t_bar = t.mean('lon') # t_bar = theta_bar
 	# prepare pressure derivative
@@ -50,7 +49,76 @@ def Theta_P(theta):
 
 	return dthdp_mean	
 
-def EP_flux(vptp, upvp, Th_bar):
+
+def eff_stat_stab(p, temp, lambda_val=0.6):
+    """
+    Calculate the effective static stability derived in O'Gorman, JAS, 2011, pages 75-90.
+
+    Parameters:
+    p (numpy.ndarray): 1D vertical profile of pressure
+    temp (numpy.ndarray): 1D vertical profile of temperature
+    lambda_val (float, optional): Asymmetry parameter (default value 0.6)
+
+    Returns:
+    dtheta_dp_eff (numpy.ndarray): Effective static stability
+    """
+    # Constants
+    Rd = 287.04  # gas constant for dry air [J/kg/K]
+    Rv = 461.5  # gas constant for water vapor [J/kg/K]
+    cpd = 1005.7  # specific heat dry air [J/kg/K]
+    cpv = 1870  # specific heat water vapor [J/kg/K]
+    g = 9.80665  # gravitational acceleration [m/s^2]
+    p0 = 1e5  # reference pressure [Pa]
+    kappa = Rd / cpd
+    gc_ratio = Rd / Rv
+
+    # Saturation vapor pressure [Pa]
+    Tc = temp - 273.15
+    es = 611.20 * np.exp(17.67 * Tc / (Tc + 243.5))  # Bolton 1980 equation 10
+
+    # Latent heat of condensation [J/kg]
+    L = (2.501 - 0.00237 * Tc) * 1e6  # Bolton 1980 equation 2
+
+    # Saturation mixing ratio
+    rs = gc_ratio * es / (p - es)
+
+    # Saturation specific humidity
+    qs = rs / (1 + rs)
+
+    # Potential temperature
+    exponent = kappa * (1 + rs / gc_ratio) / (1 + rs * cpv / cpd)
+    theta = temp * (p0 / p) ** exponent
+
+    # Density
+    temp_virtual = temp * (1 + rs / gc_ratio) / (1 + rs)
+    rho = p / Rd / temp_virtual
+
+    # Moist adiabatic lapse rate
+    malr = g / cpd * (1 + rs) / (1 + cpv / cpd * rs) * \
+           (1 + L * rs / Rd / temp) / (1 + L ** 2 * rs * (1 + rs / gc_ratio) / (Rv * temp ** 2 * (cpd + rs * cpv)))
+
+    # Derivative of potential temperature wrt pressure along a moist adiabat
+    dtemp_dp_ma = malr / g / rho
+    dtheta_dp_ma = dtemp_dp_ma * theta / temp - exponent * theta / p
+
+    # Effective static stability following equation 8 of O'Gorman, JAS, 2011
+    dtheta_dp_eff = np.gradient(theta, p) - lambda_val * dtheta_dp_ma
+
+    return dtheta_dp_eff
+
+def eff_stat_stab_xr(T):
+	return xr.apply_ufunc(
+		eff_stat_stab,
+		T['plev'],
+		T,
+		input_core_dims=[['plev'], ['plev']],
+		output_core_dims=[['plev']],
+		vectorize=True,
+		dask='allowed',
+	)
+
+
+def EP_flux(vptp, upvp, dthdp):
 	'''
 	compute the EP_flux following https://github.com/mjucker/aostools
 		vptp = v't' [m/s*K]
@@ -62,8 +130,8 @@ def EP_flux(vptp, upvp, Th_bar):
 		vptp = vptp.assign_coords(plev=vptp['plev'] / 100)
 	if 'plev' in upvp.coords and upvp['plev'].max() > 1000:
 		upvp = upvp.assign_coords(plev=upvp['plev'] / 100)
-	if 'plev' in Th_bar.coords and Th_bar['plev'].max() > 1000:
-		Th_bar = Th_bar.assign_coords(plev=Th_bar['plev'] / 100)
+	if 'plev' in dthdp.coords and dthdp['plev'].max() > 1000:
+		dthdp = dthdp.assign_coords(plev=dthdp['plev'] / 100)
 
 	# constants
 	a0    = 6371000.  # earth radius in m
@@ -75,7 +143,6 @@ def EP_flux(vptp, upvp, Th_bar):
 	R      = 1./(a0*coslat)
 	f      = 2*Omega*sinlat
 
-	dthdp = Theta_P(Th_bar)
 
 	# absolute vorticity
 	fhat = f
