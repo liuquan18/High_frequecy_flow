@@ -19,3 +19,4 @@ first_ens_list=($(find -L $base_path -name $file_name -print))
 
 
 cdo -O -P 5 -ensmean -apply,ymonmean [ ${first_ens_list[@]} ] $to_path${out_name}
+# cdo -O -P 5 -ensmean -apply,yearmean [ ${first_ens_list[@]} ] $to_path${out_name}
