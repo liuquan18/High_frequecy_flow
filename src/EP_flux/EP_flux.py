@@ -109,7 +109,7 @@ def eff_stat_stab(p, temp, lambda_val=0.6):
     return dtheta_dp_eff
 
 def eff_stat_stab_xr(T):
-	T = T.mean(dim = 'lon')
+	T = T.mean(dim = ('lon', 'time'))
 	stat_stability =  xr.apply_ufunc(
 		eff_stat_stab,
 		T['plev'],
@@ -120,7 +120,6 @@ def eff_stat_stab_xr(T):
 		dask='allowed',
 	)
 
-	stat_stability = stat_stability.mean(dim = 'time')
 	return stat_stability
 
 
@@ -211,14 +210,7 @@ def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = Fal
         theta_ensmean = xr.open_dataset(
             "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc").theta
         
-    # check if the 'plev' coordinate is in Pa and convert to hPa
-    if 'plev' in vptp.coords and vptp['plev'].max() > 1000:
-        vptp = vptp.assign_coords(plev=vptp['plev'] / 100)
-    if 'plev' in upvp.coords and upvp['plev'].max() > 1000:
-        upvp = upvp.assign_coords(plev=upvp['plev'] / 100)
-    if 'plev' in theta_ensmean.coords and theta_ensmean['plev'].max() > 1000:
-        theta_ensmean = theta_ensmean.assign_coords(plev=theta_ensmean['plev'] / 100)
-        
+
     return upvp, vptp, theta_ensmean
 
 def NPC_mean(arr):
