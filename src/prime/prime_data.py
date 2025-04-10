@@ -64,10 +64,11 @@ def read_prime_ERA5(var="eke", model="ERA5_allplev", **kwargs):
 
 
 # %%
-def vert_integrate(var):
+def vert_integrate(var, p_B = 100000, p_T = 25000):
     var = var.sortby(
         "plev", ascending=False
     )  # make sure plev is in descending order, p_B is larger than p_T
+    var = var.sel(plev=slice(p_B, p_T))
     d_var_dp = var.differentiate("plev")
     ivar = d_var_dp.integrate("plev")
     ivar = -1 * ivar / 9.81
