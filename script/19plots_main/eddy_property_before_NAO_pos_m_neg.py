@@ -269,6 +269,6 @@ for i, ax in enumerate(axes.flatten()):
     )
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/NAO_uhat_upvp_vpetpMPI_GE.png", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/NAO_uhat_upvp_vpetpMPI_GE.pdf", dpi=300, bbox_inches="tight")
 
 # %%
