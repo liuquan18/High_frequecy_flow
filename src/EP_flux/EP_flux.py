@@ -1,6 +1,8 @@
 #%%
 import xarray as xr
 import numpy as np
+from src.prime.prime_data import read_composite_MPI
+
 # %%
 # constants
 kappa 		= 2./7.
@@ -179,6 +181,48 @@ def EP_flux(vptp, upvp, dthdp):
 
 	return ep1_cart.transpose('plev','lat','lon'), ep2_cart.transpose('plev','lat','lon'),\
 	div.transpose('plev','lat','lon')
+
+
+# %%
+def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = False):
+    """
+    Read data for the specified decade and phase.
+    Parameters:
+    - decade: Decade to read data for (e.g., 1850, 2090).
+    - phase: Phase to read data for (e.g., 'pos', 'neg').
+    - ano: Boolean indicating whether to read anomaly data.
+    - equiv_theta: Boolean indicating whether to read equivalent theta data.
+    Returns:
+    - upvp: u'v' data.
+    - vptp: v't' data.
+    - theta_ensmean: Ensemble mean of theta data.
+    """
+    upvp = read_composite_MPI("upvp", "ua", decade = decade, before = before, return_as=phase, ano=ano)
+    if equiv_theta:
+        vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano)
+        theta_ensmean = xr.open_dataset(
+            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc").etheta
+    else:
+        vptp = read_composite_MPI("vptp", "vptp", decade = decade, before = before, return_as=phase, ano=ano)
+        theta_ensmean = xr.open_dataset(
+            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc").theta
+        
+    # check if the 'plev' coordinate is in Pa and convert to hPa
+    if 'plev' in vptp.coords and vptp['plev'].max() > 1000:
+        vptp = vptp.assign_coords(plev=vptp['plev'] / 100)
+    if 'plev' in upvp.coords and upvp['plev'].max() > 1000:
+        upvp = upvp.assign_coords(plev=upvp['plev'] / 100)
+    if 'plev' in theta_ensmean.coords and theta_ensmean['plev'].max() > 1000:
+        theta_ensmean = theta_ensmean.assign_coords(plev=theta_ensmean['plev'] / 100)
+        
+    return upvp, vptp, theta_ensmean
+
+def NPC_mean(arr):
+    return arr.sel(lon = slice(120, 240)).mean(dim = 'lon')
+
+def NAL_mean(arr):
+    return arr.sel(lon = slice(270, 330)).mean(dim = 'lon')
+
 #%%
 ## helper function: Get actual width and height of axes
 def GetAxSize(fig,ax,dpi=False):
