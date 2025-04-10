@@ -92,47 +92,22 @@ fig, axes = plt.subplots(
 )
 
 # first row first ten years
-# first column -15 - 5 days before
-vpetp_first.plot.contourf(
+# first column uhat
+uhat_first.plot.contourf(
     ax=axes[0, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
-    levels=vptp_levels_div,
+    levels=uhat_levels_div,
     add_colorbar=True,
     extend="both",
     cbar_kwargs={
-        "label": r"$ v' \theta'_e/ K m s^{-1}$",
+        "label": r"$\hat{u} / m s^{-1}$",
         "orientation": "horizontal",
         "pad": 0.05,
         "shrink": 0.8,
         "aspect": 20,
     },
 )
-
-# quiver
-first_flux_arrow = axes[0, 0].quiver(
-    qflux_first["lon"].values[::3],
-    qflux_first["lat"].values[::3],
-    qflux_first["u"].values[::3, ::3],
-    qflux_first["v"].values[::3, ::3],
-    transform=ccrs.PlateCarree(),
-    scale=scale_div,
-    color="black",
-    pivot="middle",
-)
-# add quiver key
-quiver_key = axes[0, 0].quiverkey(
-    first_flux_arrow,
-    0.75,
-    0.01,
-    0.05,
-    r"$0.05 g kg^{-1} m s^{-1}$",
-    transform=ccrs.PlateCarree(),
-    labelpos="E",
-    coordinates="axes",
-    fontproperties={"size": 12},
-)
-
 
 # second column 5-0 days before u'v'
 upvp_first.plot.contourf(
@@ -151,34 +126,16 @@ upvp_first.plot.contourf(
     },
 )
 
-# third column uhat
-uhat_first.plot.contourf(
+# third column -15 - 5 days before
+vpetp_first.plot.contourf(
     ax=axes[0, 2],
-    transform=ccrs.PlateCarree(),
-    cmap=temp_cmap_div,
-    levels=uhat_levels_div,
-    add_colorbar=True,
-    extend="both",
-    cbar_kwargs={
-        "label": r"$\hat{u} / m s^{-1}$",
-        "orientation": "horizontal",
-        "pad": 0.05,
-        "shrink": 0.8,
-        "aspect": 20,
-    },
-)
-
-# second row last ten years
-# first column -15 - 5 days before
-vpetp_last.plot.contourf(
-    ax=axes[1, 0],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
     levels=vptp_levels_div,
     add_colorbar=True,
     extend="both",
     cbar_kwargs={
-        "label": r"$ v' \theta_e'/ K m s^{-1}$",
+        "label": r"$ v' \theta'_e/ K m s^{-1}$",
         "orientation": "horizontal",
         "pad": 0.05,
         "shrink": 0.8,
@@ -187,19 +144,19 @@ vpetp_last.plot.contourf(
 )
 
 # quiver
-last_flux_arrow = axes[1, 0].quiver(
-    qflux_last["lon"].values[::3],
-    qflux_last["lat"].values[::3],
-    qflux_last["u"].values[::3, ::3],
-    qflux_last["v"].values[::3, ::3],
+first_flux_arrow = axes[0, 2].quiver(
+    qflux_first["lon"].values[::3],
+    qflux_first["lat"].values[::3],
+    qflux_first["u"].values[::3, ::3],
+    qflux_first["v"].values[::3, ::3],
     transform=ccrs.PlateCarree(),
     scale=scale_div,
     color="black",
     pivot="middle",
 )
 # add quiver key
-quiver_key = axes[1, 0].quiverkey(
-    last_flux_arrow,
+quiver_key = axes[0, 2].quiverkey(
+    first_flux_arrow,
     0.75,
     0.01,
     0.05,
@@ -210,8 +167,25 @@ quiver_key = axes[1, 0].quiverkey(
     fontproperties={"size": 12},
 )
 
-# second column 5-0 days before u'v'
+# second row last ten years
+# first column uhat
+uhat_last.plot.contourf(
+    ax=axes[1, 0],
+    transform=ccrs.PlateCarree(),
+    cmap=temp_cmap_div,
+    levels=uhat_levels_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\hat{u} / m s ^{-1}$",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "shrink": 0.8,
+        "aspect": 20,
+    },
+)
 
+# second column 5-0 days before u'v'
 upvp_last.plot.contourf(
     ax=axes[1, 1],
     transform=ccrs.PlateCarree(),
@@ -227,16 +201,17 @@ upvp_last.plot.contourf(
         "aspect": 20,
     },
 )
-# third column uhat
-uhat_last.plot.contourf(
+
+# third column -15 - 5 days before
+vpetp_last.plot.contourf(
     ax=axes[1, 2],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
-    levels=uhat_levels_div,
+    levels=vptp_levels_div,
     add_colorbar=True,
     extend="both",
     cbar_kwargs={
-        "label": r"$\hat{u} / m s ^{-1}$",
+        "label": r"$ v' \theta_e'/ K m s^{-1}$",
         "orientation": "horizontal",
         "pad": 0.05,
         "shrink": 0.8,
@@ -244,7 +219,29 @@ uhat_last.plot.contourf(
     },
 )
 
-
+# quiver
+last_flux_arrow = axes[1, 2].quiver(
+    qflux_last["lon"].values[::3],
+    qflux_last["lat"].values[::3],
+    qflux_last["u"].values[::3, ::3],
+    qflux_last["v"].values[::3, ::3],
+    transform=ccrs.PlateCarree(),
+    scale=scale_div,
+    color="black",
+    pivot="middle",
+)
+# add quiver key
+quiver_key = axes[1, 2].quiverkey(
+    last_flux_arrow,
+    0.75,
+    0.01,
+    0.05,
+    r"$0.05 g kg^{-1} m s^{-1}$",
+    transform=ccrs.PlateCarree(),
+    labelpos="E",
+    coordinates="axes",
+    fontproperties={"size": 12},
+)
 
 for ax in axes.flatten():
     ax.coastlines()
@@ -256,9 +253,9 @@ for ax in axes.flatten():
     ax.set_ylabel("")
     ax.set_title("")
 
-    axes[0, 0].set_title('(-15, -5)')
+    axes[0, 0].set_title('(event period)')
     axes[0, 1].set_title('(-5, 0)')
-    axes[0, 2].set_title('(event period)')
+    axes[0, 2].set_title('(-15, -5)')
 
 # add a, b, c
 for i, ax in enumerate(axes.flatten()):
