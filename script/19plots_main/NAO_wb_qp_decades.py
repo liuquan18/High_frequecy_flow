@@ -14,31 +14,29 @@ from src.moisture.longitudinal_contrast import read_NAO_extremes
 def to_dataframe(ivke_region, region):
     ivke_region = ivke_region.to_dataframe().reset_index()
     ivke_region["decade"] = ivke_region["time"].dt.year // 10 * 10
-    ivke_region = ivke_region[["ivke", "decade"]].rename(
-        columns={"ivke": f"ivke_{region}"}
+    ivke_region = ivke_region[["hus", "decade"]].rename(
+        columns={"hus": f"qq_{region}"}
     )
     return ivke_region
+#%%
 
-
+qq = xr.open_mfdataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/qpqp_monthly_ensmean/*.nc")
 # %%
-# read ivke ensemble mean
-ivke = xr.open_mfdataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ivke_ensmean/ivke_ensmean_*.nc",
-    combine="by_coords",
-)
-ivke = ivke["ivke"]
-ivke = ivke * 1e6  # kg/kg to g/kg
-ivke = erase_white_line(ivke)
-ivke.load()
+qq =qq.hus*1e6 # kg/kg to g/kg
 # %%
-ivke_NPC = ivke.sel(lat=slice(30, 60), lon=slice(120, 220)).mean(dim=["lat", "lon"])
-ivke_NAL = ivke.sel(lat=slice(0, 30), lon=slice(285, 345)).mean(dim=["lat", "lon"])
-
+qq = qq.sel(plev = 85000)
+#%%
+qq = qq.rolling(time = 10).mean()
 # %%
-ivke_NPC = to_dataframe(ivke_NPC, "NPC")
-ivke_NAL = to_dataframe(ivke_NAL, "NAL")
+qq.compute()
 # %%
-ivke_merge = pd.merge(ivke_NPC, ivke_NAL, on="decade")
+qq_NPC = qq.sel(lon = slice(120, 240), lat = slice(30, 50)).mean(dim = ['lon', 'lat'])
+qq_NAL = qq.sel(lon = slice(270, 330), lat = slice(30, 50)).mean(dim = ['lon', 'lat'])
+# %%
+qq_NPC = to_dataframe(qq_NPC, "NPC")
+qq_NAL = to_dataframe(qq_NAL, "NAL")
+# %%
+qq_merge = pd.merge(qq_NPC, qq_NAL, on="decade")
 # %%
 
 # wave breaking
@@ -115,7 +113,7 @@ NAO_merge = pd.merge(NAO_count_merge, NAO_days_merge, on="decade")
 # %%
 NAO_merge["decade"] = NAO_merge["decade"].astype(int)
 # %%
-final_merge = pd.merge(ivke_merge, wb_merge, on="decade").merge(NAO_merge, on="decade")
+final_merge = pd.merge(qq_merge, wb_merge, on="decade").merge(NAO_merge, on="decade")
 
 
 # %%
@@ -135,9 +133,9 @@ fig, axes = plt.subplots(1,3, figsize=(12, 6))
 sns.lineplot(
     data=final_merge,
     x="decade",
-    y="ivke_NPC",
+    y="qq_NPC",
     ax=axes[2],
-    label="iveke NPC",
+    label=r"$q'^2$ NPC",
     color="k",
     linewidth=2,
 )
@@ -145,9 +143,9 @@ sns.lineplot(
 sns.lineplot(
     data=final_merge,
     x="decade",
-    y="ivke_NAL",
+    y="qq_NAL",
     ax=axes[2],
-    label="iveke NAL",
+    label=r"$q'^2$ NAL",
     color="k",
     linewidth=2,
     linestyle="--",
@@ -195,7 +193,7 @@ sns.lineplot(
 )
 
 
-axes[2].set_ylabel(r"Integrated vapor eke")
+axes[2].set_ylabel(r"$q'^2 \: / \: g^2 kg^{-2}$")
 axes[1].set_ylabel("wave breaking")
 axes[0].set_ylabel("extreme NAO days")
 
