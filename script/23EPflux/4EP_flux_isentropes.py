@@ -95,6 +95,12 @@ ano = sys.argv[4] if len(sys.argv) > 4 else False  # 'True' or 'False', default 
 
 #%%
 if __name__ == "__main__":
+    # summary the input
+    logging.info(f"Phase: {phase}")
+    logging.info(f"Decade: {decade}")
+    logging.info(f"Isentrope: {isentrope}")
+    logging.info(f"Anomaly: {ano}")
+    
     # Calculate EP flux for NAO pos and neg phase
     calculate_EP_flux(decade, phase, ano=ano, equiv_theta=True, isentrope=isentrope)
-    logging.info(f"EP flux for {phase} phase in {decade} calculated")
+
