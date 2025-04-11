@@ -124,7 +124,7 @@ def eff_stat_stab_xr(T):
 	return stat_stability
 
 #%%
-def plev_to_isentrope(var, theta, var_name = 'F_phi', theta_name = 'theta', t_bins = np.arange(280, 360, 1)):
+def plev_to_isentrope(var, theta, var_name = 'F_phi', theta_name = 'theta', t_bins = np.arange(280, 360, 2)):
 	"""
 	Interpolate the variable to isentropic levels based on the potential temperature.
 	Parameters:
