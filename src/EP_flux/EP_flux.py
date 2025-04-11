@@ -1,6 +1,7 @@
 #%%
 import xarray as xr
 import numpy as np
+import pandas as pd
 from src.prime.prime_data import read_composite_MPI
 
 # %%
@@ -339,3 +340,48 @@ def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',ysca
 		return Fphi*dx,Fp*dy,ax
 	else:
 		return Fphi*dx,Fp*dy
+#%%
+def bin_var_theta(df_all, var="F_phi", t_bins = np.arange(240, 400, 5)):
+
+    var_bined = (
+        df_all[[var]]
+        .groupby(pd.cut(df_all["etheta"], bins=t_bins), observed=True)
+        .mean()
+    )
+    # add one column called tas_diff, which is the middle value of the bin
+    var_bined["theta"] = var_bined.index.map(
+        lambda x: x.mid
+    )  
+    # make the tas_diff as the index
+    var_bined = var_bined.set_index("theta")
+    return var_bined
+#%%
+def plev_to_isentrope(var, theta, var_name = 'F_phi', theta_name = 'theta'):
+	"""
+	Interpolate the variable to isentropic levels based on the potential temperature.
+	Parameters:
+	- var: xarray DataArray of the variable to be interpolated.
+	- theta: xarray DataArray of potential temperature.
+	Returns:
+	- var_isentrope: xarray DataArray of the variable interpolated to isentropic levels.
+	"""
+	# Interpolate to isentropic levels
+	ds = xr.Dataset(
+		{
+			var_name: var,
+			theta_name: theta,
+		}
+	)
+	df = ds.to_dataframe().reset_index()
+	# Drop NaN values
+	df = df.dropna()
+
+	# interpolate
+	isen_df = df.groupby(['lat','lon']).apply(
+		bin_var_theta,
+		var = var_name,
+		t_bins = np.arange(240, 400, 5)
+	)
+
+	isen_xr = isen_df.to_xarray()
+	return isen_xr
