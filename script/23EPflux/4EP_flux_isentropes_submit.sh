@@ -15,4 +15,4 @@ isentrope=$3 # isentrope
 
 echo run $phase for $decade
 
-python 7EP_flux_isentropes.py $phase $decade $isentrope
+python 4EP_flux_isentropes.py $phase $decade $isentrope
