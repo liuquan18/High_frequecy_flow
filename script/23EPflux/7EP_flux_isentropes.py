@@ -63,19 +63,25 @@ def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, isentrope=True
     Calculate EP flux for a given decade and phase
     """
     # Read data
+    logging.info (f"Read data for {phase} phase in {decade}")
     upvp, vptp, theta = read_data_all(decade, phase, ano=ano, equiv_theta=equiv_theta)
 
 
     if isentrope:
         # Calculate EP flux
+        logging.info (f"Calculate EP flux on isentropes for {phase} phase in {decade}")
         F_phi, F_p, div = EP_flux_isen(vptp, upvp, theta)
         save_dir="/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux_isen/"
     else:
         # Calculate EP flux
+        logging.info (f"Calculate EP flux for {phase} phase in {decade}")
         F_phi, F_p, div = EP_flux(vptp, upvp)
         save_dir="/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux/"
 
     # save data
+    logging.info (f"Save data for {phase} phase in {decade}")
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
     F_phi.to_netcdf(save_dir + f"F_phi_{phase}_{decade}.nc")
     F_p.to_netcdf(save_dir + f"F_p_{phase}_{decade}.nc")
     div.to_netcdf(save_dir + f"div_{phase}_{decade}.nc")
