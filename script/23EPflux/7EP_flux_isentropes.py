@@ -89,8 +89,9 @@ def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, isentrope=True
 #%%
 phase = sys.argv[1] # 'pos' or 'neg'
 decade = sys.argv[2] # '1850' or '2090'
+isentrope = sys.argv[3] # 'True' or 'False'
 
 if __name__ == "__main__":
     # Calculate EP flux for NAO pos and neg phase
-    calculate_EP_flux(decade, phase, ano=True, equiv_theta=True, isentrope=True)
+    calculate_EP_flux(decade, phase, ano=True, equiv_theta=True, isentrope=isentrope)
     logging.info(f"EP flux for {phase} phase in {decade} calculated")
