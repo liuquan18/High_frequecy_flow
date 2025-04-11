@@ -265,7 +265,7 @@ def GetAxSize(fig,ax,dpi=False):
 		height *= fig.dpi
 	return width, height
 #%%
-def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',yscale='linear',invert_y=True, newax=False, pivot='tail',scale=None,quiv_args=None, draw_key = False):
+def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',yscale='linear',invert_y=True, newax=False, pivot='tail',scale=None,quiv_args=None, draw_key = False, key_loc = (0.6, 0.9)):
 	"""Correctly scales the Eliassen-Palm flux vectors for plotting on a latitude-pressure or latitude-height axis.
 		x,y,ep1,ep2 assumed to be xarray.DataArrays.
 
@@ -358,7 +358,7 @@ def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',ysca
 	else:
 		U = scale
 	if draw_key: # when running inside a script, the figure might not exist and therefore U is None
-		ax.quiverkey(Q,0.9,1.02,U/width,label=r'{0:.1e}$\,m^3$'.format(U),labelpos='E',coordinates='axes')
+		ax.quiverkey(Q, key_loc[0],key_loc[1],U/width,label=r'{0:.1e}$\,m^3$'.format(U),labelpos='E',coordinates='axes')
 	if invert_y:
 		ax.invert_yaxis()
 	if xlim is not None:

@@ -182,6 +182,8 @@ PlotEPfluxArrows(
     xlim=[0, 85],
     fig=fig,
     ax=axes[1, 2],
+    draw_key = True,
+    key_loc = (0.7, 0.95)
 )
 
 for ax in axes.flatten():
@@ -290,6 +292,8 @@ PlotEPfluxArrows(
     xlim=[0, 85],
     fig=fig,
     ax=axes[1, 2],
+    draw_key = True,
+    key_loc = (0.7, 0.95)
 )
 
 for ax in axes.flatten():
@@ -298,7 +302,7 @@ for ax in axes.flatten():
 # %%
 # new plot, only the difference, first row for first decade, second row for last decade
 # first col for NPC, second col for NAL
-fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+fig, axes = plt.subplots(2, 2, figsize=(11, 8))
 # first row for first decade
 div_diff_NPC.plot.contourf(
     ax=axes[0, 0], levels=levels_div, cmap="RdBu_r", add_colorbar=False
@@ -314,6 +318,8 @@ PlotEPfluxArrows(
     xlim=[0, 85],
     fig=fig,
     ax=axes[0, 0],
+    draw_key = True,
+    key_loc = (0.1, 0.05)
 )
 div_diff_NAL.plot.contourf(
     ax=axes[0, 1], levels=levels_div, cmap="RdBu_r", add_colorbar=False
@@ -346,7 +352,7 @@ PlotEPfluxArrows(
     fig=fig,
     ax=axes[1, 0],
 )
-div_diff_NAL_last.plot.contourf(
+div_map = div_diff_NAL_last.plot.contourf(
     ax=axes[1, 1], levels=levels_div, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
@@ -364,7 +370,18 @@ PlotEPfluxArrows(
 for ax in axes.flatten():
     ax.set_ylim(280, 350)
     ax.set_xlim(0, 85)
-    ax.set_xlabel(r"$\theta_e / K$")
-    ax.set_ylabel(r"$\phi / \degree$")
+    ax.set_xlabel("lat / °N")
+    ax.set_ylabel(r"$\Theta_e$ / K")
 
+
+# add colorbar
+cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+cbar = fig.colorbar(
+    div_map,
+    cax=cbar_ax,
+    orientation="vertical",
+)
+
+plt.tight_layout(rect=[0, 0, 0.9, 1])  # Leave space on the right for the colorbar
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_isentropes_diff.pdf", dpi=300, bbox_inches="tight")
 # %%
