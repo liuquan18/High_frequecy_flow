@@ -66,36 +66,34 @@ def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, isentrope=True
     logging.info (f"Read data for {phase} phase in {decade}")
     upvp, vptp, theta = read_data_all(decade, phase, ano=ano, equiv_theta=equiv_theta)
 
-
+    # Determine save directory based on isentrope flag
     if isentrope:
-        # Calculate EP flux
         logging.info (f"Calculate EP flux on isentropes for {phase} phase in {decade}")
         save_dir="/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux_isen/"
     else:
-        # Calculate EP flux
         logging.info (f"Calculate EP flux for {phase} phase in {decade}")
         save_dir="/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux/"
     
     # Calculate EP flux
-    F_phi, F_p, div = EP_flux_isen(vptp, upvp, theta, isentrope)
+    F_phi, F_p, div = EP_flux_isen(vptp, upvp, theta, isentrope=isentrope)
 
-    # save data
+    # Save data
     logging.info (f"Save data for {phase} phase in {decade}")
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-    F_phi.to_netcdf(save_dir + f"F_phi_{phase}_{decade}_ano{ano}.nc")
-    F_p.to_netcdf(save_dir + f"F_p_{phase}_{decade}_ano{ano}.nc")
-    div.to_netcdf(save_dir + f"div_{phase}_{decade}_ano{ano}.nc")
+    F_phi.to_netcdf(os.path.join(save_dir, f"F_phi_{phase}_{decade}_ano{ano}.nc"))
+    F_p.to_netcdf(os.path.join(save_dir, f"F_p_{phase}_{decade}_ano{ano}.nc"))
+    div.to_netcdf(os.path.join(save_dir, f"div_{phase}_{decade}_ano{ano}.nc"))
     
 #%%
 phase = sys.argv[1] # 'pos' or 'neg'
 decade = sys.argv[2] # '1850' or '2090'
-isentrope = sys.argv[3] # 'True' or 'False'
-ano = sys.argv[4] if len(sys.argv) > 4 else False  # 'True' or 'False', default is False
+isentrope = sys.argv[3].lower() == 'true' # Convert string to boolean
+ano = sys.argv[4].lower() == 'true' if len(sys.argv) > 4 else False  # Convert string to boolean, default is False
 
 #%%
 if __name__ == "__main__":
-    # summary the input
+    # Summary of the input
     logging.info(f"Phase: {phase}")
     logging.info(f"Decade: {decade}")
     logging.info(f"Isentrope: {isentrope}")
@@ -103,4 +101,3 @@ if __name__ == "__main__":
     
     # Calculate EP flux for NAO pos and neg phase
     calculate_EP_flux(decade, phase, ano=ano, equiv_theta=True, isentrope=isentrope)
-
