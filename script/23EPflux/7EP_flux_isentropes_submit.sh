@@ -1,13 +1,13 @@
 #!/bin/bash
-#SBATCH --job-name=python
+#SBATCH --job-name=EP_isen
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=5
+#SBATCH --ntasks=1
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=python.%j.out
+#SBATCH --output=EP_isen.%j.out
 
 phase=$1 # phase
 decade=$2 # decade
