@@ -155,17 +155,17 @@ first_flux_arrow = axes[0, 2].quiver(
     pivot="middle",
 )
 # add quiver key
-quiver_key = axes[0, 2].quiverkey(
-    first_flux_arrow,
-    0.75,
-    0.01,
-    0.05,
-    r"$0.05 g kg^{-1} m s^{-1}$",
-    transform=ccrs.PlateCarree(),
-    labelpos="E",
-    coordinates="axes",
-    fontproperties={"size": 12},
-)
+# quiver_key = axes[0, 2].quiverkey(
+#     first_flux_arrow,
+#     0.65,
+#     0.0,
+#     0.05,
+#     r"$0.05 g kg^{-1} m s^{-1}$",
+#     transform=ccrs.PlateCarree(),
+#     labelpos="E",
+#     coordinates="axes",
+#     fontproperties={"size": 12},
+# )
 
 # second row last ten years
 # first column uhat
@@ -233,8 +233,8 @@ last_flux_arrow = axes[1, 2].quiver(
 # add quiver key
 quiver_key = axes[1, 2].quiverkey(
     last_flux_arrow,
-    0.75,
-    0.01,
+    0.65,
+    1.03,
     0.05,
     r"$0.05 g kg^{-1} m s^{-1}$",
     transform=ccrs.PlateCarree(),
@@ -256,6 +256,41 @@ for ax in axes.flatten():
     axes[0, 0].set_title('(event period)')
     axes[0, 1].set_title('(-5, 0)')
     axes[0, 2].set_title('(-15, -5)')
+
+# draw boxes of NPC and NAL with smoother lines
+# NPC [120, 240, 30, 50]
+npc_lon = np.linspace(120, 240, 100)
+npc_lat_bottom = np.full_like(npc_lon, 30)
+npc_lat_top = np.full_like(npc_lon, 50)
+npc_lon_left = np.full_like(npc_lat_bottom, 120)
+npc_lon_right = np.full_like(npc_lat_bottom, 240)
+npc_lat = np.concatenate([npc_lat_bottom, npc_lat_top[::-1], [30]])
+npc_lon = np.concatenate([npc_lon, npc_lon[::-1], [120]])
+axes[0, 2].plot(
+    npc_lon,
+    npc_lat,
+    transform=ccrs.PlateCarree(),
+    color="b",
+    linewidth=2,
+    ls = "--",
+)
+
+# NAL [270, 330, 30, 50]
+nal_lon = np.linspace(270, 330, 100)
+nal_lat_bottom = np.full_like(nal_lon, 30)
+nal_lat_top = np.full_like(nal_lon, 50)
+nal_lon_left = np.full_like(nal_lat_bottom, 270)
+nal_lon_right = np.full_like(nal_lat_bottom, 330)
+nal_lat = np.concatenate([nal_lat_bottom, nal_lat_top[::-1], [30]])
+nal_lon = np.concatenate([nal_lon, nal_lon[::-1], [270]])
+axes[0, 2].plot(
+    nal_lon,
+    nal_lat,
+    transform=ccrs.PlateCarree(),
+    color="b",
+    linewidth=2,
+    ls = "--",
+)
 
 # add a, b, c
 for i, ax in enumerate(axes.flatten()):
