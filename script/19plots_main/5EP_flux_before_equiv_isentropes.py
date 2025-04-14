@@ -368,7 +368,7 @@ PlotEPfluxArrows(
     ax=axes[1, 1],
 )
 for ax in axes.flatten():
-    ax.set_ylim(280, 350)
+    ax.set_ylim(285, 345)
     ax.set_xlim(0, 85)
     ax.set_xlabel("lat / °N")
     ax.set_ylabel(r"$\Theta_e$ / K")
