@@ -270,7 +270,7 @@ axes[0, 2].plot(
     npc_lon,
     npc_lat,
     transform=ccrs.PlateCarree(),
-    color="b",
+    color="yellow",
     linewidth=2,
     ls = "--",
 )
@@ -287,7 +287,7 @@ axes[0, 2].plot(
     nal_lon,
     nal_lat,
     transform=ccrs.PlateCarree(),
-    color="b",
+    color="yellow",
     linewidth=2,
     ls = "--",
 )
