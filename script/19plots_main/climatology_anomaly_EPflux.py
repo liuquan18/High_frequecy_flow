@@ -288,7 +288,7 @@ cbar = fig.colorbar(
 
 plt.tight_layout(rect=[0, 0, 0.9, 1])  # Leave space on the right for the colorbar
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_clim_ano_NPC.png", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_clim_ano_NPC.pdf", dpi=300, bbox_inches='tight')
 # %%
 # plot NAL
 fig, axes = plt.subplots(2, 3, figsize=(12, 8))
@@ -453,5 +453,5 @@ cbar = fig.colorbar(
 
 plt.tight_layout(rect=[0, 0, 0.9, 1])  # Leave space on the right for the colorbar
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_clim_ano_NAL.png", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_clim_ano_NAL.pdf", dpi=300, bbox_inches='tight')
 # %%
