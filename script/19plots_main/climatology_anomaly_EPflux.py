@@ -115,7 +115,7 @@ F_phi_last_NAL, F_p_last_NAL, div_last_NAL = read_EP_flux(
 # %%
 
 # %%
-scale = 2e15
+scale = 5e15
 scale_div = 5e15
 levels = np.arange(-5, 5.1, 0.5)
 levels_div = np.arange(-0.5, 0.51, 0.05)
