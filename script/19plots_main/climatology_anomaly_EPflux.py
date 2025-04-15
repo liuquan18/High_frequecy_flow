@@ -285,6 +285,16 @@ cbar = fig.colorbar(
     cax=cbar_ax,
     orientation="vertical",
 )
+# add a, b, c
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        0.02,
+        0.95,
+        f"{chr(97+i)}",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+    )
 
 plt.tight_layout(rect=[0, 0, 0.9, 1])  # Leave space on the right for the colorbar
 
@@ -450,6 +460,16 @@ cbar = fig.colorbar(
     cax=cbar_ax,
     orientation="vertical",
 )
+# add a, b, c
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        0.02,
+        0.95,
+        f"{chr(97+i)}",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+    )
 
 plt.tight_layout(rect=[0, 0, 0.9, 1])  # Leave space on the right for the colorbar
 
