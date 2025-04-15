@@ -310,13 +310,18 @@ for ax in [ax1, hist_ax2, hist_ax3, line_ax1, line_ax2]:
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 # add a, b, c, d,e
-ax1.text(-0.1, 1.1, "a", transform=ax1.transAxes, fontsize=14, fontweight="bold")
 
-hist_ax2.text(0.1, 1.1, "b", transform=hist_ax2.transAxes, fontsize=14, fontweight="bold")
-hist_ax3.text(-0.1, 1.1, "c", transform=hist_ax3.transAxes, fontsize=14, fontweight="bold")
-
-line_ax1.text(-0.1, 1.1, "d", transform=line_ax1.transAxes, fontsize=14, fontweight="bold")
-line_ax2.text(-0.1, 1.1, "e", transform=line_ax2.transAxes, fontsize=14, fontweight="bold")
+for i, ax in enumerate([ax1, hist_ax2, hist_ax3, line_ax1, line_ax2]):
+    ax.text(
+        -0.1,
+        1.05,
+        chr(97 + i),
+        transform=ax.transAxes,
+        fontsize=14,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
 
 plt.tight_layout()
 
