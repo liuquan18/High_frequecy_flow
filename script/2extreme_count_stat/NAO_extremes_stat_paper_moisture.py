@@ -311,7 +311,7 @@ for ax in [ax1, hist_ax2, hist_ax3, line_ax1, line_ax2]:
     ax.spines["right"].set_visible(False)
 # add a, b, c, d,e
 
-for i, ax in enumerate([ax1, hist_ax2, hist_ax3, line_ax1, line_ax2]):
+for i, ax in enumerate([ax1, hist_ax3, hist_ax2, line_ax1, line_ax2]):
     ax.text(
         -0.1,
         1.05,
