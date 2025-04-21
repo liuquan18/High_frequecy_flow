@@ -41,26 +41,16 @@ pixel_wise = sys.argv[5].lower() == "true" if len(sys.argv) > 5 else False
 
 # %%
 
-if var1 == "vt":
-    var1_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily_ano/r{member}i1p1f1/"
+if var1 == "va":
+    var1_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_ano/r{member}i1p1f1/"
 
-elif var1 == "hus_std":  # no ano because to calculate std, the mean is subtracted
-    var1_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_std/r{member}i1p1f1/"
-
-elif var1 == "tas_std":
-    var1_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/tas_daily_std/r{member}i1p1f1/"
-
-elif var1 == "hus_tas":
-    var1_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_tas_daily_std/r{member}i1p1f1/"
-
-elif var1 == "vtm":
-    var1_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vtm_daily_ano/r{member}i1p1f1/"
+elif var1 == "hus":
+    var1_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_ano/r{member}i1p1f1/"
 
 if var2 == "va":
-    var2_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_ano_lowlevel/r{member}i1p1f1/"
-elif var2 == "vt":
-    var2_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_daily_ano/r{member}i1p1f1/"
-
+    var2_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_ano/r{member}i1p1f1/"
+elif var2 == "hus":
+    var2_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_ano/r{member}i1p1f1/"
 
 else:
     logging.error("Second variable is not va")
@@ -118,10 +108,9 @@ def coherence_analy(da, pixel_wise=False):
 
 
 # %%
-def sector(data, split_basin=True):
+def sector(data):
     # change lon from 0-360 to -180-180
-    data = data.assign_coords(lon=(data.lon + 180) % 360 - 180).sortby("lon")
-    data = data.sel(lat=slice(20, 60))
+    data = data.sel(lat=slice(30, 50))
     if split_basin:
 
         box_NAL = [
@@ -185,7 +174,7 @@ for i, decade in enumerate(decades_single):
     var_da = xr.merge([var1_da, var2_da])
 
     if split_basin:
-        var_da_NAL, var_da_NPC = sector(var_da, split_basin=True)
+        var_da_NAL, var_da_NPC = sector(var_da)
 
         coherence_NAL = var_da_NAL.resample(time="1YE").apply(
             coherence_analy, pixel_wise=pixel_wise
