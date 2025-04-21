@@ -106,31 +106,18 @@ def coherence_analy(da, pixel_wise=False):
 
     return Cxy
 
+def NPC_mean(arr):
+    return arr.sel(lon = slice(120, 240), lat = slice(30, 50)).mean(dim =( 'lon', 'lat'))
 
+def NAL_mean(arr):
+    return arr.sel(lon = slice(270, 330), lat = slice(30, 50)).mean(dim =( 'lon', 'lat'))
 # %%
 def sector(data):
     # change lon from 0-360 to -180-180
     data = data.sel(lat=slice(30, 50))
     if split_basin:
-
-        box_NAL = [
-            -70,
-            -30,
-            20,
-            60,
-        ]  # [lon_min, lon_max, lat_min, lat_max] North Atlantic
-        box_NPC = [
-            140,
-            -145,
-            20,
-            60,
-        ]  # [lon_min, lon_max, lat_min, lat_max] North Pacific
-
-        data_NAL = data.sel(lon=slice(box_NAL[0], box_NAL[1]))
-        data_NPC1 = data.sel(lon=slice(box_NPC[0], 180))
-        data_NPC2 = data.sel(lon=slice(-180, box_NPC[1]))
-        data_NPC = xr.concat([data_NPC1, data_NPC2], dim="lon")
-
+        data_NAL = NAL_mean(data)
+        data_NPC = NPC_mean(data)
         return data_NAL, data_NPC
 
     else:
