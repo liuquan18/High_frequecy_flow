@@ -9,7 +9,7 @@
 #SBATCH --account=mh0033
 #SBATCH --output=ano.%j.out
 
-module load cdo
+module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
 # get the ensemble member from the command line
