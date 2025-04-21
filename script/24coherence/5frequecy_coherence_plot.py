@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os
 import glob
 #%%
-Cxy_files = glob.glob("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vt_va_coherence/r*i1p1f1/*.nc")
+Cxy_files = glob.glob("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_hus_coherence/r*i1p1f1/*.nc")
 
 #%%
 Cxy = xr.open_mfdataset(Cxy_files, combine='nested', concat_dim='member')

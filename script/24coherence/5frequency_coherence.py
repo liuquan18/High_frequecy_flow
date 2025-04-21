@@ -37,8 +37,7 @@ var2 = sys.argv[3] if len(sys.argv) > 3 else "va"  # 'va'
 split_basin = sys.argv[4].lower() == "true" if len(sys.argv) > 4 else False
 
 pixel_wise = sys.argv[5].lower() == "true" if len(sys.argv) > 5 else False
-
-
+#%%%
 # %%
 
 if var1 == "va":
@@ -138,6 +137,12 @@ for i, decade in enumerate(decades_single):
 
     var1_da = xr.open_dataset(var1_files, chunks={"time": -1, "lat": -1, "lon": -1})
     var2_da = xr.open_dataset(var2_files, chunks={"time": -1, "lat": -1, "lon": -1})
+
+    # near surface
+    if var1_da.plev.size >1:
+        var1_da = var1_da.sel(plev=slice(100000, 85000)).mean(dim = 'plev')
+    if var2_da.plev.size >1:
+        var2_da = var2_da.sel(plev=slice(100000, 85000)).mean(dim = 'plev')
 
     try:
         var1_da = var1_da[var1]

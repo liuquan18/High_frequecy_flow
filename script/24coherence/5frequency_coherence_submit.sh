@@ -21,7 +21,7 @@ pixel_wise=$5
 
 member_end=$(($member_start+4))
 echo "node $SLURM_NODEID member_start $member_start member_end $member_end"
-parallel --dryrun -j 5 python /work/mh0033/m300883/High_frequecy_flow/script/18thermal_wind/5frequency_coherence.py \
+parallel --dryrun -j 5 python 5frequency_coherence.py \
     ::: $(seq ${member_start} ${member_end}) ::: ${var1} ::: ${var2} ::: ${split_basin} ::: ${pixel_wise} >5commands_${var1}_${var2}_${split_basin}_${pixel_wise}_${member_start}.txt
 
 
