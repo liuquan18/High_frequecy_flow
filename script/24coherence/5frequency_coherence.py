@@ -41,15 +41,15 @@ pixel_wise = sys.argv[5].lower() == "true" if len(sys.argv) > 5 else False
 # %%
 
 if var1 == "va":
-    var1_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_ano/r{member}i1p1f1/"
+    var1_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily/r{member}i1p1f1/"
 
 elif var1 == "hus":
-    var1_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_ano/r{member}i1p1f1/"
+    var1_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily/r{member}i1p1f1/"
 
 if var2 == "va":
-    var2_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_ano/r{member}i1p1f1/"
+    var2_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily/r{member}i1p1f1/"
 elif var2 == "hus":
-    var2_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily_ano/r{member}i1p1f1/"
+    var2_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_daily/r{member}i1p1f1/"
 
 else:
     logging.error("Second variable is not va")
