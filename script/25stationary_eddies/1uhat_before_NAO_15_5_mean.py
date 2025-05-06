@@ -26,7 +26,7 @@ def read_all_data(decade, var, **kwargs):
     NAO_neg = read_NAO_extremes(decade, 'negative')
 
     logging.info(f"reading {var} data")
-    hf_data = read_prime( decade, var = var, **kwargs)  # change the suffix to read different data
+    hf_data = read_prime( decade, var = var, **kwargs) 
     
 
     return NAO_pos, NAO_neg, hf_data
@@ -64,8 +64,8 @@ def process_data(decade, var, integrate=False, **kwargs):
 if __name__ == "__main__":
     # nodes for different decades
     decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
-    var = str(sys.argv[2]) if len(sys.argv) > 2 else 'vptp'
-    name = str(sys.argv[3]) if len(sys.argv) > 3 else 'vptp'
+    var = str(sys.argv[2]) if len(sys.argv) > 2 else 'ua_hat'
+    name = str(sys.argv[3]) if len(sys.argv) > 3 else 'ua'
     suffix = str(sys.argv[4]) if len(sys.argv) > 4 else '' # '_ano' or ''
     integrate = False
 
