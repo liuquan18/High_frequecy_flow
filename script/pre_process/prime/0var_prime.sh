@@ -62,8 +62,10 @@ band_filter(){
         cdo -O -mergetime -apply,highpass,36.5 [ ${year_files} ] ${outfile}
 
     elif [ "$frequency" == "hat" ]; then
-        echo "Filtering >30 days"  # 1/30 cycle per day, so 1/30*365 = 12.17 per year
-        cdo -O -mergetime -apply,lowpass,12 [ ${year_files} ] ${outfile}   
+        # echo "Filtering >30 days"  # 1/30 cycle per day, so 1/30*365 = 12.17 per year
+        # cdo -O -mergetime -apply,lowpass,12 [ ${year_files} ] ${outfile}   
+        echo "30 days running mean"
+        cdo -O -mergetime -apply,runmean,30 [ ${year_files} ] ${outfile}
     fi
     # remove temporary files
     rm ${tmp_dir}${fname}_year*
