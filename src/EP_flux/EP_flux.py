@@ -110,7 +110,9 @@ def eff_stat_stab(p, temp, lambda_val=0.6):
     return dtheta_dp_eff
 
 def eff_stat_stab_xr(T):
-	T = T.mean(dim = ('lon', 'time'))
+	if 'time' in T.dims:
+		T = T.mean(dim = 'time')
+	T = T.mean(dim = ('lon'))
 	stat_stability =  xr.apply_ufunc(
 		eff_stat_stab,
 		T['plev'],
@@ -122,6 +124,38 @@ def eff_stat_stab_xr(T):
 	)
 
 	return stat_stability
+
+#%%
+def plev_to_isentrope(var, theta, var_name = 'F_phi', theta_name = 'theta', t_bins = np.arange(280, 360, 2)):
+	"""
+	Interpolate the variable to isentropic levels based on the potential temperature.
+	Parameters:
+	- var: xarray DataArray of the variable to be interpolated.
+	- theta: xarray DataArray of potential temperature.
+	Returns:
+	- var_isentrope: xarray DataArray of the variable interpolated to isentropic levels.
+	"""
+	# Interpolate to isentropic levels
+	ds = xr.Dataset(
+		{
+			var_name: var,
+			theta_name: theta,
+		}
+	)
+	df = ds.to_dataframe().reset_index()
+	# Drop NaN values
+	df = df.dropna()
+
+	# interpolate
+	isen_df = df.groupby(['lat','lon']).apply(
+		bin_var_theta,
+		var = var_name,
+		t_bins = t_bins
+	)
+
+	isen_xr = isen_df.to_xarray()
+	
+	return isen_xr.transpose('theta', 'lat', 'lon')
 
 
 def EP_flux(vptp, upvp, dthdp):
@@ -233,7 +267,7 @@ def GetAxSize(fig,ax,dpi=False):
 		height *= fig.dpi
 	return width, height
 #%%
-def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',yscale='linear',invert_y=True, newax=False, pivot='tail',scale=None,quiv_args=None):
+def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',yscale='linear',invert_y=True, newax=False, pivot='tail',scale=None,quiv_args=None, draw_key = False, key_loc = (0.6, 0.9)):
 	"""Correctly scales the Eliassen-Palm flux vectors for plotting on a latitude-pressure or latitude-height axis.
 		x,y,ep1,ep2 assumed to be xarray.DataArrays.
 
@@ -325,8 +359,8 @@ def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',ysca
 		U = Q.scale
 	else:
 		U = scale
-	if U is not None: # when running inside a script, the figure might not exist and therefore U is None
-		ax.quiverkey(Q,0.9,1.02,U/width,label=r'{0:.1e}$\,m^3$'.format(U),labelpos='E',coordinates='axes')
+	if draw_key: # when running inside a script, the figure might not exist and therefore U is None
+		ax.quiverkey(Q, key_loc[0],key_loc[1],U/width,label=r'{0:.1e}$\,m^3$'.format(U),labelpos='E',coordinates='axes')
 	if invert_y:
 		ax.invert_yaxis()
 	if xlim is not None:
@@ -355,33 +389,3 @@ def bin_var_theta(df_all, var="F_phi", t_bins = np.arange(240, 400, 5)):
     # make the tas_diff as the index
     var_bined = var_bined.set_index("theta")
     return var_bined
-#%%
-def plev_to_isentrope(var, theta, var_name = 'F_phi', theta_name = 'theta'):
-	"""
-	Interpolate the variable to isentropic levels based on the potential temperature.
-	Parameters:
-	- var: xarray DataArray of the variable to be interpolated.
-	- theta: xarray DataArray of potential temperature.
-	Returns:
-	- var_isentrope: xarray DataArray of the variable interpolated to isentropic levels.
-	"""
-	# Interpolate to isentropic levels
-	ds = xr.Dataset(
-		{
-			var_name: var,
-			theta_name: theta,
-		}
-	)
-	df = ds.to_dataframe().reset_index()
-	# Drop NaN values
-	df = df.dropna()
-
-	# interpolate
-	isen_df = df.groupby(['lat','lon']).apply(
-		bin_var_theta,
-		var = var_name,
-		t_bins = np.arange(240, 400, 5)
-	)
-
-	isen_xr = isen_df.to_xarray()
-	return isen_xr

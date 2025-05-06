@@ -35,9 +35,11 @@ def sel_uhat(uhat, events):
 
 
 # %%
-def extreme_uhat(period):
-    basedir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_{period}_hat/"
-
+def extreme_uhat(period, wind = 'ua'):
+    if wind == 'ua':
+        basedir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily_global/ua_MJJAS_{period}_hat/"
+    elif wind == 'va':
+        basedir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily_global/va_MJJAS_{period}_hat/"
     uhat_pos = []
     uhat_neg = []
 
@@ -49,7 +51,7 @@ def extreme_uhat(period):
 
         # read uhat
         uhat_file = glob.glob(f"{basedir}*r{ens}i1p1f1*.nc")[0]
-        uhat = xr.open_dataset(uhat_file).ua
+        uhat = xr.open_dataset(uhat_file)[wind]
 
         # average over plev below 700 hPa
         uhat = uhat.sel(plev=slice(None, 70000)).mean(dim="plev")
@@ -68,6 +70,15 @@ def extreme_uhat(period):
     uhat_neg = uhat_neg.mean(dim="ens")
 
     return uhat_pos, uhat_neg
+#%%
+vhat_pos_first10, vhat_neg_first10 = extreme_uhat("first10", wind='va')
+vhat_pos_last10, vhat_neg_last10 = extreme_uhat("last10", wind='va')
+# save to netcdf
+#%%
+vhat_pos_first10.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/jetstream_va_MJJAS_first10_pos.nc")
+vhat_neg_first10.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/jetstream_va_MJJAS_first10_neg.nc")
+vhat_pos_last10.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/jetstream_va_MJJAS_last10_pos.nc")
+vhat_neg_last10.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/jetstream_va_MJJAS_last10_neg.nc") 
 # %%
 def plot_uhat(ax, uhat_first, u_hat_last=None, levels=np.arange(-12, 13, 2)):
 
