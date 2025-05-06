@@ -24,8 +24,13 @@ T_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/r$
 
 if [ "$frequency" == "prime" ]; then
     Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_prime_daily/r${member}i1p1f1/
-else
+elif [ "$frequency" == "prime_high" ]; then
     Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_prime_high_daily/r${member}i1p1f1/
+elif [ "$frequency" == "hat" ]; then
+    Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_hat_daily/r${member}i1p1f1/
+else
+    echo "Frequency not recognized, please use prime or high"
+    exit 1
 fi
 
 tmp_dir=/scratch/m/m300883/${var}_prime/r${member}i1p1f1/
@@ -55,6 +60,10 @@ band_filter(){
         echo "Filtering 2-6 days"
         # cdo -O -mergetime -apply,bandpass,60.8,182.5 [ ${year_files} ] ${outfile}
         cdo -O -mergetime -apply,highpass,36.5 [ ${year_files} ] ${outfile}
+
+    elif [ "$frequency" == "hat" ]; then
+        echo "Filtering >30 days"  # 1/30 cycle per day, so 1/30*365 = 12.17 per year
+        cdo -O -mergetime -apply,lowpass,12 [ ${year_files} ] ${outfile}   
     fi
     # remove temporary files
     rm ${tmp_dir}${fname}_year*
@@ -66,7 +75,7 @@ T_prime(){
     Tfile=$(echo $Tfile | tr -d '\n')
     
     Tfile_name=$(basename "${Tfile}")
-    Tpfile_name="${Tp_path}${Tfile_name//${var}/${var}_prime}"
+    Tpfile_name="${Tp_path}${Tfile_name//${var}/${var}_${frequency}}"
 
     echo "Input file: ${Tfile}"
     echo "Output file: ${Tpfile_name}"
