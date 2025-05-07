@@ -29,15 +29,8 @@ def read_climatology(var, decade, **kwargs):
     name = kwargs.get("name", var)  # default name is the same as var
     if var == "uhat":
         data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/*{decade}*.nc"
-
-    elif var == "upvp":
-        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_monthly_ensmean/upvp_monmean_ensmean_{decade}*.nc"
-    elif var == "usvs":
-        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/usvs_monthly_ensmean/usvs_monmean_ensmean_{decade}*.nc"
-    elif var == "vpetp":
-        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vpetp_monthly_ensmean/vpetp_monmean_ensmean_{decade}*.nc"
-    elif var == "vptp":
-        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vptp_monthly_ensmean/vptp_monmean_ensmean_{decade}*.nc"
+    else:
+        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_monthly_ensmean/{var}_monmean_ensmean_{decade}*.nc"
 
     file = glob.glob(data_path)
     if len(file) == 0:
@@ -71,13 +64,13 @@ def read_composite_ano(var, decade, phase, **kwargs):
 
     # 5-0 days before
     elif var == "upvp":
-        upvp = read_composite_MPI("upvp", "ua", decade = decade, before = "5_0", return_as = phase)
+        upvp = read_composite_MPI("upvp", name=name, decade = decade, before = "5_0", return_as = phase)
         try:
             composite_ano = upvp.sel(plev = 25000)
         except KeyError:
             composite_ano = upvp
     elif var == "usvs":
-        usvs = read_composite_MPI("usvs", "usvs", decade = decade, before = "5_0", return_as = phase)
+        usvs = read_composite_MPI("usvs", name=name, decade = decade, before = "5_0", return_as = phase)
         try:
             composite_ano = usvs.sel(plev = 25000)
         except KeyError:
@@ -90,6 +83,13 @@ def read_composite_ano(var, decade, phase, **kwargs):
     elif var == "vptp":
         vptp = read_composite_MPI("vptp", "vptp", decade = decade, before = "15_5", return_as = phase)
         composite_ano = vptp.sel(plev = 85000)
+
+    elif var == "vsets":
+        vsets = read_composite_MPI("vsets", "vsets", decade = decade, before = "15_5", return_as = phase)
+        composite_ano = vsets.sel(plev = 85000)
+    elif var == "vsts":
+        vsts = read_composite_MPI("vsts", "vsts", decade = decade, before = "15_5", return_as = phase)
+        composite_ano = vsts.sel(plev = 85000)
 
     return erase_white_line(composite_ano)
 
