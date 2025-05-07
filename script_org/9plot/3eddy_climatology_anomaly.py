@@ -48,6 +48,7 @@ def read_composite_ano(var, decade, phase, **kwargs):
 
     name = kwargs.get("name", var)  # default name is the same as var
     before = kwargs.get("before", "5_0")  # default is 5-0 days before
+    smooth_value = kwargs.get("smooth_value", 5)  # default is no smoothing
     # u hat is in different path
     if var == 'uhat':
         composite_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/"
@@ -66,8 +67,8 @@ def read_composite_ano(var, decade, phase, **kwargs):
 
     # 5-0 days 
     else:
-        composite_ano = read_composite_MPI(var, name, decade = decade, before = before, return_as = phase, ano = True)
-        if var == "upvp" or var == "usvs": # upper level
+        composite_ano = read_composite_MPI(var, name, decade = decade, before = before, return_as = phase, ano = True, smooth_value=smooth_value)
+        if var in ['upvp', 'usvs']: # upper level
             try:
                 composite_ano = composite_ano.sel(plev = 25000)
             except KeyError:
@@ -97,6 +98,9 @@ upvp_last = read_climatology("upvp", 2090, name="ua")
 usvs_first = read_climatology("usvs", 1850, name="usvs")
 usvs_last = read_climatology("usvs", 2090, name="usvs")
 
+usvs_first = usvs_first.sel(plev = 25000)
+usvs_last = usvs_last.sel(plev = 25000)
+
 upvp_first = upvp_first.sel(plev = 25000)
 upvp_last = upvp_last.sel(plev = 25000)
 
@@ -108,6 +112,9 @@ vpetp_last = vpetp_last.sel(plev = 85000)
 
 vsets_first = read_climatology("vsets", 1850, name="vsets")
 vsets_last = read_climatology("vsets", 2090, name="vsets")
+
+vsets_first = vsets_first.sel(plev = 85000)
+vsets_last = vsets_last.sel(plev = 85000)
 #%%
 ###### pos anomaly ######
 uhat_first_pos = read_composite_ano("uhat", 1850, "pos", name="ua")
@@ -119,8 +126,8 @@ upvp_last_pos = read_composite_ano("upvp", 2090, "pos", name="ua", before="5_0")
 vpetp_first_pos = read_composite_ano("vpetp", 1850, "pos", name="vpetp", before = '15_5')
 vpetp_last_pos = read_composite_ano("vpetp", 2090, "pos", name="vpetp", before = '15_5')
 
-usvs_first_pos = read_composite_ano("usvs", 1850, "pos", name="usvs", before = '5_0')
-usvs_last_pos = read_composite_ano("usvs", 2090, "pos", name="usvs", before = '5_0')
+usvs_first_pos = read_composite_ano("usvs", 1850, "pos", name="usvs", before = '5_0',  )
+usvs_last_pos = read_composite_ano("usvs", 2090, "pos", name="usvs", before = '5_0',  )
 
 vsets_first_pos = read_composite_ano("vsets", 1850, "pos", name="vsets", before = '15_5')
 vsets_last_pos = read_composite_ano("vsets", 2090, "pos", name="vsets", before = '15_5')
@@ -136,8 +143,8 @@ upvp_last_neg = read_composite_ano("upvp", 2090, "neg", name="ua", before="5_0")
 vpetp_first_neg = read_composite_ano("vpetp", 1850, "neg", name="vpetp", before = '15_5')
 vpetp_last_neg = read_composite_ano("vpetp", 2090, "neg", name="vpetp", before = '15_5')
 
-usvs_first_neg = read_composite_ano("usvs", 1850, "neg", name="usvs", before = '5_0')
-usvs_last_neg = read_composite_ano("usvs", 2090, "neg", name="usvs", before = '5_0')
+usvs_first_neg = read_composite_ano("usvs", 1850, "neg", name="usvs", before = '5_0',  )
+usvs_last_neg = read_composite_ano("usvs", 2090, "neg", name="usvs", before = '5_0',  )
 
 vsets_first_neg = read_composite_ano("vsets", 1850, "neg", name="vsets", before = '15_5')
 vsets_last_neg = read_composite_ano("vsets", 2090, "neg", name="vsets", before = '15_5')
@@ -466,5 +473,199 @@ for i, ax in enumerate(axes.flatten()):
 
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/climatology_anomaly/vpetp_clim_ano.pdf", dpi=300, bbox_inches="tight")
+
+# %%
+fig, axes = plt.subplots(
+    2, 3, figsize=(12, 10), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
+)
+
+# plot climatology
+usvs_first.plot.contourf(
+    ax=axes[0, 0],
+    levels=upvp_levels,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+usvs_clim = usvs_last.plot.contourf(
+    ax=axes[1, 0],
+    levels=upvp_levels,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+
+# plot pos
+usvs_first_pos.plot.contourf(
+    ax=axes[0, 1],
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+usvs_pos = usvs_last_pos.plot.contourf(
+    ax=axes[1, 1],
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+
+
+# plot neg
+usvs_first_neg.plot.contourf(
+    ax=axes[0, 2],
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+usvs_neg = usvs_last_neg.plot.contourf(
+    ax=axes[1, 2],
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+
+# add colorbar at the bottom of each column
+cbar_ax1 = fig.add_axes([0.07, 0.05, 0.2, 0.02])  # [left, bottom, width, height]
+cbar_ax2 = fig.add_axes([0.4, 0.05, 0.2, 0.02])
+cbar_ax3 = fig.add_axes([0.73, 0.05, 0.2, 0.02])
+
+fig.colorbar(usvs_clim, cax=cbar_ax1, orientation="horizontal", label=r"$\overline{u's'v's'} / m^2 s^{-2}$")
+fig.colorbar(usvs_pos, cax=cbar_ax2, orientation="horizontal", label=r"$\overline{u's'v's'} / m^2 s^{-2}$")
+fig.colorbar(usvs_neg, cax=cbar_ax3, orientation="horizontal", label=r"$\overline{u's'v's'} / m^2 s^{-2}$")
+
+for ax in axes.flatten():
+    ax.coastlines()
+    # add gidlines at lat every 20 degree, and lon every 60 degree
+    ax.gridlines(draw_labels=False, linewidth=0.5, linestyle="dotted")
+    ax.set_global()
+
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.set_title("")
+
+    axes[0, 0].set_title('climatology')
+    axes[0, 1].set_title('NAO pos anomaly')
+    axes[0, 2].set_title('NAO neg anomaly')
+
+# add a, b, c
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        0.02,
+        0.95,
+        f"{chr(97+i)}",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+    )
+
+plt.tight_layout()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/climatology_anomaly/usvs_clim_ano.pdf", dpi=300, bbox_inches="tight")
+
+# %%
+fig, axes = plt.subplots(
+    2, 3, figsize=(12, 10), subplot_kw={"projection": ccrs.Orthographic(-30, 90)}
+)
+
+# plot climatology
+vsets_first.plot.contourf(
+    ax=axes[0, 0],
+    levels=vptp_levels,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+vsets_clim = vsets_last.plot.contourf(
+    ax=axes[1, 0],
+    levels=vptp_levels,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+
+# plot pos
+vsets_first_pos.plot.contourf(
+    ax=axes[0, 1],
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+vsets_pos = vsets_last_pos.plot.contourf(
+    ax=axes[1, 1],
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+
+
+# plot neg
+vsets_first_neg.plot.contourf(
+    ax=axes[0, 2],
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+vsets_neg = vsets_last_neg.plot.contourf(
+    ax=axes[1, 2],
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend='both',
+)
+
+# add colorbar at the bottom of each column
+cbar_ax1 = fig.add_axes([0.07, 0.05, 0.2, 0.02])  # [left, bottom, width, height]
+cbar_ax2 = fig.add_axes([0.4, 0.05, 0.2, 0.02])
+cbar_ax3 = fig.add_axes([0.73, 0.05, 0.2, 0.02])
+
+fig.colorbar(vsets_clim, cax=cbar_ax1, orientation="horizontal", label=r"$\overline{v's'} / K m s^{-1}$")
+fig.colorbar(vsets_pos, cax=cbar_ax2, orientation="horizontal", label=r"$\overline{v's'} / K m s^{-1}$")
+fig.colorbar(vsets_neg, cax=cbar_ax3, orientation="horizontal", label=r"$\overline{v's'} / K m s^{-1}$")
+
+for ax in axes.flatten():
+    ax.coastlines()
+    # add gidlines at lat every 20 degree, and lon every 60 degree
+    ax.gridlines(draw_labels=False, linewidth=0.5, linestyle="dotted")
+    ax.set_global()
+
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.set_title("")
+
+    axes[0, 0].set_title('climatology')
+    axes[0, 1].set_title('NAO pos anomaly')
+    axes[0, 2].set_title('NAO neg anomaly')
+
+# add a, b, c
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        0.02,
+        0.95,
+        f"{chr(97+i)}",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+    )
+
+plt.tight_layout()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/climatology_anomaly/vsets_clim_ano.pdf", dpi=300, bbox_inches="tight")
 
 # %%

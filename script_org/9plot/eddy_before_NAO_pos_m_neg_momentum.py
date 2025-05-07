@@ -34,6 +34,13 @@ upvp_last = read_composite_MPI("upvp", "upvp", 2090, '5_0') # 5 days before
 if upvp_first.plev.size > 1:
     upvp_first = upvp_first.sel(plev=25000)
     upvp_last = upvp_last.sel(plev=25000)
+
+# u'v' 5-0 days before steady eddies
+usvs_first = read_composite_MPI("usvs", "usvs", 1850, '5_0') # 5 days before
+usvs_last = read_composite_MPI("usvs", "usvs", 2090, '5_0') # 5 days before
+if usvs_first.plev.size > 1:
+    usvs_first = usvs_first.sel(plev=25000)
+    usvs_last = usvs_last.sel(plev=25000)
 #%%
 # v't' -15 - 5 days before
 vpetp_first = read_composite_MPI("vpetp", "vpetp", 1850)
@@ -112,8 +119,8 @@ uhat_first.plot.contourf(
     },
 )
 
-# second column 5-0 days before u'v'
-upvp_first.plot.contourf(
+# second column usvs 5-0 days before
+usvs_first.plot.contourf(
     ax=axes[0, 1],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
@@ -129,46 +136,22 @@ upvp_first.plot.contourf(
     },
 )
 
-# third column -15 - 5 days before
-vpetp_first.plot.contourf(
+# third column 5-0 days before u'v'
+upvp_first.plot.contourf(
     ax=axes[0, 2],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
-    levels=vptp_levels_div,
+    levels=upvp_levels_div,
     add_colorbar=True,
     extend="both",
     cbar_kwargs={
-        "label": r"$ v' \theta'_e/ K m s^{-1}$",
+        "label": r"$ u' v'/ m^{2} s {-2}$",
         "orientation": "horizontal",
         "pad": 0.05,
         "shrink": 0.8,
         "aspect": 20,
     },
 )
-
-# quiver
-first_flux_arrow = axes[0, 2].quiver(
-    qflux_first["lon"].values[::3],
-    qflux_first["lat"].values[::3],
-    qflux_first["u"].values[::3, ::3],
-    qflux_first["v"].values[::3, ::3],
-    transform=ccrs.PlateCarree(),
-    scale=scale_div,
-    color="black",
-    pivot="middle",
-)
-# add quiver key
-# quiver_key = axes[0, 2].quiverkey(
-#     first_flux_arrow,
-#     0.65,
-#     0.0,
-#     0.05,
-#     r"$0.05 g kg^{-1} m s^{-1}$",
-#     transform=ccrs.PlateCarree(),
-#     labelpos="E",
-#     coordinates="axes",
-#     fontproperties={"size": 12},
-# )
 
 # second row last ten years
 # first column uhat
@@ -188,8 +171,8 @@ uhat_last.plot.contourf(
     },
 )
 
-# second column 5-0 days before u'v'
-upvp_last.plot.contourf(
+# second column usvs 5-0 days before
+usvs_last.plot.contourf(
     ax=axes[1, 1],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
@@ -205,45 +188,21 @@ upvp_last.plot.contourf(
     },
 )
 
-# third column -15 - 5 days before
-vpetp_last.plot.contourf(
+# third column 5-0 days before u'v'
+upvp_last.plot.contourf(
     ax=axes[1, 2],
     transform=ccrs.PlateCarree(),
     cmap=temp_cmap_div,
-    levels=vptp_levels_div,
+    levels=upvp_levels_div,
     add_colorbar=True,
     extend="both",
     cbar_kwargs={
-        "label": r"$ v' \theta_e'/ K m s^{-1}$",
+        "label": r"$ u' v'/ m^{2} s {-2}$",
         "orientation": "horizontal",
         "pad": 0.05,
         "shrink": 0.8,
         "aspect": 20,
     },
-)
-
-# quiver
-last_flux_arrow = axes[1, 2].quiver(
-    qflux_last["lon"].values[::3],
-    qflux_last["lat"].values[::3],
-    qflux_last["u"].values[::3, ::3],
-    qflux_last["v"].values[::3, ::3],
-    transform=ccrs.PlateCarree(),
-    scale=scale_div,
-    color="black",
-    pivot="middle",
-)
-# add quiver key
-quiver_key = axes[1, 2].quiverkey(
-    last_flux_arrow,
-    0.65,
-    1.03,
-    0.05,
-    r"$0.05 g kg^{-1} m s^{-1}$",
-    transform=ccrs.PlateCarree(),
-    labelpos="E",
-    coordinates="axes",
-    fontproperties={"size": 12},
 )
 
 for ax in axes.flatten():
@@ -256,44 +215,10 @@ for ax in axes.flatten():
     ax.set_ylabel("")
     ax.set_title("")
 
-    axes[0, 0].set_title('(event period)')
-    axes[0, 1].set_title('(-5, 0)')
-    axes[0, 2].set_title('(-15, -5)')
+    axes[0, 0].set_title("eddy driven jet")
+    axes[0, 1].set_title('steady eddies')
+    axes[0, 2].set_title('transient eddies')
 
-# draw boxes of NPC and NAL with smoother lines
-# NPC [120, 240, 30, 50]
-npc_lon = np.linspace(120, 240, 100)
-npc_lat_bottom = np.full_like(npc_lon, 30)
-npc_lat_top = np.full_like(npc_lon, 50)
-npc_lon_left = np.full_like(npc_lat_bottom, 120)
-npc_lon_right = np.full_like(npc_lat_bottom, 240)
-npc_lat = np.concatenate([npc_lat_bottom, npc_lat_top[::-1], [30]])
-npc_lon = np.concatenate([npc_lon, npc_lon[::-1], [120]])
-axes[0, 2].plot(
-    npc_lon,
-    npc_lat,
-    transform=ccrs.PlateCarree(),
-    color="yellow",
-    linewidth=2,
-    ls = "--",
-)
-
-# NAL [270, 330, 30, 50]
-nal_lon = np.linspace(270, 330, 100)
-nal_lat_bottom = np.full_like(nal_lon, 30)
-nal_lat_top = np.full_like(nal_lon, 50)
-nal_lon_left = np.full_like(nal_lat_bottom, 270)
-nal_lon_right = np.full_like(nal_lat_bottom, 330)
-nal_lat = np.concatenate([nal_lat_bottom, nal_lat_top[::-1], [30]])
-nal_lon = np.concatenate([nal_lon, nal_lon[::-1], [270]])
-axes[0, 2].plot(
-    nal_lon,
-    nal_lat,
-    transform=ccrs.PlateCarree(),
-    color="yellow",
-    linewidth=2,
-    ls = "--",
-)
 
 # add a, b, c
 for i, ax in enumerate(axes.flatten()):
@@ -307,6 +232,6 @@ for i, ax in enumerate(axes.flatten()):
     )
 
 plt.tight_layout()
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/NAO_uhat_upvp_vpetpMPI_GE.pdf", dpi=300, bbox_inches="tight")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/NAO_momentum_transient_steady.pdf", dpi=300, bbox_inches="tight")
 
 # %%
