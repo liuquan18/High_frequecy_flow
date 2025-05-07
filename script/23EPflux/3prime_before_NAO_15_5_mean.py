@@ -57,11 +57,11 @@ def process_data(decade, var, integrate=False, **kwargs):
     logging.info(f"saving data for decade {decade} \n")
     suffix = kwargs.get('suffix', '_ano')
     if suffix == '_ano':
-        save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_pos_15_5_mean_{decade}.nc'
-        save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_neg_15_5_mean_{decade}.nc'
+        save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_pos_{window}_mean_{decade}.nc'
+        save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_neg_{window}_mean_{decade}.nc'
     elif suffix == '':
-        save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/{var}_NAO_pos_15_5_mean_{decade}.nc'
-        save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/{var}_NAO_neg_15_5_mean_{decade}.nc'
+        save_dir_pos=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/{var}_NAO_pos_{window}_mean_{decade}.nc'
+        save_dir_neg=f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/{var}_NAO_neg_{window}_mean_{decade}.nc'
 
     ivke_NAO_pos.to_netcdf(save_dir_pos)
     ivke_NAO_neg.to_netcdf(save_dir_neg)
