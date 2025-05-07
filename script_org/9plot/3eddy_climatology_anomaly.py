@@ -84,7 +84,6 @@ def read_composite_ano(var, decade, phase, **kwargs):
 #%%
 
 ##### climatology ######
-# %%
 uhat_first = read_climatology("uhat", 1850, name="ua")
 uhat_last = read_climatology("uhat", 2091, name="ua") # 2090 
 
@@ -92,22 +91,21 @@ uhat_last = read_climatology("uhat", 2091, name="ua") # 2090
 uhat_first = uhat_first.sel(plev = slice(100000, 85000)).mean(dim = "plev")
 uhat_last = uhat_last.sel(plev = slice(100000, 85000)).mean(dim = "plev")
 
-#%%
 upvp_first = read_climatology("upvp", 1850, name="ua")
 upvp_last = read_climatology("upvp", 2090, name="ua")
-#%%
+
 usvs_first = read_climatology("usvs", 1850, name="usvs")
 usvs_last = read_climatology("usvs", 2090, name="usvs")
-#%%
+
 upvp_first = upvp_first.sel(plev = 25000)
 upvp_last = upvp_last.sel(plev = 25000)
-#%%
+
 vpetp_first = read_climatology("vpetp", 1850, name="vpetp")
 vpetp_last = read_climatology("vpetp", 2090, name="vpetp")
-#%%
+
 vpetp_first = vpetp_first.sel(plev = 85000)
 vpetp_last = vpetp_last.sel(plev = 85000)
-#%%
+
 vsets_first = read_climatology("vsets", 1850, name="vsets")
 vsets_last = read_climatology("vsets", 2090, name="vsets")
 #%%
@@ -115,28 +113,34 @@ vsets_last = read_climatology("vsets", 2090, name="vsets")
 uhat_first_pos = read_composite_ano("uhat", 1850, "pos", name="ua")
 uhat_last_pos = read_composite_ano("uhat", 2090, "pos", name="ua")
 
-upvp_first_pos = read_composite_ano("upvp", 1850, "pos", name="ua")
-upvp_last_pos = read_composite_ano("upvp", 2090, "pos", name="ua")
+upvp_first_pos = read_composite_ano("upvp", 1850, "pos", name="ua", before="5_0")
+upvp_last_pos = read_composite_ano("upvp", 2090, "pos", name="ua", before="5_0")
 
-vpetp_first_pos = read_composite_ano("vpetp", 1850, "pos", name="vpetp")
-vpetp_last_pos = read_composite_ano("vpetp", 2090, "pos", name="vpetp")
+vpetp_first_pos = read_composite_ano("vpetp", 1850, "pos", name="vpetp", before = '15_5')
+vpetp_last_pos = read_composite_ano("vpetp", 2090, "pos", name="vpetp", before = '15_5')
 
-usvs_first_pos = read_composite_ano("usvs", 1850, "pos", name="usvs")
-usvs_last_pos = read_composite_ano("usvs", 2090, "pos", name="usvs")
+usvs_first_pos = read_composite_ano("usvs", 1850, "pos", name="usvs", before = '5_0')
+usvs_last_pos = read_composite_ano("usvs", 2090, "pos", name="usvs", before = '5_0')
 
-vsets_first_pos = read_composite_ano("vsets", 1850, "pos", name="vsets")
-vsets_last_pos = read_composite_ano("vsets", 2090, "pos", name="vsets")
+vsets_first_pos = read_composite_ano("vsets", 1850, "pos", name="vsets", before = '15_5')
+vsets_last_pos = read_composite_ano("vsets", 2090, "pos", name="vsets", before = '15_5')
 #%%
 
 ####### neg anomaly ######
 uhat_first_neg = read_composite_ano("uhat", 1850, "neg", name="ua")
 uhat_last_neg = read_composite_ano("uhat", 2090, "neg", name="ua")
 
-upvp_first_neg = read_composite_ano("upvp", 1850, "neg", name="ua")
-upvp_last_neg = read_composite_ano("upvp", 2090, "neg", name="ua")
+upvp_first_neg = read_composite_ano("upvp", 1850, "neg", name="ua", before="5_0")
+upvp_last_neg = read_composite_ano("upvp", 2090, "neg", name="ua", before="5_0")
 
-vpetp_first_neg = read_composite_ano("vpetp", 1850, "neg", name="vpetp")
-vpetp_last_neg = read_composite_ano("vpetp", 2090, "neg", name="vpetp")
+vpetp_first_neg = read_composite_ano("vpetp", 1850, "neg", name="vpetp", before = '15_5')
+vpetp_last_neg = read_composite_ano("vpetp", 2090, "neg", name="vpetp", before = '15_5')
+
+usvs_first_neg = read_composite_ano("usvs", 1850, "neg", name="usvs", before = '5_0')
+usvs_last_neg = read_composite_ano("usvs", 2090, "neg", name="usvs", before = '5_0')
+
+vsets_first_neg = read_composite_ano("vsets", 1850, "neg", name="vsets", before = '15_5')
+vsets_last_neg = read_composite_ano("vsets", 2090, "neg", name="vsets", before = '15_5')
 
 
 
