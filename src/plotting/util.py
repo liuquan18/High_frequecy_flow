@@ -27,6 +27,15 @@ def erase_white_line(data):
 
     return new_data
 
+def map_smooth(ds, lon_win=25, lat_win=3):
+    extended_ds = xr.concat([ds, ds], dim="lon")
+    ds_rolling = extended_ds.rolling(lon=lon_win, lat=lat_win).mean()
+
+    original_lonsize = ds.lon.size
+    ds_rolling = ds_rolling.isel(lon=slice(original_lonsize, 2 * original_lonsize))
+    return ds_rolling.sortby("lon")
+
+
 def lat2y(latitude, ax):
     """
     Convert latitude to corresponding y-coordinates.
@@ -43,3 +52,12 @@ def lon2x(longitude, ax):
     x_coord = ax.projection.transform_point(longitude, 0, ccrs.PlateCarree())[0]
 
     return x_coord
+
+def x2lon(x, ax):
+    """
+    Convert x-coordinates to corresponding longitude.
+    """
+    lon_coord = ax.projection.transform_point(x, 0, ccrs.PlateCarree())[0]
+
+    return lon_coord
+
