@@ -37,7 +37,7 @@ elif [ "$var1" == "ts" ]; then
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_steady_daily/r${member}i1p1f1/
 elif [ "$var1" == "ets" ]; then
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_steady_daily/r${member}i1p1f1/
-elif [ "$var1" == "qps" ]; then
+elif [ "$var1" == "qs" ]; then
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_steady_daily/r${member}i1p1f1/
 fi
 
@@ -61,7 +61,7 @@ elif [ "$var2" == "ts" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_steady_daily/r${member}i1p1f1/
 elif [ "$var2" == "ets" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_steady_daily/r${member}i1p1f1/
-elif [ "$var2" == "qps" ]; then
+elif [ "$var2" == "qs" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_steady_daily/r${member}i1p1f1/
 fi
     
