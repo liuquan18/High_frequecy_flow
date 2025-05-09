@@ -12,8 +12,9 @@
 phase=$1 # phase
 decade=$2 # decade
 isentrope=$3 # isentrope
-ano=$4 # anomaly
+eddy=$4 # steady or transient
+ano=$5 # anomaly
 
 echo run $phase for $decade
 
-python 4EP_flux_isentropes.py $phase $decade $isentrope $ano
+python 4EP_flux_isentropes.py $phase $decade $isentrope $eddy $ano

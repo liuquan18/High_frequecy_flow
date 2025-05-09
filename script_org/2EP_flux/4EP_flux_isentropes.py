@@ -58,13 +58,13 @@ def EP_flux_isen(vptp, upvp, theta=None, isentrope=True):
 
     return F_phi, F_p, div
 
-def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, isentrope=True):
+def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, isentrope=True, eddy='transient'):
     """
     Calculate EP flux for a given decade and phase
     """
     # Read data
     logging.info (f"Read data for {phase} phase in {decade}")
-    upvp, vptp, theta = read_data_all(decade, phase, ano=ano, equiv_theta=equiv_theta)
+    upvp, vptp, theta = read_data_all(decade, phase, ano=ano, equiv_theta=equiv_theta, eddy=eddy)
 
     # Determine save directory based on isentrope flag
     if isentrope:
@@ -89,7 +89,8 @@ def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, isentrope=True
 phase = sys.argv[1] # 'pos' or 'neg'
 decade = sys.argv[2] # '1850' or '2090'
 isentrope = sys.argv[3].lower() == 'true' # Convert string to boolean
-ano = sys.argv[4].lower() == 'true' if len(sys.argv) > 4 else False  # Convert string to boolean, default is False
+eddy = sys.argv[4] == 'transient' if len(sys.argv) > 4 else 'steady' # Convert string to boolean
+ano = sys.argv[4].lower() == 'true' if len(sys.argv) > 5 else False  # Convert string to boolean, default is False
 
 #%%
 if __name__ == "__main__":
@@ -97,7 +98,8 @@ if __name__ == "__main__":
     logging.info(f"Phase: {phase}")
     logging.info(f"Decade: {decade}")
     logging.info(f"Isentrope: {isentrope}")
+    logging.info(f"Eddy: {eddy}")
     logging.info(f"Anomaly: {ano}")
     
     # Calculate EP flux for NAO pos and neg phase
-    calculate_EP_flux(decade, phase, ano=ano, equiv_theta=True, isentrope=isentrope)
+    calculate_EP_flux(decade, phase, ano=ano, equiv_theta=True, isentrope=isentrope, eddy=eddy)
