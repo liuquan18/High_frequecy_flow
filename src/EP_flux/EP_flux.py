@@ -222,33 +222,27 @@ def EP_flux(vptp, upvp, dthdp):
 
 
 # %%
-def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = False):
-    """
-    Read data for the specified decade and phase.
-    Parameters:
-    - decade: Decade to read data for (e.g., 1850, 2090).
-    - phase: Phase to read data for (e.g., 'pos', 'neg').
-    - ano: Boolean indicating whether to read anomaly data.
-    - equiv_theta: Boolean indicating whether to read equivalent theta data.
-    Returns:
-    - upvp: u'v' data.
-    - vptp: v't' data.
-    - theta_ensmean: Ensemble mean of theta data.
-    """
-    upvp = read_composite_MPI("upvp", "ua", decade = decade, before = before, return_as=phase, ano=ano)
-    if equiv_theta:
-        vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano)
-        theta_ensmean = xr.open_dataset(
-            f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_{decade}*.nc").etheta
-    else:
-        vptp = read_composite_MPI("vptp", "vptp", decade = decade, before = before, return_as=phase, ano=ano)
-        theta_ensmean = xr.open_dataset(
-            f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_{decade}*.nc").theta
-		
-    if 'time' in theta_ensmean.dims:
-        theta_ensmean = theta_ensmean.mean(dim ='time')
+def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = False, transient = True):
+	"""
+	theta for interpolation
+	steady eddies: usvs
+	transient eddies: upvp
+	"""
+	if transient:
+		upvp = read_composite_MPI("upvp", "ua", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
+	else:
+		upvp = read_composite_MPI("usvs", "usvs", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
+	if equiv_theta:
+		vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano)
+		theta = read_composite_MPI("equiv_theta", "etheta", decade = decade, before = before, return_as=phase, ano=ano)
 
-    return upvp, vptp, theta_ensmean
+
+	else:
+		vptp = read_composite_MPI("vptp", "vptp", decade = decade, before = before, return_as=phase, ano=ano)
+		theta = read_composite_MPI("theta", "theta", decade = decade, before = before, return_as=phase, ano=ano)			
+
+
+	return upvp, vptp, theta
 
 def NPC_mean(arr):
     return arr.sel(lon = slice(120, 240)).mean(dim = 'lon')
