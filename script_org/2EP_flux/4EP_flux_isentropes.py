@@ -81,9 +81,9 @@ def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, isentrope=True
     logging.info (f"Save data for {phase} phase in {decade}")
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-    F_phi.to_netcdf(os.path.join(save_dir, f"F_phi_{phase}_{decade}_ano{ano}.nc"))
-    F_p.to_netcdf(os.path.join(save_dir, f"F_p_{phase}_{decade}_ano{ano}.nc"))
-    div.to_netcdf(os.path.join(save_dir, f"div_{phase}_{decade}_ano{ano}.nc"))
+    F_phi.to_netcdf(os.path.join(save_dir, f"{eddy}_F_phi_{phase}_{decade}_ano{ano}.nc"))
+    F_p.to_netcdf(os.path.join(save_dir, f"{eddy}_F_p_{phase}_{decade}_ano{ano}.nc"))
+    div.to_netcdf(os.path.join(save_dir, f"{eddy}_div_{phase}_{decade}_ano{ano}.nc"))
     
 #%%
 phase = sys.argv[1] # 'pos' or 'neg'
