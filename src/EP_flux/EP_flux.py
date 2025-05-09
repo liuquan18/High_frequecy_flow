@@ -232,6 +232,7 @@ def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = Fal
 		upvp = read_composite_MPI("upvp", "ua", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
 		if equiv_theta:
 			vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano)
+			# for coordinates
 			theta_ensmean = xr.open_dataset(
 				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_{decade}*.nc").etheta
 
