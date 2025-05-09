@@ -28,12 +28,91 @@ importlib.reload(util)
 from src.prime.prime_data import read_composite_MPI  # noqa: E402
 from src.prime.prime_data import read_MPI_GE_uhat
 #%%
+def read_climatology(var, decade, **kwargs):
+
+    name = kwargs.get("name", var)  # default name is the same as var
+    if var == "uhat":
+        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/*{decade}*.nc"
+    else:
+        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_monthly_ensmean/{var}_monmean_ensmean_{decade}*.nc"
+
+    file = glob.glob(data_path)
+    if len(file) == 0:
+        raise ValueError(f"no file found for {var} in {decade}")
+    data = xr.open_dataset(file[0])
+    data = data[name]
+
+    if "time" in data.dims:
+        data = data.mean(dim="time")
+
+    return erase_white_line(data)
+
+#%%
+def read_composite_ano(var, decade, phase, **kwargs):
+
+    name = kwargs.get("name", var)  # default name is the same as var
+    before = kwargs.get("before", "5_0")  # default is 5-0 days before
+    smooth_value = kwargs.get("smooth_value", 5)  # default is no smoothing
+    # u hat is in different path
+    if var == 'uhat':
+        composite_path = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/"
+        if decade == 1850:
+            if phase == 'pos':
+                composite_path += "jetstream_MJJAS_first10_pos.nc"
+            elif phase == 'neg':
+                composite_path += "jetstream_MJJAS_first10_neg.nc"
+        elif decade == 2090:
+            if phase == 'pos':
+                composite_path += "jetstream_MJJAS_last10_pos.nc"
+            elif phase == 'neg':
+                composite_path += "jetstream_MJJAS_last10_neg.nc"
+
+        composite_ano = xr.open_dataarray(composite_path)
+
+    # 5-0 days 
+    else:
+        composite_ano = read_composite_MPI(var, name, decade = decade, before = before, return_as = phase, ano = True, smooth_value=smooth_value)
+
+    return composite_ano
+
+
+#%%
 def to_plot_data(eke):
     # fake data to plot
     eke = eke.rename({"plev": "lat"})  # fake lat to plot correctly the lon
     eke["lat"] = -1*(eke["lat"]/1000 -10)  # fake lat to plot correctly the lon
     # Solve the problem on 180 longitude by extending the data
     return eke
+#%%
+
+##### climatology
+
+steady_first = read_climatology("vsets", 1850, name = 'vsets')
+steady_last = read_climatology("vsets", 2090, name = 'vsets')
+
+
+transient_first = read_climatology("vpetp", 1850, name = 'vpetp')
+transient_last = read_climatology("vpetp", 2090, name = 'vpetp')
+
+
+#%%
+steady_first_pos = read_climatology("vsets", 1850, "pos", name = 'vsets')
+steady_last_pos = read_climatology("vsets", 2090, "pos", name = 'vsets')
+
+transient_first_pos = read_climatology("vpetp", 1850, "pos", name = 'vpetp')
+transient_last_pos = read_climatology("vpetp", 2090, "pos", name = 'vpetp')
+
+steady_first_neg = read_climatology("vsets", 1850, "neg", name = 'vsets')
+steady_last_neg = read_climatology("vsets", 2090, "neg", name = 'vsets')
+
+transient_first_neg = read_climatology("vpetp", 1850, "neg", name = 'vpetp')
+transient_last_neg = read_climatology("vpetp", 2090, "neg", name = 'vpetp')
+#%%
+
+
+
+
+
 
 # %%
 vpetp_first = read_composite_MPI("vpetp", "vpetp", 1850)
@@ -91,20 +170,6 @@ qflux_last = xr.Dataset({'u': upqp_last*1e3, 'v': vpqp_last*1e3})
 # steady eddies
 vsqs_first = read_composite_MPI("vsqs", "vsqs", 1850)
 vsqs_last = read_composite_MPI("vsqs", "vsqs", 2090)
-
-usqs_first = read_composite_MPI("usqs", "usqs", 1850)
-usqs_last = read_composite_MPI("usqs", "usqs", 2090)
-
-# integrate qs
-usqs_first = vert_integrate(usqs_first)
-usqs_last = vert_integrate(usqs_last)
-vsqs_first = vert_integrate(vsqs_first)
-vsqs_last = vert_integrate(vsqs_last)
-# to flux
-qflux_first = xr.Dataset({'u': usqs_first*1e3, 'v': vsqs_first*1e3}) #g/kg m/s
-qflux_last = xr.Dataset({'u': usqs_last*1e3, 'v': vsqs_last*1e3})
-#%%
-
 
 # %%
 # %%
