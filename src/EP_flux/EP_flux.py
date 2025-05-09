@@ -232,28 +232,36 @@ def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = Fal
 		upvp = read_composite_MPI("upvp", "ua", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
 		if equiv_theta:
 			vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano)
-			theta = read_composite_MPI("equiv_theta", "etheta", decade = decade, before = before, return_as=phase, ano=ano)
+			theta_ensmean = xr.open_dataset(
+				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_{decade}*.nc").etheta
+
 
 		else:
 			vptp = read_composite_MPI("vptp", "vptp", decade = decade, before = before, return_as=phase, ano=ano)
-			theta = read_composite_MPI("theta", "theta", decade = decade, before = before, return_as=phase, ano=ano)			
+			theta_ensmean = xr.open_dataset(
+				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_{decade}*.nc").theta
 
 
 	elif eddy == 'steady':
 		upvp = read_composite_MPI("usvs", "usvs", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
 		if equiv_theta:
 			vptp = read_composite_MPI("vsets", "vsets", decade = decade, before = before, return_as=phase, ano=ano)
-			theta = read_composite_MPI("equiv_theta", "etheta", decade = decade, before = before, return_as=phase, ano=ano)
+			theta_ensmean = xr.open_dataset(
+				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_{decade}*.nc").etheta
 
 		else:
 			vptp = read_composite_MPI("vsts", "vsts", decade = decade, before = before, return_as=phase, ano=ano)
-			theta = read_composite_MPI("theta", "theta", decade = decade, before = before, return_as=phase, ano=ano)
+			theta_ensmean = xr.open_dataset(
+				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_{decade}*.nc").theta
 
 	else:
 		raise ValueError("eddy must be either 'transient' or 'steady'", f"but got {eddy}")
 
 
-	return upvp, vptp, theta
+	if 'time' in theta_ensmean.dims:
+		theta_ensmean = theta_ensmean.mean(dim = 'time')
+
+	return upvp, vptp, theta_ensmean
 
 def NPC_mean(arr):
     return arr.sel(lon = slice(120, 240)).mean(dim = 'lon')
