@@ -90,7 +90,7 @@ phase = sys.argv[1] # 'pos' or 'neg'
 decade = sys.argv[2] # '1850' or '2090'
 isentrope = sys.argv[3].lower() == 'true' # Convert string to boolean
 eddy = sys.argv[4] == 'transient' if len(sys.argv) > 4 else 'steady' # Convert string to boolean
-ano = sys.argv[4].lower() == 'true' if len(sys.argv) > 5 else False  # Convert string to boolean, default is False
+ano = sys.argv[5].lower() == 'true' if len(sys.argv) > 5 else False  # Convert string to boolean, default is False
 
 #%%
 if __name__ == "__main__":
