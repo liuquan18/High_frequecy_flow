@@ -35,6 +35,25 @@ def to_plot_data(eke):
     # Solve the problem on 180 longitude by extending the data
     return eke
 
+def read_climatology(var, decade, **kwargs):
+
+    name = kwargs.get("name", var)  # default name is the same as var
+    if var == "uhat":
+        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/*{decade}*.nc"
+    else:
+        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_monthly_ensmean/{var}_monmean_ensmean_{decade}*.nc"
+
+    file = glob.glob(data_path)
+    if len(file) == 0:
+        raise ValueError(f"no file found for {var} in {decade}")
+    data = xr.open_dataset(file[0])
+    data = data[name]
+
+    if "time" in data.dims:
+        data = data.mean(dim="time")
+
+    return data
+
 # %%
 vpetp_first = read_composite_MPI("vpetp", "vpetp", 1850)
 vpetp_last = read_composite_MPI("vpetp", "vpetp", 2090)
@@ -103,6 +122,31 @@ vsqs_last = vert_integrate(vsqs_last)
 # to flux
 sflux_first = xr.Dataset({'u': usqs_first*1e3, 'v': vsqs_first*1e3}) #g/kg m/s
 sflux_last = xr.Dataset({'u': usqs_last*1e3, 'v': vsqs_last*1e3})
+#%%
+## climatology
+vsets_first_clim = read_climatology("vsets", "1850")
+vsets_last_clim = read_climatology("vsets", "2090")
+vpetp_first_clim = read_climatology("vpetp", "1850")
+vpetp_last_clim = read_climatology("vpetp", "2090")
+
+
+# smooth the data
+vsets_first_clim = map_smooth(vsets_first_clim, lon_win=10, lat_win=3)
+vsets_last_clim = map_smooth(vsets_last_clim, lon_win=10, lat_win=3)
+vpetp_first_clim = map_smooth(vpetp_first_clim, lon_win=10, lat_win=3)
+vpetp_last_clim = map_smooth(vpetp_last_clim, lon_win=10, lat_win=3)
+
+# meridional mean between 20-50N
+vsets_first_clim = vsets_first_clim.sel(lat=slice(20, 50)).mean(dim="lat")
+vsets_last_clim = vsets_last_clim.sel(lat=slice(20, 50)).mean(dim="lat")
+vpetp_first_clim = vpetp_first_clim.sel(lat=slice(20, 50)).mean(dim="lat")
+vpetp_last_clim = vpetp_last_clim.sel(lat=slice(20, 50)).mean(dim="lat")
+
+# fake data to plot
+vsets_first_clim_plot = to_plot_data(vsets_first_clim)
+vsets_last_clim_plot = to_plot_data(vsets_last_clim)
+vpetp_first_clim_plot = to_plot_data(vpetp_first_clim)
+vpetp_last_clim_plot = to_plot_data(vpetp_last_clim)
 
 # %%
 temp_cmap_seq = np.loadtxt(
@@ -164,6 +208,18 @@ vsets_first_plot.plot.contourf(
     transform=ccrs.PlateCarree(),
     add_colorbar = False
 )
+
+vsets_first_clim_plot.plot.contour(
+    ax=profile_ax_steady_first,
+    levels=np.delete(vsts_levels_div*10, np.where(vsts_levels_div*10 == 0)),
+    colors="black",
+    linewidths=0.5,
+    transform=ccrs.PlateCarree(),
+    add_colorbar = False
+)
+
+
+
 # second col for transient eddies
 vpetp_first_plot.plot.contourf(
     ax=profile_ax_transient_first,
@@ -171,8 +227,18 @@ vpetp_first_plot.plot.contourf(
     cmap="RdBu_r",
     transform=ccrs.PlateCarree(),
     add_colorbar = False
-
 )
+
+vpetp_first_clim_plot.plot.contour(
+    ax=profile_ax_transient_first,
+    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
+    colors="black",
+    linewidths=0.5,
+    transform=ccrs.PlateCarree(),
+    add_colorbar = False
+)
+
+
 # second row for last ten years
 # first col for steady eddies
 vsets_last_plot.plot.contourf(
@@ -183,11 +249,31 @@ vsets_last_plot.plot.contourf(
     add_colorbar = False
 
 )
+
+vsets_last_clim_plot.plot.contour(
+    ax=profile_ax_steady_last,
+    levels=np.delete(vsts_levels_div*10, np.where(vsts_levels_div*10 == 0)),
+    colors="black",
+    linewidths=0.5,
+    transform=ccrs.PlateCarree(),
+    add_colorbar = False
+)
+
+
 # second col for transient eddies
 vpetp_last_plot.plot.contourf(
     ax=profile_ax_transient_last,
     levels=vptp_levels_div,
     cmap="RdBu_r",
+    transform=ccrs.PlateCarree(),
+    add_colorbar = False
+)
+
+vpetp_last_clim_plot.plot.contour(
+    ax=profile_ax_transient_last,
+    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
+    colors="black",
+    linewidths=0.5,
     transform=ccrs.PlateCarree(),
     add_colorbar = False
 )
@@ -248,9 +334,9 @@ steady_last_flux_arrow = map_ax_steady_last.quiver(
 quiver_key = map_ax_steady_last.quiverkey(
     steady_last_flux_arrow,
     0.65,
-    -2.5,
-    0.1,
-    r"$0.05 g kg^{-1} m s^{-1}$",
+    -1.5,
+    0.5,
+    r"$0.5 g kg^{-1} m s^{-1}$",
     transform=ccrs.PlateCarree(),
     labelpos="E",
     coordinates="axes",
@@ -317,8 +403,8 @@ transient_last_flux_arrow = map_ax_transient_last.quiver(
 quiver_key = map_ax_transient_last.quiverkey(
     transient_last_flux_arrow,
     0.65,
-    -2.5,
-    0.5,
+    -1.5,
+    0.05,
     r"$0.05 g kg^{-1} m s^{-1}$",
     transform=ccrs.PlateCarree(),
     labelpos="E",
@@ -340,7 +426,12 @@ def major_formatter(x, pos):
     return f"{int((x-10)*-10)}"
 
 
-for ax in [profile_ax_steady_first, profile_ax_steady_last]:
+
+
+for ax in [profile_ax_steady_first, profile_ax_transient_first,
+            profile_ax_steady_last, profile_ax_transient_last]:
+    ax.set_aspect(1.4)
+    ax.set_xticklabels([])
     gl = ax.gridlines(
         crs=ccrs.PlateCarree(),
         linewidth=0.5,
@@ -358,26 +449,23 @@ for ax in [profile_ax_steady_first, profile_ax_steady_last]:
     gl.xlocator = mticker.FixedLocator([])
 
 
-for ax in [profile_ax_steady_first, profile_ax_transient_first,
-            profile_ax_steady_last, profile_ax_transient_last]:
-    ax.set_aspect(1.4)
-    ax.set_xticklabels([])
-
-
 for ax in [map_ax_steady_first, map_ax_transient_first,
             map_ax_steady_last, map_ax_transient_last]:
     ax.coastlines(color="black", linewidth=0.5)  # Light gray with 70% lightness
     # continents light gray
     # add gidlines at lat every 20 degree, and lon every 60 degree
     ax.set_xlim(-180, 180)  # 
-    ax.set_ylim(10, 70)  # 
+    ax.set_ylim(0, 70)  # 
     ax.set_title("")
 
     # hline at y = 30 and y = 50
     ax.axhline(20, color="gray", linewidth=0.5, linestyle="--")
     ax.axhline(50, color="gray", linewidth=0.5, linestyle="--")
 
+
+
 for ax in [map_ax_steady_last, map_ax_transient_last]:
+
     gl = ax.gridlines(
         crs=ccrs.PlateCarree(),
         linewidth=0.5,
@@ -388,6 +476,7 @@ for ax in [map_ax_steady_last, map_ax_transient_last]:
     
 
     gl.xlabels_top = False
+    gl.xlabels_bottom = False
     gl.xlines = False
 
 
