@@ -239,12 +239,14 @@ def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = Fal
     if equiv_theta:
         vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano)
         theta_ensmean = xr.open_dataset(
-            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc").etheta
+            f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_{decade}*.nc").etheta
     else:
         vptp = read_composite_MPI("vptp", "vptp", decade = decade, before = before, return_as=phase, ano=ano)
         theta_ensmean = xr.open_dataset(
-            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc").theta
-        
+            f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_{decade}*.nc").theta
+		
+    if 'time' in theta_ensmean.dims:
+        theta_ensmean = theta_ensmean.mean(dim ='time')
 
     return upvp, vptp, theta_ensmean
 
