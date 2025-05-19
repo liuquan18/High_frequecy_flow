@@ -14,6 +14,12 @@ echo "va hat before $window $suffix"
 sbatch 1Flux_before_NAO_submit.sh 1850 va_hat va $window $suffix
 sbatch 1Flux_before_NAO_submit.sh 2090 va_hat va $window $suffix
 
+# zg
+echo "zg before $window $suffix"
+sbatch 1Flux_before_NAO_submit.sh 1850 zg zg $window $suffix
+sbatch 1Flux_before_NAO_submit.sh 2090 zg zg $window $suffix
+
+
 # upvp
 echo "upvp before $window $suffix"
 sbatch 1Flux_before_NAO_submit.sh 1850 upvp upvp $window $suffix
