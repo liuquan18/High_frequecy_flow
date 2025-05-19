@@ -22,9 +22,9 @@ def read_EP_flux(phase, decade, ano=False, isentrope=True, region="NPC", smooth=
             "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux/"
         )
 
-    F_phi = xr.open_dataarray(f"{EP_flux_dir}F_phi_{phase}_{decade}_ano{ano}.nc")
-    F_p = xr.open_dataarray(f"{EP_flux_dir}F_p_{phase}_{decade}_ano{ano}.nc")
-    div = xr.open_dataarray(f"{EP_flux_dir}div_{phase}_{decade}_ano{ano}.nc")
+    F_phi = xr.open_dataarray(f"{EP_flux_dir}transient_F_phi_{phase}_{decade}_ano{ano}.nc")
+    F_p = xr.open_dataarray(f"{EP_flux_dir}transient_F_p_{phase}_{decade}_ano{ano}.nc")
+    div = xr.open_dataarray(f"{EP_flux_dir}transient_div_{phase}_{decade}_ano{ano}.nc")
 
     if region == "NPC":
         F_phi = NPC_mean(F_phi)
@@ -72,10 +72,10 @@ F_phi_neg_last_NAL, F_p_neg_last_NAL, div_neg_last_NAL = read_EP_flux(
 )
 
 # %%
-scale = 5e17
-scale_div = 5e16
-levels = np.arange(-10, 10.1, 1)
-levels_div = np.arange(-5, 5.1, 1)
+scale = 1e17
+scale_div = 1e16
+levels = np.arange(-5, 5.1, 0.5)
+levels_div = np.arange(-0.8, 0.81, 0.1)
 
 # %%
 # plot NPC
