@@ -63,38 +63,38 @@ def read_climatology(var, decade, **kwargs):
 
 # %%
 uhat_first_pos = read_composite_MPI(
-    "ua_hat", "ua", 1850, before="15_5", return_as="pos"
+    "ua_hat", "ua", 1850, before="10_0", return_as="pos"
 )
-uhat_last_pos = read_composite_MPI("ua_hat", "ua", 2090, before="15_5", return_as="pos")
+uhat_last_pos = read_composite_MPI("ua_hat", "ua", 2090, before="10_0", return_as="pos")
 
 uhat_first_neg = read_composite_MPI(
-    "ua_hat", "ua", 1850, before="15_5", return_as="neg"
+    "ua_hat", "ua", 1850, before="10_0", return_as="neg"
 )
-uhat_last_neg = read_composite_MPI("ua_hat", "ua", 2090, before="15_5", return_as="neg")
+uhat_last_neg = read_composite_MPI("ua_hat", "ua", 2090, before="10_0", return_as="neg")
 # %%
 vhat_first_pos = read_composite_MPI(
-    "va_hat", "va", 1850, before="15_5", return_as="pos"
+    "va_hat", "va", 1850, before="10_0", return_as="pos"
 )
-vhat_last_pos = read_composite_MPI("va_hat", "va", 2090, before="15_5", return_as="pos")
+vhat_last_pos = read_composite_MPI("va_hat", "va", 2090, before="10_0", return_as="pos")
 
 vhat_first_neg = read_composite_MPI(
-    "va_hat", "va", 1850, before="15_5", return_as="neg"
+    "va_hat", "va", 1850, before="10_0", return_as="neg"
 )
-vhat_last_neg = read_composite_MPI("va_hat", "va", 2090, before="15_5", return_as="neg")
+vhat_last_neg = read_composite_MPI("va_hat", "va", 2090, before="10_0", return_as="neg")
 # %%
 # to flux
 uhat_first_diff = read_composite_MPI(
-    "ua_hat", "ua", 1850, before="15_5", return_as="diff"
+    "ua_hat", "ua", 1850, before="10_0", return_as="diff"
 )
 uhat_last_diff = read_composite_MPI(
-    "ua_hat", "ua", 2090, before="15_5", return_as="diff"
+    "ua_hat", "ua", 2090, before="10_0", return_as="diff"
 )
 
 vhat_first_diff = read_composite_MPI(
-    "va_hat", "va", 1850, before="15_5", return_as="diff"
+    "va_hat", "va", 1850, before="10_0", return_as="diff"
 )
 vhat_last_diff = read_composite_MPI(
-    "va_hat", "va", 2090, before="15_5", return_as="diff"
+    "va_hat", "va", 2090, before="10_0", return_as="diff"
 )
 # %%
 wind_flux_first_diff = xr.Dataset({"u": uhat_first_diff, "v": vhat_first_diff})  # m/s
@@ -116,10 +116,10 @@ upvp_last = read_climatology("upvp", "2090", name="upvp")
 # %%
 # diff
 upvp_first_diff = read_composite_MPI(
-    "upvp", "upvp", 1850, before="15_5", return_as="diff", ano=ano
+    "upvp", "upvp", 1850, before="10_0", return_as="diff", ano=ano
 )
 upvp_last_diff = read_composite_MPI(
-    "upvp", "upvp", 2090, before="15_5", return_as="diff", ano=ano
+    "upvp", "upvp", 2090, before="10_0", return_as="diff", ano=ano
 )
 # %%
 ####### read heat flux vpetp
