@@ -12,7 +12,7 @@ import os
 
 from src.extremes.before_extreme import read_NAO_extreme_ERA5
 from src.composite.composite import before_NAO_mean
-from src.prime.prime_data import read_prime_ERA5
+from src.plotting.prime_data import read_prime_ERA5
 logging.basicConfig(level=logging.INFO)
 
 
