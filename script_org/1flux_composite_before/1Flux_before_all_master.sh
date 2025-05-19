@@ -4,20 +4,30 @@ window=$1
 suffix=$2
 
 
-# ua hat
+# ua
 echo "ua hat before $window $suffix"
-sbatch 1Flux_before_NAO_submit.sh 1850 ua_hat ua $window $suffix
-sbatch 1Flux_before_NAO_submit.sh 2090 ua_hat ua $window $suffix
+sbatch 1Flux_before_NAO_submit.sh 1850 ua ua $window # no '_ano'
+sbatch 1Flux_before_NAO_submit.sh 2090 ua ua $window 
 
-# va hat
+# va
 echo "va hat before $window $suffix"
-sbatch 1Flux_before_NAO_submit.sh 1850 va_hat va $window $suffix
-sbatch 1Flux_before_NAO_submit.sh 2090 va_hat va $window $suffix
+sbatch 1Flux_before_NAO_submit.sh 1850 va va $window
+sbatch 1Flux_before_NAO_submit.sh 2090 va va $window 
 
 # zg
 echo "zg before $window $suffix"
 sbatch 1Flux_before_NAO_submit.sh 1850 zg zg $window $suffix
 sbatch 1Flux_before_NAO_submit.sh 2090 zg zg $window $suffix
+
+# theta
+echo "theta before $window $suffix"
+sbatch 1Flux_before_NAO_submit.sh 1850 theta theta $window $suffix
+sbatch 1Flux_before_NAO_submit.sh 2090 theta theta $window $suffix
+
+# etheta
+echo "etheta before $window $suffix"
+sbatch 1Flux_before_NAO_submit.sh 1850 equiv_theta etheta $window $suffix
+sbatch 1Flux_before_NAO_submit.sh 2090 equiv_theta etheta $window $suffix
 
 
 # upvp
