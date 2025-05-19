@@ -23,7 +23,7 @@ importlib.reload(util)
 # %%
 from src.prime.prime_data import read_composite_MPI  # noqa: E402
 from src.prime.prime_data import read_MPI_GE_uhat
-from src.EP_flux.EP_flux import (
+from src.dynamics.EP_flux import (
     NPC_mean,
     PlotEPfluxArrows,
     NAL_mean,

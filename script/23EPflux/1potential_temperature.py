@@ -7,7 +7,7 @@ import logging
 import glob
 logging.basicConfig(level=logging.INFO)
 # %%
-import src.EP_flux.EP_flux as EP_flux
+import src.dynamics.EP_flux as EP_flux
 # %%
 member= sys.argv[1]
 # %%

@@ -4,7 +4,7 @@ import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
 
-from src.EP_flux.EP_flux import (
+from src.dynamics.EP_flux import (
     EP_flux,
     NPC_mean,
     NAL_mean,
@@ -13,7 +13,7 @@ from src.EP_flux.EP_flux import (
     PlotEPfluxArrows,
 )
 
-import src.EP_flux.EP_flux as EP_flux_module
+import src.dynamics.EP_flux as EP_flux_module
 import importlib
 
 importlib.reload(EP_flux_module)

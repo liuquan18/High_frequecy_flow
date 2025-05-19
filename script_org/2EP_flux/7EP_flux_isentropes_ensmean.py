@@ -1,11 +1,11 @@
 # %%
-import src.EP_flux.EP_flux as EP_flux_module
+import src.dynamics.EP_flux as EP_flux_module
 import importlib
 import xarray as xr
 import glob
 
 importlib.reload(EP_flux_module)
-from src.EP_flux.EP_flux import (  # noqa: E402
+from src.dynamics.EP_flux import (  # noqa: E402
     EP_flux,
     eff_stat_stab_xr,
     read_data_all,
