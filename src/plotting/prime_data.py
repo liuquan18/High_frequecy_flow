@@ -2,7 +2,7 @@ import xarray as xr
 import numpy as np
 import glob
 from src.plotting.util import erase_white_line
-import src.moisture.longitudinal_contrast as lc
+import src.dynamics.longitudinal_contrast as lc
 
 
 def read_prime(decade, var="eke", **kwargs):
