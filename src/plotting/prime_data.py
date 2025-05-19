@@ -121,9 +121,15 @@ def read_composite_MPI(var, name, decade, before="15_5", return_as = 'diff', ano
     NAO_pos = NAO_pos[name]
     NAO_neg = NAO_neg[name]
 
-    NAO_pos = NAO_pos.mean(dim="event").squeeze()
-    NAO_neg = NAO_neg.mean(dim="event").squeeze()
+    try:
 
+        NAO_pos = NAO_pos.mean(dim="event").squeeze()
+        NAO_neg = NAO_neg.mean(dim="event").squeeze()
+
+    except ValueError:
+        NAO_pos = NAO_pos.squeeze()
+        NAO_neg = NAO_neg.squeeze()
+        
     NAO_pos = postprocess(NAO_pos, smooth_value=smooth_value, remove_zonal=remove_zonal)
     NAO_neg = postprocess(NAO_neg, smooth_value=smooth_value, remove_zonal=remove_zonal)
 
