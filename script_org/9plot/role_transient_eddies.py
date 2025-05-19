@@ -26,7 +26,7 @@ importlib.reload(prime_data)
 importlib.reload(util)
 # %%
 from src.plotting.prime_data import read_composite_MPI  # noqa: E402
-from src.plotting.prime_data import read_MPI_GE_uhat
+from src.plotting.prime_data import read_climatology  # noqa: E402
 
 
 # %%
@@ -37,76 +37,34 @@ def to_plot_data(eke):
     # Solve the problem on 180 longitude by extending the data
     return eke
 
-
-def read_climatology(var, decade, **kwargs):
-
-    name = kwargs.get("name", var)  # default name is the same as var
-    if var == "uhat":
-        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/*{decade}*.nc"
-    else:
-        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_monthly_ensmean/{var}_monmean_ensmean_{decade}*.nc"
-
-    file = glob.glob(data_path)
-    if len(file) == 0:
-        raise ValueError(f"no file found for {var} in {decade}")
-    data = xr.open_dataset(file[0])
-    data = data[name]
-
-    if "time" in data.dims:
-        data = data.mean(dim="time")
-
-    return data
-
-
+#%%
 #### read ua and va hat
 
-# %%
-ua_first_pos = read_composite_MPI(
-    "ua", "ua", 1850, before="10_0", return_as="pos"
-)
-ua_last_pos = read_composite_MPI("ua", "ua", 2090, before="10_0", return_as="pos")
+ua_first_diff = read_composite_MPI("ua", "ua", 1850, before="10_0", return_as="diff")
+ua_last_diff = read_composite_MPI("ua", "ua", 2090, before="10_0", return_as="diff")
 
-uhat_first_neg = read_composite_MPI(
-    "ua_hat", "ua", 1850, before="10_0", return_as="neg"
-)
-uhat_last_neg = read_composite_MPI("ua_hat", "ua", 2090, before="10_0", return_as="neg")
-# %%
-vhat_first_pos = read_composite_MPI(
-    "va_hat", "va", 1850, before="10_0", return_as="pos"
-)
-vhat_last_pos = read_composite_MPI("va_hat", "va", 2090, before="10_0", return_as="pos")
+va_first_diff = read_composite_MPI("va", "va", 1850, before="10_0", return_as="diff")
+va_last_diff = read_composite_MPI("va", "va", 2090, before="10_0", return_as="diff")
 
-vhat_first_neg = read_composite_MPI(
-    "va_hat", "va", 1850, before="10_0", return_as="neg"
-)
-vhat_last_neg = read_composite_MPI("va_hat", "va", 2090, before="10_0", return_as="neg")
-# %%
-# to flux
-uhat_first_diff = read_composite_MPI(
-    "ua_hat", "ua", 1850, before="10_0", return_as="diff"
-)
-uhat_last_diff = read_composite_MPI(
-    "ua_hat", "ua", 2090, before="10_0", return_as="diff"
-)
 
-vhat_first_diff = read_composite_MPI(
-    "va_hat", "va", 1850, before="10_0", return_as="diff"
-)
-vhat_last_diff = read_composite_MPI(
-    "va_hat", "va", 2090, before="10_0", return_as="diff"
-)
-# %%
-wind_flux_first_diff = xr.Dataset({"u": uhat_first_diff, "v": vhat_first_diff})  # m/s
-wind_flux_last_diff = xr.Dataset({"u": uhat_last_diff, "v": vhat_last_diff})  # m/s
+wind_flux_first_diff = xr.Dataset({"u": ua_first_diff, "v": va_first_diff})  # m/s
+wind_flux_last_diff = xr.Dataset({"u": ua_last_diff, "v": va_last_diff})  # m/s
 
 wind_flux_first_diff = wind_flux_first_diff.sel(plev=25000)
 wind_flux_last_diff = wind_flux_last_diff.sel(plev=25000)
 
+#%%
+####### theta on 2PVU
 
-####### read zg
-# wip
+theta_pv_first_diff = read_composite_MPI(
+    "theta2PVU", "theta2PVU", 1850, before="10_0", return_as="diff", ano = False,
+)
+theta_pv_last_diff = read_composite_MPI(
+    "theta2PVU", "theta2PVU", 2090, before="10_0", return_as="diff", ano = False,
+)
+
 # %%
-ano = False
+ano = True
 # %%
 ###### read up vp
 # climatology
@@ -205,7 +163,8 @@ prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 
 # %%
 uhat_levels_div = np.arange(-12, 13, 2)
-upvp_levels_div = np.arange(-10, 11, 2)
+theta_levels_div = np.arange(-2, 2.1, 0.5)
+upvp_levels_div = np.arange(-20, 21, 5)
 vsts_levels_div = np.arange(-3, 3.1, 0.5)
 vptp_levels_div = np.arange(-1.2, 1.3, 0.2)
 
@@ -240,6 +199,25 @@ profile_ax_upvp_last   = axes[2, 1]
 map_ax_vpetp_first     = axes[3, 0]
 map_ax_vpetp_last      = axes[3, 1]
 
+# theta on 2PVU
+theta_pv_first_diff.plot.contourf(
+    ax=map_ax_meanflow_first,
+    transform=ccrs.PlateCarree(),
+    levels=theta_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    extend="both",
+)
+theta_pv_last_diff.plot.contourf(
+    ax=map_ax_meanflow_last,
+    transform=ccrs.PlateCarree(),
+    levels=theta_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    extend="both",
+)
+
+
 # wind quiver for ua_hat, va_hat
 first_wind_arrow = map_ax_meanflow_first.quiver(
     wind_flux_first_diff["lon"].values[::5],
@@ -258,6 +236,8 @@ last_wind_arrow = map_ax_meanflow_last.quiver(
     transform=ccrs.PlateCarree(),
     scale=scale_wind,
 )
+
+
 
 # upvp map
 upvp_first_diff.sel(plev=25000).plot.contourf(
