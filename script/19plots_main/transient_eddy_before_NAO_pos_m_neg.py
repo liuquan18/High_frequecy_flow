@@ -29,8 +29,11 @@ uhat_first, uhat_last = read_MPI_GE_uhat()
 
 #%%
 # u'v' 5-0 days before 
-upvp_first = read_composite_MPI("upvp", "ua", 1850, '5_0') # 5 days before
-upvp_last = read_composite_MPI("upvp", "ua", 2090, '5_0') # 5 days before
+upvp_first = read_composite_MPI("upvp", "upvp", 1850, '5_0') # 5 days before
+upvp_last = read_composite_MPI("upvp", "upvp", 2090, '5_0') # 5 days before
+if upvp_first.plev.size > 1:
+    upvp_first = upvp_first.sel(plev=25000)
+    upvp_last = upvp_last.sel(plev=25000)
 #%%
 # v't' -15 - 5 days before
 vpetp_first = read_composite_MPI("vpetp", "vpetp", 1850)
@@ -304,6 +307,6 @@ for i, ax in enumerate(axes.flatten()):
     )
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/NAO_uhat_upvp_vpetpMPI_GE.pdf", dpi=300, bbox_inches="tight")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/NAO_uhat_upvp_vpetpMPI_GE.pdf", dpi=300, bbox_inches="tight")
 
 # %%

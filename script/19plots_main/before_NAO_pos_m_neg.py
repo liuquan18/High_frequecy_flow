@@ -47,12 +47,12 @@ def postprocess(ds, do_smooth=False, remove_zonal=False):
 # %%
 
 
-def read_composite_MPI(var, name, decade):
+def read_composite_MPI(var, name, decade, window = "15_5"):
     pos_file = glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_pos_*_mean_{decade}.nc"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_pos_{window}_mean_{decade}.nc"
     )
     neg_file = glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_neg_*_mean_{decade}.nc"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_neg_{window}_mean_{decade}.nc"
     )
     if len(pos_file) == 0 or len(neg_file) == 0:
         raise ValueError(f"no file found for {var} in {decade}")

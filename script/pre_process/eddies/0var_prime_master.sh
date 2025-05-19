@@ -9,6 +9,12 @@ if [ "$frequency" == "prime" ]; then
 elif [ "$frequency" == "high" ]; then
     echo frequency is set to high
     echo "Filtering 2-6 days"
+elif [ "$frequency" == "hat" ]; then
+    echo frequency is set to hat
+    echo "Filtering >30 days"
+else
+    echo "Frequency not recognized, please use prime or high"
+    exit 1
 fi
 
 #for loop 1-50

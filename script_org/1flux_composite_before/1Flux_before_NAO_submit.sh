@@ -17,4 +17,4 @@ suffix=$5
 
 echo " decade ${decade} for variable ${var}"
 
-python 3prime_before_NAO_15_5_mean.py ${decade} ${var} ${name} ${window} ${suffix}
+python 1flux_before_NAO.py ${decade} ${var} ${name} ${window} ${suffix}

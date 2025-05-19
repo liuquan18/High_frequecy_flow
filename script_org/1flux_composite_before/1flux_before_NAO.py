@@ -39,7 +39,7 @@ def process_data(decade, var, integrate=False, **kwargs):
 
     # select data before NAO events, here 'var' is only for column name
     logging.info (f"selecting data for {decade} \n")
-
+    window = kwargs.get('window', '15_5')
     # determin the time window
     if kwargs.get('window', '15_5') == '15_5':
         time_window = (-15, -5)

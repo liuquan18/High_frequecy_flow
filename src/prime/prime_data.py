@@ -90,16 +90,16 @@ def remove_zonalmean(arr):
 
 
 # %%
-def postprocess(ds, do_smooth=True, remove_zonal=False):
-    if do_smooth:
-        ds = smooth(ds)
+def postprocess(ds, smooth_value=5, remove_zonal=False):
+    if smooth_value is not None:
+        ds = smooth(ds, lat_window=smooth_value, lon_window=smooth_value)
     if remove_zonal:
         ds = remove_zonalmean(ds)
     ds = erase_white_line(ds)
     return ds
 
 
-def read_composite_MPI(var, name, decade, before="15_5", return_as = 'diff', ano = True):
+def read_composite_MPI(var, name, decade, before="15_5", return_as = 'diff', ano = False, smooth_value = 5, remove_zonal = False):
     if ano:
         pos_file = glob.glob(
             f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_pos_{before}_mean_{decade}.nc"
@@ -125,8 +125,8 @@ def read_composite_MPI(var, name, decade, before="15_5", return_as = 'diff', ano
     NAO_pos = NAO_pos.mean(dim="event").squeeze()
     NAO_neg = NAO_neg.mean(dim="event").squeeze()
 
-    NAO_pos = postprocess(NAO_pos)
-    NAO_neg = postprocess(NAO_neg)
+    NAO_pos = postprocess(NAO_pos, smooth_value=smooth_value, remove_zonal=remove_zonal)
+    NAO_neg = postprocess(NAO_neg, smooth_value=smooth_value, remove_zonal=remove_zonal)
 
     diff = NAO_pos - NAO_neg
 
@@ -141,10 +141,10 @@ def read_composite_MPI(var, name, decade, before="15_5", return_as = 'diff', ano
 # %%
 def read_composite_ERA5(var, name, before="15_5", return_as = 'diff'):
     pos_file = glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/ERA5_allplev_{var}_NAO_pos_{before}_mean.nc"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results_without_ano/ERA5_allplev_{var}_NAO_pos_{before}_mean.nc"
     )
     neg_file = glob.glob(
-        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results/ERA5_allplev_{var}_NAO_neg_{before}_mean.nc"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results_without_ano/ERA5_allplev_{var}_NAO_neg_{before}_mean.nc"
     )
     if len(pos_file) == 0 or len(neg_file) == 0:
         raise ValueError(f"no file found for {var}")

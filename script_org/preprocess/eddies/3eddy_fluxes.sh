@@ -17,6 +17,7 @@ var1=$2
 var2=$3
 
 if [ "$var1" == "vp" ]; then
+    # transient eddies
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_prime_daily/r${member}i1p1f1/
 elif [ "$var1" == "up" ]; then
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_prime_daily/r${member}i1p1f1/
@@ -26,9 +27,22 @@ elif [ "$var1" == "etp" ]; then
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_prime_daily/r${member}i1p1f1/  # equivalent potential temperature
 elif [ "$var1" == "qp" ]; then
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_prime_daily/r${member}i1p1f1/
+
+    # steady eddies
+elif [ "$var1" == "vs" ]; then
+    var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_steady_daily/r${member}i1p1f1/
+elif [ "$var1" == "us" ]; then
+    var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_steady_daily/r${member}i1p1f1/
+elif [ "$var1" == "ts" ]; then
+    var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_steady_daily/r${member}i1p1f1/
+elif [ "$var1" == "ets" ]; then
+    var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_steady_daily/r${member}i1p1f1/
+elif [ "$var1" == "qs" ]; then
+    var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_steady_daily/r${member}i1p1f1/
 fi
 
 if [ "$var2" == "vp" ]; then
+    # transient eddies
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_prime_daily/r${member}i1p1f1/
 elif [ "$var2" == "up" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_prime_daily/r${member}i1p1f1/
@@ -38,6 +52,17 @@ elif [ "$var2" == "etp" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_prime_daily/r${member}i1p1f1/  # equivalent potential temperature
 elif [ "$var2" == "qp" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_prime_daily/r${member}i1p1f1/
+    # steady eddies
+elif [ "$var2" == "vs" ]; then
+    var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_steady_daily/r${member}i1p1f1/
+elif [ "$var2" == "us" ]; then
+    var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_steady_daily/r${member}i1p1f1/
+elif [ "$var2" == "ts" ]; then
+    var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_steady_daily/r${member}i1p1f1/
+elif [ "$var2" == "ets" ]; then
+    var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_steady_daily/r${member}i1p1f1/
+elif [ "$var2" == "qs" ]; then
+    var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/hus_steady_daily/r${member}i1p1f1/
 fi
     
 

@@ -3,6 +3,7 @@ import xarray as xr
 import numpy as np
 import pandas as pd
 from src.prime.prime_data import read_composite_MPI
+import glob
 
 # %%
 # constants
@@ -222,31 +223,54 @@ def EP_flux(vptp, upvp, dthdp):
 
 
 # %%
-def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = False):
-    """
-    Read data for the specified decade and phase.
-    Parameters:
-    - decade: Decade to read data for (e.g., 1850, 2090).
-    - phase: Phase to read data for (e.g., 'pos', 'neg').
-    - ano: Boolean indicating whether to read anomaly data.
-    - equiv_theta: Boolean indicating whether to read equivalent theta data.
-    Returns:
-    - upvp: u'v' data.
-    - vptp: v't' data.
-    - theta_ensmean: Ensemble mean of theta data.
-    """
-    upvp = read_composite_MPI("upvp", "ua", decade = decade, before = before, return_as=phase, ano=ano)
-    if equiv_theta:
-        vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano)
-        theta_ensmean = xr.open_dataset(
-            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc").etheta
-    else:
-        vptp = read_composite_MPI("vptp", "vptp", decade = decade, before = before, return_as=phase, ano=ano)
-        theta_ensmean = xr.open_dataset(
-            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc").theta
-        
+def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = False, eddy = 'transient'):
+	"""
+	theta for interpolation
+	steady eddies: usvs
+	transient eddies: upvp
+	"""
+	if eddy == 'transient':
+		upvp = read_composite_MPI("upvp", "ua", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
+		if equiv_theta:
+			vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
+			# for coordinates
+			theta_ensmean_path=glob.glob(
+				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc"
+			)[0]
+			theta_ensmean = xr.open_dataset(theta_ensmean_path).etheta
 
-    return upvp, vptp, theta_ensmean
+
+		else:
+			vptp = read_composite_MPI("vptp", "vptp", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
+			theta_ensmean_path=glob.glob(
+				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc"
+			)[0]
+			theta_ensmean = xr.open_dataset(theta_ensmean_path).theta
+
+	elif eddy == 'steady':
+		upvp = read_composite_MPI("usvs", "usvs", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
+		if equiv_theta:
+			vptp = read_composite_MPI("vsets", "vsets", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
+			theta_ensmean_path=glob.glob(
+				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc"
+			)[0]
+			theta_ensmean = xr.open_dataset(theta_ensmean_path).etheta
+
+		else:
+			vptp = read_composite_MPI("vsts", "vsts", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
+			theta_ensmean_path=glob.glob(
+				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc"
+			)[0]
+			theta_ensmean = xr.open_dataset(theta_ensmean_path).theta
+
+	else:
+		raise ValueError("eddy must be either 'transient' or 'steady'", f"but got {eddy}")
+
+	
+	if 'time' in theta_ensmean.dims:
+		theta_ensmean = theta_ensmean.mean(dim = 'time')
+
+	return upvp, vptp, theta_ensmean
 
 def NPC_mean(arr):
     return arr.sel(lon = slice(120, 240)).mean(dim = 'lon')
