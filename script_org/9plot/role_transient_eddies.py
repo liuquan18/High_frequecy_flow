@@ -54,6 +54,43 @@ def read_climatology(var, decade, **kwargs):
 
     return data
 
+#### read ua and va hat
+
+#%%
+uhat_first_pos = read_composite_MPI("ua_hat", "ua", 1850, before = "15_5", return_as="pos")
+uhat_last_pos = read_composite_MPI("ua_hat", "ua", 2090, before = "15_5", return_as="pos")
+
+uhat_first_neg = read_composite_MPI("ua_hat", "ua", 1850, before = "15_5", return_as="neg")
+uhat_last_neg = read_composite_MPI("ua_hat", "ua", 2090, before = "15_5", return_as="neg")
+#%%
+vhat_first_pos = read_composite_MPI("va_hat", "va", 1850, before = "15_5", return_as="pos")
+vhat_last_pos = read_composite_MPI("va_hat", "va", 2090, before = "15_5", return_as="pos")
+
+vhat_first_neg = read_composite_MPI("va_hat", "va", 1850, before = "15_5", return_as="neg")
+vhat_last_neg = read_composite_MPI("va_hat", "va", 2090, before = "15_5", return_as="neg")
+
+####### read zg
+# wip
+#%%
+
+#%%
+###### read up vp
+# climatology
+upvp_first = read_climatology("upvp", "1850", name = "ua")
+upvp_last = read_climatology("upvp", "2090", name = "ua")
+#%%
+# composite
+upvp_first_pos = read_composite_MPI("upvp", "upvp", 1850, before = "15_5", return_as="pos")
+upvp_last_pos = read_composite_MPI("upvp", "upvp", 2090, before = "15_5", return_as="pos")
+
+upvp_first_neg = read_composite_MPI("upvp", "upvp", 1850, before = "15_5", return_as="neg")
+upvp_last_neg = read_composite_MPI("upvp", "upvp", 2090, before = "15_5", return_as="neg")
+# diff
+upvp_first_diff = read_composite_MPI("upvp", "upvp", 1850, before = "15_5", return_as="diff")
+upvp_last_diff = read_composite_MPI("upvp", "upvp", 2090, before = "15_5", return_as="diff")
+#%%
+
+
 # %%
 vpetp_first = read_composite_MPI("vpetp", "vpetp", 1850)
 vpetp_last = read_composite_MPI("vpetp", "vpetp", 2090)
