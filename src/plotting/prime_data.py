@@ -194,3 +194,25 @@ def read_MPI_GE_uhat():
     uhat_NAO_first = postprocess(uhat_NAO_first)
     uhat_NAO_last = postprocess(uhat_NAO_last)
     return uhat_NAO_first, uhat_NAO_last
+
+
+
+
+def read_climatology(var, decade, **kwargs):
+
+    name = kwargs.get("name", var)  # default name is the same as var
+    if var == "uhat":
+        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/*{decade}*.nc"
+    else:
+        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_monthly_ensmean/{var}_monmean_ensmean_{decade}*.nc"
+
+    file = glob.glob(data_path)
+    if len(file) == 0:
+        raise ValueError(f"no file found for {var} in {decade}")
+    data = xr.open_dataset(file[0])
+    data = data[name]
+
+    if "time" in data.dims:
+        data = data.mean(dim="time")
+
+    return data
