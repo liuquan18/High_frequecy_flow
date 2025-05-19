@@ -83,21 +83,27 @@ neg_last = theta2UPV(
     phase="neg",
     equiv_theta=False,
 )
+
+#%%
+pos_first.name = "theta2PVU"
+neg_first.name = "theta2PVU"
+pos_last.name = "theta2PVU"
+neg_last.name = "theta2PVU"
 # %%
 # save the data
 pos_first.to_netcdf(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/theta2UPV_NAO_pos_10_0_mean_1850.nc"
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_pos_10_0_mean_1850.nc"
 )
 
 neg_first.to_netcdf(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/theta2UPV_NAO_neg_10_0_mean_1850.nc"
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_neg_10_0_mean_1850.nc"
 )
 # %%
 pos_last.to_netcdf(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/theta2UPV_NAO_pos_10_0_mean_2090.nc"
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_pos_10_0_mean_2090.nc"
 )
 neg_last.to_netcdf(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/theta2UPV_NAO_neg_10_0_mean_2090.nc"
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_neg_10_0_mean_2090.nc"
 )
 
 # %%
