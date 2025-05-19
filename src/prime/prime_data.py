@@ -69,8 +69,7 @@ def vert_integrate(var, p_B = 100000, p_T = 25000):
         "plev", ascending=False
     )  # make sure plev is in descending order, p_B is larger than p_T
     var = var.sel(plev=slice(p_B, p_T))
-    d_var_dp = var.differentiate("plev")
-    ivar = d_var_dp.integrate("plev")
+    ivar = var.integrate("plev")
     ivar = -1 * ivar / 9.81
     ivar.name = f"i{var.name}"
     return ivar
