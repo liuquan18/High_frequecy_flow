@@ -5,7 +5,7 @@ import numpy as np
 import glob
 import logging
 
-from src.jet_stream.jet_speed_and_location import jet_stream_anomaly
+from src.dynamics.jet_speed_and_location import jet_stream_anomaly
 
 logging.basicConfig(level=logging.INFO)
 

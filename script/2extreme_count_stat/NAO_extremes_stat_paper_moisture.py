@@ -5,8 +5,8 @@ import seaborn as sns
 import xarray as xr
 from src.extremes.extreme_read import read_extremes_allens
 import matplotlib.pyplot as plt
-from src.jet_stream.jet_speed_and_location import jet_stream_anomaly, jet_event
-from src.jet_stream.jet_stream_plotting import plot_uhat
+from src.dynamics.jet_speed_and_location import jet_stream_anomaly, jet_event
+from src.plotting.jet_stream_plotting import plot_uhat
 
 from src.composite.composite_NAO_WB import smooth, NAO_WB
 from src.plotting.util import erase_white_line
