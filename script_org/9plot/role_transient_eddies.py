@@ -19,7 +19,6 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
 # %%
 import src.plotting.util as util
-import src.moisture.longitudinal_contrast as lc
 
 import importlib
 
@@ -62,10 +61,10 @@ def read_climatology(var, decade, **kwargs):
 #### read ua and va hat
 
 # %%
-uhat_first_pos = read_composite_MPI(
-    "ua_hat", "ua", 1850, before="10_0", return_as="pos"
+ua_first_pos = read_composite_MPI(
+    "ua", "ua", 1850, before="10_0", return_as="pos"
 )
-uhat_last_pos = read_composite_MPI("ua_hat", "ua", 2090, before="10_0", return_as="pos")
+ua_last_pos = read_composite_MPI("ua", "ua", 2090, before="10_0", return_as="pos")
 
 uhat_first_neg = read_composite_MPI(
     "ua_hat", "ua", 1850, before="10_0", return_as="neg"
