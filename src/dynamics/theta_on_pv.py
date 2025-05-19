@@ -31,11 +31,11 @@ def theta_on_2pvu(theta, uwnd, vwnd):
     target_pvu = 2.0 * pv.metpy.units
 
     # 
-    theta_on_2pvu = interpolate_to_isosurface(pv.values*pv.metpy.units, theta.values*units.kelvin, target_pvu)
+    theta_pv = interpolate_to_isosurface(pv.values*pv.metpy.units, theta.values*units.kelvin, target_pvu)
 
     # 
-    theta_on_2pvu_xr = xr.DataArray(
-        theta_on_2pvu,
+    theta_pv_xr = xr.DataArray(
+        theta_pv,
         coords={
             'lat': theta.lat,
             'lon': theta.lon,
@@ -43,4 +43,4 @@ def theta_on_2pvu(theta, uwnd, vwnd):
         dims=['lat', 'lon']
     )
 
-    return theta_on_2pvu_xr
+    return theta_pv_xr
