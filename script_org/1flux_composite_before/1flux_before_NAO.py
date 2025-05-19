@@ -40,13 +40,14 @@ def process_data(decade, var, integrate=False, **kwargs):
     # select data before NAO events, here 'var' is only for column name
     logging.info (f"selecting data for {decade} \n")
     window = kwargs.get('window', '15_5')
-    # determin the time window
-    if kwargs.get('window', '15_5') == '15_5':
-        time_window = (-15, -5)
-    elif kwargs.get('window', '5_0') == '5_0':
-        time_window = (-5, 0)
+    match = re.match(r'(\d+)_(\d+)', window)
+    if match:
+        num1, num2 = map(int, match.groups())
+        time_window = (-num1, -num2)
     else:
-        raise ValueError("window must be either '15_5' or '5_0'")
+        raise ValueError("window must be in the format '{num1}_{num2}'")
+    
+
     ivke_NAO_pos = before_NAO_mean(NAO_pos, data, time_window)
     ivke_NAO_neg = before_NAO_mean(NAO_neg, data, time_window)
 
