@@ -4,6 +4,7 @@
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --mem=0
+#SBATCH --ntasks-per-node=1
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
 #SBATCH --output=before.%j.out
