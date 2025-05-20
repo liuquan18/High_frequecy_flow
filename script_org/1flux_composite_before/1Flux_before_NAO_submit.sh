@@ -16,6 +16,6 @@ window=$4
 suffix=$5
 
 
-echo " decade ${decade} for variable ${var}"
+echo " decade ${decade} for variable ${var} before ${window}"
 
 python 1flux_before_NAO.py ${decade} ${var} ${name} ${window} ${suffix}
