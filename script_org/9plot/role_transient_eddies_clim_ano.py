@@ -57,58 +57,10 @@ def read_climatology(var, decade, **kwargs):
 
     return data
 
-
-# %%
-#### read ua and va hat
-ua_first_clim = read_climatology("ua", "1850", name="ua")
-ua_last_clim = read_climatology("ua", "2090", name="ua")
-
-
-ua_first_pos = read_composite_MPI("ua", "ua", 1850, before="10_0", return_as="pos")
-ua_last_pos = read_composite_MPI("ua", "ua", 2090, before="10_0", return_as="pos")
-
-ua_first_neg = read_composite_MPI("ua", "ua", 1850, before="10_0", return_as="neg")
-ua_last_neg = read_composite_MPI("ua", "ua", 2090, before="10_0", return_as="neg")
-
-va_first_clim = read_climatology("va", "1850", name="va")
-va_last_clim = read_climatology("va", "2090", name="va")
-
-va_first_pos = read_composite_MPI("va", "va", 1850, before="10_0", return_as="pos")
-va_last_pos = read_composite_MPI("va", "va", 2090, before="10_0", return_as="pos")
-
-va_first_neg = read_composite_MPI("va", "va", 1850, before="10_0", return_as="neg")
-va_last_neg = read_composite_MPI("va", "va", 2090, before="10_0", return_as="neg")
-
-
-# to dataset 
-wind_first_clim = xr.Dataset({"u": ua_first_clim, "v": va_first_clim})
-wind_last_clim = xr.Dataset({"u": ua_last_clim, "v": va_last_clim})
-
-wind_first_pos = xr.Dataset({"u": ua_first_pos, "v": va_first_pos})
-wind_last_pos = xr.Dataset({"u": ua_last_pos, "v": va_last_pos})
-
-wind_first_neg = xr.Dataset({"u": ua_first_neg, "v": va_first_neg})
-wind_last_neg = xr.Dataset({"u": ua_last_neg, "v": va_last_neg})
-# %%
-####### read theta2PVU
-# climatology
-theta_first_clim = xr.open_dataarray("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0climatology/theta2UPV_1850.nc")
-theta_last_clim = xr.open_dataarray("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0climatology/theta2UPV_2090.nc")
-
-# pos ano
-theta_first_pos = read_composite_MPI(
-    "theta2PVU", "theta2PVU", 1850, before="10_0", return_as="pos", ano=False # for theta2PVU the ano is not needed
-)
-theta_last_pos = read_composite_MPI(
-    "theta2PVU", "theta2PVU", 2090, before="10_0", return_as="pos", ano=False
-)
-# neg ano
-theta_first_neg = read_composite_MPI(
-    "theta2PVU", "theta2PVU", 1850, before="10_0", return_as="neg", ano=False
-)
-theta_last_neg = read_composite_MPI(
-    "theta2PVU", "theta2PVU", 2090, before="10_0", return_as="neg", ano=False
-)
+#%%%
+# config
+time_window = "15_5"
+ano = True
 # %%
 ###### read upvp
 # climatology
@@ -116,17 +68,24 @@ upvp_first_clim = read_climatology("upvp", "1850", name="upvp")
 upvp_last_clim = read_climatology("upvp", "2090", name="upvp")
 # pos ano
 upvp_first_pos = read_composite_MPI(
-    "upvp", "upvp", 1850, before="10_0", return_as="pos", ano=True
+    "upvp", "upvp", 1850, before=time_window, return_as="pos",ano = ano
 )
 upvp_last_pos = read_composite_MPI(
-    "upvp", "upvp", 2090, before="10_0", return_as="pos", ano=True
+    "upvp", "upvp", 2090, before=time_window, return_as="pos",ano = ano
 )
 # neg ano
 upvp_first_neg = read_composite_MPI(
-    "upvp", "upvp", 1850, before="10_0", return_as="neg", ano=True
+    "upvp", "upvp", 1850, before=time_window, return_as="neg",ano = ano
 )
 upvp_last_neg = read_composite_MPI(
-    "upvp", "upvp", 2090, before="10_0", return_as="neg", ano=True
+    "upvp", "upvp", 2090, before=time_window, return_as="neg",ano = ano
+)
+# diff
+upvp_first_diff = read_composite_MPI(
+    "upvp", "upvp", 1850, before=time_window,ano = ano, return_as="diff"
+)
+upvp_last_diff = read_composite_MPI(
+    "upvp", "upvp", 2090, before=time_window,ano = ano, return_as="diff"
 )
 # %%
 ###### read heat flux
@@ -135,23 +94,39 @@ vpetp_first_clim = read_climatology("vpetp", "1850", name="vpetp")
 vpetp_last_clim = read_climatology("vpetp", "2090", name="vpetp")
 # pos ano
 vpetp_first_pos = read_composite_MPI(
-    "vpetp", "vpetp", 1850, before="10_0", return_as="pos", ano=True
+    "vpetp", "vpetp", 1850, before=time_window, return_as="pos",ano = ano, smooth_value=None,
 )
 vpetp_last_pos = read_composite_MPI(
-    "vpetp", "vpetp", 2090, before="10_0", return_as="pos", ano=True
+    "vpetp", "vpetp", 2090, before=time_window, return_as="pos",ano = ano, smooth_value=None,
 )
 # neg ano
 vpetp_first_neg = read_composite_MPI(
-    "vpetp", "vpetp", 1850, before="10_0", return_as="neg", ano=True
+    "vpetp", "vpetp", 1850, before=time_window, return_as="neg",ano = ano, smooth_value=None,
 )
 vpetp_last_neg = read_composite_MPI(
-    "vpetp", "vpetp", 2090, before="10_0", return_as="neg", ano=True
+    "vpetp", "vpetp", 2090, before=time_window, return_as="neg",ano = ano, smooth_value=None,
+)
+
+vpetp_first_diff = read_composite_MPI(
+    "vpetp", "vpetp", 1850, before=time_window,ano = ano, return_as="diff", smooth_value=None,
+)
+vpetp_last_diff = read_composite_MPI(
+    "vpetp", "vpetp", 2090, before=time_window,ano = ano, return_as="diff", smooth_value=None,
 )
 
 
 # smooth the data
-# vpetp_first_clim = map_smooth(vpetp_first_clim, lon_win=10, lat_win=3)
-# vpetp_last_clim = map_smooth(vpetp_last_clim, lon_win=10, lat_win=3)
+vpetp_first_clim = map_smooth(vpetp_first_clim, lon_win=10, lat_win=3)
+vpetp_last_clim = map_smooth(vpetp_last_clim, lon_win=10, lat_win=3)
+
+vpetp_first_pos = map_smooth(vpetp_first_pos, lon_win=10, lat_win=3)
+vpetp_last_pos = map_smooth(vpetp_last_pos, lon_win=10, lat_win=3)
+
+vpetp_first_neg = map_smooth(vpetp_first_neg, lon_win=10, lat_win=3)
+vpetp_last_neg = map_smooth(vpetp_last_neg, lon_win=10, lat_win=3)
+
+vpetp_first_diff = map_smooth(vpetp_first_diff, lon_win=10, lat_win=3)
+vpetp_last_diff = map_smooth(vpetp_last_diff, lon_win=10, lat_win=3)
 
 # profile
 vpetp_profile_first_clim = vpetp_first_clim.sel(lat=slice(20, 50)).mean(dim="lat")
@@ -165,6 +140,9 @@ vpetp_profile_last_pos = vpetp_last_pos.sel(lat=slice(20, 50)).mean(dim="lat")
 vpetp_profile_first_neg = vpetp_first_neg.sel(lat=slice(20, 50)).mean(dim="lat")
 vpetp_profile_last_neg = vpetp_last_neg.sel(lat=slice(20, 50)).mean(dim="lat")
 
+# diff
+vpetp_profile_first_diff = vpetp_first_diff.sel(lat=slice(20, 50)).mean(dim="lat")
+vpetp_profile_last_diff = vpetp_last_diff.sel(lat=slice(20, 50)).mean(dim="lat")
 # fake data to plot
 vpetp_first_clim_plot = to_plot_data(vpetp_profile_first_clim)
 vpetp_last_clim_plot = to_plot_data(vpetp_profile_last_clim)
@@ -172,6 +150,9 @@ vpetp_first_pos_plot = to_plot_data(vpetp_profile_first_pos)
 vpetp_last_pos_plot = to_plot_data(vpetp_profile_last_pos)
 vpetp_first_neg_plot = to_plot_data(vpetp_profile_first_neg)
 vpetp_last_neg_plot = to_plot_data(vpetp_profile_last_neg)
+vpetp_first_diff_plot = to_plot_data(vpetp_profile_first_diff)
+vpetp_last_diff_plot = to_plot_data(vpetp_profile_last_diff)
+
 # %%
 ####### read moisture flux
 # climatology
@@ -196,31 +177,31 @@ qp_last_clim = xr.Dataset(
 )  # g/kg m/s
 # pos ano
 upqp_first_pos = read_composite_MPI(
-    "upqp", "upqp", 1850, before="10_0", return_as="pos", ano=True
+    "upqp", "upqp", 1850, before=time_window, return_as="pos",ano = ano
 )
 upqp_last_pos = read_composite_MPI(
-    "upqp", "upqp", 2090, before="10_0", return_as="pos", ano=True
+    "upqp", "upqp", 2090, before=time_window, return_as="pos",ano = ano
 )
 # neg ano
 upqp_first_neg = read_composite_MPI(
-    "upqp", "upqp", 1850, before="10_0", return_as="neg", ano=True
+    "upqp", "upqp", 1850, before=time_window, return_as="neg",ano = ano
 )
 upqp_last_neg = read_composite_MPI(
-    "upqp", "upqp", 2090, before="10_0", return_as="neg", ano=True
+    "upqp", "upqp", 2090, before=time_window, return_as="neg",ano = ano
 )
 
 vpqp_first_pos = read_composite_MPI(
-    "vpqp", "vpqp", 1850, before="10_0", return_as="pos", ano=True
+    "vpqp", "vpqp", 1850, before=time_window, return_as="pos",ano = ano
 )
 vpqp_last_pos = read_composite_MPI(
-    "vpqp", "vpqp", 2090, before="10_0", return_as="pos", ano=True
+    "vpqp", "vpqp", 2090, before=time_window, return_as="pos",ano = ano
 )
 # neg ano
 vpqp_first_neg = read_composite_MPI(
-    "vpqp", "vpqp", 1850, before="10_0", return_as="neg", ano=True
+    "vpqp", "vpqp", 1850, before=time_window, return_as="neg",ano = ano
 )
 vpqp_last_neg = read_composite_MPI(
-    "vpqp", "vpqp", 2090, before="10_0", return_as="neg", ano=True
+    "vpqp", "vpqp", 2090, before=time_window, return_as="neg",ano = ano
 )
 # integrate qp
 upqp_first_pos = prime_data.vert_integrate(upqp_first_pos)
@@ -246,35 +227,11 @@ qflux_first_neg = xr.Dataset(
 )  # g/kg m/s
 qflux_last_neg = xr.Dataset(
     {"u": upqp_last_neg * 1e3, "v": vpqp_last_neg * 1e3}
-)  # g/kg m/s
+)  # g/kg m/
 
+qflux_first_diff = qflux_first_pos - qflux_first_neg
+qflux_last_diff = qflux_last_pos - qflux_last_neg
 
-#%%
-
-
-
-
-# %%
-# v'q' -15 - 5 days before
-
-vpqp_first_diff = read_composite_MPI("vpqp", "vptp", 1850)
-vpqp_last_diff = read_composite_MPI("vpqp", "vptp", 2090)
-
-upqp_first_diff = read_composite_MPI("upqp", "upqp", 1850)
-upqp_last_diff = read_composite_MPI("upqp", "upqp", 2090)
-
-# integrate qp
-upqp_first = prime_data.vert_integrate(upqp_first_diff)
-upqp_last = prime_data.vert_integrate(upqp_last_diff)
-
-vpqp_first = prime_data.vert_integrate(vpqp_first_diff)
-vpqp_last = prime_data.vert_integrate(vpqp_last_diff)
-
-# to flux
-qflux_first_diff = xr.Dataset(
-    {"u": upqp_first * 1e3, "v": vpqp_first * 1e3}
-)  # g/kg m/s
-qflux_last_diff = xr.Dataset({"u": upqp_last * 1e3, "v": vpqp_last * 1e3})
 
 # %%
 temp_cmap_seq = np.loadtxt(
@@ -305,150 +262,286 @@ vptp_levels_div = np.arange(-1.2, 1.3, 0.2)
 
 scale_hus = 5e4
 
-scale_wind = 60
 # %%
-
+# first decade
 fig, axes = plt.subplots(
-    4,
-    2,
-    figsize=(10, 10),
+    3,
+    3,
+    figsize=(10, 6),
     subplot_kw={"projection": ccrs.PlateCarree(-90)},
-    gridspec_kw={"height_ratios": [0.5, 0.5, 1, 0.5], "width_ratios": [1, 1]},
+    # gridspec_kw={"height_ratios": [ 0.5, 1, 0.5], "width_ratios": [1, 1]},
     sharex=True,
     sharey=False,
 )
 #
-# Create a 4x2 grid of axes and assign each to a descriptive variable name
-# axes[row, col] corresponds to:
-# [0, 0]: map_ax_meanflow_first   - Mean flow map, first period
-# [0, 1]: map_ax_meanflow_last    - Mean flow map, last period
-# [1, 0]: map_ax_upvp_first       - UpVp map, first period
-# [1, 1]: map_ax_upvp_last        - UpVp map, last period
-# [2, 0]: profile_ax_upvp_first   - UpVp profile, first period
-# [2, 1]: profile_ax_upvp_last    - UpVp profile, last period
-# [3, 0]: map_ax_vpetp_first      - VpEtp map, first period
-# [3, 1]: map_ax_vpetp_last       - VpEtp map, last period
+pos_upvp_ax = axes[0, 0]
+neg_upvp_ax = axes[0, 1]
+diff_upvp_ax = axes[0, 2]
 
-map_ax_meanflow_first = axes[0, 0]
-map_ax_meanflow_last = axes[0, 1]
-map_ax_upvp_first = axes[1, 0]
-map_ax_upvp_last = axes[1, 1]
-profile_ax_upvp_first = axes[2, 0]
-profile_ax_upvp_last = axes[2, 1]
-map_ax_vpetp_first = axes[3, 0]
-map_ax_vpetp_last = axes[3, 1]
+pos_vptp_profile_ax = axes[1, 0]
+neg_vptp_profile_ax = axes[1, 1]
+diff_vptp_profile_ax = axes[1, 2]
 
-# wind quiver for ua_hat, va_hat
-first_wind_arrow = map_ax_meanflow_first.quiver(
-    wind_flux_first_diff["lon"].values[::5],
-    wind_flux_first_diff["lat"].values[::5],
-    wind_flux_first_diff["u"].values[::5, ::5],
-    wind_flux_first_diff["v"].values[::5, ::5],
-    transform=ccrs.PlateCarree(),
-    scale=scale_wind,
-)
+pos_vptp_map_ax = axes[2, 0]
+neg_vptp_map_ax = axes[2, 1]
+diff_vptp_map_ax = axes[2, 2]
 
-last_wind_arrow = map_ax_meanflow_last.quiver(
-    wind_flux_last_diff["lon"].values[::5],
-    wind_flux_last_diff["lat"].values[::5],
-    wind_flux_last_diff["u"].values[::5, ::5],
-    wind_flux_last_diff["v"].values[::5, ::5],
-    transform=ccrs.PlateCarree(),
-    scale=scale_wind,
-)
-
-# upvp map
-upvp_first_diff.sel(plev=25000).plot.contourf(
-    ax=map_ax_upvp_first,
+# map of upvp
+# pos
+map_upvp = upvp_first_pos.sel(plev=25000).plot.contourf(
+    ax=pos_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=upvp_levels_div,
     cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+
+# climatology as contour
+upvp_first_clim.sel(plev=25000).plot.contour(
+    ax=pos_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
     add_colorbar=False,
     extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    alpha=0.5,
+    zorder=10,
 )
-upvp_last_diff.sel(plev=25000).plot.contourf(
-    ax=map_ax_upvp_last,
+
+# neg
+map_upvp = upvp_first_neg.sel(plev=25000).plot.contourf(
+    ax=neg_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=upvp_levels_div,
     cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+# climatology as contour
+upvp_first_clim.sel(plev=25000).plot.contour(
+    ax=neg_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
     add_colorbar=False,
     extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    alpha=0.5,
+    zorder=10,
+)
+# diff
+map_upvp = upvp_first_diff.sel(plev=25000).plot.contourf(
+    ax=diff_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+# climatology as contour
+upvp_first_clim.sel(plev=25000).plot.contour(
+    ax=diff_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
+    add_colorbar=False,
+    extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    alpha=0.5,
+    zorder=10,
 )
 
-# vpetp profile
-vpetp_first_plot.plot.contourf(
-    ax=profile_ax_upvp_first,
+
+# profile of upvp
+# pos
+profile_upvp = vpetp_first_pos_plot.plot.contourf(
+    ax=pos_vptp_profile_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
     cmap=temp_cmap_div,
-    add_colorbar=False,
+    add_colorbar=True,
     extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2][::2],
+    },
 )
-vpetp_last_plot.plot.contourf(
-    ax=profile_ax_upvp_last,
-    transform=ccrs.PlateCarree(),
-    levels=vptp_levels_div,
-    cmap=temp_cmap_div,
-    add_colorbar=False,
-    extend="both",
-)
-
-# contour for climatology of vpetp
+# climatology as contour
 vpetp_first_clim_plot.plot.contour(
-    ax=profile_ax_upvp_first,
+    ax=pos_vptp_profile_ax,
     transform=ccrs.PlateCarree(),
-    levels=np.delete(vptp_levels_div * 10, np.where(vptp_levels_div * 10 == 0)),
+    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
     add_colorbar=False,
     extend="both",
     colors="black",
+    linewidths=0.5,
+    linestyles="solid",
 )
-
-vpetp_last_clim_plot.plot.contour(
-    ax=profile_ax_upvp_last,
+# neg
+profile_upvp = vpetp_first_neg_plot.plot.contourf(
+    ax=neg_vptp_profile_ax,
     transform=ccrs.PlateCarree(),
-    levels=np.delete(vptp_levels_div * 10, np.where(vptp_levels_div * 10 == 0)),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# climatology as contour
+vpetp_first_clim_plot.plot.contour(
+    ax=neg_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
     add_colorbar=False,
     extend="both",
     colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    zorder=10,
 )
 
-
-# vpetp map
-vpetp_first_low.plot.contourf(
-    ax=map_ax_vpetp_first,
+# diff
+profile_upvp = vpetp_first_diff_plot.plot.contourf(
+    ax=diff_vptp_profile_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
     cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# climatology as contour
+vpetp_first_clim_plot.plot.contour(
+    ax=diff_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
     add_colorbar=False,
     extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    zorder=10,
 )
-vpetp_last_low.plot.contourf(
-    ax=map_ax_vpetp_last,
+
+# map of vpetp
+# pos
+map_vpetp = vpetp_last_pos.sel(plev=85000).plot.contourf(
+    ax=pos_vptp_map_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
     cmap=temp_cmap_div,
-    add_colorbar=False,
+    add_colorbar=True,
     extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
 )
-
-# quiver for water vapor flux
-first_qflux_arrow = map_ax_vpetp_first.quiver(
-    qflux_first_diff["lon"].values[::4],
-    qflux_first_diff["lat"].values[::4],
-    qflux_first_diff["u"].values[::4, ::4],
-    qflux_first_diff["v"].values[::4, ::4],
-    transform=ccrs.PlateCarree(),
-    scale=scale_hus,
-)
-last_qflux_arrow = map_ax_vpetp_last.quiver(
-    qflux_last_diff["lon"].values[::4],
-    qflux_last_diff["lat"].values[::4],
-    qflux_last_diff["u"].values[::4, ::4],
-    qflux_last_diff["v"].values[::4, ::4],
+# quiver of qflux
+qflux_arrow = pos_vptp_map_ax.quiver(
+    qflux_first_pos.lon.values[::4],
+    qflux_first_pos.lat.values[::4],
+    qflux_first_pos.u.values[::4, ::4],
+    qflux_first_pos.v.values[::4, ::4],
     transform=ccrs.PlateCarree(),
     scale=scale_hus,
 )
 
+# neg
+map_vpetp = vpetp_last_neg.sel(plev=85000).plot.contourf(
+    ax=neg_vptp_map_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# quiver of qflux
+qflux_arrow = neg_vptp_map_ax.quiver(
+    qflux_first_neg.lon.values[::4],
+    qflux_first_neg.lat.values[::4],
+    qflux_first_neg.u.values[::4, ::4],
+    qflux_first_neg.v.values[::4, ::4],
+    transform=ccrs.PlateCarree(),
+    scale=scale_hus,
+)
+
+# diff
+map_vpetp = vpetp_last_diff.sel(plev=85000).plot.contourf(
+    ax=diff_vptp_map_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# quiver of qflux
+qflux_arrow = diff_vptp_map_ax.quiver(
+    qflux_first_diff.lon.values[::4],
+    qflux_first_diff.lat.values[::4],
+    qflux_first_diff.u.values[::4, ::4],
+    qflux_first_diff.v.values[::4, ::4],
+    transform=ccrs.PlateCarree(),
+    scale=scale_hus,
+)
 
 # FuncFormatter can be used as a decorator
 @mticker.FuncFormatter
@@ -456,7 +549,7 @@ def major_formatter(x, pos):
     return f"{int((x-10)*-10)}"
 
 
-for ax in [profile_ax_upvp_first, profile_ax_upvp_last]:
+for ax in [pos_vptp_profile_ax, neg_vptp_profile_ax, diff_vptp_profile_ax]:
     ax.set_aspect(2)
     ax.set_xticklabels([])
     gl = ax.gridlines(
@@ -477,12 +570,12 @@ for ax in [profile_ax_upvp_first, profile_ax_upvp_last]:
 
 
 for ax in [
-    map_ax_meanflow_first,
-    map_ax_meanflow_last,
-    map_ax_upvp_first,
-    map_ax_upvp_last,
-    map_ax_vpetp_first,
-    map_ax_vpetp_last,
+    pos_upvp_ax,
+    neg_upvp_ax,
+    diff_upvp_ax,
+    pos_vptp_map_ax,
+    neg_vptp_map_ax,
+    diff_vptp_map_ax,
 ]:
     # ax.set_aspect(0.8)
     ax.coastlines(color="black", linewidth=0.5)  # Light gray with 70% lightness
@@ -494,8 +587,9 @@ for ax in [
 
     # hline at y = 30 and y = 50
 for ax in [
-    map_ax_vpetp_first,
-    map_ax_vpetp_last,
+    pos_vptp_map_ax,
+    neg_vptp_map_ax,
+    diff_vptp_map_ax,
 ]:
     ax.axhline(20, color="gray", linewidth=0.5, linestyle="--")
     ax.axhline(50, color="gray", linewidth=0.5, linestyle="--")
@@ -516,7 +610,354 @@ for ax in [
     gl.xlocator = mticker.FixedLocator(np.arange(-180, 181, 60))
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
+    gl.ylocator = mticker.FixedLocator([20, 50])
 
 
 plt.tight_layout()
+# %%
+# first decade
+fig, axes = plt.subplots(
+    3,
+    3,
+    figsize=(10, 6),
+    subplot_kw={"projection": ccrs.PlateCarree(-90)},
+    sharex=True,
+    sharey=False,
+)
+#
+pos_upvp_ax = axes[0, 0]
+neg_upvp_ax = axes[0, 1]
+diff_upvp_ax = axes[0, 2]
+
+pos_vptp_profile_ax = axes[1, 0]
+neg_vptp_profile_ax = axes[1, 1]
+diff_vptp_profile_ax = axes[1, 2]
+
+pos_vptp_map_ax = axes[2, 0]
+neg_vptp_map_ax = axes[2, 1]
+diff_vptp_map_ax = axes[2, 2]
+
+# map of upvp
+# pos
+map_upvp = upvp_last_pos.sel(plev=25000).plot.contourf(
+    ax=pos_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+
+# climatology as contour
+upvp_last_clim.sel(plev=25000).plot.contour(
+    ax=pos_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
+    add_colorbar=False,
+    extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    alpha=0.5,
+    zorder=10,
+)
+
+# neg
+map_upvp = upvp_last_neg.sel(plev=25000).plot.contourf(
+    ax=neg_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+# climatology as contour
+upvp_last_clim.sel(plev=25000).plot.contour(
+    ax=neg_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
+    add_colorbar=False,
+    extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    alpha=0.5,
+    zorder=10,
+)
+# diff
+map_upvp = upvp_last_diff.sel(plev=25000).plot.contourf(
+    ax=diff_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+# climatology as contour
+upvp_last_clim.sel(plev=25000).plot.contour(
+    ax=diff_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
+    add_colorbar=False,
+    extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    alpha=0.5,
+    zorder=10,
+)
+
+
+# profile of upvp
+# pos
+profile_upvp = vpetp_last_pos_plot.plot.contourf(
+    ax=pos_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2][::2],
+    },
+)
+# climatology as contour
+vpetp_last_clim_plot.plot.contour(
+    ax=pos_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
+    add_colorbar=False,
+    extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+)
+# neg
+profile_upvp = vpetp_last_neg_plot.plot.contourf(
+    ax=neg_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# climatology as contour
+vpetp_last_clim_plot.plot.contour(
+    ax=neg_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
+    add_colorbar=False,
+    extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    zorder=10,
+)
+
+# diff
+profile_upvp = vpetp_last_diff_plot.plot.contourf(
+    ax=diff_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# climatology as contour
+vpetp_last_clim_plot.plot.contour(
+    ax=diff_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
+    add_colorbar=False,
+    extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    zorder=10,
+)
+
+# map of vpetp
+# pos
+map_vpetp = vpetp_last_pos.sel(plev=85000).plot.contourf(
+    ax=pos_vptp_map_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# quiver of qflux
+qflux_arrow = pos_vptp_map_ax.quiver(
+    qflux_last_pos.lon.values[::4],
+    qflux_last_pos.lat.values[::4],
+    qflux_last_pos.u.values[::4, ::4],
+    qflux_last_pos.v.values[::4, ::4],
+    transform=ccrs.PlateCarree(),
+    scale=scale_hus,
+)
+
+# neg
+map_vpetp = vpetp_last_neg.sel(plev=85000).plot.contourf(
+    ax=neg_vptp_map_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# quiver of qflux
+qflux_arrow = neg_vptp_map_ax.quiver(
+    qflux_last_neg.lon.values[::4],
+    qflux_last_neg.lat.values[::4],
+    qflux_last_neg.u.values[::4, ::4],
+    qflux_last_neg.v.values[::4, ::4],
+    transform=ccrs.PlateCarree(),
+    scale=scale_hus,
+)
+
+# diff
+map_vpetp = vpetp_last_diff.sel(plev=85000).plot.contourf(
+    ax=diff_vptp_map_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# quiver of qflux
+qflux_arrow = diff_vptp_map_ax.quiver(
+    qflux_last_diff.lon.values[::4],
+    qflux_last_diff.lat.values[::4],
+    qflux_last_diff.u.values[::4, ::4],
+    qflux_last_diff.v.values[::4, ::4],
+    transform=ccrs.PlateCarree(),
+    scale=scale_hus,
+)
+
+# FuncFormatter can be used as a decorator
+@mticker.FuncFormatter
+def major_formatter(x, pos):
+    return f"{int((x-10)*-10)}"
+
+
+for ax in [pos_vptp_profile_ax, neg_vptp_profile_ax, diff_vptp_profile_ax]:
+    ax.set_aspect(2)
+    ax.set_xticklabels([])
+    gl = ax.gridlines(
+        crs=ccrs.PlateCarree(),
+        linewidth=0.5,
+        linestyle="dotted",
+        color="gray",
+        alpha=0.5,
+        draw_labels=True,
+    )
+    gl.xlines = False
+    gl.ylines = False
+    gl.ylocator = mticker.FixedLocator([-90.0, -75.0, -60.0, -40.0, -15.0])
+    gl.yformatter = major_formatter
+    gl.xlabels_top = False
+    gl.xlabels_bottom = False
+    gl.xlocator = mticker.FixedLocator([])
+
+
+for ax in [
+    pos_upvp_ax,
+    neg_upvp_ax,
+    diff_upvp_ax,
+    pos_vptp_map_ax,
+    neg_vptp_map_ax,
+    diff_vptp_map_ax,
+]:
+    ax.coastlines(color="black", linewidth=0.5)
+    ax.set_xlim(-180, 180)
+    ax.set_ylim(0, 85)
+    ax.set_title("")
+
+for ax in [
+    pos_vptp_map_ax,
+    neg_vptp_map_ax,
+    diff_vptp_map_ax,
+]:
+    ax.axhline(20, color="gray", linewidth=0.5, linestyle="--")
+    ax.axhline(50, color="gray", linewidth=0.5, linestyle="--")
+    gl = ax.gridlines(
+        crs=ccrs.PlateCarree(),
+        draw_labels=True,
+        linewidth=2,
+        color="gray",
+        alpha=0.5,
+        linestyle="--",
+    )
+    gl.xlabels_top = False
+    gl.xlabels_bottom = True
+    gl.ylabels_left = False
+    gl.xlines = False
+    gl.ylines = False
+    gl.xlocator = mticker.FixedLocator(np.arange(-180, 181, 60))
+    gl.xformatter = LONGITUDE_FORMATTER
+    gl.yformatter = LATITUDE_FORMATTER
+    gl.ylocator = mticker.FixedLocator([20, 50])
+
+plt.tight_layout()
+
 # %%
