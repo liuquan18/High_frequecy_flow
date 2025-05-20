@@ -9,20 +9,22 @@ from src.plotting.prime_data import read_composite_MPI
 # %%
 import importlib
 import src.dynamics.theta_on_pv
-
+#%%
+time_window = "12_6"
 
 # %%
 def theta2UPV(
     decade,
     phase="pos",
     equiv_theta=False,
+    time_window = "10_0",
 ):
     if equiv_theta:
         theta = read_composite_MPI(
             "equiv_theta",
             "etheta",
             decade,
-            before="10_0",
+            before=time_window,
             return_as=phase,
             ano=False,
         )
@@ -31,7 +33,7 @@ def theta2UPV(
             "theta",
             "theta",
             decade,
-            before="10_0",
+            before=time_window,
             return_as=phase,
             ano=False,
         )
@@ -39,7 +41,7 @@ def theta2UPV(
         "ua",
         "ua",
         decade,
-        before="10_0",
+        before=time_window,
         return_as=phase,
         ano=False,
     )
@@ -48,7 +50,7 @@ def theta2UPV(
         "va",
         "va",
         decade,
-        before="10_0",
+        before=time_window,
         return_as=phase,
         ano=False,
     )
@@ -63,12 +65,14 @@ pos_first = theta2UPV(
     1850,
     phase="pos",
     equiv_theta=False,
+    time_window = time_window,
 )
 # %%
 neg_first = theta2UPV(
     1850,
     phase="neg",
     equiv_theta=False,
+    time_window = time_window,
 )
 
 # %%
@@ -76,12 +80,14 @@ pos_last = theta2UPV(
     2090,
     phase="pos",
     equiv_theta=False,
+    time_window = time_window,
 )
 
 neg_last = theta2UPV(
     2090,
     phase="neg",
     equiv_theta=False,
+    time_window = time_window,
 )
 
 #%%
@@ -92,18 +98,18 @@ neg_last.name = "theta2PVU"
 # %%
 # save the data
 pos_first.to_netcdf(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_pos_10_0_mean_1850.nc"
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_pos_{time_window}_mean_1850.nc"
 )
 
 neg_first.to_netcdf(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_neg_10_0_mean_1850.nc"
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_neg_{time_window}_mean_1850.nc"
 )
 # %%
 pos_last.to_netcdf(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_pos_10_0_mean_2090.nc"
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_pos_{time_window}_mean_2090.nc"
 )
 neg_last.to_netcdf(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_neg_10_0_mean_2090.nc"
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/theta2PVU_NAO_neg_{time_window}_mean_2090.nc"
 )
 
 # %%
