@@ -125,7 +125,7 @@ def read_wb(dec, type, NAO_region = False, overlap_threshold=0.5):
         # Create region box (-90,40,20,80)
         region_box = box(-90, 20, 40, 80)
         
-    wbs = filter_by_overlap_threshold(wbs, region_box, threshold=overlap_threshold)
+        wbs = filter_by_overlap_threshold(wbs, region_box, threshold=overlap_threshold)
     return wbs
 
 
