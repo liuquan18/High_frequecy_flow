@@ -38,29 +38,18 @@ def to_plot_data(eke):
     return eke
 
 
-def read_climatology(var, decade, **kwargs):
-
-    name = kwargs.get("name", var)  # default name is the same as var
-    if var == "uhat":
-        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/*{decade}*.nc"
-    else:
-        data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_monthly_ensmean/{var}_monmean_ensmean_{decade}*.nc"
-
-    file = glob.glob(data_path)
-    if len(file) == 0:
-        raise ValueError(f"no file found for {var} in {decade}")
-    data = xr.open_dataset(file[0])
-    data = data[name]
-
-    if "time" in data.dims:
-        data = data.mean(dim="time")
-
-    return data
-
 #%%%
 # config
-time_window = "15_5"
+time_window = "6_0"
 ano = True
+# %%
+uhat_levels_div = np.arange(-12, 13, 2)
+upvp_levels_div = np.arange(-8, 9, 2)
+vsts_levels_div = np.arange(-3, 3.1, 0.5)
+vptp_levels_div = np.arange(-1.2, 1.3, 0.2)
+
+scale_hus = 5e4
+
 # %%
 ###### read upvp
 # climatology
@@ -94,39 +83,39 @@ vpetp_first_clim = read_climatology("vpetp", "1850", name="vpetp")
 vpetp_last_clim = read_climatology("vpetp", "2090", name="vpetp")
 # pos ano
 vpetp_first_pos = read_composite_MPI(
-    "vpetp", "vpetp", 1850, before=time_window, return_as="pos",ano = ano, smooth_value=None,
+    "vpetp", "vpetp", 1850, before=time_window, return_as="pos",ano = ano, smooth_value=3,
 )
 vpetp_last_pos = read_composite_MPI(
-    "vpetp", "vpetp", 2090, before=time_window, return_as="pos",ano = ano, smooth_value=None,
+    "vpetp", "vpetp", 2090, before=time_window, return_as="pos",ano = ano, smooth_value=3,
 )
 # neg ano
 vpetp_first_neg = read_composite_MPI(
-    "vpetp", "vpetp", 1850, before=time_window, return_as="neg",ano = ano, smooth_value=None,
+    "vpetp", "vpetp", 1850, before=time_window, return_as="neg",ano = ano, smooth_value=3,
 )
 vpetp_last_neg = read_composite_MPI(
-    "vpetp", "vpetp", 2090, before=time_window, return_as="neg",ano = ano, smooth_value=None,
+    "vpetp", "vpetp", 2090, before=time_window, return_as="neg",ano = ano, smooth_value=3,
 )
 
 vpetp_first_diff = read_composite_MPI(
-    "vpetp", "vpetp", 1850, before=time_window,ano = ano, return_as="diff", smooth_value=None,
+    "vpetp", "vpetp", 1850, before=time_window,ano = ano, return_as="diff", smooth_value=3,
 )
 vpetp_last_diff = read_composite_MPI(
-    "vpetp", "vpetp", 2090, before=time_window,ano = ano, return_as="diff", smooth_value=None,
+    "vpetp", "vpetp", 2090, before=time_window,ano = ano, return_as="diff", smooth_value=3,
 )
 
 
-# smooth the data
-vpetp_first_clim = map_smooth(vpetp_first_clim, lon_win=10, lat_win=3)
-vpetp_last_clim = map_smooth(vpetp_last_clim, lon_win=10, lat_win=3)
+# # smooth the data
+# vpetp_first_clim = map_smooth(vpetp_first_clim, lon_win=10, lat_win=3)
+# vpetp_last_clim = map_smooth(vpetp_last_clim, lon_win=10, lat_win=3)
 
-vpetp_first_pos = map_smooth(vpetp_first_pos, lon_win=10, lat_win=3)
-vpetp_last_pos = map_smooth(vpetp_last_pos, lon_win=10, lat_win=3)
+# vpetp_first_pos = map_smooth(vpetp_first_pos, lon_win=10, lat_win=3)
+# vpetp_last_pos = map_smooth(vpetp_last_pos, lon_win=10, lat_win=3)
 
-vpetp_first_neg = map_smooth(vpetp_first_neg, lon_win=10, lat_win=3)
-vpetp_last_neg = map_smooth(vpetp_last_neg, lon_win=10, lat_win=3)
+# vpetp_first_neg = map_smooth(vpetp_first_neg, lon_win=10, lat_win=3)
+# vpetp_last_neg = map_smooth(vpetp_last_neg, lon_win=10, lat_win=3)
 
-vpetp_first_diff = map_smooth(vpetp_first_diff, lon_win=10, lat_win=3)
-vpetp_last_diff = map_smooth(vpetp_last_diff, lon_win=10, lat_win=3)
+# vpetp_first_diff = map_smooth(vpetp_first_diff, lon_win=10, lat_win=3)
+# vpetp_last_diff = map_smooth(vpetp_last_diff, lon_win=10, lat_win=3)
 
 # profile
 vpetp_profile_first_clim = vpetp_first_clim.sel(lat=slice(20, 50)).mean(dim="lat")
@@ -254,13 +243,6 @@ prec_cmap_div = np.loadtxt(
 )
 prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 
-# %%
-uhat_levels_div = np.arange(-12, 13, 2)
-upvp_levels_div = np.arange(-10, 11, 2)
-vsts_levels_div = np.arange(-3, 3.1, 0.5)
-vptp_levels_div = np.arange(-1.2, 1.3, 0.2)
-
-scale_hus = 5e4
 
 # %%
 # first decade
@@ -614,8 +596,9 @@ for ax in [
 
 
 plt.tight_layout()
+plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_first.pdf", dpi=300)
 # %%
-# first decade
+# last decade
 fig, axes = plt.subplots(
     3,
     3,
@@ -959,5 +942,258 @@ for ax in [
     gl.ylocator = mticker.FixedLocator([20, 50])
 
 plt.tight_layout()
+plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_last.pdf", dpi=300)
+# %%
+# a new plot, the first column shows the difference between pos and neg in the first decade,
+# the second column shows the difference between pos and neg in the last decade
+fig, axes = plt.subplots(
+    3,
+    2,
+    figsize=(10, 10),
+    subplot_kw={"projection": ccrs.PlateCarree(-90)},
+    sharex=True,
+    sharey=False,
+)
 
+first_upvp_ax = axes[0, 0]
+last_upvp_ax = axes[0, 1]
+
+first_vptp_profile_ax = axes[1, 0]
+last_vptp_profile_ax = axes[1, 1]
+
+first_vptp_map_ax = axes[2, 0]
+last_vptp_map_ax = axes[2, 1]
+
+# map of upvp
+# first diff
+map_upvp = upvp_first_diff.sel(plev=25000).plot.contourf(
+    ax=first_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+
+# climatology as contour
+upvp_first_clim.sel(plev=25000).plot.contour(
+    ax=first_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
+    add_colorbar=False,
+    extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    alpha=0.5,
+    zorder=10,
+)
+
+# last diff
+map_upvp = upvp_last_diff.sel(plev=25000).plot.contourf(
+    ax=last_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+# climatology as contour
+upvp_last_clim.sel(plev=25000).plot.contour(
+    ax=last_upvp_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
+    add_colorbar=False,
+    extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    alpha=0.5,
+    zorder=10,
+)
+
+# profile of vpetp
+# first diff
+profile_upvp = vpetp_first_diff_plot.plot.contourf(
+    ax=first_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2][::2],
+    },
+)
+
+# climatology as contour
+vpetp_first_clim_plot.plot.contour(
+    ax=first_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
+    add_colorbar=False,
+    extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+)
+
+# last diff
+profile_upvp = vpetp_last_diff_plot.plot.contourf(
+    ax=last_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# climatology as contour
+vpetp_last_clim_plot.plot.contour(
+    ax=last_vptp_profile_ax,
+    transform=ccrs.PlateCarree(),
+    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
+    add_colorbar=False,
+    extend="both",
+    colors="black",
+    linewidths=0.5,
+    linestyles="solid",
+    zorder=10,
+)
+
+# map of vpetp
+# first diff
+map_vpetp = vpetp_first_diff.sel(plev=85000).plot.contourf(
+    ax=first_vptp_map_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# quiver of qflux
+qflux_arrow = first_vptp_map_ax.quiver(
+    qflux_first_diff.lon.values[::4],
+    qflux_first_diff.lat.values[::4],
+    qflux_first_diff.u.values[::4, ::4],
+    qflux_first_diff.v.values[::4, ::4],
+    transform=ccrs.PlateCarree(),
+    scale=scale_hus,
+)
+
+# last diff
+map_vpetp = vpetp_last_diff.sel(plev=85000).plot.contourf(
+    ax=last_vptp_map_ax,
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_div[::2],
+    },
+)
+# quiver of qflux
+qflux_arrow = last_vptp_map_ax.quiver(
+    qflux_last_diff.lon.values[::4],
+    qflux_last_diff.lat.values[::4],
+    qflux_last_diff.u.values[::4, ::4],
+    qflux_last_diff.v.values[::4, ::4],
+    transform=ccrs.PlateCarree(),
+    scale=scale_hus,
+)
+
+# FuncFormatter can be used as a decorator
+@mticker.FuncFormatter
+def major_formatter(x, pos):
+    return f"{int((x-10)*-10)}"
+for ax in [first_vptp_profile_ax, last_vptp_profile_ax]:
+    ax.set_aspect(2)
+    ax.set_xticklabels([])
+    gl = ax.gridlines(
+        crs=ccrs.PlateCarree(),
+        linewidth=0.5,
+        linestyle="dotted",
+        color="gray",
+        alpha=0.5,
+        draw_labels=True,
+    )
+    gl.xlines = False
+    gl.ylines = False
+    gl.ylocator = mticker.FixedLocator([-90.0, -75.0, -60.0, -40.0, -15.0])
+    gl.yformatter = major_formatter
+    gl.xlabels_top = False
+    gl.xlabels_bottom = False
+    gl.xlocator = mticker.FixedLocator([])
+
+for ax in [
+    first_upvp_ax,
+    last_upvp_ax,
+    first_vptp_map_ax,
+    last_vptp_map_ax,
+]:
+    ax.coastlines(color="black", linewidth=0.5)
+    ax.set_xlim(-180, 180)
+    ax.set_ylim(0, 85)
+    ax.set_title("")
+for ax in [
+    first_vptp_map_ax,
+    last_vptp_map_ax,
+]:
+    ax.axhline(20, color="gray", linewidth=0.5, linestyle="--")
+    ax.axhline(50, color="gray", linewidth=0.5, linestyle="--")
+    gl = ax.gridlines(
+        crs=ccrs.PlateCarree(),
+        draw_labels=True,
+        linewidth=2,
+        color="gray",
+        alpha=0.5,
+        linestyle="--",
+    )
+    gl.xlabels_top = False
+    gl.xlabels_bottom = True
+    gl.ylabels_left = False
+    gl.xlines = False
+    gl.ylines = False
+    gl.xlocator = mticker.FixedLocator(np.arange(-180, 181, 60))
+    gl.xformatter = LONGITUDE_FORMATTER
+    gl.yformatter = LATITUDE_FORMATTER
+    gl.ylocator = mticker.FixedLocator([20, 50])
+plt.tight_layout()
+plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_diff.pdf", dpi=300, bbox_inches='tight')
 # %%
