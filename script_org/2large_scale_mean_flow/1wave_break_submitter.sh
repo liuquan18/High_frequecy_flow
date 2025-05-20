@@ -11,4 +11,4 @@
 
 
 
-mpirun -n 10 python 3wave_break.py $1
+mpirun -n 10 python 1wave_break.py $1
