@@ -5,24 +5,24 @@ suffix=$2
 
 
 # # ua
-# echo "ua hat before $window $suffix"
-# sbatch 1Flux_before_NAO_submit.sh 1850 ua ua $window # no '_ano'
-# sbatch 1Flux_before_NAO_submit.sh 2090 ua ua $window 
+echo "ua hat before $window $suffix"
+sbatch 1Flux_before_NAO_submit.sh 1850 ua ua $window # no '_ano'
+sbatch 1Flux_before_NAO_submit.sh 2090 ua ua $window 
 
-# # va
-# echo "va hat before $window $suffix"
-# sbatch 1Flux_before_NAO_submit.sh 1850 va va $window
-# sbatch 1Flux_before_NAO_submit.sh 2090 va va $window 
+# va
+echo "va hat before $window $suffix"
+sbatch 1Flux_before_NAO_submit.sh 1850 va va $window
+sbatch 1Flux_before_NAO_submit.sh 2090 va va $window 
 
 # # zg
 # echo "zg before $window $suffix"
 # sbatch 1Flux_before_NAO_submit.sh 1850 zg zg $window $suffix 
 # sbatch 1Flux_before_NAO_submit.sh 2090 zg zg $window $suffix
 
-# # theta
-# echo "theta before $window $suffix"
-# sbatch 1Flux_before_NAO_submit.sh 1850 theta theta $window # no '_ano'
-# sbatch 1Flux_before_NAO_submit.sh 2090 theta theta $window 
+# theta
+echo "theta before $window $suffix"
+sbatch 1Flux_before_NAO_submit.sh 1850 theta theta $window # no '_ano'
+sbatch 1Flux_before_NAO_submit.sh 2090 theta theta $window 
 
 # # etheta
 # echo "etheta before $window $suffix"
