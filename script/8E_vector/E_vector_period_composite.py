@@ -17,8 +17,7 @@ import src.extremes.extreme_read as ext_read
 import src.composite.composite_plot as composite_plot
 
 # %%
-from src.composite.composite import event_composite
-
+from src.composite.composite import range_NAO_composite
 
 
 # %%
@@ -71,7 +70,7 @@ def composite_single_ens(variable, period, ens, plev, freq_label=None):
     pos_extreme, neg_extreme = ext_read.read_extremes(period, 8, ens, plev=plev)
     variable_ds = read_variable(variable, period, ens, plev, freq_label)
 
-    pos_comp, neg_comp = event_composite(variable_ds, pos_extreme, neg_extreme)
+    pos_comp, neg_comp = range_NAO_composite(variable_ds, pos_extreme, neg_extreme)
     return pos_comp, neg_comp
 
 
@@ -101,6 +100,7 @@ def composite_variable(variable, plev, freq_label, period, stat="mean"):
         neg_comps = neg_comps.count(dim="event")
 
     return pos_comps, neg_comps
+
 
 # %%
 plev = 25000
