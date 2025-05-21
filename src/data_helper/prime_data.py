@@ -35,12 +35,12 @@ def read_prime(decade, var="eke", **kwargs):
 
     return data
 
-def read_prime_single_ens(var, ens, **kwargs):
+def read_prime_single_ens(var, dec, ens, **kwargs):
     name = kwargs.get("name", var)  # default name is the same as var
     plev = kwargs.get("plev", None)
     suffix = kwargs.get("suffix", "_ano")
     data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
-    files = glob.glob(data_path + f"r{ens}i1p1f1/*{var}*")
+    files = glob.glob(data_path + f"r{ens}i1p1f1/*{dec}*")
     if len(files) == 0:
         raise ValueError(f"no file found for {var} in {ens}")
     data = xr.open_dataset(files[0])
