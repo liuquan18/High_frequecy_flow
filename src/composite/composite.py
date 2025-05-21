@@ -10,8 +10,30 @@ import src.extremes.extreme_read as ext_read
 logging.basicConfig(level=logging.INFO)
 
 
+################## NAO composite during the event ######################
+def sel_uhat(uhat, events):
+    try:
+        uhat["time"] = uhat.indexes["time"].to_datetimeindex()
+    except AttributeError:
+        pass
+
+    uhat_extreme = []
+    for i, event in events.iterrows():
+        uhat_extreme.append(
+            uhat.sel(time=slice(event["extreme_start_time"], event["extreme_end_time"]))
+        )
+
+    uhat_extreme = xr.concat(uhat_extreme, dim="time")
+
+    # average over time
+    uhat_extreme = uhat_extreme.mean(dim="time")
+
+    return uhat_extreme
+
+
+################# before the NAO composite ######################
 # %%
-def before_NAO_mean(NAO, data, lag=(-15, -5)):
+def before_NAO_composite(NAO, data, lag=(-15, -5)):
 
     data_before_NAO = []
     for i, event in NAO.iterrows():
@@ -39,6 +61,8 @@ def before_NAO_mean(NAO, data, lag=(-15, -5)):
 
     return data_before_NAO
 
+
+################# NAO composite -30 - 30 days ######################
 # %%
 def find_lead_lag_30days(events, base_plev=None, cross_plev=None):
     """
