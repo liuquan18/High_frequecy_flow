@@ -1,7 +1,7 @@
 #%%
 import xarray as xr
 import numpy as np
-from src.data_helper.before_extreme import read_NAO_extremes_single_ens
+from src.data_helper.read_NAO_extremes import read_NAO_extremes_single_ens
 from src.composite import composite
 from src.data_helper import read_variable
 

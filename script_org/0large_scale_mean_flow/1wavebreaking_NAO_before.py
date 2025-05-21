@@ -10,7 +10,7 @@ import logging
 import re
 import os
 
-from src.data_helper.before_extreme import read_NAO_extremes
+from src.data_helper.read_NAO_extremes import read_NAO_extremes
 from src.composite.composite_NAO_WB import read_wb
 # %%
 def read_all_data(decade, **kwargs):
