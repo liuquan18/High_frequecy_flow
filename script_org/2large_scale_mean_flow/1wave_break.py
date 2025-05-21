@@ -85,7 +85,7 @@ except:
     size = 1
 # %%
 av_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/av_daily_ano/r{ens}i1p1f1/"
-mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily_ano/r{ens}i1p1f1/"
+mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/usvs_daily_ano/r{ens}i1p1f1/"
 
 awb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_awb_th3_daily/r{ens}i1p1f1/"
 cwb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_cwb_th3_daily/r{ens}i1p1f1/"
@@ -108,9 +108,9 @@ for i, dec in enumerate(single_decades):
     av = xr.open_dataset(av_file[0])
     av = av.AV
 
-    mf_file = glob.glob(mf_path + f"upvp_day_MPI-ESM1-2-LR_r{ens}i1p1f1_gn_{dec}*.nc")
+    mf_file = glob.glob(mf_path + f"*{dec}*.nc")
     # remap mf, while av is remaped during its calculation
-    mf = remap(mf_file[0], var = 'ua')
+    mf = remap(mf_file[0], var = 'usvs')
 
     events = wavebreaking(av, mf)
 
