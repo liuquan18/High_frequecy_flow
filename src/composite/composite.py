@@ -172,7 +172,7 @@ def date_range_composite(zg, date_range):
 
 
 def range_NAO_composite(
-    variable, pos_extremes, neg_extremes, base_plev=None, cross_plev=1
+    variable, pos_extremes, neg_extremes, base_plev=None, cross_plev=None
 ):
 
     pos_date_range = find_lead_lag_30days(pos_extremes, base_plev, cross_plev)
