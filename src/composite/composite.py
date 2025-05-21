@@ -11,49 +11,33 @@ logging.basicConfig(level=logging.INFO)
 
 
 # %%
-def read_variable(
-    variable: str, period: str, ens: int, plev: int = None, freq_label: str = None
-):
-    """
-    Parameters
-    ----------
-    variable : str
-        variable name
-    period : str
-        period name, first10 or last10
-    ens : int
-        ensemble number
-    plev : int
-        pressure level
-    freq : str
-        frequency label, default is None, hat, prime, prime_veryhigh, prime_intermedia
-    """
-    base_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{variable}_daily_global/{variable}_MJJAS_{period}"
+def before_NAO_mean(NAO, data, lag=(-15, -5)):
 
-    if freq_label is None:
-        freq_label = "/"
-    else:
-        freq_label = f"_{freq_label}/"
+    data_before_NAO = []
+    for i, event in NAO.iterrows():
+        event_date = pd.to_datetime(event.extreme_start_time)
+        event_date_before_start = event_date + pd.Timedelta(days=lag[0])
+        event_date_before_end = event_date + pd.Timedelta(days=lag[1])
 
-    base_path = f"{base_path}{freq_label}"
+        # -15 to -5 days before the event average
 
-    file = glob.glob(f"{base_path}{variable}_day_*r{ens}i1p1f1_gn_*.nc")[0]
+        # if 'ens' in the column
+        if "ens" in data.dims:
+            event_ens = int(event.ens)
+            data_NAO_event = data.sel(
+                time=slice(event_date_before_start, event_date_before_end),
+                ens=event_ens,
+            ).mean(dim="time")
+        else:
+            data_NAO_event = data.sel(
+                time=slice(event_date_before_start, event_date_before_end)
+            ).mean(dim="time")
 
-    try:
-        ds = xr.open_dataset(file)[variable]
-    except KeyError:
-        ds = xr.open_dataset(file)["ua"]  # case for momentum fluxes
-    if plev is not None:
-        ds = ds.sel(plev=plev)
+        data_before_NAO.append(data_NAO_event)
 
-    # convert datetime to pandas datetime
-    try:
-        ds["time"] = ds.indexes["time"].to_datetimeindex()
-    except AttributeError:
-        pass
+    data_before_NAO = xr.concat(data_before_NAO, dim="event")
 
-    return ds
-
+    return data_before_NAO
 
 # %%
 def find_lead_lag_30days(events, base_plev=None, cross_plev=None):
@@ -182,6 +166,51 @@ def event_composite(variable, pos_extremes, neg_extremes, base_plev=None, cross_
 
 
 # %%
+def read_variable(
+    variable: str, period: str, ens: int, plev: int = None, freq_label: str = None
+):
+    """
+    Parameters
+    ----------
+    variable : str
+        variable name
+    period : str
+        period name, first10 or last10
+    ens : int
+        ensemble number
+    plev : int
+        pressure level
+    freq : str
+        frequency label, default is None, hat, prime, prime_veryhigh, prime_intermedia
+    """
+    base_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{variable}_daily_global/{variable}_MJJAS_{period}"
+
+    if freq_label is None:
+        freq_label = "/"
+    else:
+        freq_label = f"_{freq_label}/"
+
+    base_path = f"{base_path}{freq_label}"
+
+    file = glob.glob(f"{base_path}{variable}_day_*r{ens}i1p1f1_gn_*.nc")[0]
+
+    try:
+        ds = xr.open_dataset(file)[variable]
+    except KeyError:
+        ds = xr.open_dataset(file)["ua"]  # case for momentum fluxes
+    if plev is not None:
+        ds = ds.sel(plev=plev)
+
+    # convert datetime to pandas datetime
+    try:
+        ds["time"] = ds.indexes["time"].to_datetimeindex()
+    except AttributeError:
+        pass
+
+    return ds
+
+
+# %%
 def composite_single_ens(variable, period, ens, plev, freq_label=None):
     pos_extreme, neg_extreme = ext_read.read_extremes(period, 8, ens, plev=plev)
     variable_ds = read_variable(variable, period, ens, plev, freq_label)
@@ -218,31 +247,3 @@ def composite_variable(variable, plev, freq_label, period, stat="mean"):
     return pos_comps, neg_comps
 
 
-# %%
-def before_NAO_mean(NAO, data, lag=(-15, -5)):
-
-    data_before_NAO = []
-    for i, event in NAO.iterrows():
-        event_date = pd.to_datetime(event.extreme_start_time)
-        event_date_before_start = event_date + pd.Timedelta(days=lag[0])
-        event_date_before_end = event_date + pd.Timedelta(days=lag[1])
-
-        # -15 to -5 days before the event average
-
-        # if 'ens' in the column
-        if "ens" in data.dims:
-            event_ens = int(event.ens)
-            data_NAO_event = data.sel(
-                time=slice(event_date_before_start, event_date_before_end),
-                ens=event_ens,
-            ).mean(dim="time")
-        else:
-            data_NAO_event = data.sel(
-                time=slice(event_date_before_start, event_date_before_end)
-            ).mean(dim="time")
-
-        data_before_NAO.append(data_NAO_event)
-
-    data_before_NAO = xr.concat(data_before_NAO, dim="event")
-
-    return data_before_NAO
