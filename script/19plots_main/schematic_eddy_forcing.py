@@ -4,8 +4,8 @@ import numpy as np
 import cartopy.crs as ccrs
 import cartopy
 # %%
-from src.data_helper.prime_data import read_composite_MPI  # noqa: E402
-from src.data_helper.prime_data import read_MPI_GE_uhat
+from src.data_helper.read_variable import read_composite_MPI  # noqa: E402
+from src.data_helper.read_variable import read_MPI_GE_uhat
 import matplotlib.colors as mcolors
 
 #%%

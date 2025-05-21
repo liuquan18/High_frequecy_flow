@@ -12,7 +12,7 @@ import os
 
 from src.data_helper.before_extreme import read_NAO_extremes
 from src.composite.composite import before_NAO_composite
-from src.data_helper.prime_data import read_prime
+from src.data_helper.read_variable import read_prime
 
 # %%
 logging.basicConfig(level=logging.INFO)

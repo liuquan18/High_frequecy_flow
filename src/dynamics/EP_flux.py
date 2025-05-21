@@ -2,7 +2,7 @@
 import xarray as xr
 import numpy as np
 import pandas as pd
-from src.data_helper.prime_data import read_composite_MPI
+from src.data_helper.read_variable import read_composite_MPI
 import glob
 
 # %%

@@ -12,7 +12,7 @@ import re
 import os
 
 from src.data_helper.before_extreme import read_NAO_extreme_ERA5
-from src.data_helper.prime_data import read_prime_ERA5
+from src.data_helper.read_variable import read_prime_ERA5
 from src.composite.composite_during import sel_var
 logging.basicConfig(level=logging.INFO)
 

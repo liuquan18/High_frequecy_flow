@@ -4,7 +4,7 @@ import numpy as np
 from src.dynamics.theta_on_pv import theta_on_2pvu
 
 # %%
-from src.data_helper.prime_data import read_climatology
+from src.data_helper.read_variable import read_climatology
 
 # %%
 import importlib

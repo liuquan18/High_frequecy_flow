@@ -3,14 +3,14 @@ import xarray as xr
 import numpy as np
 from src.data_helper.before_extreme import read_NAO_extremes_single_ens
 from src.composite import composite
-from src.data_helper import prime_data
+from src.data_helper import read_variable
 
 import logging
 logging.basicConfig(level=logging.INFO)
 import importlib
 importlib.reload(composite)
-importlib.reload(prime_data)
-read_prime_single_ens = prime_data.read_prime_single_ens
+importlib.reload(read_variable)
+read_prime_single_ens = read_variable.read_prime_single_ens
 range_NAO_composite = composite.range_NAO_composite
 #%%
 def composite_single_ens(var, decade, ens, plev, freq_label=None, **kwargs):

@@ -7,7 +7,7 @@ import cartopy.crs as ccrs
 from src.plotting.util import erase_white_line, map_smooth
 from src.plotting.util import lon2x
 from matplotlib.ticker import ScalarFormatter
-import src.data_helper.prime_data as prime_data
+import src.data_helper.read_variable as read_variable
 
 
 import matplotlib.colors as mcolors
@@ -22,11 +22,11 @@ import src.plotting.util as util
 
 import importlib
 
-importlib.reload(prime_data)
+importlib.reload(read_variable)
 importlib.reload(util)
 # %%
-from src.data_helper.prime_data import read_composite_MPI  # noqa: E402
-from src.data_helper.prime_data import read_climatology  # noqa: E402
+from src.data_helper.read_variable import read_composite_MPI  # noqa: E402
+from src.data_helper.read_variable import read_climatology  # noqa: E402
 
 
 # %%
@@ -128,11 +128,11 @@ upqp_first_diff = read_composite_MPI("upqp", "upqp", 1850)
 upqp_last_diff = read_composite_MPI("upqp", "upqp", 2090)
 
 # integrate qp
-upqp_first = prime_data.vert_integrate(upqp_first_diff)
-upqp_last = prime_data.vert_integrate(upqp_last_diff)
+upqp_first = read_variable.vert_integrate(upqp_first_diff)
+upqp_last = read_variable.vert_integrate(upqp_last_diff)
 
-vpqp_first = prime_data.vert_integrate(vpqp_first_diff)
-vpqp_last = prime_data.vert_integrate(vpqp_last_diff)
+vpqp_first = read_variable.vert_integrate(vpqp_first_diff)
+vpqp_last = read_variable.vert_integrate(vpqp_last_diff)
 
 # to flux
 qflux_first_diff = xr.Dataset(

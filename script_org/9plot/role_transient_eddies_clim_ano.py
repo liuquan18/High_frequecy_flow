@@ -7,7 +7,7 @@ import cartopy.crs as ccrs
 from src.plotting.util import erase_white_line, map_smooth
 from src.plotting.util import lon2x
 from matplotlib.ticker import ScalarFormatter
-import src.data_helper.prime_data as prime_data
+import src.data_helper.read_variable as read_variable
 
 
 import matplotlib.colors as mcolors
@@ -22,11 +22,11 @@ import src.plotting.util as util
 
 import importlib
 
-importlib.reload(prime_data)
+importlib.reload(read_variable)
 importlib.reload(util)
 # %%
-from src.data_helper.prime_data import read_composite_MPI  # noqa: E402
-from src.data_helper.prime_data import read_climatology
+from src.data_helper.read_variable import read_composite_MPI  # noqa: E402
+from src.data_helper.read_variable import read_climatology
 
 
 # %%
@@ -152,10 +152,10 @@ vpqp_first_clim = read_climatology("vpqp", "1850", name="vpqp")
 vpqp_last_clim = read_climatology("vpqp", "2090", name="vpqp")
 
 # integrate qp
-upqp_first_clim = prime_data.vert_integrate(upqp_first_clim)
-upqp_last_clim = prime_data.vert_integrate(upqp_last_clim)
-vpqp_first_clim = prime_data.vert_integrate(vpqp_first_clim)
-vpqp_last_clim = prime_data.vert_integrate(vpqp_last_clim)
+upqp_first_clim = read_variable.vert_integrate(upqp_first_clim)
+upqp_last_clim = read_variable.vert_integrate(upqp_last_clim)
+vpqp_first_clim = read_variable.vert_integrate(vpqp_first_clim)
+vpqp_last_clim = read_variable.vert_integrate(vpqp_last_clim)
 
 # into flux
 qp_first_clim = xr.Dataset(
@@ -193,14 +193,14 @@ vpqp_last_neg = read_composite_MPI(
     "vpqp", "vpqp", 2090, before=time_window, return_as="neg",ano = ano
 )
 # integrate qp
-upqp_first_pos = prime_data.vert_integrate(upqp_first_pos)
-upqp_last_pos = prime_data.vert_integrate(upqp_last_pos)
-vpqp_first_pos = prime_data.vert_integrate(vpqp_first_pos)
-vpqp_last_pos = prime_data.vert_integrate(vpqp_last_pos)
-upqp_first_neg = prime_data.vert_integrate(upqp_first_neg)
-upqp_last_neg = prime_data.vert_integrate(upqp_last_neg)
-vpqp_first_neg = prime_data.vert_integrate(vpqp_first_neg)
-vpqp_last_neg = prime_data.vert_integrate(vpqp_last_neg)
+upqp_first_pos = read_variable.vert_integrate(upqp_first_pos)
+upqp_last_pos = read_variable.vert_integrate(upqp_last_pos)
+vpqp_first_pos = read_variable.vert_integrate(vpqp_first_pos)
+vpqp_last_pos = read_variable.vert_integrate(vpqp_last_pos)
+upqp_first_neg = read_variable.vert_integrate(upqp_first_neg)
+upqp_last_neg = read_variable.vert_integrate(upqp_last_neg)
+vpqp_first_neg = read_variable.vert_integrate(vpqp_first_neg)
+vpqp_last_neg = read_variable.vert_integrate(vpqp_last_neg)
 
 
 # into flux
