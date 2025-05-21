@@ -12,8 +12,8 @@ import os
 
 from src.extremes.before_extreme import read_NAO_extremes
 from src.composite.composite import before_NAO_mean
-from src.plotting.prime_data import read_prime 
-from src.plotting.prime_data import vert_integrate
+from src.data_helper.prime_data import read_prime 
+from src.data_helper.prime_data import vert_integrate
 logging.basicConfig(level=logging.INFO)
 
 

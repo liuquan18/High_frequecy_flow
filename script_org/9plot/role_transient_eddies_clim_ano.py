@@ -7,7 +7,7 @@ import cartopy.crs as ccrs
 from src.plotting.util import erase_white_line, map_smooth
 from src.plotting.util import lon2x
 from matplotlib.ticker import ScalarFormatter
-import src.plotting.prime_data as prime_data
+import src.data_helper.prime_data as prime_data
 
 
 import matplotlib.colors as mcolors
@@ -25,8 +25,8 @@ import importlib
 importlib.reload(prime_data)
 importlib.reload(util)
 # %%
-from src.plotting.prime_data import read_composite_MPI  # noqa: E402
-from src.plotting.prime_data import read_climatology
+from src.data_helper.prime_data import read_composite_MPI  # noqa: E402
+from src.data_helper.prime_data import read_climatology
 
 
 # %%
