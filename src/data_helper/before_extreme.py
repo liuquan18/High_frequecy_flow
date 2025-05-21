@@ -8,6 +8,8 @@ import glob
 import logging
 import re
 logging.basicConfig(level=logging.INFO)
+from shapely import wkt
+
 
 def read_NAO_extremes(decade, phase = 'positive', dur_threshold = 5):
     base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/{phase}_extreme_events_decades/'
@@ -28,6 +30,28 @@ def read_NAO_extremes(decade, phase = 'positive', dur_threshold = 5):
     extremes = pd.concat(extremes)
     extremes = extremes[extremes['extreme_duration'] >= dur_threshold]
     return extremes
+
+def read_NAO_extremes_single_ens(phase,dec, ens, dur_threshold = 5):
+
+    # pos or positive to positive
+    if phase == 'pos':
+        phase = 'positive'
+    elif phase == 'neg':
+        phase = 'negative'
+    else:
+        pass
+
+    base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/{phase}_extreme_events_decades/'
+
+    file_path = base_dir + f'r{ens}i1p1f1/*{dec}*.csv'
+    file = glob.glob(file_path)[0]
+    df = pd.read_csv(file)
+    df['ens'] = ens
+
+    extremes = df[df['extreme_duration'] >= dur_threshold]
+    return extremes
+
+
 
 def read_NAO_extreme_ERA5(phase = 'pos', dur_threshold = 5):
 
