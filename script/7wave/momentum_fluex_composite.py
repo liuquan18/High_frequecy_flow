@@ -23,11 +23,55 @@ importlib.reload(composite)
 importlib.reload(ext_read)
 importlib.reload(composite_plot)
 
+def read_variable(
+    variable: str, period: str, ens: int, plev: int = None, freq_label: str = None
+):
+    """
+    Parameters
+    ----------
+    variable : str
+        variable name
+    period : str
+        period name, first10 or last10
+    ens : int
+        ensemble number
+    plev : int
+        pressure level
+    freq : str
+        frequency label, default is None, hat, prime, prime_veryhigh, prime_intermedia
+    """
+    base_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{variable}_daily_global/{variable}_MJJAS_{period}"
+
+    if freq_label is None:
+        freq_label = "/"
+    else:
+        freq_label = f"_{freq_label}/"
+
+    base_path = f"{base_path}{freq_label}"
+
+    file = glob.glob(f"{base_path}{variable}_day_*r{ens}i1p1f1_gn_*.nc")[0]
+
+    try:
+        ds = xr.open_dataset(file)[variable]
+    except KeyError:
+        ds = xr.open_dataset(file)["ua"]  # case for momentum fluxes
+    if plev is not None:
+        ds = ds.sel(plev=plev)
+
+    # convert datetime to pandas datetime
+    try:
+        ds["time"] = ds.indexes["time"].to_datetimeindex()
+    except AttributeError:
+        pass
+
+    return ds
+
+
 
 # %%
 def composite_single_ens(variable, period, ens, plev, freq_label=None):
     pos_extreme, neg_extreme = ext_read.read_extremes(period, 8, ens, plev=plev)
-    variable_ds = composite.read_variable(variable, period, ens, plev, freq_label)
+    variable_ds = read_variable(variable, period, ens, plev, freq_label)
     pos_comp, neg_comp = composite.event_composite(
         variable_ds, pos_extreme, neg_extreme
     )
