@@ -78,16 +78,14 @@ def find_lead_lag_30days(events, base_plev=None, cross_plev=None):
 
     start_times = []
     end_times = []
-
-    if base_plev is not None:
-        events = events[events["plev"] == base_plev]
+    try:
+        events["extreme_start_time"] = pd.to_datetime(events["extreme_start_time"])
+        events["extreme_end_time"] = pd.to_datetime(events["extreme_end_time"])
+    except Exception:
+        pass
 
     for base_event in events.itertuples():
         ref_time = base_event.extreme_start_time
-
-        # change ref_time to datetime
-        if isinstance(ref_time, str):
-            ref_time = pd.to_datetime(ref_time)
 
         count_startime = ref_time - pd.Timedelta(days=30)
         count_endtime = ref_time + pd.Timedelta(days=30)
