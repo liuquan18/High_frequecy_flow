@@ -56,8 +56,7 @@ def read_variable(
 
 
 # %%
-def lead_lag_30days(events, base_plev=None, cross_plev=None):
-
+def find_lead_lag_30days(events, base_plev=None, cross_plev=None):
     """
     Parameters
     ----------
@@ -87,7 +86,9 @@ def lead_lag_30days(events, base_plev=None, cross_plev=None):
             & (events.extreme_end_time >= count_startime)
         ]
 
-        if (cross_plev is not None) and (len(overlapped_events_across_height.plev.unique()) < cross_plev):
+        if (cross_plev is not None) and (
+            len(overlapped_events_across_height.plev.unique()) < cross_plev
+        ):
             continue
 
         start_times.append(count_startime)
@@ -165,8 +166,8 @@ def date_range_composite(zg, date_range):
 # %%[]
 def event_composite(variable, pos_extremes, neg_extremes, base_plev=None, cross_plev=1):
 
-    pos_date_range = lead_lag_30days(pos_extremes, base_plev, cross_plev)
-    neg_date_range = lead_lag_30days(neg_extremes, base_plev, cross_plev)
+    pos_date_range = find_lead_lag_30days(pos_extremes, base_plev, cross_plev)
+    neg_date_range = find_lead_lag_30days(neg_extremes, base_plev, cross_plev)
 
     pos_composite = None
     neg_composite = None
@@ -216,8 +217,9 @@ def composite_variable(variable, plev, freq_label, period, stat="mean"):
 
     return pos_comps, neg_comps
 
-#%%
-def before_NAO_mean(NAO, data, lag = (-15, -5)):
+
+# %%
+def before_NAO_mean(NAO, data, lag=(-15, -5)):
 
     data_before_NAO = []
     for i, event in NAO.iterrows():
@@ -226,16 +228,21 @@ def before_NAO_mean(NAO, data, lag = (-15, -5)):
         event_date_before_end = event_date + pd.Timedelta(days=lag[1])
 
         # -15 to -5 days before the event average
-        
+
         # if 'ens' in the column
-        if 'ens' in data.dims:
+        if "ens" in data.dims:
             event_ens = int(event.ens)
-            data_NAO_event = data.sel(time=slice(event_date_before_start, event_date_before_end), ens = event_ens).mean(dim = 'time')
+            data_NAO_event = data.sel(
+                time=slice(event_date_before_start, event_date_before_end),
+                ens=event_ens,
+            ).mean(dim="time")
         else:
-            data_NAO_event = data.sel(time=slice(event_date_before_start, event_date_before_end)).mean(dim = 'time')
+            data_NAO_event = data.sel(
+                time=slice(event_date_before_start, event_date_before_end)
+            ).mean(dim="time")
 
         data_before_NAO.append(data_NAO_event)
 
-    data_before_NAO = xr.concat(data_before_NAO, dim='event')
+    data_before_NAO = xr.concat(data_before_NAO, dim="event")
 
     return data_before_NAO
