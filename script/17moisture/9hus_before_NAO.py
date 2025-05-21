@@ -8,7 +8,7 @@ import seaborn as sns
 import glob
 import logging
 from src.moisture.longitudinal_contrast import read_data
-from src.extremes.before_extreme import read_NAO_extremes, sel_before_NAO
+from src.data_helper.before_extreme import read_NAO_extremes, sel_before_NAO
 
 import re
 logging.basicConfig(level=logging.INFO)

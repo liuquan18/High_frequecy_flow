@@ -10,7 +10,7 @@ import logging
 import re
 import os
 
-from src.extremes.before_extreme import read_NAO_extremes
+from src.data_helper.before_extreme import read_NAO_extremes
 from src.composite.composite import before_NAO_composite
 from src.data_helper.prime_data import read_prime
 from src.data_helper.prime_data import vert_integrate
