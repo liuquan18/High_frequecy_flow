@@ -27,3 +27,5 @@ def read_all_data(decade, **kwargs):
 
     return NAO_pos, NAO_neg, AWB, CWB
 # %%
+NAO_pos, NAO_neg, AWB, CWB = read_all_data(decade)
+# %%
