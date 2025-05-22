@@ -64,6 +64,11 @@ theta_2PVU_negs = comm.gather(theta_2PVU_negs, root=0)
 
 # concatenate the results 
 if rank == 0:
+
+    # Flatten the gathered lists
+    theta_2PVU_poss = [item for sublist in theta_2PVU_poss for item in sublist]
+    theta_2PVU_negs = [item for sublist in theta_2PVU_negs for item in sublist]
+
     theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='ens')
     theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='ens')
 
