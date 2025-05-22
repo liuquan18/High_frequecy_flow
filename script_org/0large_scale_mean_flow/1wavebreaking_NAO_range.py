@@ -65,7 +65,7 @@ neg_AWBs = []
 pos_CWBs = []
 neg_CWBs = []
 
-for i, member in enumerate(members_single):
+for i, member in enumerate(members_single[:5]):
     print(f"Rank {rank}, member {member}/{members_single[-1]}")
 
     # read data
@@ -79,6 +79,11 @@ for i, member in enumerate(members_single):
     neg_AWB = neg_AWB.mean(dim='event')
     pos_CWB = pos_CWB.mean(dim='event')
     neg_CWB = neg_CWB.mean(dim='event')
+
+    pos_AWB['ens'] = member
+    neg_AWB['ens'] = member
+    pos_CWB['ens'] = member
+    neg_CWB['ens'] = member
     
 
     pos_AWBs.append(pos_AWB)
@@ -104,10 +109,10 @@ if rank == 0:
     neg_CWBs = [item for sublist in neg_CWBs for item in sublist]
 
 
-    pos_AWBs = xr.concat(pos_AWB, dim="ens", coords = 'all')
-    neg_AWBs = xr.concat(neg_AWB, dim="ens", coords = 'all')
-    pos_CWBs = xr.concat(pos_CWB, dim="ens", coords = 'all')
-    neg_CWBs = xr.concat(neg_CWB, dim="ens", coords = 'all')
+    pos_AWBs = xr.concat(pos_AWBs, dim="ens", coords = 'all')
+    neg_AWBs = xr.concat(neg_AWBs, dim="ens", coords = 'all')
+    pos_CWBs = xr.concat(pos_CWBs, dim="ens", coords = 'all')
+    neg_CWBs = xr.concat(neg_CWBs, dim="ens", coords = 'all')
 
     # save data
     logging.info("saving data")
