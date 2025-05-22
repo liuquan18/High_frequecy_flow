@@ -5,7 +5,6 @@ from src.data_helper.read_NAO_extremes import read_NAO_extremes_single_ens
 from src.composite import composite
 from src.data_helper import read_variable
 import sys
-from src.dynamics.theta_on_pv import theta_on_2pvu
 import logging
 logging.basicConfig(level=logging.INFO)
 import importlib
@@ -29,8 +28,7 @@ def composite_single_ens(var, decade, ens, plev = None, **kwargs):
     neg_extreme = read_NAO_extremes_single_ens('neg', decade, ens)
 
     # read variable
-    name = kwargs.get('name', var)  # default name is the same as var')
-    var_field = read_prime_single_ens(var, decade, ens, name = name, plev = plev, **kwargs)
+    var_field = read_prime_single_ens( decade, ens,var, **kwargs)
 
     if not pos_extreme.empty and not neg_extreme.empty:
 
@@ -49,16 +47,27 @@ members_single = np.array_split(members, size)[rank]  # members on this core
 
 # %%
 
-theta_2PVUs = []
+theta_2PVU_poss = []
+theta_2PVU_negs = []
 for i, member in enumerate(members_single):
     print(f"Rank {rank}, member {member}/{members_single[-1]}")
 
-    ua_pos, ua_neg = composite_single_ens('ua', decade, member, suffix = '')
+    theta_2pvu_pos, theta_2pvu_neg = composite_single_ens('theta_2pvu', decade=decade, ens=member, name = '__xarray_dataarray_variable__', suffix = '')
 
-    va_pos, va_neg = composite_single_ens('va', decade, member, suffix = '')
+    theta_2PVU_poss.append(theta_2pvu_pos)
+    theta_2PVU_negs.append(theta_2pvu_neg)
 
-    theta_pos, theta_neg = composite_single_ens('theta', decade, member, suffix = '')
 
-    #  drop na along time dimension
-    theta_2PVU_pos = theta_on_2pvu(theta_pos, ua_pos, va_pos)
+# combine all members from all cores
+theta_2PVU_poss = comm.gather(theta_2PVU_poss, root=0)
+theta_2PVU_negs = comm.gather(theta_2PVU_negs, root=0)
+
+# concatenate the results 
+if rank == 0:
+    theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='ens')
+    theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='ens')
+
+    # save the results
+    theta_2PVU_poss.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_range/theta_2pvu_NAO_pos_{decade}.nc')
+    theta_2PVU_negs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_range/theta_2pvu_NAO_neg_{decade}.nc')
 # %%
