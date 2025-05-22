@@ -104,10 +104,10 @@ if rank == 0:
     neg_CWBs = [item for sublist in neg_CWBs for item in sublist]
 
 
-    pos_AWBs = xr.concat(pos_AWB, dim="ens")
-    neg_AWBs = xr.concat(neg_AWB, dim="ens")
-    pos_CWBs = xr.concat(pos_CWB, dim="ens")
-    neg_CWBs = xr.concat(neg_CWB, dim="ens")
+    pos_AWBs = xr.concat(pos_AWB, dim="ens", coords = 'all')
+    neg_AWBs = xr.concat(neg_AWB, dim="ens", coords = 'all')
+    pos_CWBs = xr.concat(pos_CWB, dim="ens", coords = 'all')
+    neg_CWBs = xr.concat(neg_CWB, dim="ens", coords = 'all')
 
     # save data
     logging.info("saving data")

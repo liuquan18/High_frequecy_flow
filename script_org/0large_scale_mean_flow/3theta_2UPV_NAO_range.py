@@ -69,8 +69,8 @@ if rank == 0:
     theta_2PVU_poss = [item for sublist in theta_2PVU_poss for item in sublist]
     theta_2PVU_negs = [item for sublist in theta_2PVU_negs for item in sublist]
 
-    theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='ens')
-    theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='ens')
+    theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='ens', coords = 'all')
+    theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='ens', coords = 'all')
 
     # save the results
     theta_2PVU_poss.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_range/theta_2pvu_NAO_pos_{decade}.nc')
