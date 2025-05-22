@@ -25,10 +25,14 @@ ssp585_path=/work/ik1017/CMIP6/data/CMIP6/ScenarioMIP/MPI-M/MPI-ESM1-2-LR/ssp585
 file_list=$(find $historical_path -name "*.nc" -print; find $ssp585_path -name "*.nc" -print)
 
 
-to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/r${member}i1p1f1/
+to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_daily/r${member}i1p1f1/
 tmp_path=/scratch/m/m300883/$var/r${member}i1p1f1/
 
-mkdir -p $to_path $tmp_path
+mkdir -p $to_path 
+if [ -d "$tmp_path" ]; then
+    rm -rf "$tmp_path"
+fi
+mkdir -p "$tmp_path"
 
 export to_path tmp_path
 
@@ -41,7 +45,7 @@ split() {
 
     name_prefix=${filename:0:-20}
 
-    cdo -splityear -sellevel,100000,85000,70000,50000,25000 $infile $tmp_path$name_prefix
+    cdo -splityear $infile $tmp_path$name_prefix
 
 }
 
