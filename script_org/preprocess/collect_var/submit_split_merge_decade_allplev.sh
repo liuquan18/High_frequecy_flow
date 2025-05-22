@@ -6,5 +6,5 @@ for ens in {1..50}
 do
     echo "Ensemble member ${ens}"
     # run the python script
-    sbatch split_merge_decade_${var}.sh ${ens}
+    sbatch split_merge_decade_${var}_allplev.sh ${ens}
 done
