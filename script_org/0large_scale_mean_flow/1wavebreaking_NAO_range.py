@@ -87,11 +87,11 @@ for i, member in enumerate(members_single):
     pos_CWBs.append(pos_CWB)
     neg_CWBs.append(neg_CWB)
 
-# combine all members from all cores
-pos_AWBs = xr.concat(pos_AWBs, dim="ens").sum(dim="ens")
-neg_AWBs = xr.concat(neg_AWBs, dim="ens").sum(dim="ens")
-pos_CWBs = xr.concat(pos_CWBs, dim="ens").sum(dim="ens")
-neg_CWBs = xr.concat(neg_CWBs, dim="ens").sum(dim="ens")
+# gather data
+pos_AWBs = comm.gather(pos_AWBs, root=0)
+neg_AWBs = comm.gather(neg_AWBs, root=0)
+pos_CWBs = comm.gather(pos_CWBs, root=0)
+neg_CWBs = comm.gather(neg_CWBs, root=0)
 
 
 # concatenate all members
@@ -102,6 +102,8 @@ if rank == 0:
     neg_AWBs = [item for sublist in neg_AWBs for item in sublist]
     pos_CWBs = [item for sublist in pos_CWBs for item in sublist]
     neg_CWBs = [item for sublist in neg_CWBs for item in sublist]
+
+
     pos_AWBs = xr.concat(pos_AWB, dim="ens")
     neg_AWBs = xr.concat(neg_AWB, dim="ens")
     pos_CWBs = xr.concat(pos_CWB, dim="ens")
