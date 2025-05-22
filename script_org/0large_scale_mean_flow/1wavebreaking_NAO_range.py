@@ -75,6 +75,12 @@ for i, member in enumerate(members_single):
     pos_AWB, neg_AWB = range_NAO_composite(AWB, NAO_pos, NAO_neg)
     pos_CWB, neg_CWB = range_NAO_composite(CWB, NAO_pos, NAO_neg)
 
+    pos_AWB = pos_AWB.mean(dim='event')
+    neg_AWB = neg_AWB.mean(dim='event')
+    pos_CWB = pos_CWB.mean(dim='event')
+    neg_CWB = neg_CWB.mean(dim='event')
+    
+
     pos_AWBs.append(pos_AWB)
     neg_AWBs.append(neg_AWB)
 
