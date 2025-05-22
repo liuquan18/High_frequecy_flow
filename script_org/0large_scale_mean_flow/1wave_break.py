@@ -32,7 +32,7 @@ def wavebreaking(avor, mflux):
         data=avor,
         contour_levels=[3 * 1e-5], # 90th percentile of [20, 60]
         range_group=5,  # optional
-        min_exp=3,  # optional
+        min_exp=5,  # optional
         intensity=mflux,  # optional
         periodic_add=120,
     )  # optional
