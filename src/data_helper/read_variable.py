@@ -35,7 +35,7 @@ def read_prime(decade, var="eke", **kwargs):
 
     return data
 
-def read_prime_single_ens(var, dec, ens, **kwargs):
+def read_prime_single_ens(dec, ens, var, **kwargs):
     name = kwargs.get("name", var)  # default name is the same as var
     plev = kwargs.get("plev", None)
     suffix = kwargs.get("suffix", "_ano")
