@@ -2,8 +2,7 @@
 import xarray as xr
 import numpy as np
 
-from src.dynamics.theta_on_pv import theta_on_2pvu
-from src.data_helper.read_variable import read_prime_single_ens
+from src.dynamics.theta_on_pv import cal_theta_on2pvu
 # %%
 import logging
 import os
@@ -11,8 +10,6 @@ import glob
 import sys
 
 logging.basicConfig(level=logging.INFO)
-
-
 
 
 
@@ -33,9 +30,9 @@ except:
     rank = 0
     size = 1
 # %%
-ua_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/ua_daily/r{ens}i1p1f1/"
-va_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/va_daily/r{ens}i1p1f1/"
-theta_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_daily/r{ens}i1p1f1/"
+ua_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_daily/r{ens}i1p1f1/"
+va_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/va_daily/r{ens}i1p1f1/"
+ta_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ta_daily/r{ens}i1p1f1/"
 
 # save path
 theta_2pvu_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_2pvu_daily/r{ens}i1p1f1/"
@@ -53,14 +50,14 @@ for i, dec in enumerate(single_decades):
     # read data
     ua_file = glob.glob(ua_path + f"*{dec}*.nc")
     va_file = glob.glob(va_path + f"*{dec}*.nc")
-    theta_file = glob.glob(theta_path + f"*{dec}*.nc")
+    ta_file = glob.glob(ta_path + f"*{dec}*.nc")
 
     ua = xr.open_dataset(ua_file[0]).ua
     va = xr.open_dataset(va_file[0]).va
-    theta = xr.open_dataset(theta_file[0]).theta
+    ta = xr.open_dataset(ta_file[0]).ta
 
     # calculate theta on 2PVU
-    theta_2pvu = theta_on_2pvu(theta, ua, va)
+    theta_2pvu = cal_theta_on2pvu(ta, ua, va)
 
     # save data
     theta_2pvu.to_netcdf(
