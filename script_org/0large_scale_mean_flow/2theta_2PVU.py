@@ -59,7 +59,10 @@ for i, dec in enumerate(single_decades):
     # calculate theta on 2PVU
     theta_2pvu = cal_theta_on2pvu(ta, ua, va)
 
+    # drop the 'metpy_crs'
+    theta_2pvu = theta_2pvu.drop_vars("metpy_crs")
+
     # save data
     theta_2pvu.to_netcdf(
-        theta_2pvu_path + f"theta_2pvu_day_MPI-ESM1-2-LR_r{ens}i1p1f1_gn_{dec[0]}0502-{dec[-1]+9}0930.nc"
+        theta_2pvu_path + f"theta_2pvu_day_MPI-ESM1-2-LR_r{ens}i1p1f1_gn_{dec}0501-{dec+9}0930.nc"
     )
