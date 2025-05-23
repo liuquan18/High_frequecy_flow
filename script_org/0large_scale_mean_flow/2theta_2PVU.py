@@ -67,8 +67,8 @@ for i, dec in enumerate(single_decades):
     pv = pv.drop_vars("metpy_crs")
 
     # rename the variable
-    theta_2pvu = theta_2pvu.rename({"__xarray_dataarray_variable__": "theta_2pvu"})
-    pv = pv.rename({"__xarray_dataarray_variable__": "pv"})
+    theta_2pvu.name = "theta_2pvu"
+    pv.name = "pv"
 
     # save data
     theta_2pvu.to_netcdf(
