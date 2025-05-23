@@ -10,12 +10,12 @@ def cos_lat_weight(lat):
 def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='lon', standard=False, plev = None):
     """Project field data onto pattern data to get the temporal index, weighted by cos(latitude)."""
     # Extract latitudes and calculate weights
-    latitudes = field_data.coords[lat_dim].values
+    latitudes = field_data.coords[lat_dim]
     weights = cos_lat_weight(latitudes)
     
     # Apply weights
-    weighted_field = field_data * weights[:, np.newaxis]
-    weighted_pattern = pattern_data * weights[:, np.newaxis]
+    weighted_field = field_data * weights
+    weighted_pattern = pattern_data * weights
     
 
     # flat field to [time,lon-lat] or [time,lon-lat,heith]
