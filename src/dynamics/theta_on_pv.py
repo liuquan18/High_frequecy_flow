@@ -3,7 +3,7 @@ import xarray as xr
 import metpy.calc as mpcalc
 from metpy.interpolate import interpolate_to_isosurface
 from metpy.units import units
-
+import numpy as np
 #%%
 
 def cal_theta_on2pvu(ta, ua, va):
@@ -57,7 +57,21 @@ def cal_theta_on2pvu(ta, ua, va):
 
 #%%
 
-def cal_pv(ta, ua, va):
+def interpolate_isent(tmpk, pv, isentlevs, pres):
+    """
+    Interpolate the potential vorticity to the isentropic surface.
+    """
+    isent_pv = mpcalc.isentropic_interpolation(
+        isentlevs,
+        pres * units('Pa'),
+        tmpk * units('K'),
+        pv * units("kelvin meter^2 / kilogram / second"),
+    )
+
+    return isent_pv
+#%%
+
+def cal_pv_isent(ta, ua, va):
 
     ds = xr.Dataset({'ua': ua, 'va': va, 'ta': ta})
     ds = ds.metpy.parse_cf()
@@ -87,5 +101,32 @@ def cal_pv(ta, ua, va):
                                                 vwnd,
                                            )
   
-    return pv
+
+    # Define isentropic levels as a numpy array with units
+    isentlevs = [320, 330, 340] * units('K')
+
+
+
+    isent_pvs = []
+    for time in pv.time:
+        _, isent_pv = mpcalc.isentropic_interpolation(
+            isentlevs,
+            pres,
+            tmpk.sel(time=time),
+            pv.sel(time=time),
+        )
+
+        # conver to xarray DataArray
+        isent_pv = xr.DataArray(
+            isent_pv,
+            dims=["isentlev", "lat", "lon"],
+            coords={
+                "isentlev": isentlevs,
+                "lat": pv.lat,
+                "lon": pv.lon,
+            },
+        )
+
+        isent_pvs.append(isent_pv)
+    isent_pv = xr.concat(isent_pvs, dim="time").metpy.dequantify()
 
