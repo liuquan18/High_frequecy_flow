@@ -35,8 +35,8 @@ def read_all_data(decade,ens, **kwargs):
     NAO_neg = read_NAO_extremes_single_ens('neg', decade, ens )
 
     logging.info("reading wave breaking data")
-    AWB = read_wb_single_ens(decade, ens, 'awb')
-    CWB = read_wb_single_ens(decade, ens, 'cwb')
+    AWB = read_wb_single_ens(decade, ens, 'awb', type_by='orientation')
+    CWB = read_wb_single_ens(decade, ens, 'cwb', type_by='orientation')
 
     logging.info("reading AV data")
     AV = read_prime_single_ens(decade, ens, 'av', suffix = '', name = 'AV')
