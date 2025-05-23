@@ -19,11 +19,11 @@ def read_comp_var(var, phase, decade, time_window = (-5, 5), **kwargs):
     ds = ds.mean(dim=("time", "ens"))
     return ds
 #%%
-def read_comp_wb(decade, wb_type, phase, time_window = (-5, 5)):
+def read_comp_wb(decade, wb_type, phase, time_window = (-15, 0)):
     basedir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_range/{wb_type}_{phase}_{decade}.nc"
     ds = xr.open_dataset(basedir).flag
     ds = ds.sel(time=slice(*time_window))
-    ds = ds.mean(dim=("time", "ens"))
+    ds = ds.sum(dim=("time", "ens"))
     return ds
 # %%
 uhat_composiste = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/"
@@ -233,4 +233,9 @@ AWB_diff_first.plot(
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
 )
+
+# add coastlines and gridlines
+for ax in axes.flatten():
+    ax.coastlines(color="grey", linewidth=1)
+
 # %%
