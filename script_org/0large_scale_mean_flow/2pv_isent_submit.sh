@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=2pv
-#SBATCH --time=01:00:00
+#SBATCH --time=03:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=5
+#SBATCH --ntasks-per-node=2
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
@@ -11,4 +11,4 @@
 
 
 
-mpirun -n 5 python 2pv_isent.py $1
+mpirun -n 2 python 2pv_isent.py $1

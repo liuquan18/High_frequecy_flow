@@ -2,7 +2,7 @@
 import xarray as xr
 import numpy as np
 
-from src.dynamics.theta_on_pv import cal_pv
+from src.dynamics.theta_on_pv import cal_pv_isent
 # %%
 import logging
 import os
@@ -57,10 +57,14 @@ for i, dec in enumerate(single_decades):
     ta = xr.open_dataset(ta_file[0]).ta
 
     # calculate theta on 2PVU
-    pv = cal_pv(ta, ua, va)
+    pv = cal_pv_isent(ta, ua, va)
 
     # drop the 'metpy_crs'
-    pv = pv.drop_vars("metpy_crs")
+    try:
+        pv = pv.drop_vars("metpy_crs")
+    except KeyError:
+        # If the variable does not exist, we can safely ignore this error
+        pass
 
     # rename the variable
     pv.name = "pv"
