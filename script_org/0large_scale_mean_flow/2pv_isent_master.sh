@@ -5,5 +5,5 @@ for ens in {1..50}
 do
     echo "Ensemble member ${ens}"
     # run the python script
-    sbatch 2pv_submit_isent.sh ${ens}
+    sbatch 2pv_isent_submit.sh ${ens}
 done
