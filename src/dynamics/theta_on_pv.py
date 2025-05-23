@@ -55,3 +55,37 @@ def cal_theta_on2pvu(ta, ua, va):
 
     return pv, theta_DT
 
+#%%
+
+def cal_pv(ta, ua, va):
+
+    ds = xr.Dataset({'ua': ua, 'va': va, 'ta': ta})
+    ds = ds.metpy.parse_cf()
+
+    pres = ds['plev']* units('Pa')
+
+    tmpk_var = ds['ta']
+    tmpk = mpcalc.smooth_n_point(tmpk_var, 5, 2)
+    thta = mpcalc.potential_temperature(pres, tmpk)
+    thta = thta.transpose('time', 'plev','lat','lon')
+
+    uwnd_var = ds['ua'].squeeze()
+    vwnd_var = ds['va'].squeeze()   
+    uwnd = mpcalc.smooth_n_point(uwnd_var, 5, 2)
+    vwnd = mpcalc.smooth_n_point(vwnd_var, 5, 2)
+
+
+    lons = ds.lon
+    lats = ds.lat
+    # Compute dx and dy spacing for use in vorticity calculation
+    dx, dy = mpcalc.lat_lon_grid_deltas(lons, lats)
+
+    # Comput the PV on all isobaric surfaces
+    pv = mpcalc.potential_vorticity_baroclinic(thta,
+                                                pres, 
+                                                uwnd, 
+                                                vwnd,
+                                           )
+  
+    return pv
+
