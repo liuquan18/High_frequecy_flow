@@ -193,31 +193,6 @@ def read_composite_ERA5(var, name, before="15_5", return_as = 'diff'):
         return diff.compute()
 
 
-# %%
-def read_MPI_GE_uhat():
-    uhat_composiste = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/"
-    uhat_pos_first10 = xr.open_dataarray(
-        f"{uhat_composiste}jetstream_MJJAS_first10_pos.nc"
-    )
-    uhat_neg_first10 = xr.open_dataarray(
-        f"{uhat_composiste}jetstream_MJJAS_first10_neg.nc"
-    )
-
-    uhat_pos_last10 = xr.open_dataarray(
-        f"{uhat_composiste}jetstream_MJJAS_last10_pos.nc"
-    )
-    uhat_neg_last10 = xr.open_dataarray(
-        f"{uhat_composiste}jetstream_MJJAS_last10_neg.nc"
-    )
-
-    uhat_NAO_first = uhat_pos_first10 - uhat_neg_first10
-    uhat_NAO_last = uhat_pos_last10 - uhat_neg_last10
-
-    uhat_NAO_first = postprocess(uhat_NAO_first)
-    uhat_NAO_last = postprocess(uhat_NAO_last)
-    return uhat_NAO_first, uhat_NAO_last
-
-
 
 
 def read_climatology(var, decade, **kwargs):
