@@ -34,7 +34,7 @@ def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='l
 
         if nplev > 1:
 
-            projected_pcs = xr.apply_ufunc(
+            Projected_pcs = xr.apply_ufunc(
                 lambda x, y: x.dot(y.T),
                 field_flat,
                 eof_flat,
@@ -43,7 +43,6 @@ def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='l
                 vectorize=True,
                 dask='allowed',
             )
-
 
         else:
             Projected_pcs = field_flat.dot(eof_flat.T)
