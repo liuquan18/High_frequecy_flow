@@ -129,7 +129,7 @@ fig, axes = plt.subplots(
     nrows = 3,
     ncols = 3,
     figsize = (12, 10),
-    subplot_kw={"projection": ccrs.Orthographic(-30, 90)},
+    subplot_kw={"projection": ccrs.Orthographic(-30, 75)},
     constrained_layout = True,
 )
 # rows for different variables
@@ -235,7 +235,139 @@ AWB_diff_first.plot(
 )
 
 # add coastlines and gridlines
-for ax in axes.flatten():
+for ax in axes[0,:].flatten():
     ax.coastlines(color="grey", linewidth=1)
+    # gridlines
+    gl = ax.gridlines(
+        draw_labels=True,
+        linewidth=1,
+        color="grey",
+        alpha=0.5,
+        linestyle="--",
+    )
+
+# %%
+# %%
+# last 10 years
+fig, axes = plt.subplots(
+    nrows = 3,
+    ncols = 3,
+    figsize = (12, 10),
+    subplot_kw={"projection": ccrs.Orthographic(-30, 75)},
+    constrained_layout = True,
+)
+# rows for different variables
+# columns for pos, neg, diff
+# uhat
+uhat_pos_last10.plot.contourf(
+    ax=axes[0, 0],
+    levels=uhat_levels_div,
+    cmap='jet',
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+
+uhat_neg_last10.plot.contourf(
+    ax=axes[0, 1],
+    levels=uhat_levels_div,
+    cmap='jet',
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+
+uhat_NAO_diff_last.plot.contourf(
+    ax=axes[0, 2],
+    levels=uhat_levels_div,
+    cmap='jet',
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+
+# theta
+theta_pos_last.plot.contourf(
+    ax=axes[1, 0],
+    levels=temp_levels,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+theta_neg_last.plot.contourf(
+    ax=axes[1, 1],
+    levels=temp_levels,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+theta_diff_last.plot.contourf(
+    ax=axes[1, 2],
+    levels=temp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+
+# wind quiver
+wnd_quiver = axes[1,0].quiver(
+    wnd_pos_last["lon"].values[::5],
+    wnd_pos_last.lat[::5],
+    wnd_pos_last["ua"].values[::5, ::5],
+    wnd_pos_last["va"].values[::5, ::5],
+    transform=ccrs.PlateCarree(),
+    scale=wnd_scale,
+    color="black",
+)
+
+# wind quiver
+wnd_quiver = axes[1,1].quiver(
+    wnd_neg_last["lon"].values[::5],
+    wnd_neg_last.lat[::5],
+    wnd_neg_last["ua"].values[::5, ::5],
+    wnd_neg_last["va"].values[::5, ::5],
+    transform=ccrs.PlateCarree(),
+    scale=wnd_scale,
+    color="black",
+)
+
+# wind quiver
+wnd_quiver = axes[1,2].quiver(
+    wnd_diff_last["lon"].values[::5],
+    wnd_diff_last.lat[::5],
+    wnd_diff_last["ua"].values[::5, ::5],
+    wnd_diff_last["va"].values[::5, ::5],
+    transform=ccrs.PlateCarree(),
+    scale=wnd_scale_div,
+    color="black",
+)
+
+# wb
+AWB_pos_last.plot(
+    ax=axes[2, 0],
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+
+CWB_neg_last.plot(
+    ax=axes[2, 1],
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+
+AWB_diff_last.plot(
+    ax=axes[2, 2],
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+
+# add coastlines and gridlines
+for ax in axes[0,:].flatten():
+    ax.coastlines(color="grey", linewidth=1)
+    # gridlines
+    gl = ax.gridlines(
+        draw_labels=True,
+        linewidth=1,
+        color="grey",
+        alpha=0.5,
+        linestyle="--",
+    )
 
 # %%
