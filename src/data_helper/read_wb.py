@@ -144,11 +144,29 @@ def read_wb(dec, type, NAO_region=False, overlap_threshold=0.5, convert_lon = Fa
     return wbs
 
 
-def read_wb_single_ens(dec, ens, wb_type, convert_lon = False):
-    base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_{wb_type}_th3_daily/"
-    file_path = base_dir + f"r{ens}i1p1f1/*{dec}*.csv"
-    file = glob.glob(file_path)[0]
-    df = pd.read_csv(file)
+def read_wb_single_ens(dec, ens, wb_type, convert_lon = False, type_by = 'intensity'):
+    if type_by == 'intensity':
+        base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_{wb_type}_th3_daily/"
+        file_path = base_dir + f"r{ens}i1p1f1/*{dec}*.csv"
+        file = glob.glob(file_path)[0]
+        df = pd.read_csv(file)
+    elif type_by == 'orientation':
+        # combine the "awb" and "cwb" files to select the orientation
+        base_dir_awb = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_awb_th3_daily/"
+        file_path_awb = base_dir_awb + f"r{ens}i1p1f1/*{dec}*.csv"
+        file_awb = glob.glob(file_path_awb)[0]
+        df_awb = pd.read_csv(file_awb)
+        base_dir_cwb = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_cwb_th3_daily/"
+        file_path_cwb = base_dir_cwb + f"r{ens}i1p1f1/*{dec}*.csv"
+        file_cwb = glob.glob(file_path_cwb)[0]
+        df_cwb = pd.read_csv(file_cwb)
+        # combine the two dataframes
+        df = pd.concat([df_awb, df_cwb], axis=0)
+        if wb_type == "awb":
+            df = df[df["orientation"] == "anticyclonic"]
+        elif wb_type == "cwb":
+            df = df[df["orientation"] == "cyclonic"]
+    
     df["geometry"] = df["geometry"].apply(wkt.loads)
     gdf = gpd.GeoDataFrame(df, geometry="geometry")
     # convert coordinates
