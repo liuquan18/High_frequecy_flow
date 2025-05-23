@@ -62,7 +62,7 @@ for i, dec in enumerate(single_decades):
     # drop the 'metpy_crs'
     try:
         pv = pv.drop_vars("metpy_crs")
-    except KeyError:
+    except AttributeError:
         # If the variable does not exist, we can safely ignore this error
         pass
 
