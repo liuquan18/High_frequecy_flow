@@ -36,9 +36,12 @@ ta_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ta
 
 # save path
 theta_2pvu_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_2pvu_daily/r{ens}i1p1f1/"
+pv_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pv_daily/r{ens}i1p1f1/"
 if rank == 0:
     if not os.path.exists(theta_2pvu_path):
         os.makedirs(theta_2pvu_path)
+    if not os.path.exists(pv_path):
+        os.makedirs(pv_path)
 
 # %%
 all_decades = np.arange(1850, 2100, 10)
@@ -57,12 +60,20 @@ for i, dec in enumerate(single_decades):
     ta = xr.open_dataset(ta_file[0]).ta
 
     # calculate theta on 2PVU
-    theta_2pvu = cal_theta_on2pvu(ta, ua, va)
+    pv, theta_2pvu = cal_theta_on2pvu(ta, ua, va)
 
     # drop the 'metpy_crs'
     theta_2pvu = theta_2pvu.drop_vars("metpy_crs")
+    pv = pv.drop_vars("metpy_crs")
+
+    # rename the variable
+    theta_2pvu = theta_2pvu.rename({"__xarray_dataarray_variable__": "theta_2pvu"})
+    pv = pv.rename({"__xarray_dataarray_variable__": "pv"})
 
     # save data
     theta_2pvu.to_netcdf(
         theta_2pvu_path + f"theta_2pvu_day_MPI-ESM1-2-LR_r{ens}i1p1f1_gn_{dec}0501-{dec+9}0930.nc"
+    )
+    pv.to_netcdf(
+        pv_path + f"pv_day_MPI-ESM1-2-LR_r{ens}i1p1f1_gn_{dec}0501-{dec+9}0930.nc"
     )
