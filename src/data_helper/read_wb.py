@@ -116,7 +116,7 @@ def filter_by_overlap_threshold(gdf, region_box, threshold=0.5):
 # %%
 
 
-def read_wb(dec, type, NAO_region=False, overlap_threshold=0.5):
+def read_wb(dec, type, NAO_region=False, overlap_threshold=0.5, convert_lon = False):
 
     base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_{type}_th3_daily/"
 
@@ -129,7 +129,8 @@ def read_wb(dec, type, NAO_region=False, overlap_threshold=0.5):
         df["geometry"] = df["geometry"].apply(wkt.loads)
         gdf = gpd.GeoDataFrame(df, geometry="geometry")
         # convert coordinates
-        gdf.geometry = gdf.geometry.apply(convert_geometry)
+        if convert_lon:
+            gdf.geometry = gdf.geometry.apply(convert_geometry)
         gdf["ens"] = ens
         wbs.append(gdf)
 
@@ -143,7 +144,7 @@ def read_wb(dec, type, NAO_region=False, overlap_threshold=0.5):
     return wbs
 
 
-def read_wb_single_ens(dec, ens, wb_type):
+def read_wb_single_ens(dec, ens, wb_type, convert_lon = False):
     base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/WB_{wb_type}_th3_daily/"
     file_path = base_dir + f"r{ens}i1p1f1/*{dec}*.csv"
     file = glob.glob(file_path)[0]
@@ -151,7 +152,8 @@ def read_wb_single_ens(dec, ens, wb_type):
     df["geometry"] = df["geometry"].apply(wkt.loads)
     gdf = gpd.GeoDataFrame(df, geometry="geometry")
     # convert coordinates
-    gdf.geometry = gdf.geometry.apply(convert_geometry)
+    if convert_lon:
+        gdf.geometry = gdf.geometry.apply(convert_geometry)
     gdf["ens"] = ens
 
 
