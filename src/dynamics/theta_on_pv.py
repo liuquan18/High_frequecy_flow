@@ -53,5 +53,5 @@ def cal_theta_on2pvu(ta, ua, va):
     theta_DT = theta_DT.sel(lat=slice(0, 90))
 
 
-    return theta_DT
+    return pv, theta_DT
 
