@@ -48,6 +48,7 @@ for i, dec in enumerate(single_decades):
     logging.info(f"rank {rank} Processing {i+1}/{len(single_decades)}")
 
     # read data
+    logging.info(f"   reading data for {dec}...")
     ua_file = glob.glob(ua_path + f"*{dec}*.nc")
     va_file = glob.glob(va_path + f"*{dec}*.nc")
     ta_file = glob.glob(ta_path + f"*{dec}*.nc")
@@ -56,6 +57,7 @@ for i, dec in enumerate(single_decades):
     va = xr.open_dataset(va_file[0]).va
     ta = xr.open_dataset(ta_file[0]).ta
 
+    logging.info(f"   calculating pv...")
     # calculate theta on 2PVU
     pv = cal_pv_isent(ta, ua, va)
 
@@ -66,10 +68,8 @@ for i, dec in enumerate(single_decades):
         # If the variable does not exist, we can safely ignore this error
         pass
 
-    # rename the variable
-    pv.name = "pv"
-
-
+    pv = pv.metpy.dequantify()
+    logging.info (f"   saving data for {dec}...")
     pv.to_netcdf(
         pv_path + f"pv_day_MPI-ESM1-2-LR_r{ens}i1p1f1_gn_{dec}0501-{dec+9}0930.nc"
     )

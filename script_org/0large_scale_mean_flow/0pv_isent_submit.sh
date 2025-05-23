@@ -11,4 +11,4 @@
 
 
 
-mpirun -n 2 python 2pv_isent.py $1
+mpirun -n 2 python 0pv_isent.py $1
