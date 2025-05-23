@@ -26,20 +26,25 @@ def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='l
     # dorpna
     field_flat = field_flat.dropna(dim='spatial')
     eof_flat = eof_flat.dropna(dim='spatial')
+    eof_flat = eof_flat.sortby('plev', ascending = False)
 
     # for all plevs:
     if plev is None:
         nplev = field_data.plev.size
 
         if nplev > 1:
-            Projected_pcs = []
-            for plev in field_flat.plev:
-                field_f = field_flat.sel(plev = plev)
-                eof_f = eof_flat.sel(plev = plev)
-                projected_pcs = field_f.dot(eof_f.T)
-                Projected_pcs.append(projected_pcs)
 
-            Projected_pcs = xr.concat(Projected_pcs, dim = 'plev')
+            projected_pcs = xr.apply_ufunc(
+                lambda x, y: x.dot(y.T),
+                field_flat,
+                eof_flat,
+                input_core_dims=[['spatial'], ['spatial']],
+                exclude_dims={'spatial'},
+                vectorize=True,
+                dask='allowed',
+            )
+
+
         else:
             Projected_pcs = field_flat.dot(eof_flat.T)
     else:
