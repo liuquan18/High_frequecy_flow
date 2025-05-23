@@ -40,7 +40,6 @@ def read_all_data(decade,ens, **kwargs):
 
     logging.info("reading AV data")
     AV = read_prime_single_ens(decade, ens, 'av', suffix = '', name = 'AV')
-    
 
     # convert events to arrays
     AWB_array = wb.to_xarray(AV, AWB)
