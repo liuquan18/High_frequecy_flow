@@ -798,7 +798,7 @@ fig, axes = plt.subplots(
     constrained_layout=True,
 )
 v = uhat_levels_div
-viridis = mpl.colormaps['jet']
+viridis = mpl.colormaps['RdBu_r']
 my_cmap = ListedColormap(viridis(np.linspace(0, 1, len(v))))
 
 # Plot data without colorbars
@@ -846,6 +846,8 @@ for coli, map in enumerate([pos_map, neg_map, diff_map]):
 
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/uhat_2x3.pdf", bbox_inches='tight', dpi=300)
+
+# %%
 
 #%%
 # Plot 2: Potential temperature
