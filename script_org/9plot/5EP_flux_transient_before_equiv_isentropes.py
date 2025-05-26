@@ -12,7 +12,7 @@ from src.dynamics.EP_flux import (
 
 
 # %%
-def read_EP_flux(phase, decade, ano=False, isentrope=True, region="NPC", smooth=True):
+def read_EP_flux(phase, decade, ano=False, isentrope=False, region="NPC", smooth=True):
     if isentrope:
         EP_flux_dir = (
             "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux_isen/"
@@ -35,8 +35,6 @@ def read_EP_flux(phase, decade, ano=False, isentrope=True, region="NPC", smooth=
         F_phi = NAL_mean(F_phi)
         F_p = NAL_mean(F_p)
         div = NAL_mean(div)
-    if smooth:
-        div = div.rolling(theta=3).mean()
 
     return F_phi, F_p, div
 
@@ -72,9 +70,9 @@ F_phi_neg_last_NAL, F_p_neg_last_NAL, div_neg_last_NAL = read_EP_flux(
 )
 
 # %%
-scale = 1e17
-scale_div = 1e16
-levels = np.arange(-5, 5.1, 0.5)
+scale = 1e16
+scale_div = 1e15
+levels = np.arange(-10, 10.1, 1)
 levels_div = np.arange(-0.8, 0.81, 0.1)
 
 # %%
@@ -88,9 +86,9 @@ div_pos_first_NPC.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_first_NPC.lat[::3],
-    y=F_phi_pos_first_NPC.theta[::3],
-    ep1=F_phi_pos_first_NPC[::3, ::3],
-    ep2=F_p_pos_first_NPC[::3, ::3],
+    y=F_phi_pos_first_NPC.plev,
+    ep1=F_phi_pos_first_NPC[:, ::3],
+    ep2=F_p_pos_first_NPC[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
@@ -105,9 +103,9 @@ div_neg_first_NPC.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_neg_first_NPC.lat[::3],
-    y=F_phi_neg_first_NPC.theta[::3],
-    ep1=F_phi_neg_first_NPC[::3, ::3],
-    ep2=F_p_neg_first_NPC[::3, ::3],
+    y=F_phi_neg_first_NPC.plev,
+    ep1=F_phi_neg_first_NPC[:, ::3],
+    ep2=F_p_neg_first_NPC[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
@@ -123,9 +121,9 @@ div_diff_NPC.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_first_NPC.lat[::3],
-    y=F_phi_pos_first_NPC.theta[::3],
-    ep1=(F_phi_pos_first_NPC - F_phi_neg_first_NPC)[::3, ::3],
-    ep2=(F_p_pos_first_NPC - F_p_neg_first_NPC)[::3, ::3],
+    y=F_phi_pos_first_NPC.plev,
+    ep1=(F_phi_pos_first_NPC - F_phi_neg_first_NPC)[:, ::3],
+    ep2=(F_p_pos_first_NPC - F_p_neg_first_NPC)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
@@ -140,9 +138,9 @@ div_pos_last_NPC.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_last_NPC.lat[::3],
-    y=F_phi_pos_last_NPC.theta[::3],
-    ep1=F_phi_pos_last_NPC[::3, ::3],
-    ep2=F_p_pos_last_NPC[::3, ::3],
+    y=F_phi_pos_last_NPC.plev,
+    ep1=F_phi_pos_last_NPC[:, ::3],
+    ep2=F_p_pos_last_NPC[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
@@ -155,9 +153,9 @@ div_neg_last_NPC.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_neg_last_NPC.lat[::3],
-    y=F_phi_neg_last_NPC.theta[::3],
-    ep1=F_phi_neg_last_NPC[::3, ::3],
-    ep2=F_p_neg_last_NPC[::3, ::3],
+    y=F_phi_neg_last_NPC.plev,
+    ep1=F_phi_neg_last_NPC[:, ::3],
+    ep2=F_p_neg_last_NPC[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
@@ -172,9 +170,9 @@ div_diff_NPC_last.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_last_NPC.lat[::3],
-    y=F_phi_pos_last_NPC.theta[::3],
-    ep1=(F_phi_pos_last_NPC - F_phi_neg_last_NPC)[::3, ::3],
-    ep2=(F_p_pos_last_NPC - F_p_neg_last_NPC)[::3, ::3],
+    y=F_phi_pos_last_NPC.plev,
+    ep1=(F_phi_pos_last_NPC - F_phi_neg_last_NPC)[:, ::3],
+    ep2=(F_p_pos_last_NPC - F_p_neg_last_NPC)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
@@ -185,9 +183,10 @@ PlotEPfluxArrows(
     key_loc=(0.7, 0.95),
 )
 
-for ax in axes.flatten():
-    ax.set_ylim(280, 350)
 
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_NPC.pdf",
+    dpi=300,)
 
 # %%
 # new plot for NAL
@@ -199,9 +198,9 @@ div_pos_first_NAL.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_first_NAL.lat[::3],
-    y=F_phi_pos_first_NAL.theta[::3],
-    ep1=F_phi_pos_first_NAL[::3, ::3],
-    ep2=F_p_pos_first_NAL[::3, ::3],
+    y=F_phi_pos_first_NAL.plev,
+    ep1=F_phi_pos_first_NAL[:, ::3],
+    ep2=F_p_pos_first_NAL[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
@@ -215,9 +214,9 @@ div_neg_first_NAL.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_neg_first_NAL.lat[::3],
-    y=F_phi_neg_first_NAL.theta[::3],
-    ep1=F_phi_neg_first_NAL[::3, ::3],
-    ep2=F_p_neg_first_NAL[::3, ::3],
+    y=F_phi_neg_first_NAL.plev,
+    ep1=F_phi_neg_first_NAL[:, ::3],
+    ep2=F_p_neg_first_NAL[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
@@ -233,9 +232,9 @@ div_diff_NAL.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_first_NAL.lat[::3],
-    y=F_phi_pos_first_NAL.theta[::3],
-    ep1=(F_phi_pos_first_NAL - F_phi_neg_first_NAL)[::3, ::3],
-    ep2=(F_p_pos_first_NAL - F_p_neg_first_NAL)[::3, ::3],
+    y=F_phi_pos_first_NAL.plev,
+    ep1=(F_phi_pos_first_NAL - F_phi_neg_first_NAL)[:, ::3],
+    ep2=(F_p_pos_first_NAL - F_p_neg_first_NAL)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
@@ -250,9 +249,9 @@ div_pos_last_NAL.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_last_NAL.lat[::3],
-    y=F_phi_pos_last_NAL.theta[::3],
-    ep1=F_phi_pos_last_NAL[::3, ::3],
-    ep2=F_p_pos_last_NAL[::3, ::3],
+    y=F_phi_pos_last_NAL.plev,
+    ep1=F_phi_pos_last_NAL[:, ::3],
+    ep2=F_p_pos_last_NAL[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
@@ -265,9 +264,9 @@ div_neg_last_NAL.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_neg_last_NAL.lat[::3],
-    y=F_phi_neg_last_NAL.theta[::3],
-    ep1=F_phi_neg_last_NAL[::3, ::3],
-    ep2=F_p_neg_last_NAL[::3, ::3],
+    y=F_phi_neg_last_NAL.plev,
+    ep1=F_phi_neg_last_NAL[:, ::3],
+    ep2=F_p_neg_last_NAL[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
@@ -282,9 +281,9 @@ div_diff_NAL_last.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_last_NAL.lat[::3],
-    y=F_phi_pos_last_NAL.theta[::3],
-    ep1=(F_phi_pos_last_NAL - F_phi_neg_last_NAL)[::3, ::3],
-    ep2=(F_p_pos_last_NAL - F_p_neg_last_NAL)[::3, ::3],
+    y=F_phi_pos_last_NAL.plev,
+    ep1=(F_phi_pos_last_NAL - F_phi_neg_last_NAL)[:, ::3],
+    ep2=(F_p_pos_last_NAL - F_p_neg_last_NAL)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
@@ -295,8 +294,10 @@ PlotEPfluxArrows(
     key_loc=(0.7, 0.95),
 )
 
-for ax in axes.flatten():
-    ax.set_ylim(280, 350)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_NAL.pdf",
+    dpi=300,
+)
 
 # %%
 # new plot, only the difference, first row for first decade, second row for last decade
@@ -312,9 +313,9 @@ div_diff_NPC.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_first_NPC.lat[::3],
-    y=F_phi_pos_first_NPC.theta[::5],
-    ep1=(F_phi_pos_first_NPC - F_phi_neg_first_NPC)[::5, ::3],
-    ep2=(F_p_pos_first_NPC - F_p_neg_first_NPC)[::5, ::3],
+    y=F_phi_pos_first_NPC.plev,
+    ep1=(F_phi_pos_first_NPC - F_phi_neg_first_NPC)[:, ::3],
+    ep2=(F_p_pos_first_NPC - F_p_neg_first_NPC)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
@@ -333,9 +334,9 @@ div_diff_NAL.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_first_NAL.lat[::3],
-    y=F_phi_pos_first_NAL.theta[::5],
-    ep1=(F_phi_pos_first_NAL - F_phi_neg_first_NAL)[::5, ::3],
-    ep2=(F_p_pos_first_NAL - F_p_neg_first_NAL)[::5, ::3],
+    y=F_phi_pos_first_NAL.plev,
+    ep1=(F_phi_pos_first_NAL - F_phi_neg_first_NAL)[:, ::3],
+    ep2=(F_p_pos_first_NAL - F_p_neg_first_NAL)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
@@ -353,9 +354,9 @@ div_diff_NPC_last.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_last_NPC.lat[::3],
-    y=F_phi_pos_last_NPC.theta[::5],
-    ep1=(F_phi_pos_last_NPC - F_phi_neg_last_NPC)[::5, ::3],
-    ep2=(F_p_pos_last_NPC - F_p_neg_last_NPC)[::5, ::3],
+    y=F_phi_pos_last_NPC.plev,
+    ep1=(F_phi_pos_last_NPC - F_phi_neg_last_NPC)[:, ::3],
+    ep2=(F_p_pos_last_NPC - F_p_neg_last_NPC)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
@@ -372,9 +373,9 @@ div_map = div_diff_NAL_last.plot.contourf(
 )
 PlotEPfluxArrows(
     x=F_phi_pos_last_NAL.lat[::3],
-    y=F_phi_pos_last_NAL.theta[::5],
-    ep1=(F_phi_pos_last_NAL - F_phi_neg_last_NAL)[::5, ::3],
-    ep2=(F_p_pos_last_NAL - F_p_neg_last_NAL)[::5, ::3],
+    y=F_phi_pos_last_NAL.plev,
+    ep1=(F_phi_pos_last_NAL - F_phi_neg_last_NAL)[:, ::3],
+    ep2=(F_p_pos_last_NAL - F_p_neg_last_NAL)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
@@ -383,7 +384,6 @@ PlotEPfluxArrows(
     ax=axes[1, 1],
 )
 for ax in axes.flatten():
-    ax.set_ylim(285, 345)
     ax.set_xlim(0, 85)
     ax.set_xlabel("lat / °N")
     ax.set_ylabel(r"$\Theta_e$ / K")
@@ -397,7 +397,7 @@ cbar = fig.colorbar(
     orientation="vertical",
 )
 
-# add a, b, c
+# add a, b, c, d
 for i, ax in enumerate(axes.flatten()):
     ax.text(
         0.02,
@@ -409,5 +409,5 @@ for i, ax in enumerate(axes.flatten()):
     )
 
 plt.tight_layout(rect=[0, 0, 0.9, 1])  # Leave space on the right for the colorbar
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_isentropes_diff.pdf", dpi=300, bbox_inches="tight")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_diff.pdf", dpi=300, bbox_inches="tight")
 # %%
