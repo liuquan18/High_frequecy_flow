@@ -25,8 +25,9 @@ import importlib
 importlib.reload(read_variable)
 importlib.reload(util)
 # %%
-from src.data_helper.read_variable import read_composite_MPI  # noqa: E402
 from src.data_helper.read_variable import read_climatology
+from src.data_helper.read_composite import read_comp_var
+
 
 
 # %%
@@ -40,8 +41,10 @@ def to_plot_data(eke):
 
 #%%%
 # config
-time_window = "6_0"
-ano = True
+time_window = (-10, 5)
+suffix = ""
+remove_zonmean = True
+
 # %%
 uhat_levels_div = np.arange(-12, 13, 2)
 upvp_levels_div = np.arange(-8, 9, 2)
@@ -53,55 +56,50 @@ scale_hus = 5e4
 # %%
 ###### read upvp
 # climatology
-upvp_first_clim = read_climatology("upvp", "1850", name="upvp")
-upvp_last_clim = read_climatology("upvp", "2090", name="upvp")
+upvp_clim_first = read_climatology("upvp", "1850", name="upvp")
+upvp_clim_last = read_climatology("upvp", "2090", name="upvp")
 # pos ano
-upvp_first_pos = read_composite_MPI(
-    "upvp", "upvp", 1850, before=time_window, return_as="pos",ano = ano
+upvp_pos_first = read_comp_var(
+    "upvp", "pos", 1850, time_window=time_window, name="upvp", suffix=suffix, remove_zonmean=remove_zonmean
 )
-upvp_last_pos = read_composite_MPI(
-    "upvp", "upvp", 2090, before=time_window, return_as="pos",ano = ano
+upvp_neg_first = read_comp_var(
+    "upvp", "neg", 1850, time_window=time_window, name="upvp", suffix=suffix, remove_zonmean=remove_zonmean
 )
-# neg ano
-upvp_first_neg = read_composite_MPI(
-    "upvp", "upvp", 1850, before=time_window, return_as="neg",ano = ano
+
+upvp_pos_last = read_comp_var(
+    "upvp", "pos", 2090, time_window=time_window, name="upvp", suffix=suffix, remove_zonmean=remove_zonmean
 )
-upvp_last_neg = read_composite_MPI(
-    "upvp", "upvp", 2090, before=time_window, return_as="neg",ano = ano
+upvp_neg_last = read_comp_var(
+    "upvp", "neg", 2090, time_window=time_window, name="upvp", suffix=suffix, remove_zonmean=remove_zonmean
 )
+
 # diff
-upvp_first_diff = read_composite_MPI(
-    "upvp", "upvp", 1850, before=time_window,ano = ano, return_as="diff"
-)
-upvp_last_diff = read_composite_MPI(
-    "upvp", "upvp", 2090, before=time_window,ano = ano, return_as="diff"
-)
+upvp_diff_first = upvp_pos_first - upvp_neg_first
+upvp_diff_last = upvp_pos_last - upvp_neg_last
+
 # %%
 ###### read heat flux
 # climatology
-vpetp_first_clim = read_climatology("vpetp", "1850", name="vpetp")
-vpetp_last_clim = read_climatology("vpetp", "2090", name="vpetp")
+vpetp_clim_first = read_climatology("vpetp", "1850", name="vpetp")
+vpetp_clim_last = read_climatology("vpetp", "2090", name="vpetp")
 # pos ano
-vpetp_first_pos = read_composite_MPI(
-    "vpetp", "vpetp", 1850, before=time_window, return_as="pos",ano = ano, smooth_value=3,
+vpetp_pos_first = read_comp_var(
+    "vpetp", "pos", 1850, time_window=time_window, name="vpetp", suffix=suffix, remove_zonmean=remove_zonmean
 )
-vpetp_last_pos = read_composite_MPI(
-    "vpetp", "vpetp", 2090, before=time_window, return_as="pos",ano = ano, smooth_value=3,
-)
-# neg ano
-vpetp_first_neg = read_composite_MPI(
-    "vpetp", "vpetp", 1850, before=time_window, return_as="neg",ano = ano, smooth_value=3,
-)
-vpetp_last_neg = read_composite_MPI(
-    "vpetp", "vpetp", 2090, before=time_window, return_as="neg",ano = ano, smooth_value=3,
+vpetp_neg_first = read_comp_var(
+    "vpetp", "neg", 1850, time_window=time_window, name="vpetp", suffix=suffix, remove_zonmean=remove_zonmean
 )
 
-vpetp_first_diff = read_composite_MPI(
-    "vpetp", "vpetp", 1850, before=time_window,ano = ano, return_as="diff", smooth_value=3,
+vpetp_pos_last = read_comp_var(
+    "vpetp", "pos", 2090, time_window=time_window, name="vpetp", suffix=suffix, remove_zonmean=remove_zonmean
 )
-vpetp_last_diff = read_composite_MPI(
-    "vpetp", "vpetp", 2090, before=time_window,ano = ano, return_as="diff", smooth_value=3,
+vpetp_neg_last = read_comp_var(
+    "vpetp", "neg", 2090, time_window=time_window, name="vpetp", suffix=suffix, remove_zonmean=remove_zonmean
 )
+
+# diff
+vpetp_diff_first = vpetp_pos_first - vpetp_neg_first
+vpetp_diff_last = vpetp_pos_last - vpetp_neg_last
 
 
 # # smooth the data
@@ -118,29 +116,30 @@ vpetp_last_diff = read_composite_MPI(
 # vpetp_last_diff = map_smooth(vpetp_last_diff, lon_win=10, lat_win=3)
 
 # profile
-vpetp_profile_first_clim = vpetp_first_clim.sel(lat=slice(20, 50)).mean(dim="lat")
-vpetp_profile_last_clim = vpetp_last_clim.sel(lat=slice(20, 50)).mean(dim="lat")
+vpetp_profile_clim_first = vpetp_clim_first.sel(lat=slice(20, 45)).mean(dim="lat")
+vpetp_profile_clim_last = vpetp_clim_last.sel(lat=slice(20, 45)).mean(dim="lat")
 
 # pos ano
-vpetp_profile_first_pos = vpetp_first_pos.sel(lat=slice(20, 50)).mean(dim="lat")
-vpetp_profile_last_pos = vpetp_last_pos.sel(lat=slice(20, 50)).mean(dim="lat")
+vpetp_profile_pos_first = vpetp_pos_first.sel(lat=slice(20, 45)).mean(dim="lat")
+vpetp_profile_pos_last = vpetp_pos_last.sel(lat=slice(20, 45)).mean(dim="lat")
 
 # neg ano
-vpetp_profile_first_neg = vpetp_first_neg.sel(lat=slice(20, 50)).mean(dim="lat")
-vpetp_profile_last_neg = vpetp_last_neg.sel(lat=slice(20, 50)).mean(dim="lat")
+vpetp_profile_neg_first = vpetp_neg_first.sel(lat=slice(20, 45)).mean(dim="lat")
+vpetp_profile_neg_last = vpetp_neg_last.sel(lat=slice(20, 45)).mean(dim="lat")
 
 # diff
-vpetp_profile_first_diff = vpetp_first_diff.sel(lat=slice(20, 50)).mean(dim="lat")
-vpetp_profile_last_diff = vpetp_last_diff.sel(lat=slice(20, 50)).mean(dim="lat")
+vpetp_profile_diff_first = vpetp_diff_first.sel(lat=slice(20, 45)).mean(dim="lat")
+vpetp_profile_diff_last = vpetp_diff_last.sel(lat=slice(20, 45)).mean(dim="lat")
+
 # fake data to plot
-vpetp_first_clim_plot = to_plot_data(vpetp_profile_first_clim)
-vpetp_last_clim_plot = to_plot_data(vpetp_profile_last_clim)
-vpetp_first_pos_plot = to_plot_data(vpetp_profile_first_pos)
-vpetp_last_pos_plot = to_plot_data(vpetp_profile_last_pos)
-vpetp_first_neg_plot = to_plot_data(vpetp_profile_first_neg)
-vpetp_last_neg_plot = to_plot_data(vpetp_profile_last_neg)
-vpetp_first_diff_plot = to_plot_data(vpetp_profile_first_diff)
-vpetp_last_diff_plot = to_plot_data(vpetp_profile_last_diff)
+vpetp_first_clim_plot = to_plot_data(vpetp_profile_clim_first)
+vpetp_last_clim_plot = to_plot_data(vpetp_profile_clim_last)
+vpetp_first_pos_plot = to_plot_data(vpetp_profile_pos_first)
+vpetp_last_pos_plot = to_plot_data(vpetp_profile_pos_last)
+vpetp_first_neg_plot = to_plot_data(vpetp_profile_neg_first)
+vpetp_last_neg_plot = to_plot_data(vpetp_profile_neg_last)
+vpetp_first_diff_plot = to_plot_data(vpetp_profile_diff_first)
+vpetp_last_diff_plot = to_plot_data(vpetp_profile_diff_last)
 
 # %%
 ####### read moisture flux
@@ -165,32 +164,32 @@ qp_last_clim = xr.Dataset(
     {"u": upqp_last_clim * 1e3, "v": vpqp_last_clim * 1e3}
 )  # g/kg m/s
 # pos ano
-upqp_first_pos = read_composite_MPI(
-    "upqp", "upqp", 1850, before=time_window, return_as="pos",ano = ano
+upqp_first_pos = read_comp_var(
+    "upqp", "pos", 1850, time_window=time_window, name="upqp", suffix=suffix
 )
-upqp_last_pos = read_composite_MPI(
-    "upqp", "upqp", 2090, before=time_window, return_as="pos",ano = ano
+upqp_last_pos = read_comp_var(
+    "upqp", "pos", 2090, time_window=time_window, name="upqp", suffix=suffix
 )
 # neg ano
-upqp_first_neg = read_composite_MPI(
-    "upqp", "upqp", 1850, before=time_window, return_as="neg",ano = ano
+upqp_first_neg = read_comp_var(
+    "upqp", "neg", 1850, time_window=time_window, name="upqp", suffix=suffix
 )
-upqp_last_neg = read_composite_MPI(
-    "upqp", "upqp", 2090, before=time_window, return_as="neg",ano = ano
+upqp_last_neg = read_comp_var(
+    "upqp", "neg", 2090, time_window=time_window, name="upqp", suffix=suffix
 )
 
-vpqp_first_pos = read_composite_MPI(
-    "vpqp", "vpqp", 1850, before=time_window, return_as="pos",ano = ano
+vpqp_first_pos = read_comp_var(
+    "vpqp", "pos", 1850, time_window=time_window, name="vpqp", suffix=suffix
 )
-vpqp_last_pos = read_composite_MPI(
-    "vpqp", "vpqp", 2090, before=time_window, return_as="pos",ano = ano
+vpqp_last_pos = read_comp_var(
+    "vpqp", "pos", 2090, time_window=time_window, name="vpqp", suffix=suffix
 )
 # neg ano
-vpqp_first_neg = read_composite_MPI(
-    "vpqp", "vpqp", 1850, before=time_window, return_as="neg",ano = ano
+vpqp_first_neg = read_comp_var(
+    "vpqp", "neg", 1850, time_window=time_window, name="vpqp", suffix=suffix
 )
-vpqp_last_neg = read_composite_MPI(
-    "vpqp", "vpqp", 2090, before=time_window, return_as="neg",ano = ano
+vpqp_last_neg = read_comp_var(
+    "vpqp", "neg", 2090, time_window=time_window, name="vpqp", suffix=suffix
 )
 # integrate qp
 upqp_first_pos = read_variable.vert_integrate(upqp_first_pos)
@@ -270,7 +269,7 @@ diff_vptp_map_ax = axes[2, 2]
 
 # map of upvp
 # pos
-map_upvp = upvp_first_pos.sel(plev=25000).plot.contourf(
+map_upvp = upvp_pos_first.sel(plev=25000).plot.contourf(
     ax=pos_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=upvp_levels_div,
@@ -287,7 +286,7 @@ map_upvp = upvp_first_pos.sel(plev=25000).plot.contourf(
 )
 
 # climatology as contour
-upvp_first_clim.sel(plev=25000).plot.contour(
+upvp_clim_first.sel(plev=25000).plot.contour(
     ax=pos_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
@@ -301,7 +300,7 @@ upvp_first_clim.sel(plev=25000).plot.contour(
 )
 
 # neg
-map_upvp = upvp_first_neg.sel(plev=25000).plot.contourf(
+map_upvp = upvp_neg_first.sel(plev=25000).plot.contourf(
     ax=neg_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=upvp_levels_div,
@@ -317,7 +316,7 @@ map_upvp = upvp_first_neg.sel(plev=25000).plot.contourf(
     },
 )
 # climatology as contour
-upvp_first_clim.sel(plev=25000).plot.contour(
+upvp_clim_first.sel(plev=25000).plot.contour(
     ax=neg_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
@@ -330,7 +329,7 @@ upvp_first_clim.sel(plev=25000).plot.contour(
     zorder=10,
 )
 # diff
-map_upvp = upvp_first_diff.sel(plev=25000).plot.contourf(
+map_upvp = upvp_diff_first.sel(plev=25000).plot.contourf(
     ax=diff_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=upvp_levels_div,
@@ -346,7 +345,7 @@ map_upvp = upvp_first_diff.sel(plev=25000).plot.contourf(
     },
 )
 # climatology as contour
-upvp_first_clim.sel(plev=25000).plot.contour(
+upvp_clim_first.sel(plev=25000).plot.contour(
     ax=diff_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
@@ -448,7 +447,7 @@ vpetp_first_clim_plot.plot.contour(
 
 # map of vpetp
 # pos
-map_vpetp = vpetp_last_pos.sel(plev=85000).plot.contourf(
+map_vpetp = vpetp_pos_first.sel(plev=85000).plot.contourf(
     ax=pos_vptp_map_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
@@ -474,7 +473,7 @@ qflux_arrow = pos_vptp_map_ax.quiver(
 )
 
 # neg
-map_vpetp = vpetp_last_neg.sel(plev=85000).plot.contourf(
+map_vpetp = vpetp_neg_first.sel(plev=85000).plot.contourf(
     ax=neg_vptp_map_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
@@ -500,7 +499,7 @@ qflux_arrow = neg_vptp_map_ax.quiver(
 )
 
 # diff
-map_vpetp = vpetp_last_diff.sel(plev=85000).plot.contourf(
+map_vpetp = vpetp_diff_first.sel(plev=85000).plot.contourf(
     ax=diff_vptp_map_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
@@ -596,7 +595,7 @@ for ax in [
 
 
 plt.tight_layout()
-plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_first.pdf", dpi=300)
+# plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_first.pdf", dpi=300)
 # %%
 # last decade
 fig, axes = plt.subplots(
@@ -622,7 +621,7 @@ diff_vptp_map_ax = axes[2, 2]
 
 # map of upvp
 # pos
-map_upvp = upvp_last_pos.sel(plev=25000).plot.contourf(
+map_upvp = upvp_pos_last.sel(plev=25000).plot.contourf(
     ax=pos_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=upvp_levels_div,
@@ -639,7 +638,7 @@ map_upvp = upvp_last_pos.sel(plev=25000).plot.contourf(
 )
 
 # climatology as contour
-upvp_last_clim.sel(plev=25000).plot.contour(
+upvp_clim_last.sel(plev=25000).plot.contour(
     ax=pos_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
@@ -653,7 +652,7 @@ upvp_last_clim.sel(plev=25000).plot.contour(
 )
 
 # neg
-map_upvp = upvp_last_neg.sel(plev=25000).plot.contourf(
+map_upvp = upvp_neg_last.sel(plev=25000).plot.contourf(
     ax=neg_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=upvp_levels_div,
@@ -669,7 +668,7 @@ map_upvp = upvp_last_neg.sel(plev=25000).plot.contourf(
     },
 )
 # climatology as contour
-upvp_last_clim.sel(plev=25000).plot.contour(
+upvp_clim_last.sel(plev=25000).plot.contour(
     ax=neg_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
@@ -682,7 +681,7 @@ upvp_last_clim.sel(plev=25000).plot.contour(
     zorder=10,
 )
 # diff
-map_upvp = upvp_last_diff.sel(plev=25000).plot.contourf(
+map_upvp = upvp_diff_last.sel(plev=25000).plot.contourf(
     ax=diff_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=upvp_levels_div,
@@ -698,7 +697,7 @@ map_upvp = upvp_last_diff.sel(plev=25000).plot.contourf(
     },
 )
 # climatology as contour
-upvp_last_clim.sel(plev=25000).plot.contour(
+upvp_clim_last.sel(plev=25000).plot.contour(
     ax=diff_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
@@ -712,7 +711,7 @@ upvp_last_clim.sel(plev=25000).plot.contour(
 )
 
 
-# profile of upvp
+# profile of vpetp
 # pos
 profile_upvp = vpetp_last_pos_plot.plot.contourf(
     ax=pos_vptp_profile_ax,
@@ -800,7 +799,7 @@ vpetp_last_clim_plot.plot.contour(
 
 # map of vpetp
 # pos
-map_vpetp = vpetp_last_pos.sel(plev=85000).plot.contourf(
+map_vpetp = vpetp_pos_last.sel(plev=85000).plot.contourf(
     ax=pos_vptp_map_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
@@ -826,7 +825,7 @@ qflux_arrow = pos_vptp_map_ax.quiver(
 )
 
 # neg
-map_vpetp = vpetp_last_neg.sel(plev=85000).plot.contourf(
+map_vpetp = vpetp_neg_last.sel(plev=85000).plot.contourf(
     ax=neg_vptp_map_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
@@ -852,7 +851,7 @@ qflux_arrow = neg_vptp_map_ax.quiver(
 )
 
 # diff
-map_vpetp = vpetp_last_diff.sel(plev=85000).plot.contourf(
+map_vpetp = vpetp_diff_last.sel(plev=85000).plot.contourf(
     ax=diff_vptp_map_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
@@ -942,7 +941,7 @@ for ax in [
     gl.ylocator = mticker.FixedLocator([20, 50])
 
 plt.tight_layout()
-plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_last.pdf", dpi=300)
+# plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_last.pdf", dpi=300)
 # %%
 # a new plot, the first column shows the difference between pos and neg in the first decade,
 # the second column shows the difference between pos and neg in the last decade
@@ -983,7 +982,7 @@ map_upvp = upvp_first_diff.sel(plev=25000).plot.contourf(
 )
 
 # climatology as contour
-upvp_first_clim.sel(plev=25000).plot.contour(
+upvp_clim_first.sel(plev=25000).plot.contour(
     ax=first_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
@@ -1013,7 +1012,7 @@ map_upvp = upvp_last_diff.sel(plev=25000).plot.contourf(
     },
 )
 # climatology as contour
-upvp_last_clim.sel(plev=25000).plot.contour(
+upvp_clim_last.sel(plev=25000).plot.contour(
     ax=last_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
