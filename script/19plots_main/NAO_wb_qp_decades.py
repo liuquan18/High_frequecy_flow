@@ -7,7 +7,7 @@ from src.plotting.util import erase_white_line, lat2y, lon2x
 import matplotlib.colors as mcolors
 import pandas as pd
 import seaborn as sns
-from src.moisture.longitudinal_contrast import read_NAO_extremes
+from src.data_helper.read_NAO_extremes import read_NAO_extremes
 
 
 # %%
