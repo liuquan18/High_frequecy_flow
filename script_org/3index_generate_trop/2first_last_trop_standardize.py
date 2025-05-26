@@ -7,7 +7,7 @@ import sys
 decade = sys.argv[1] # 1850
 # %%
 # calculate the mean and std from all members and time
-all_pcs = xr.open_mfdataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_pc_1850_trop_nonstd/*.nc", 
+all_pcs = xr.open_mfdataset(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_pc_{dec}_trop_nonstd/*.nc", 
                             combine = 'nested', concat_dim = 'member')
 
 #%%
