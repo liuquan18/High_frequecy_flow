@@ -24,7 +24,7 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
     ds = xr.open_dataset(file_name)[name]
     ds = ds.sel(time=slice(*time_window))
     if method == "mean":
-        ds = ds.mean(dim="time")
+        ds = ds.mean(dim=("time", "ens"))
     elif method == "sum":
         ds = ds.sum(dim=("time", "ens"))
     return ds
@@ -33,6 +33,7 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
 
 #%%
 wb_time_window = (-10, 5)
+theta_time_window = (-5, 5)
 # %%
 uhat_composiste = (
     "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NA_jet_stream/composite/"
@@ -49,60 +50,64 @@ uhat_NAO_diff_last = uhat_pos_last10 - uhat_neg_last10
 
 # %%
 theta_pos_first = read_comp_var(
-    "theta_2pvu", "pos", 1850, name="__xarray_dataarray_variable__"
+    "theta_2pvu", "pos", 1850, name="__xarray_dataarray_variable__",
+    time_window=theta_time_window, method='mean'
 )
 theta_pos_last = read_comp_var(
-    "theta_2pvu", "pos", 2090, name="__xarray_dataarray_variable__"
+    "theta_2pvu", "pos", 2090, name="__xarray_dataarray_variable__",
+    time_window=theta_time_window, method='mean'
 )
 theta_neg_first = read_comp_var(
-    "theta_2pvu", "neg", 1850, name="__xarray_dataarray_variable__"
+    "theta_2pvu", "neg", 1850, name="__xarray_dataarray_variable__",
+    time_window=theta_time_window, method='mean'
 )
 theta_neg_last = read_comp_var(
-    "theta_2pvu", "neg", 2090, name="__xarray_dataarray_variable__"
+    "theta_2pvu", "neg", 2090, name="__xarray_dataarray_variable__",
+    time_window=theta_time_window, method='mean'
 )
 
 theta_diff_first = theta_pos_first - theta_neg_first
 theta_diff_last = theta_pos_last - theta_neg_last
 # %%
 # ua
-ua_pos_first = read_comp_var("ua", "pos", 1850, name="ua")
-ua_pos_last = read_comp_var("ua", "pos", 2090, name="ua")
-ua_neg_first = read_comp_var("ua", "neg", 1850, name="ua")
-ua_neg_last = read_comp_var("ua", "neg", 2090, name="ua")
+ua_pos_first = read_comp_var("ua", "pos", 1850, name="ua", time_window=theta_time_window)
+ua_pos_last = read_comp_var("ua", "pos", 2090, name="ua", time_window=theta_time_window)
+ua_neg_first = read_comp_var("ua", "neg", 1850, name="ua", time_window=theta_time_window)
+ua_neg_last = read_comp_var("ua", "neg", 2090, name="ua" , time_window=theta_time_window)
 
 # va
-va_pos_first = read_comp_var("va", "pos", 1850, name="va")
-va_pos_last = read_comp_var("va", "pos", 2090, name="va")
-va_neg_first = read_comp_var("va", "neg", 1850, name="va")
-va_neg_last = read_comp_var("va", "neg", 2090, name="va")
+va_pos_first = read_comp_var("va", "pos", 1850, name="va", time_window=theta_time_window)
+va_pos_last = read_comp_var("va", "pos", 2090, name="va", time_window=theta_time_window)
+va_neg_first = read_comp_var("va", "neg", 1850, name="va", time_window=theta_time_window)
+va_neg_last = read_comp_var("va", "neg", 2090, name="va", time_window=theta_time_window)
 
 # %%
 # stratrospheric wb
 stra_wb_pos_first = read_comp_var(
-    "wb_stratospheric", "pos", 1850, name="flag", time_window=wb_time_window
+    "wb_stratospheric", "pos", 1850, name="flag", time_window=wb_time_window, method = 'sum'
 )
 stra_wb_pos_last = read_comp_var(
-    "wb_stratospheric", "pos", 2090, name="flag", time_window=wb_time_window
+    "wb_stratospheric", "pos", 2090, name="flag", time_window=wb_time_window, method = 'sum'
 )
 stra_wb_neg_first = read_comp_var(
-    "wb_stratospheric", "neg", 1850, name="flag", time_window=wb_time_window
+    "wb_stratospheric", "neg", 1850, name="flag", time_window=wb_time_window, method = 'sum'
 )
 stra_wb_neg_last = read_comp_var(
-    "wb_stratospheric", "neg", 2090, name="flag", time_window=wb_time_window
+    "wb_stratospheric", "neg", 2090, name="flag", time_window=wb_time_window, method = 'sum'
 )
 
 # tropospheric wb
 tro_wb_pos_first = read_comp_var(
-    "wb_tropospheric", "pos", 1850, name="flag", time_window=wb_time_window
+    "wb_tropospheric", "pos", 1850, name="flag", time_window=wb_time_window, method = 'sum'
 )
 tro_wb_pos_last = read_comp_var(
-    "wb_tropospheric", "pos", 2090, name="flag", time_window=wb_time_window
+    "wb_tropospheric", "pos", 2090, name="flag", time_window=wb_time_window, method = 'sum'
 )
 tro_wb_neg_first = read_comp_var(
-    "wb_tropospheric", "neg", 1850, name="flag", time_window=wb_time_window
+    "wb_tropospheric", "neg", 1850, name="flag", time_window=wb_time_window, method = 'sum'
 )
 tro_wb_neg_last = read_comp_var(
-    "wb_tropospheric", "neg", 2090, name="flag", time_window=wb_time_window
+    "wb_tropospheric", "neg", 2090, name="flag", time_window=wb_time_window, method = 'sum'
 )
 
 # wb diff
@@ -113,29 +118,29 @@ tro_wb_diff_last = tro_wb_pos_last - tro_wb_neg_last
 # %%
 # anticyclonic wb
 awb_pos_first = read_comp_var(
-    "wb_anticyclonic", "pos", 1850, name="flag", time_window=wb_time_window
+    "wb_anticyclonic", "pos", 1850, name="flag", time_window=wb_time_window, method = 'sum'
 )
 awb_pos_last = read_comp_var(
-    "wb_anticyclonic", "pos", 2090, name="flag", time_window=wb_time_window
+    "wb_anticyclonic", "pos", 2090, name="flag", time_window=wb_time_window, method = 'sum'
 )
 awb_neg_first = read_comp_var(
-    "wb_anticyclonic", "neg", 1850, name="flag", time_window=wb_time_window
+    "wb_anticyclonic", "neg", 1850, name="flag", time_window=wb_time_window, method = 'sum'
 )
 awb_neg_last = read_comp_var(
-    "wb_anticyclonic", "neg", 2090, name="flag", time_window=wb_time_window
+    "wb_anticyclonic", "neg", 2090, name="flag", time_window=wb_time_window, method = 'sum'
 )
 # cyclonic wb
 cwb_pos_first = read_comp_var(
-    "wb_cyclonic", "pos", 1850, name="flag", time_window=wb_time_window
+    "wb_cyclonic", "pos", 1850, name="flag", time_window=wb_time_window, method = 'sum'
 )
 cwb_pos_last = read_comp_var(
-    "wb_cyclonic", "pos", 2090, name="flag", time_window=wb_time_window
+    "wb_cyclonic", "pos", 2090, name="flag", time_window=wb_time_window, method = 'sum'
 )
 cwb_neg_first = read_comp_var(
-    "wb_cyclonic", "neg", 1850, name="flag", time_window=wb_time_window
+    "wb_cyclonic", "neg", 1850, name="flag", time_window=wb_time_window, method = 'sum'
 )
 cwb_neg_last = read_comp_var(
-    "wb_cyclonic", "neg", 2090, name="flag", time_window=wb_time_window
+    "wb_cyclonic", "neg", 2090, name="flag", time_window=wb_time_window, method = 'sum'
 )
 
 # diff
@@ -269,14 +274,21 @@ uhat_levels_div = np.arange(-12, 13, 2)
 temp_levels = np.arange(300, 360, 5)  # K instead of C
 temp_levels_div = np.arange(-10, 11, 1)
 
-wb_levels = np.arange(0., 0.05, 0.005)
-wb_levels_div = np.arange(-0.02, 0.021, 0.005)
+awb_levels = np.arange(10, 50, 5)
+awb_levels_div = np.arange(-20, 22, 5)
+
+cwb_levels = np.arange(10, 36, 5)
+cwb_levels_div = np.arange(-10, 11, 2.5)
 
 wnd_scale = 150
 wnd_scale_div = 150
+#%%
+# Custom thermal colormap: select one more chunk than awb_levels, drop the first chunk (too dark)
+thermal_colors = cmocean.cm.thermal(np.linspace(0, 1, len(awb_levels) + 1))[1:]
+cust_cmap = ListedColormap(thermal_colors, name="thermal_custom")
+
 # %%
 # first 10 years, but with anticyclonic and cyclonic wb
-# first 10 years
 fig, axes = plt.subplots(
     nrows=3,
     ncols=3,
@@ -284,13 +296,10 @@ fig, axes = plt.subplots(
     subplot_kw={"projection": ccrs.Orthographic(-30, 90)},
     constrained_layout=True,
 )
-# rows for different variables
-# columns for pos, neg, diff
-# uhat
 
 v = uhat_levels_div
 viridis = mpl.colormaps['jet']
-my_cmap = ListedColormap(viridis(np.linspace(0,1,len(v))))
+my_cmap = ListedColormap(viridis(np.linspace(0, 1, len(v))))
 
 uhat_pos_first10 = map_smooth(uhat_pos_first10, 3, 3)
 uhat_pos_first10.plot.contourf(
@@ -387,7 +396,6 @@ wnd_quiver = axes[1, 0].quiver(
     color="black",
 )
 
-# add key for quiver
 axes[1, 0].quiverkey(
     wnd_quiver,
     0.9,
@@ -399,7 +407,6 @@ axes[1, 0].quiverkey(
     coordinates="axes",
 )
 
-# wind quiver
 wnd_quiver = axes[1, 1].quiver(
     wnd_neg_first["lon"].values[::5],
     wnd_neg_first.lat[::5],
@@ -410,7 +417,6 @@ wnd_quiver = axes[1, 1].quiver(
     color="black",
 )
 
-# wind quiver
 wnd_quiver = axes[1, 2].quiver(
     wnd_diff_first["lon"].values[::5],
     wnd_diff_first.lat[::5],
@@ -420,112 +426,92 @@ wnd_quiver = axes[1, 2].quiver(
     scale=wnd_scale_div,
     color="black",
 )
-# Mask values between 0 and 0.01 for awb_pos_first and awb_neg_first
-awb_pos_first_masked = awb_pos_first.where((awb_pos_first <= 0) | (awb_pos_first >= 0.01))
-awb_neg_first_masked = awb_neg_first.where((awb_neg_first <= 0) | (awb_neg_first >= 0.01))
 
-# Create a colormap with a transparent color for the 0-0.01 interval
-orig_cmap = cmocean.cm.thermal(np.linspace(0, 1, len(wb_levels)))
-cmap_with_transparent = np.array(orig_cmap)
-# Find the indices corresponding to 0 and 0.01
-zero_idx = np.where(np.isclose(wb_levels, 0))[0][0]
-one_idx = np.where(np.isclose(wb_levels, 0.01))[0][0]
-cmap_with_transparent[zero_idx:one_idx, -1] = 0  # Set alpha to 0 for 0-0.01
-masked_cmap = ListedColormap(cmap_with_transparent)
-
-norm = mpl.colors.BoundaryNorm(wb_levels, masked_cmap.N)
-
-awb_pos_first_masked.plot.contourf(
+# awb/cwb plots
+awb_pos_first.plot.contourf(
     ax=axes[2, 0],
-    levels=wb_levels,
-    cmap=masked_cmap,
-    norm=norm,
+    levels=awb_levels,
+    cmap=cust_cmap,
     add_colorbar=True,
     cbar_kwargs={
         "label": "wave breaking freq",
         "orientation": "horizontal",
         "shrink": 0.8,
-        "ticks": wb_levels[::2],
-        "format": '%.2f',
+        "ticks": awb_levels[::2],
+        "format": '%.0f',
     },
     transform=ccrs.PlateCarree(),
     extend="max",
 )
 cwb_pos_first.plot.contour(
     ax=axes[2, 0],
-    levels=wb_levels[2:],
+    levels=cwb_levels,
     colors="black",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="max",
 )
 
-awb_neg_first_masked.plot.contourf(
+awb_neg_first.plot.contourf(
     ax=axes[2, 1],
-    levels=wb_levels,
-    cmap=masked_cmap,
-    norm=norm,
+    levels=awb_levels,
+    cmap=cust_cmap,
     add_colorbar=True,
     cbar_kwargs={
         "label": "wave breaking freq",
         "orientation": "horizontal",
         "shrink": 0.8,
-        "ticks": wb_levels[::2],
-        "format": '%.2f',
+        "ticks": awb_levels[::2],
+        "format": '%.0f',
     },
     transform=ccrs.PlateCarree(),
     extend="max",
 )
 cwb_neg_first.plot.contour(
     ax=axes[2, 1],
-    levels=wb_levels[2:], # Skip the first two levels (0 and 0.005)
+    levels=cwb_levels,
     colors="black",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="max",
 )
 
-#Find the index closest to zero
-zero_idx = np.argmin(np.abs(wb_levels_div))
-
-# SGet ticks every 2 steps from center
+# Find the index closest to zero
+zero_idx = np.argmin(np.abs(awb_levels_div))
+# Get ticks every 2 steps from center
 ticks = np.sort(np.unique(np.concatenate([
-    wb_levels_div[zero_idx::-2],   # e.g., [0.0, -0.01, -0.03]
-    wb_levels_div[zero_idx::2]     # e.g., [0.0, 0.01, 0.03]
+    awb_levels_div[zero_idx::-2],
+    awb_levels_div[zero_idx::2]
 ])))
-
 
 awb_diff_first.plot.contourf(
     ax=axes[2, 2],
-    levels=wb_levels_div,  # Use the same levels as before
+    levels= awb_levels_div,
     cmap="coolwarm",
     add_colorbar=True,
     cbar_kwargs={
         "label": "wave breaking freq",
         "orientation": "horizontal",
         "shrink": 0.8,
-        "ticks": ticks,  # Show every two ticks, counting from the center (0)
-        "format": '%.2f',
+        "ticks": ticks,
+        "format": '%.0f',
     },
     transform=ccrs.PlateCarree(),
     extend="both",
 )
 
-
 cwb_diff_first.plot.contour(
     ax=axes[2, 2],
-    levels=wb_levels_div[wb_levels_div != 0],
+    levels=cwb_levels_div[cwb_levels_div != 0],
     colors="black",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="both",
 )
 
-
 # add coastlines and gridlines
 for ax in axes[0, :].flatten():
     ax.coastlines(color="grey", linewidth=1)
-    # gridlines
     gl = ax.gridlines(
         draw_labels=False,
         linewidth=1,
@@ -533,13 +519,11 @@ for ax in axes[0, :].flatten():
         alpha=0.5,
         linestyle="--",
     )
-    # Remove tick marks
     ax.xlocator = None
     ax.ylocator = None
 
 for ax in axes[-1, :]:
     ax.coastlines(color="grey", linewidth=1)
-    # gridlines
     gl = ax.gridlines(
         draw_labels=False,
         linewidth=1,
@@ -547,16 +531,16 @@ for ax in axes[-1, :]:
         alpha=0.5,
         linestyle="--",
     )
-    # Remove tick marks
     ax.xlocator = None
     ax.ylocator = None
-    
+
 for ax in axes.flatten():
     ax.set_global()
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/mean_flow_first10.pdf", bbox_inches='tight', dpi = 300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/mean_flow_first10.pdf", bbox_inches='tight', dpi = 300)
 # %%
 
 # %%
+
 # last 10 years, but with anticyclonic and cyclonic wb
 fig, axes = plt.subplots(
     nrows=3,
@@ -696,108 +680,89 @@ wnd_quiver = axes[1, 2].quiver(
     color="black",
 )
 
-# Mask values between 0 and 0.01 for awb_pos_last and awb_neg_last
-awb_pos_last_masked = awb_pos_last.where((awb_pos_last <= 0) | (awb_pos_last >= 0.01))
-awb_neg_last_masked = awb_neg_last.where((awb_neg_last <= 0) | (awb_neg_last >= 0.01))
-
-# Create a colormap with a transparent color for the 0-0.01 interval
-orig_cmap = cmocean.cm.thermal(np.linspace(0, 1, len(wb_levels)))
-cmap_with_transparent = np.array(orig_cmap)
-zero_idx = np.where(np.isclose(wb_levels, 0))[0][0]
-one_idx = np.where(np.isclose(wb_levels, 0.01))[0][0]
-cmap_with_transparent[zero_idx:one_idx, -1] = 0
-masked_cmap = ListedColormap(cmap_with_transparent)
-norm = mpl.colors.BoundaryNorm(wb_levels, masked_cmap.N)
-
-awb_pos_last_masked.plot.contourf(
+# awb/cwb plots
+awb_pos_last.plot.contourf(
     ax=axes[2, 0],
-    levels=wb_levels,
-    cmap=masked_cmap,
-    norm=norm,
+    levels=awb_levels,
+    cmap=cust_cmap,
     add_colorbar=True,
     cbar_kwargs={
         "label": "wave breaking freq",
         "orientation": "horizontal",
         "shrink": 0.8,
-        "ticks": wb_levels[::2],
-        "format": '%.2f',
+        "ticks": awb_levels[::2],
+        "format": '%.0f',
     },
     transform=ccrs.PlateCarree(),
     extend="max",
 )
 cwb_pos_last.plot.contour(
     ax=axes[2, 0],
-    levels=wb_levels[2:],
+    levels=cwb_levels,
     colors="black",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="max",
 )
 
-awb_neg_last_masked.plot.contourf(
+awb_neg_last.plot.contourf(
     ax=axes[2, 1],
-    levels=wb_levels,
-    cmap=masked_cmap,
-    norm=norm,
+    levels=awb_levels,
+    cmap=cust_cmap,
     add_colorbar=True,
     cbar_kwargs={
         "label": "wave breaking freq",
         "orientation": "horizontal",
         "shrink": 0.8,
-        "ticks": wb_levels[::2],
-        "format": '%.2f',
+        "ticks": awb_levels[::2],
+        "format": '%.0f',
     },
     transform=ccrs.PlateCarree(),
     extend="max",
 )
 cwb_neg_last.plot.contour(
     ax=axes[2, 1],
-    levels=wb_levels[2:],
+    levels=cwb_levels,
     colors="black",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="max",
 )
 
-# Mask values between -0.01 and 0.01 for awb_diff_last and cwb_diff_last
-awb_diff_masked = awb_diff_last.where((awb_diff_last <= -0.01) | (awb_diff_last >= 0.01))
-cwb_diff_masked = cwb_diff_last.where((cwb_diff_last <= -0.01) | (cwb_diff_last >= 0.01))
+# Find the index closest to zero
+zero_idx = np.argmin(np.abs(awb_levels_div))
+# Get ticks every 2 steps from center
+ticks = np.sort(np.unique(np.concatenate([
+    awb_levels_div[zero_idx::-2],
+    awb_levels_div[zero_idx::2]
+])))
 
-orig_cmap = plt.cm.viridis(np.linspace(0, 1, len(wb_levels_div) - 1))
-cmap_with_transparent = np.array(orig_cmap)
-mask_start = np.where(np.isclose(wb_levels_div[:-1], -0.005))[0][0]
-mask_end = np.where(np.isclose(wb_levels_div[1:], 0.005))[0][0] + 1
-cmap_with_transparent[mask_start:mask_end, -1] = 0
-masked_cmap = ListedColormap(cmap_with_transparent)
-norm = mpl.colors.BoundaryNorm(wb_levels_div, ncolors=masked_cmap.N)
-
-awb_diff_masked.plot.contourf(
+awb_diff_last.plot.contourf(
     ax=axes[2, 2],
-    levels=wb_levels_div,
-    cmap=masked_cmap,
-    norm=norm,
+    levels=awb_levels_div,
+    cmap="coolwarm",
     add_colorbar=True,
     cbar_kwargs={
         "label": "wave breaking freq",
         "orientation": "horizontal",
         "shrink": 0.8,
-        "ticks": wb_levels_div[wb_levels_div != 0][::2],
-        "format": '%.2f',
-        "extend": "both",
+        "ticks": ticks,
+        "format": '%.0f',
     },
     transform=ccrs.PlateCarree(),
     extend="both",
 )
 
-cwb_diff_masked.plot.contour(
+cwb_diff_last.plot.contour(
     ax=axes[2, 2],
-    levels=wb_levels_div[wb_levels_div != 0],
+    levels=cwb_levels_div[cwb_levels_div != 0],
     colors="black",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="both",
 )
 
+# add coastlines and gridlines
 for ax in axes[0, :].flatten():
     ax.coastlines(color="grey", linewidth=1)
     gl = ax.gridlines(
@@ -824,7 +789,5 @@ for ax in axes[-1, :]:
 
 for ax in axes.flatten():
     ax.set_global()
-
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/mean_flow_last10.pdf", bbox_inches='tight', dpi=300)
-
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/mean_flow_last10.pdf", bbox_inches='tight', dpi = 300)
 # %%
