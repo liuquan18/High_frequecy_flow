@@ -88,7 +88,9 @@ def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, isentrope=True
 #%%
 phase = sys.argv[1] # 'pos' or 'neg'
 decade = sys.argv[2] # '1850' or '2090'
-isentrope = sys.argv[3].lower() == 'true' # Convert string to boolean
+isentrope = sys.argv[3].lower() == 'true' if len(sys.argv) > 3 else False  # Convert string to boolean
+if isentrope:
+    logging.warning("Isentrope should be calculated after False manually, this is not implemented yet.")
 eddy = sys.argv[4]
 ano = sys.argv[5].lower() == 'true' if len(sys.argv) > 5 else False  # Convert string to boolean, default is False
 
