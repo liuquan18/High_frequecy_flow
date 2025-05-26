@@ -51,6 +51,28 @@ def read_NAO_extremes_single_ens(phase,dec, ens, dur_threshold = 5):
     extremes = df[df['extreme_duration'] >= dur_threshold]
     return extremes
 
+# read NAO for troposphere
+def read_NAO_extremes_troposphere(decade, phase = 'pos', dur_threshold = 5):
+    base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_trop_firstlast/neg_extreme_events/neg_extreme_events_{decade}/'
+    file_list = glob.glob(base_dir + "*.csv")
+    # sort
+    # Sort by ensemble number (rXX)
+    file_list.sort(key=lambda x: int(re.search(r"_r(\d+)_neg_extremes\.csv", x).group(1)))
+    extremes = []
+
+    for ens in range(1, 51):
+        filename = glob.glob(base_dir + f"*r{ens}_*.csv")[0]
+
+    
+        extreme = pd.read_csv(filename)
+        extreme['ens'] = ens
+        extremes.append(extreme)
+
+    extremes = pd.concat(extremes)
+    extremes = extremes[extremes['extreme_duration'] >= dur_threshold]
+    return extremes
+
+
 
 
 def read_NAO_extreme_ERA5(phase = 'pos', dur_threshold = 5):
