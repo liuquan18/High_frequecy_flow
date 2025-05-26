@@ -110,7 +110,7 @@ def cal_pv_isent(ta, ua, va):
 
 
 
-    ds_isent = xr.Dataset({'pv': pv, 'temperature': thta}) # potential temperature
+    ds_isent = xr.Dataset({'pv': pv, 'temperature': tmpk}) 
 
 
     pv_isent = ds_isent.groupby('time').apply(
