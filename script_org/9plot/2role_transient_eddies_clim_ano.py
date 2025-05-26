@@ -950,7 +950,7 @@ plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/trans
 upvp_levels_diff = np.arange(-20, 21, 5)
 vptp_levels_diff = np.arange(-2, 2.1, 0.2)
 vptp_levels_low_diff = np.arange(-5, 5.1, 0.5)
-scale_hus = 1e5
+scale_hus_diff = 1e5
 
 
 # %%
@@ -1119,7 +1119,7 @@ qflux_arrow = first_vptp_map_ax.quiver(
     qflux_first_diff.u.values[::4, ::4],
     qflux_first_diff.v.values[::4, ::4],
     transform=ccrs.PlateCarree(),
-    scale=scale_hus,
+    scale=scale_hus_diff,
 )
 
 # last diff
@@ -1145,8 +1145,21 @@ qflux_arrow = last_vptp_map_ax.quiver(
     qflux_last_diff.u.values[::4, ::4],
     qflux_last_diff.v.values[::4, ::4],
     transform=ccrs.PlateCarree(),
-    scale=scale_hus,
+    scale=scale_hus_diff,
 )
+
+# add key for qflux_arrow
+qflux_arrow_key = first_vptp_map_ax.quiverkey(
+    qflux_arrow,
+    0.7,
+    1.3,
+    1e4,
+    r"1e4 kg m$^{-2}$ s$^{-1}$",
+    labelpos="E",
+    transform=first_vptp_map_ax.transAxes,
+    coordinates="axes",
+)
+
 
 # FuncFormatter can be used as a decorator
 @mticker.FuncFormatter
@@ -1206,4 +1219,3 @@ for ax in [
     gl.ylocator = mticker.FixedLocator([20, 45])
 plt.tight_layout()
 plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_diff.pdf", dpi=300, bbox_inches='tight')
-# %%
