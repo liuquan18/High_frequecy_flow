@@ -42,15 +42,15 @@ def to_plot_data(eke):
 #%%%
 # config
 time_window = (-10, 5)
-suffix = ""
-remove_zonmean = True
+suffix = "_ano"
+remove_zonmean = False
 
 # %%
 uhat_levels_div = np.arange(-12, 13, 2)
-upvp_levels_div = np.arange(-8, 9, 2)
+upvp_levels_div = np.arange(-10, 11, 2)
 vsts_levels_div = np.arange(-3, 3.1, 0.5)
 vptp_levels_div = np.arange(-1.2, 1.3, 0.2)
-
+vptp_levels_low_div = np.arange(-2.4, 2.5, 0.4)
 scale_hus = 5e4
 
 # %%
@@ -450,7 +450,7 @@ vpetp_first_clim_plot.plot.contour(
 map_vpetp = vpetp_pos_first.sel(plev=85000).plot.contourf(
     ax=pos_vptp_map_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_div,
+    levels=vptp_levels_low_div,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -459,7 +459,7 @@ map_vpetp = vpetp_pos_first.sel(plev=85000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.06,
         "aspect": 30,
-        "ticks": vptp_levels_div[::2],
+        "ticks": vptp_levels_low_div[::2],
     },
 )
 # quiver of qflux
@@ -476,7 +476,7 @@ qflux_arrow = pos_vptp_map_ax.quiver(
 map_vpetp = vpetp_neg_first.sel(plev=85000).plot.contourf(
     ax=neg_vptp_map_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_div,
+    levels=vptp_levels_low_div,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -485,7 +485,7 @@ map_vpetp = vpetp_neg_first.sel(plev=85000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.06,
         "aspect": 30,
-        "ticks": vptp_levels_div[::2],
+        "ticks": vptp_levels_low_div[::2],
     },
 )
 # quiver of qflux
@@ -502,7 +502,7 @@ qflux_arrow = neg_vptp_map_ax.quiver(
 map_vpetp = vpetp_diff_first.sel(plev=85000).plot.contourf(
     ax=diff_vptp_map_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_div,
+    levels=vptp_levels_low_div,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -511,7 +511,7 @@ map_vpetp = vpetp_diff_first.sel(plev=85000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.06,
         "aspect": 30,
-        "ticks": vptp_levels_div[::2],
+        "ticks": vptp_levels_low_div[::2],
     },
 )
 # quiver of qflux
@@ -802,7 +802,7 @@ vpetp_last_clim_plot.plot.contour(
 map_vpetp = vpetp_pos_last.sel(plev=85000).plot.contourf(
     ax=pos_vptp_map_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_div,
+    levels=vptp_levels_low_div,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -811,7 +811,7 @@ map_vpetp = vpetp_pos_last.sel(plev=85000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.06,
         "aspect": 30,
-        "ticks": vptp_levels_div[::2],
+        "ticks": vptp_levels_low_div[::2],
     },
 )
 # quiver of qflux
@@ -828,7 +828,7 @@ qflux_arrow = pos_vptp_map_ax.quiver(
 map_vpetp = vpetp_neg_last.sel(plev=85000).plot.contourf(
     ax=neg_vptp_map_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_div,
+    levels=vptp_levels_low_div,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -837,7 +837,7 @@ map_vpetp = vpetp_neg_last.sel(plev=85000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.06,
         "aspect": 30,
-        "ticks": vptp_levels_div[::2],
+        "ticks": vptp_levels_low_div[::2],
     },
 )
 # quiver of qflux
@@ -854,7 +854,7 @@ qflux_arrow = neg_vptp_map_ax.quiver(
 map_vpetp = vpetp_diff_last.sel(plev=85000).plot.contourf(
     ax=diff_vptp_map_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_div,
+    levels=vptp_levels_low_div,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -863,7 +863,7 @@ map_vpetp = vpetp_diff_last.sel(plev=85000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.06,
         "aspect": 30,
-        "ticks": vptp_levels_div[::2],
+        "ticks": vptp_levels_low_div[::2],
     },
 )
 # quiver of qflux
@@ -948,7 +948,7 @@ plt.tight_layout()
 fig, axes = plt.subplots(
     3,
     2,
-    figsize=(10, 10),
+    figsize=(10, 8),
     subplot_kw={"projection": ccrs.PlateCarree(-90)},
     sharex=True,
     sharey=False,
@@ -965,7 +965,7 @@ last_vptp_map_ax = axes[2, 1]
 
 # map of upvp
 # first diff
-map_upvp = upvp_first_diff.sel(plev=25000).plot.contourf(
+map_upvp = upvp_diff_first.sel(plev=25000).plot.contourf(
     ax=first_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=upvp_levels_div,
@@ -996,7 +996,7 @@ upvp_clim_first.sel(plev=25000).plot.contour(
 )
 
 # last diff
-map_upvp = upvp_last_diff.sel(plev=25000).plot.contourf(
+map_upvp = upvp_diff_last.sel(plev=25000).plot.contourf(
     ax=last_upvp_ax,
     transform=ccrs.PlateCarree(),
     levels=upvp_levels_div,
@@ -1027,7 +1027,7 @@ upvp_clim_last.sel(plev=25000).plot.contour(
 
 # profile of vpetp
 # first diff
-profile_upvp = vpetp_first_diff_plot.plot.contourf(
+profile_vptp = vpetp_first_diff_plot.plot.contourf(
     ax=first_vptp_profile_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
@@ -1056,7 +1056,7 @@ vpetp_first_clim_plot.plot.contour(
 )
 
 # last diff
-profile_upvp = vpetp_last_diff_plot.plot.contourf(
+profile_vptp = vpetp_last_diff_plot.plot.contourf(
     ax=last_vptp_profile_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
@@ -1086,7 +1086,7 @@ vpetp_last_clim_plot.plot.contour(
 
 # map of vpetp
 # first diff
-map_vpetp = vpetp_first_diff.sel(plev=85000).plot.contourf(
+map_vpetp = vpetp_diff_first.sel(plev=85000).plot.contourf(
     ax=first_vptp_map_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
@@ -1112,7 +1112,7 @@ qflux_arrow = first_vptp_map_ax.quiver(
 )
 
 # last diff
-map_vpetp = vpetp_last_diff.sel(plev=85000).plot.contourf(
+map_vpetp = vpetp_diff_last.sel(plev=85000).plot.contourf(
     ax=last_vptp_map_ax,
     transform=ccrs.PlateCarree(),
     levels=vptp_levels_div,
