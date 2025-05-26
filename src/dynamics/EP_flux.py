@@ -230,7 +230,7 @@ def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = Fal
 	transient eddies: upvp
 	"""
 	if eddy == 'transient':
-		upvp = read_composite_MPI("upvp", "ua", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
+		upvp = read_composite_MPI("upvp", "upvp", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
 		if equiv_theta:
 			vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
 			# for coordinates
