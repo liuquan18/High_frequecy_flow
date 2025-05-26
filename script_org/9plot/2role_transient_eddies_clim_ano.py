@@ -595,7 +595,7 @@ for ax in [
 
 
 plt.tight_layout()
-# plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_first.pdf", dpi=300)
+plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_first.pdf", dpi=300)
 # %%
 # last decade
 fig, axes = plt.subplots(
@@ -941,7 +941,7 @@ for ax in [
     gl.ylocator = mticker.FixedLocator([20, 50])
 
 plt.tight_layout()
-# plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_last.pdf", dpi=300)
+plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_last.pdf", dpi=300)
 
 
 
