@@ -949,7 +949,7 @@ plt.tight_layout()
 # %%
 upvp_levels_diff = np.arange(-20, 21, 5)
 vptp_levels_diff = np.arange(-2, 2.1, 0.2)
-vptp_levels_low_diff = np.arange(-4, 4.1, 0.4)
+vptp_levels_low_diff = np.arange(-5, 5.1, 0.5)
 scale_hus = 1e5
 
 
@@ -1100,7 +1100,7 @@ vpetp_last_clim_plot.plot.contour(
 map_vpetp = vpetp_diff_first.sel(plev=85000).plot.contourf(
     ax=first_vptp_map_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_diff,
+    levels=vptp_levels_low_diff,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -1109,7 +1109,7 @@ map_vpetp = vpetp_diff_first.sel(plev=85000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.06,
         "aspect": 30,
-        "ticks": vptp_levels_diff[::2],
+        "ticks": vptp_levels_low_diff[::2],
     },
 )
 # quiver of qflux
@@ -1126,7 +1126,7 @@ qflux_arrow = first_vptp_map_ax.quiver(
 map_vpetp = vpetp_diff_last.sel(plev=85000).plot.contourf(
     ax=last_vptp_map_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_diff,
+    levels=vptp_levels_low_diff,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -1135,7 +1135,7 @@ map_vpetp = vpetp_diff_last.sel(plev=85000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.06,
         "aspect": 30,
-        "ticks": vptp_levels_diff[::2],
+        "ticks": vptp_levels_low_diff[::2],
     },
 )
 # quiver of qflux
@@ -1186,7 +1186,7 @@ for ax in [
     last_vptp_map_ax,
 ]:
     ax.axhline(20, color="gray", linewidth=0.5, linestyle="--")
-    ax.axhline(50, color="gray", linewidth=0.5, linestyle="--")
+    ax.axhline(45, color="gray", linewidth=0.5, linestyle="--")
     gl = ax.gridlines(
         crs=ccrs.PlateCarree(),
         draw_labels=True,
@@ -1203,7 +1203,7 @@ for ax in [
     gl.xlocator = mticker.FixedLocator(np.arange(-180, 181, 60))
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
-    gl.ylocator = mticker.FixedLocator([20, 50])
+    gl.ylocator = mticker.FixedLocator([20, 45])
 plt.tight_layout()
 plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_diff.pdf", dpi=300, bbox_inches='tight')
 # %%
