@@ -47,7 +47,7 @@ remove_zonmean = False
 
 # %%
 uhat_levels_div = np.arange(-12, 13, 2)
-upvp_levels_div = np.arange(-10, 11, 2)
+upvp_levels_div = np.arange(-15, 16, 5)
 vsts_levels_div = np.arange(-3, 3.1, 0.5)
 vptp_levels_div = np.arange(-1.2, 1.3, 0.2)
 vptp_levels_low_div = np.arange(-2.4, 2.5, 0.4)
@@ -942,6 +942,17 @@ for ax in [
 
 plt.tight_layout()
 # plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_last.pdf", dpi=300)
+
+
+
+#%%
+# %%
+upvp_levels_diff = np.arange(-20, 21, 5)
+vptp_levels_diff = np.arange(-2, 2.1, 0.2)
+vptp_levels_low_diff = np.arange(-4, 4.1, 0.4)
+scale_hus = 1e5
+
+
 # %%
 # a new plot, the first column shows the difference between pos and neg in the first decade,
 # the second column shows the difference between pos and neg in the last decade
@@ -968,7 +979,7 @@ last_vptp_map_ax = axes[2, 1]
 map_upvp = upvp_diff_first.sel(plev=25000).plot.contourf(
     ax=first_upvp_ax,
     transform=ccrs.PlateCarree(),
-    levels=upvp_levels_div,
+    levels=upvp_levels_diff,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -977,7 +988,7 @@ map_upvp = upvp_diff_first.sel(plev=25000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.05,
         "aspect": 30,
-        "ticks": upvp_levels_div,
+        "ticks": upvp_levels_diff,
     },
 )
 
@@ -985,7 +996,7 @@ map_upvp = upvp_diff_first.sel(plev=25000).plot.contourf(
 upvp_clim_first.sel(plev=25000).plot.contour(
     ax=first_upvp_ax,
     transform=ccrs.PlateCarree(),
-    levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
+    levels=np.delete(upvp_levels_diff*10, np.where(upvp_levels_diff*10 == 0)),
     add_colorbar=False,
     extend="both",
     colors="black",
@@ -999,7 +1010,7 @@ upvp_clim_first.sel(plev=25000).plot.contour(
 map_upvp = upvp_diff_last.sel(plev=25000).plot.contourf(
     ax=last_upvp_ax,
     transform=ccrs.PlateCarree(),
-    levels=upvp_levels_div,
+    levels=upvp_levels_diff,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -1008,14 +1019,14 @@ map_upvp = upvp_diff_last.sel(plev=25000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.05,
         "aspect": 30,
-        "ticks": upvp_levels_div,
+        "ticks": upvp_levels_diff,
     },
 )
 # climatology as contour
 upvp_clim_last.sel(plev=25000).plot.contour(
     ax=last_upvp_ax,
     transform=ccrs.PlateCarree(),
-    levels=np.delete(upvp_levels_div*10, np.where(upvp_levels_div*10 == 0)),
+    levels=np.delete(upvp_levels_diff*10, np.where(upvp_levels_diff*10 == 0)),
     add_colorbar=False,
     extend="both",
     colors="black",
@@ -1030,7 +1041,7 @@ upvp_clim_last.sel(plev=25000).plot.contour(
 profile_vptp = vpetp_first_diff_plot.plot.contourf(
     ax=first_vptp_profile_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_div,
+    levels=vptp_levels_diff,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -1039,7 +1050,7 @@ profile_vptp = vpetp_first_diff_plot.plot.contourf(
         "orientation": "horizontal",
         "pad": 0.05,
         "aspect": 30,
-        "ticks": vptp_levels_div[::2][::2],
+        "ticks": vptp_levels_diff[::2][::2],
     },
 )
 
@@ -1047,7 +1058,7 @@ profile_vptp = vpetp_first_diff_plot.plot.contourf(
 vpetp_first_clim_plot.plot.contour(
     ax=first_vptp_profile_ax,
     transform=ccrs.PlateCarree(),
-    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
+    levels=np.delete(vptp_levels_diff*10, np.where(vptp_levels_diff*10 == 0)),
     add_colorbar=False,
     extend="both",
     colors="black",
@@ -1059,7 +1070,7 @@ vpetp_first_clim_plot.plot.contour(
 profile_vptp = vpetp_last_diff_plot.plot.contourf(
     ax=last_vptp_profile_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_div,
+    levels=vptp_levels_diff,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -1068,14 +1079,14 @@ profile_vptp = vpetp_last_diff_plot.plot.contourf(
         "orientation": "horizontal",
         "pad": 0.05,
         "aspect": 30,
-        "ticks": vptp_levels_div[::2],
+        "ticks": vptp_levels_diff[::2],
     },
 )
 # climatology as contour
 vpetp_last_clim_plot.plot.contour(
     ax=last_vptp_profile_ax,
     transform=ccrs.PlateCarree(),
-    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
+    levels=np.delete(vptp_levels_diff*10, np.where(vptp_levels_diff*10 == 0)),
     add_colorbar=False,
     extend="both",
     colors="black",
@@ -1089,7 +1100,7 @@ vpetp_last_clim_plot.plot.contour(
 map_vpetp = vpetp_diff_first.sel(plev=85000).plot.contourf(
     ax=first_vptp_map_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_div,
+    levels=vptp_levels_diff,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -1098,7 +1109,7 @@ map_vpetp = vpetp_diff_first.sel(plev=85000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.06,
         "aspect": 30,
-        "ticks": vptp_levels_div[::2],
+        "ticks": vptp_levels_diff[::2],
     },
 )
 # quiver of qflux
@@ -1115,7 +1126,7 @@ qflux_arrow = first_vptp_map_ax.quiver(
 map_vpetp = vpetp_diff_last.sel(plev=85000).plot.contourf(
     ax=last_vptp_map_ax,
     transform=ccrs.PlateCarree(),
-    levels=vptp_levels_div,
+    levels=vptp_levels_diff,
     cmap=temp_cmap_div,
     add_colorbar=True,
     extend="both",
@@ -1124,7 +1135,7 @@ map_vpetp = vpetp_diff_last.sel(plev=85000).plot.contourf(
         "orientation": "horizontal",
         "pad": 0.06,
         "aspect": 30,
-        "ticks": vptp_levels_div[::2],
+        "ticks": vptp_levels_diff[::2],
     },
 )
 # quiver of qflux
