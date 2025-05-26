@@ -593,9 +593,22 @@ for ax in [
     gl.yformatter = LATITUDE_FORMATTER
     gl.ylocator = mticker.FixedLocator([20, 50])
 
+# add a, b, c
+for i, ax in enumerate(axes.flat):
+    ax.text(
+        -0.1,
+        0.99,
+        f"{chr(97 + i)}",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+        va="top",
+        ha="left",
+    )
 
 plt.tight_layout()
 plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_first.pdf", dpi=300)
+
 # %%
 # last decade
 fig, axes = plt.subplots(
@@ -939,7 +952,18 @@ for ax in [
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
     gl.ylocator = mticker.FixedLocator([20, 50])
-
+# add a, b, c
+for i, ax in enumerate(axes.flat):
+    ax.text(
+        -0.1,
+        0.99,
+        f"{chr(97 + i)}",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+        va="top",
+        ha="left",
+    )
 plt.tight_layout()
 plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_last.pdf", dpi=300)
 
@@ -959,7 +983,7 @@ scale_hus_diff = 1e5
 fig, axes = plt.subplots(
     3,
     2,
-    figsize=(10, 8),
+    figsize=(10, 9),
     subplot_kw={"projection": ccrs.PlateCarree(-90)},
     sharex=True,
     sharey=False,
@@ -975,7 +999,7 @@ first_vptp_map_ax = axes[2, 0]
 last_vptp_map_ax = axes[2, 1]
 
 # map of upvp
-# first diff
+# first upvp diff
 map_upvp = upvp_diff_first.sel(plev=25000).plot.contourf(
     ax=first_upvp_ax,
     transform=ccrs.PlateCarree(),
@@ -1006,7 +1030,7 @@ upvp_clim_first.sel(plev=25000).plot.contour(
     zorder=10,
 )
 
-# last diff
+# last upvp diff
 map_upvp = upvp_diff_last.sel(plev=25000).plot.contourf(
     ax=last_upvp_ax,
     transform=ccrs.PlateCarree(),
@@ -1037,7 +1061,7 @@ upvp_clim_last.sel(plev=25000).plot.contour(
 )
 
 # profile of vpetp
-# first diff
+# first vpetp diff
 profile_vptp = vpetp_first_diff_plot.plot.contourf(
     ax=first_vptp_profile_ax,
     transform=ccrs.PlateCarree(),
@@ -1094,6 +1118,10 @@ vpetp_last_clim_plot.plot.contour(
     linestyles="solid",
     zorder=10,
 )
+
+
+# Adjust vertical space (hspace) between second and third row
+fig.subplots_adjust(hspace=-0.5)
 
 # map of vpetp
 # first diff
@@ -1217,5 +1245,20 @@ for ax in [
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
     gl.ylocator = mticker.FixedLocator([20, 45])
+
+# add a, b, c
+for i, ax in enumerate(axes.flat):
+    ax.text(
+        -0.05,
+        0.99,
+        f"{chr(97 + i)}",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+        va="top",
+        ha="left",
+    )
 plt.tight_layout()
 plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_eddies_{time_window}_clim_ano_diff.pdf", dpi=300, bbox_inches='tight')
+
+# %%
