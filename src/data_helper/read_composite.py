@@ -18,7 +18,7 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
     if method == "mean":
         ds = ds.mean(dim=("time", "ens"))
         if remove_zonmean:
-            ds = ds - ds.mean(dim="lat", keep_attrs=True)
+            ds = ds - ds.mean(dim="lon", keep_attrs=True)
     elif method == "sum":
         ds = ds.sum(dim=("time", "ens"))
     return ds
