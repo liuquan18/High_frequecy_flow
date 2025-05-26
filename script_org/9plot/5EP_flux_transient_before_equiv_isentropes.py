@@ -165,7 +165,7 @@ PlotEPfluxArrows(
 )
 # third col for difference between positive and negative
 div_diff_NPC_last = div_pos_last_NPC - div_neg_last_NPC
-div_diff_NPC_last.plot.contourf(
+div_map = div_diff_NPC_last.plot.contourf(
     ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
@@ -183,6 +183,25 @@ PlotEPfluxArrows(
     key_loc=(0.7, 0.95),
 )
 
+# add colorbar
+cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+cbar = fig.colorbar(
+    div_map,
+    cax=cbar_ax,
+    orientation="vertical",
+    label = r"$\nabla \cdot \mathbf{F}$ / m s$^{-1}$ day$^{-1}$",
+)
+
+# add a, b, c, d
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        0.02,
+        0.95,
+        f"{chr(97+i)}",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+    )
 
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_NPC.pdf",
@@ -227,7 +246,7 @@ PlotEPfluxArrows(
 
 # third col for difference between positive and negative
 div_diff_NAL = div_pos_first_NAL - div_neg_first_NAL
-div_diff_NAL.plot.contourf(
+div_map = div_diff_NAL.plot.contourf(
     ax=axes[0, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
@@ -294,6 +313,28 @@ PlotEPfluxArrows(
     key_loc=(0.7, 0.95),
 )
 
+
+# add a, b, c, d
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        0.02,
+        0.95,
+        f"{chr(97+i)}",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+    )
+
+
+
+# add colorbar
+cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+cbar = fig.colorbar(
+    div_map,
+    cax=cbar_ax,
+    orientation="vertical",
+    label = r"$\nabla \cdot \mathbf{F}$ / m s$^{-1}$ day$^{-1}$",
+)
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_NAL.pdf",
     dpi=300,
@@ -395,6 +436,7 @@ cbar = fig.colorbar(
     div_map,
     cax=cbar_ax,
     orientation="vertical",
+    label = r"$\nabla \cdot \mathbf{F}$ / m s$^{-1}$ day$^{-1}$",
 )
 
 # add a, b, c, d
@@ -409,5 +451,15 @@ for i, ax in enumerate(axes.flatten()):
     )
 
 plt.tight_layout(rect=[0, 0, 0.9, 1])  # Leave space on the right for the colorbar
+# add a, b, c, d labels
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        0.02,
+        0.95,
+        f"{chr(97+i)}",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+    )
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_diff.pdf", dpi=300, bbox_inches="tight")
 # %%
