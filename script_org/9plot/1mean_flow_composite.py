@@ -277,7 +277,7 @@ temp_levels_div = np.arange(-10, 11, 1)
 awb_levels = np.arange(10, 50, 5)
 awb_levels_div = np.arange(-20, 22, 5)
 
-cwb_levels = np.arange(10, 36, 5)
+cwb_levels = np.arange(7, 22, 3)
 cwb_levels_div = np.arange(-10, 11, 2.5)
 
 wnd_scale = 150
@@ -992,19 +992,25 @@ awb_pos_first.plot.contourf(
     cbar_kwargs={"label": "AWB freq", "orientation": "horizontal", "shrink": 0.8, "ticks": awb_levels[::2], "format": '%.0f'},
     transform=ccrs.PlateCarree(), extend="max",
 )
-cwb_pos_first.plot.contour(
+cwb_contour = cwb_pos_first.plot.contour(
     ax=axes[0, 0], levels=cwb_levels, colors="black", add_colorbar=False,
     transform=ccrs.PlateCarree(), extend="max",
 )
+if 10 in cwb_levels:
+    axes[0, 0].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
+
 awb_neg_first.plot.contourf(
     ax=axes[0, 1], levels=awb_levels, cmap=cust_cmap, add_colorbar=True,
     cbar_kwargs={"label": "AWB freq", "orientation": "horizontal", "shrink": 0.8, "ticks": awb_levels[::2], "format": '%.0f'},
     transform=ccrs.PlateCarree(), extend="max",
 )
-cwb_neg_first.plot.contour(
+cwb_contour = cwb_neg_first.plot.contour(
     ax=axes[0, 1], levels=cwb_levels, colors="black", add_colorbar=False,
     transform=ccrs.PlateCarree(), extend="max",
 )
+if 10 in cwb_levels:
+    axes[0, 1].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
+
 zero_idx = np.argmin(np.abs(awb_levels_div))
 ticks = np.sort(np.unique(np.concatenate([awb_levels_div[zero_idx::-2], awb_levels_div[zero_idx::2]])))
 awb_diff_first.plot.contourf(
@@ -1012,29 +1018,37 @@ awb_diff_first.plot.contourf(
     cbar_kwargs={"label": "AWB freq diff", "orientation": "horizontal", "shrink": 0.8, "ticks": ticks, "format": '%.0f'},
     transform=ccrs.PlateCarree(), extend="both",
 )
-cwb_diff_first.plot.contour(
+cwb_contour = cwb_diff_first.plot.contour(
     ax=axes[0, 2], levels=cwb_levels_div[cwb_levels_div != 0], colors="black", add_colorbar=False,
     transform=ccrs.PlateCarree(), extend="both",
 )
+axes[0, 2].clabel(cwb_contour, [-5, 5], fmt='%g', fontsize=8)
+
 # Last 10 years
 awb_pos_last.plot.contourf(
     ax=axes[1, 0], levels=awb_levels, cmap=cust_cmap, add_colorbar=True,
     cbar_kwargs={"label": "AWB freq", "orientation": "horizontal", "shrink": 0.8, "ticks": awb_levels[::2], "format": '%.0f'},
     transform=ccrs.PlateCarree(), extend="max",
 )
-cwb_pos_last.plot.contour(
+cwb_contour = cwb_pos_last.plot.contour(
     ax=axes[1, 0], levels=cwb_levels, colors="black", add_colorbar=False,
     transform=ccrs.PlateCarree(), extend="max",
 )
+if 10 in cwb_levels:
+    axes[1, 0].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
+
 awb_neg_last.plot.contourf(
     ax=axes[1, 1], levels=awb_levels, cmap=cust_cmap, add_colorbar=True,
     cbar_kwargs={"label": "AWB freq", "orientation": "horizontal", "shrink": 0.8, "ticks": awb_levels[::2], "format": '%.0f'},
     transform=ccrs.PlateCarree(), extend="max",
 )
-cwb_neg_last.plot.contour(
+cwb_contour = cwb_neg_last.plot.contour(
     ax=axes[1, 1], levels=cwb_levels, colors="black", add_colorbar=False,
     transform=ccrs.PlateCarree(), extend="max",
 )
+if 10 in cwb_levels:
+    axes[1, 1].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
+
 zero_idx = np.argmin(np.abs(awb_levels_div))
 ticks = np.sort(np.unique(np.concatenate([awb_levels_div[zero_idx::-2], awb_levels_div[zero_idx::2]])))
 awb_diff_last.plot.contourf(
@@ -1042,10 +1056,12 @@ awb_diff_last.plot.contourf(
     cbar_kwargs={"label": "AWB freq diff", "orientation": "horizontal", "shrink": 0.8, "ticks": ticks, "format": '%.0f'},
     transform=ccrs.PlateCarree(), extend="both",
 )
-cwb_diff_last.plot.contour(
+cwb_contour = cwb_diff_last.plot.contour(
     ax=axes[1, 2], levels=cwb_levels_div[cwb_levels_div != 0], colors="black", add_colorbar=False,
     transform=ccrs.PlateCarree(), extend="both",
 )
+axes[1, 2].clabel(cwb_contour, [-5, 5], fmt='%g', fontsize=8)
+
 for ax in axes.flatten():
     ax.coastlines(color="grey", linewidth=1)
     ax.gridlines(draw_labels=False, linewidth=1, color="grey", alpha=0.5, linestyle="--")
@@ -1053,8 +1069,7 @@ for ax in axes.flatten():
 axes[0, 0].set_title("Positive phase")
 axes[0, 1].set_title("Negative phase")
 axes[0, 2].set_title("Difference")
-axes[0, 0].text(-0.1, 1.05, "First 10 years", transform=axes[0, 0].transAxes, fontsize=12, fontweight='bold')
-axes[1, 0].text(-0.1, 1.05, "Last 10 years", transform=axes[1, 0].transAxes, fontsize=12, fontweight='bold')
+
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wb_2x3.pdf", bbox_inches='tight', dpi=300)
 
 # %%
