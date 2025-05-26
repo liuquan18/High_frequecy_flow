@@ -1060,6 +1060,7 @@ upvp_clim_last.sel(plev=25000).plot.contour(
     zorder=10,
 )
 
+
 # profile of vpetp
 # first vpetp diff
 profile_vptp = vpetp_first_diff_plot.plot.contourf(
@@ -1121,7 +1122,7 @@ vpetp_last_clim_plot.plot.contour(
 
 
 # Adjust vertical space (hspace) between second and third row
-fig.subplots_adjust(hspace=-0.5)
+fig.subplots_adjust(hspace=-0.3)
 
 # map of vpetp
 # first diff
@@ -1180,7 +1181,7 @@ qflux_arrow = last_vptp_map_ax.quiver(
 qflux_arrow_key = first_vptp_map_ax.quiverkey(
     qflux_arrow,
     0.7,
-    1.3,
+    1.4,
     1e4,
     r"1e4 kg m$^{-2}$ s$^{-1}$",
     labelpos="E",
