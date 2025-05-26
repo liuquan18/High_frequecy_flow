@@ -384,7 +384,7 @@ def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',ysca
 	else:
 		U = scale
 	if draw_key: # when running inside a script, the figure might not exist and therefore U is None
-		ax.quiverkey(Q, key_loc[0],key_loc[1],U/width,label=r'{0:.1e}$\,m^3$'.format(U),labelpos='E',coordinates='axes')
+		ax.quiverkey(Q, key_loc[0],key_loc[1],U/width,label=r'{0:.1e}$$'.format(U),labelpos='E',coordinates='axes')
 	if invert_y:
 		ax.invert_yaxis()
 	if xlim is not None:
