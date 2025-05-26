@@ -844,8 +844,16 @@ for coli, map in enumerate([pos_map, neg_map, diff_map]):
         orientation="horizontal",
         label=r"$\overline{u}$ (m/s)",)
 
+# add a, b, c labels
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        -0.1, 1.05, chr(97 + i), transform=ax.transAxes,
+        fontsize=14, fontweight='bold', va='top', ha='right'
+    )
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/uhat_2x3.pdf", bbox_inches='tight', dpi=300)
+
+# %%
 
 # %%
 
@@ -983,6 +991,13 @@ for coli, map in enumerate([pos_map, neg_map, diff_map]):
         label=r"$\overline{v' \theta}$ (K m s$^{-1}$)",
     )
 
+# add a, b, c labels
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        -0.1, 1.05, chr(97 + i), transform=ax.transAxes,
+        fontsize=14, fontweight='bold', va='top', ha='right'
+    )
+
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/theta_2x3.pdf", bbox_inches='tight', dpi=300)
 
 #%%
@@ -1084,6 +1099,13 @@ for coli, (map, label, ticks_, fmt) in enumerate([
         label=label,
         ticks=ticks_,
         format=fmt,
+    )
+
+# add a, b, c labels
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        -0.1, 1.05, chr(97 + i), transform=ax.transAxes,
+        fontsize=14, fontweight='bold', va='top', ha='right'
     )
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wb_2x3.pdf", bbox_inches='tight', dpi=300)
