@@ -12,23 +12,7 @@ from src.plotting.util import erase_white_line
 from matplotlib.colors import ListedColormap
 import matplotlib as mpl
 import cmocean
-
-# %%
-def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
-    name = kwargs.get("name", var)
-    method = kwargs.get("method", "mean")
-    basedir = (
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_range/"
-    )
-    file_name = basedir + f"{var}_NAO_{phase}_{decade}.nc"
-    ds = xr.open_dataset(file_name)[name]
-    ds = ds.sel(time=slice(*time_window))
-    if method == "mean":
-        ds = ds.mean(dim=("time", "ens"))
-    elif method == "sum":
-        ds = ds.sum(dim=("time", "ens"))
-    return ds
-
+from src.data_helper.read_composite import read_comp_var
 
 
 #%%
