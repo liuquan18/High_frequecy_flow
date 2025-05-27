@@ -64,10 +64,10 @@ steady_eddy(){
 export -f sub_zonmean
 export -f steady_eddy
 
-parallel -j 5 steady_eddy ::: {1850..2090..10}
+parallel -j 5 steady_eddy :::  1850 2090
 
 # check completion
-for dec in {1850..2090..10}; do
+for dec in 1850 2090; do
     if [ ! -f ${Ts_path}/*${dec}*.nc ]; then
         echo "Decade ${dec} is missing"
         echo "Recalculate decade ${dec}"

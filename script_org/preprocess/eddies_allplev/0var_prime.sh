@@ -85,13 +85,14 @@ T_prime(){
 export -f band_filter
 export -f T_prime
 
-parallel -j 5 T_prime ::: {1850..2090..10}
+parallel -j 2 T_prime ::: 1850 2090
 
 # check completion
-for dec in {1850..2090..10}; do
+for dec in 1850 2090; do
     if [ ! -f ${Tp_path}/*${dec}*.nc ]; then
         echo "Decade ${dec} is missing"
         echo "Recalculate decade ${dec}"
         T_prime ${dec}
     fi
+done
 done
