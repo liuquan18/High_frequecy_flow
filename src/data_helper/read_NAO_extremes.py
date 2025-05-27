@@ -52,7 +52,7 @@ def read_NAO_extremes_single_ens(phase,dec, ens, dur_threshold = 5):
     return extremes
 
 # read NAO for troposphere every singl ensemble
-def read_NAO_extremes_troposphere_single_ens(phase, decade, ens, dur_threshold = 5):
+def read_NAO_extremes_troposphere_single_ens( decade, phase, ens, dur_threshold = 5):
     base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_trop_firstlast/{phase}_extreme_events/{phase}_extreme_events_{decade}/'
     file_path = base_dir + f"*r{ens}_*.csv"
     file = glob.glob(file_path)[0]
@@ -65,7 +65,7 @@ def read_NAO_extremes_troposphere_single_ens(phase, decade, ens, dur_threshold =
 def read_NAO_extremes_troposphere(decade, phase = 'pos', dur_threshold = 5):
     extremes = []
     for ens in range(1, 51):
-        extreme = read_NAO_extremes_troposphere_single_ens(phase, decade, ens, dur_threshold)
+        extreme = read_NAO_extremes_troposphere_single_ens( decade, phase, ens, dur_threshold)
         extremes.append(extreme)
 
     extremes = pd.concat(extremes)
