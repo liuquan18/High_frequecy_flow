@@ -12,7 +12,7 @@ importlib.reload(composite)
 importlib.reload(read_variable)
 read_prime_single_ens = read_variable.read_prime_single_ens
 range_NAO_composite = composite.range_NAO_composite
-
+range_NAO_composite_single_phase = composite.range_NAO_composite_single_phase
 #%%
 import mpi4py.MPI as MPI
 # %%
@@ -32,20 +32,18 @@ def composite_single_ens(var, decade, ens, plev = None, method = 'sum', **kwargs
     # select plev 
     if not pos_extreme.empty:
         pos_extreme = pos_extreme[pos_extreme['plev'] == plev] if plev is not None else pos_extreme
+        # postive composite
+        var_pos = range_NAO_composite_single_phase(var_field, pos_extreme)
+        var_pos = var_pos.sum(dim='event') # sum over the event
+    else:
+        var_pos = None
     if not neg_extreme.empty:
         neg_extreme = neg_extreme[neg_extreme['plev'] == plev] if plev is not None else neg_extreme
-
-
-    var_pos, var_neg = range_NAO_composite(var_field, pos_extreme, neg_extreme)
-
-    # average over the event
-    if method == 'mean':
-        var_pos = var_pos.mean(dim='event')
-        var_neg = var_neg.mean(dim='event')
-
-    elif method == 'sum':
-        var_pos = var_pos.sum(dim='event')
-        var_neg = var_neg.sum(dim='event')
+        # negative composite
+        var_neg = range_NAO_composite_single_phase(var_field, neg_extreme)
+        var_neg = var_neg.sum(dim='event')  # sum over the event
+    else:
+        var_neg = None
     return var_pos, var_neg
 # %%
 decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
