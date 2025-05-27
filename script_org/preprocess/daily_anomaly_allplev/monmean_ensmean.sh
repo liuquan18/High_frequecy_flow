@@ -24,8 +24,8 @@ ensmean(){
     echo "Decade ${decade} for variable ${var}"
 
 
-    base_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/
-    to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_monthly_ensmean/
+    base_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_daily/
+    to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_monthly_ensmean/
     mkdir -p $to_path
 
     file_name=*_day_MPI-ESM1-2-LR_r*_gn_${decade}*.nc
