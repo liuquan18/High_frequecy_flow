@@ -19,15 +19,15 @@ echo "Ensemble member ${member} of variable ${var}"
 
 frequency=${3:-prime} # prime (2-12 days) or high (2-6 days), default prime
 
-T_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/r${member}i1p1f1/
+T_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_daily/r${member}i1p1f1/
 
 
 if [ "$frequency" == "prime" ]; then
-    Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_prime_daily/r${member}i1p1f1/
+    Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_prime_daily/r${member}i1p1f1/
 elif [ "$frequency" == "prime_high" ]; then
-    Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_prime_high_daily/r${member}i1p1f1/
+    Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_prime_high_daily/r${member}i1p1f1/
 elif [ "$frequency" == "hat" ]; then
-    Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_hat_daily/r${member}i1p1f1/
+    Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_hat_daily/r${member}i1p1f1/
 else
     echo "Frequency not recognized, please use prime or high"
     exit 1
