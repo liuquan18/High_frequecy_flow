@@ -76,29 +76,7 @@ def wavebreaking(pv, mflux):
                             events=cyclonic)
 
     return stratospheric_array, tropospheric_array, anticyclonic_array, cyclonic_array
-# %%
-def event_classify(events):
 
-    # anticyclonic and cyclonic by intensity for the Northern Hemisphere
-    anticyclonic = events[events.intensity > 0]
-    cyclonic = events[events.intensity < 0]
-
-    anti_tracked = wb.track_events(
-        events=anticyclonic,
-        method="by_overlap",  # method for tracking ["by_overlap", "by_distance"], optional
-        buffer=1.9,  # buffer in degrees for polygons overlapping, spatial resolution is 1.875 
-        overlap=0.3,  # minimum overlap percentage, optinal
-    )  # distance in km for method "by_distance"
-
-    cyc_tracked = wb.track_events(
-        events=cyclonic,
-        method="by_overlap",  # method for tracking ["by_overlap", "by_distance"], optional
-        buffer=1.9,  # buffer in degrees for polygons overlapping, optional
-        overlap=0.3,  # minimum overlap percentage, optinal
-    )  
-
-
-    return anti_tracked, cyc_tracked
 # %%
 node = sys.argv[1]
 ens = int(node)
