@@ -9,7 +9,8 @@ import src.extremes.extreme_read as ext_read
 
 logging.basicConfig(level=logging.INFO)
 
-#%%
+
+# %%
 ################## NAO composite during the event ######################
 def during_NAO_composite(uhat, events):
     try:
@@ -30,7 +31,8 @@ def during_NAO_composite(uhat, events):
 
     return uhat_extreme
 
-#%%
+
+# %%
 ################# before the NAO composite ######################
 # %%
 def before_NAO_composite(NAO, data, lag=(-15, -5)):
@@ -111,7 +113,6 @@ def find_lead_lag_30days(events, base_plev=None, cross_plev=None):
     return date_range
 
 
-
 def date_range_composite(zg, date_range):
     """
     parameters:
@@ -173,20 +174,27 @@ def date_range_composite(zg, date_range):
     return composite
 
 
+def range_NAO_composite_single_phase(
+    variable, extremes, base_plev=None, cross_plev=None
+):
+    date_range = find_lead_lag_30days(extremes, base_plev, cross_plev)
+    composite = None
+    if not date_range.empty:
+        composite = date_range_composite(variable, date_range)
+    return composite
+
+
 def range_NAO_composite(
     variable, pos_extremes, neg_extremes, base_plev=None, cross_plev=None
 ):
 
-    pos_date_range = find_lead_lag_30days(pos_extremes, base_plev, cross_plev)
-    neg_date_range = find_lead_lag_30days(neg_extremes, base_plev, cross_plev)
+    # pos
+    pos_composite = range_NAO_composite_single_phase(
+        variable, pos_extremes, base_plev, cross_plev
+    )
 
-    pos_composite = None
-    neg_composite = None
-
-    if not pos_date_range.empty:
-        pos_composite = date_range_composite(variable, pos_date_range)
-
-    if not neg_date_range.empty:
-        neg_composite = date_range_composite(variable, neg_date_range)
-
+    # neg
+    neg_composite = range_NAO_composite_single_phase(
+        variable, neg_extremes, base_plev, cross_plev
+    )
     return pos_composite, neg_composite
