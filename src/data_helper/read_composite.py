@@ -25,4 +25,6 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
             ds = ds - ds.mean(dim="lon", keep_attrs=True)
     elif method == "sum":
         ds = ds.sum(dim=("time", "ens"))
+    elif method == "no_stat":
+        pass
     return ds
