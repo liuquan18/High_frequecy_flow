@@ -28,7 +28,10 @@ Ts_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}
 
 tmp_dir=/scratch/m/m300883/${var}_steady/r${member}i1p1f1/
 
-mkdir -p ${Ts_path} ${tmp_dir}
+if [ -d "${tmp_dir}" ]; then
+    rm -rf "${tmp_dir}"
+fi
+mkdir -p "${Ts_path}" "${tmp_dir}"
 
 
 export T_path Ts_path member tmp_dir var
