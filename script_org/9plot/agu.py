@@ -12,8 +12,12 @@ from src.composite.composite_NAO_WB import smooth, NAO_WB
 from src.plotting.util import erase_white_line
 import cartopy.crs as ccrs
 
-
+from src.data_helper.read_NAO_extremes import read_NAO_extremes_troposphere 
+from src.data_helper.read_composite import read_comp_var
+from cartopy.mpl.patch import geos_to_path
 # %%
+
+################ old jet, should be updated #############
 #### extreme count
 def combine_events(df, duration=13):
     """
@@ -168,16 +172,152 @@ jet_loc_first10_neg = jet_event(first10_ano, first10_neg_events)
 jet_loc_last10_pos = jet_event(last10_ano, last10_pos_events)
 jet_loc_last10_neg = jet_event(last10_ano, last10_neg_events)
 
+####################################################
+#%%
+wb_time_window = (-15, 5)  # days relative to NAO onset
+#%%
+# read NAO extremes
 
-# %%%% wave breaking
-first_NAO_pos_AWB, first_NAO_neg_AWB, first_NAO_pos_CWB, first_NAO_neg_CWB = NAO_WB(
-    "first10"
-)
-last_NAO_pos_AWB, last_NAO_neg_AWB, last_NAO_pos_CWB, last_NAO_neg_CWB = NAO_WB(
-    "last10"
-)
+pos_first = read_NAO_extremes_troposphere(1850, 'pos', dur_threshold=8)
+neg_first = read_NAO_extremes_troposphere(1850, 'neg', dur_threshold=8)
+
+pos_last = read_NAO_extremes_troposphere(2090, 'pos', dur_threshold=8)
+neg_last = read_NAO_extremes_troposphere(2090, 'neg', dur_threshold=8)
+#%%
+pos_days_first = pos_first.groupby("plev")["extreme_duration"].sum().reset_index()
+neg_days_first = neg_first.groupby("plev")["extreme_duration"].sum().reset_index()
+pos_days_last = pos_last.groupby("plev")["extreme_duration"].sum().reset_index()
+neg_days_last = neg_last.groupby("plev")["extreme_duration"].sum().reset_index()
+
+#%%
+pos_days_first['extreme_duration'] = pos_days_first['extreme_duration']/50
+neg_days_first['extreme_duration'] = neg_days_first['extreme_duration']/50
+
+pos_days_last['extreme_duration'] = pos_days_last['extreme_duration']/50
+neg_days_last['extreme_duration'] = neg_days_last['extreme_duration']/50
+
 # %%
+awb_pos_first = read_comp_var(
+    "wb_anticyclonic", "pos", 1850, name="flag", time_window=wb_time_window, method = 'no_stat'
+)
 
+cwb_neg_first = read_comp_var(
+    "wb_cyclonic", "neg", 1850, name="flag", time_window=wb_time_window, method = 'no_stat'
+)
+
+awb_pos_last = read_comp_var(
+    "wb_anticyclonic", "pos", 2090, name="flag", time_window=wb_time_window, method = 'no_stat'
+)
+cwb_neg_last = read_comp_var(
+    "wb_cyclonic", "neg", 2090, name="flag", time_window=wb_time_window, method = 'no_stat'
+)
+# check the map
+#%%
+fig, axes = plt.subplots(
+    2, 2, figsize=(20, 10), subplot_kw=dict(projection=ccrs.PlateCarree(-70))
+)
+
+awb_pos_first.sum(dim = 'ens').mean(dim = 'time').plot.contourf(
+    ax=axes[0, 0],
+    transform=ccrs.PlateCarree(),
+    add_colorbar=False,
+)
+
+cwb_neg_first.sum(dim = 'ens').mean(dim = 'time').plot.contourf(
+    ax=axes[0, 1],
+    transform=ccrs.PlateCarree(),
+    add_colorbar=False,
+)
+
+
+
+awb_pos_last.sum(dim = 'ens').mean(dim = 'time').plot.contourf(
+    ax=axes[1, 0],
+    transform=ccrs.PlateCarree(),
+    add_colorbar=False,
+)
+cwb_neg_last.sum(dim = 'ens').mean(dim = 'time').plot.contourf(
+    ax=axes[1, 1],
+    transform=ccrs.PlateCarree(),
+    add_colorbar=False,
+)
+
+# add box at the first column, first row, 40-60N, -10, 10 E
+import matplotlib.patches as mpatches
+
+# Define the box coordinates (longitude in 0-360 or -180-180 as per your data)
+# Here, -10 to 10 E is equivalent to 350 to 10 if your data is 0-360, or just -10 to 10 if -180 to 180
+box_lons = [-10, 10, 10, -10, -10]
+box_lats = [40, 40, 60, 60, 40]
+
+axes[0, 0].plot(
+    box_lons,
+    box_lats,
+    transform=ccrs.PlateCarree(),
+    color="k",
+    linewidth=2,
+    linestyle="--",
+)
+
+# add box at the second column, first row, 50-70N, -50, -40 W
+box_lons = [310, 320, 320, 310, 310]
+box_lats = [50, 50, 70, 70, 50]
+axes[0, 1].plot(
+    box_lons,
+    box_lats,
+    transform=ccrs.PlateCarree(),
+    color="k",
+    linewidth=2,
+    linestyle="--",
+)
+
+# add gridlines
+for ax in axes.flatten():
+    ax.set_extent([-180, 180, 0, 90], crs=ccrs.PlateCarree())
+    ax.coastlines()
+    ax.gridlines(draw_labels=True, dms=True, x_inline=False, y_inline=False)
+plt.tight_layout()
+
+
+#%%
+# AWB 40-60N, -10, 10 E
+awb_pos_NAL_first = awb_pos_first.sel(lat = slice(30, 60), lon = slice(300, 360)).mean(dim = ('lat','lon')).sum(dim = 'ens')
+awb_pos_NAL_last = awb_pos_last.sel(lat = slice(30, 60), lon = slice(300, 360)).mean(dim = ('lat','lon')).sum(dim = 'ens')
+
+cwb_neg_NAL_first = cwb_neg_first.sel(lat = slice(30, 60), lon = slice(300, 360)).mean(dim = ('lat','lon')).sum(dim = 'ens')
+cwb_neg_NAL_last = cwb_neg_last.sel(lat = slice(30, 60), lon = slice(300, 360)).mean(dim = ('lat','lon')).sum(dim = 'ens')
+
+
+
+#%%
+first_NAO_pos_AWB = awb_pos_NAL_first
+last_NAO_pos_AWB = awb_pos_NAL_last
+
+first_NAO_neg_CWB = cwb_neg_NAL_first
+last_NAO_neg_CWB = cwb_neg_NAL_last
+
+# %%
+# Merge the two dataframes and reshape for 'period' column
+pos_extrems = pd.concat(
+    [
+        pos_days_first.assign(period="first10"),
+        pos_days_last.assign(period="last10"),
+    ],
+    axis=0,
+    ignore_index=True,
+)
+neg_extrems = pd.concat(
+    [
+        neg_days_first.assign(period="first10"),
+        neg_days_last.assign(period="last10"),
+    ],
+    axis=0,
+    ignore_index=True,
+)
+
+# reanem "extreme_duration" to "count"
+pos_extrems.rename(columns={"extreme_duration": "count"}, inplace=True)
+neg_extrems.rename(columns={"extreme_duration": "count"}, inplace=True)
 # %%
 cm = 1 / 2.54  # centimeters in inches
 fig = plt.figure(figsize=(36 * cm, 60 * cm))
@@ -303,11 +443,11 @@ smooth(last_NAO_neg_CWB).plot(
 )
 
 
-line_ax2.set_xlim(-21, 21)
-line_ax1.set_xlim(-21, 21)
+line_ax2.set_xlim(-15, 5)
+line_ax1.set_xlim(-15, 5)
 
-line_ax2.set_ylim(10, 33)
-line_ax1.set_ylim(0, 10)
+line_ax2.set_ylim(0, 3)
+line_ax1.set_ylim(0, 3)
 
 line_ax2.set_ylabel("WB occurrence", fontsize=14)
 line_ax2.set_ylabel("")
@@ -324,12 +464,12 @@ for ax in [ax1, hist_ax2, hist_ax3, line_ax1, line_ax2]:
     ax.spines["right"].set_visible(False)
 
 
-# save as pdf without background
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/slides/agu/agu.pdf",
-    dpi=500,
-    transparent=True,
-)
+# # save as pdf without background
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/slides/agu/agu.pdf",
+#     dpi=500,
+#     transparent=True,
+# )
 # %%
 
 # %%
