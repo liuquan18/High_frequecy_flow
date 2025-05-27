@@ -24,8 +24,8 @@ name = MPI.Get_processor_name()
 def composite_single_ens(var, decade, ens, plev = None, method = 'sum', **kwargs):
     
     # read NAO extremes
-    pos_extreme = read_NAO_extremes_single_ens('pos', decade, ens)
-    neg_extreme = read_NAO_extremes_single_ens('neg', decade, ens)
+    pos_extreme = read_NAO_extremes_single_ens('pos', decade, ens, dur_threshold=8)
+    neg_extreme = read_NAO_extremes_single_ens('neg', decade, ens, dur_threshold=8)
     # read variable
     var_field = read_prime_single_ens( decade, ens,var, **kwargs)
     
