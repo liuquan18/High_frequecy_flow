@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import xarray as xr
-from src.extremes.extreme_read import read_extremes_allens
 import matplotlib.pyplot as plt
 from src.plotting.jet_stream_plotting import plot_uhat
 
@@ -16,15 +15,15 @@ from src.data_helper.read_NAO_extremes import (
 )
 from src.data_helper.read_composite import read_comp_var
 # %%
-wb_time_window = (-15, 5)  # days relative to NAO onset
+wb_time_window = (-20, 10)  # days relative to NAO onset
 # %%
 # read NAO extremes
 
-pos_first = read_NAO_extremes_troposphere(1850, "pos", dur_threshold=8)
-neg_first = read_NAO_extremes_troposphere(1850, "neg", dur_threshold=8)
+pos_first = read_NAO_extremes_troposphere(1850, "pos", dur_threshold=5)
+neg_first = read_NAO_extremes_troposphere(1850, "neg", dur_threshold=5)
 
-pos_last = read_NAO_extremes_troposphere(2090, "pos", dur_threshold=8)
-neg_last = read_NAO_extremes_troposphere(2090, "neg", dur_threshold=8)
+pos_last = read_NAO_extremes_troposphere(2090, "pos", dur_threshold=5)
+neg_last = read_NAO_extremes_troposphere(2090, "neg", dur_threshold=5)
 # %%
 pos_days_first = pos_first.groupby("plev")["extreme_duration"].sum().reset_index()
 neg_days_first = neg_first.groupby("plev")["extreme_duration"].sum().reset_index()
@@ -61,6 +60,7 @@ awb_pos_first = read_comp_var(
     name="flag",
     time_window=wb_time_window,
     method="no_stat",
+    comp_path = "0composite_distribution",
 )
 
 cwb_neg_first = read_comp_var(
@@ -70,6 +70,8 @@ cwb_neg_first = read_comp_var(
     name="flag",
     time_window=wb_time_window,
     method="no_stat",
+    comp_path = "0composite_distribution",
+
 )
 
 awb_pos_last = read_comp_var(
@@ -79,6 +81,8 @@ awb_pos_last = read_comp_var(
     name="flag",
     time_window=wb_time_window,
     method="no_stat",
+    comp_path = "0composite_distribution",
+
 )
 cwb_neg_last = read_comp_var(
     "wb_cyclonic",
@@ -87,6 +91,8 @@ cwb_neg_last = read_comp_var(
     name="flag",
     time_window=wb_time_window,
     method="no_stat",
+    comp_path = "0composite_distribution",
+
 )
 # check the map
 # %%
@@ -158,23 +164,24 @@ plt.tight_layout()
 # %%
 # AWB 40-60N, -10, 10 E
 awb_pos_NAL_first = (
-    awb_pos_first.sel(lat=slice(30, 60), lon=slice(300, 360))
+    awb_pos_first.sel(lat=slice(30, 50), lon=slice(340, 360))
     .mean(dim=("lat", "lon"))
     .sum(dim="ens")
 )
 awb_pos_NAL_last = (
-    awb_pos_last.sel(lat=slice(30, 60), lon=slice(300, 360))
+    awb_pos_last.sel(lat=slice(30, 50), lon=slice(340, 360))
     .mean(dim=("lat", "lon"))
     .sum(dim="ens")
 )
 
+#%%
 cwb_neg_NAL_first = (
-    cwb_neg_first.sel(lat=slice(30, 60), lon=slice(300, 360))
+    cwb_neg_first.sel(lat=slice(50, 70), lon=slice(290, 310))
     .mean(dim=("lat", "lon"))
     .sum(dim="ens")
 )
 cwb_neg_NAL_last = (
-    cwb_neg_last.sel(lat=slice(30, 60), lon=slice(300, 360))
+    cwb_neg_last.sel(lat=slice(50, 70), lon=slice(290, 310))
     .mean(dim=("lat", "lon"))
     .sum(dim="ens")
 )
@@ -334,11 +341,11 @@ smooth(last_NAO_neg_CWB).plot(
 )
 
 
-line_ax2.set_xlim(-15, 5)
-line_ax1.set_xlim(-15, 5)
+line_ax2.set_xlim(-20, 10)
+line_ax1.set_xlim(-20, 10)
 
-line_ax2.set_ylim(0, 3)
-line_ax1.set_ylim(0, 3)
+# line_ax2.set_ylim(0, 3)
+# line_ax1.set_ylim(0, 3)
 
 line_ax2.set_ylabel("WB occurrence", fontsize=14)
 line_ax2.set_ylabel("")
