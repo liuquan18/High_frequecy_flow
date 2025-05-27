@@ -25,7 +25,7 @@ ssp585_path=/work/ik1017/CMIP6/data/CMIP6/ScenarioMIP/MPI-M/MPI-ESM1-2-LR/ssp585
 file_list=$(find $historical_path -name "*.nc" -print; find $ssp585_path -name "*.nc" -print)
 
 
-to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_daily/r${member}i1p1f1/
+to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_hat_daily/r${member}i1p1f1/
 tmp_path=/scratch/m/m300883/$var/r${member}i1p1f1/
 
 mkdir -p $to_path 
