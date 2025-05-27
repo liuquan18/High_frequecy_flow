@@ -11,7 +11,7 @@
 
 # subtract the ensemble mean of the monthly data from the daily data using cdo monsub
 # by doing which a long-term trend and seasonal cycle are removed
-module load cdo
+module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
 # get the ensemble member from the command line
