@@ -12,7 +12,7 @@ import os
 import wavebreaking as wb
 
 
-from src.data_helper.read_NAO_extremes import read_NAO_extremes_single_ens
+from src.data_helper.read_NAO_extremes import read_NAO_extremes_troposphere_single_ens
 from src.composite.composite import range_NAO_composite
 from src.data_helper import read_variable 
 from src.data_helper import read_wb 
@@ -29,11 +29,17 @@ size = comm.Get_size()
 name = MPI.Get_processor_name()
 # %%
 def read_all_data(decade,ens, **kwargs):
-    logging.info("reading NAO extremes")
+    plev = kwargs.get('plev', 50000)  # default plev is 500 hPa
+    logging.info(f"reading NAO extremes on {plev}")
     # wave breaking
-    NAO_pos = read_NAO_extremes_single_ens('pos', decade, ens)
-    NAO_neg = read_NAO_extremes_single_ens('neg', decade, ens )
-
+    NAO_pos = read_NAO_extremes_troposphere_single_ens(decade, 'pos',ens, dur_threshold=8)
+    NAO_neg = read_NAO_extremes_troposphere_single_ens(decade, 'neg',ens, dur_threshold=8)
+    # select the plev
+    if not NAO_pos.empty:
+        NAO_pos = NAO_pos[NAO_pos['plev'] == plev]
+    if not NAO_neg.empty:
+        NAO_neg = NAO_neg[NAO_neg['plev'] == plev]
+    logging.info(f"NAO pos events: {len(NAO_pos)}, NAO neg events: {len(NAO_neg)}")
     logging.info("reading wave breaking data")
     AWB = read_wb_single_ens(decade, ens, 'awb', type_by='orientation')
     CWB = read_wb_single_ens(decade, ens, 'cwb', type_by='orientation')
@@ -74,10 +80,10 @@ for i, member in enumerate(members_single[:5]):
     pos_AWB, neg_AWB = range_NAO_composite(AWB, NAO_pos, NAO_neg)
     pos_CWB, neg_CWB = range_NAO_composite(CWB, NAO_pos, NAO_neg)
 
-    pos_AWB = pos_AWB.mean(dim='event')
-    neg_AWB = neg_AWB.mean(dim='event')
-    pos_CWB = pos_CWB.mean(dim='event')
-    neg_CWB = neg_CWB.mean(dim='event')
+    pos_AWB = pos_AWB.sum(dim='event')
+    neg_AWB = neg_AWB.sum(dim='event')
+    pos_CWB = pos_CWB.sum(dim='event')
+    neg_CWB = neg_CWB.sum(dim='event')
 
     pos_AWB['ens'] = member
     neg_AWB['ens'] = member
@@ -116,9 +122,9 @@ if rank == 0:
     # save data
     logging.info("saving data")
 
-    pos_AWBs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_range/AWB_pos_{decade}.nc')
-    neg_AWBs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_range/AWB_neg_{decade}.nc')
-    pos_CWBs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_range/CWB_pos_{decade}.nc')
-    neg_CWBs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_range/CWB_neg_{decade}.nc')
+    pos_AWBs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_distribution/AWB_pos_trop_{decade}.nc')
+    neg_AWBs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_distribution/AWB_neg_trop_{decade}.nc')
+    pos_CWBs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_distribution/CWB_pos_trop_{decade}.nc')
+    neg_CWBs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_distribution/CWB_neg_trop_{decade}.nc')
 
     
