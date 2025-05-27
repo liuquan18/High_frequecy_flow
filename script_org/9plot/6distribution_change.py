@@ -19,11 +19,11 @@ wb_time_window = (-20, 10)  # days relative to NAO onset
 # %%
 # read NAO extremes
 
-pos_first = read_NAO_extremes_troposphere(1850, "pos", dur_threshold=5)
-neg_first = read_NAO_extremes_troposphere(1850, "neg", dur_threshold=5)
+pos_first = read_NAO_extremes_troposphere(1850, "pos", dur_threshold=7)
+neg_first = read_NAO_extremes_troposphere(1850, "neg", dur_threshold=7)
 
-pos_last = read_NAO_extremes_troposphere(2090, "pos", dur_threshold=5)
-neg_last = read_NAO_extremes_troposphere(2090, "neg", dur_threshold=5)
+pos_last = read_NAO_extremes_troposphere(2090, "pos", dur_threshold=7)
+neg_last = read_NAO_extremes_troposphere(2090, "neg", dur_threshold=7)
 # %%
 pos_days_first = pos_first.groupby("plev")["extreme_duration"].sum().reset_index()
 neg_days_first = neg_first.groupby("plev")["extreme_duration"].sum().reset_index()
@@ -94,72 +94,6 @@ cwb_neg_last = read_comp_var(
     comp_path = "0composite_distribution",
 
 )
-# check the map
-# %%
-fig, axes = plt.subplots(
-    2, 2, figsize=(20, 10), subplot_kw=dict(projection=ccrs.PlateCarree(-70))
-)
-
-awb_pos_first.sum(dim="ens").mean(dim="time").plot.contourf(
-    ax=axes[0, 0],
-    transform=ccrs.PlateCarree(),
-    add_colorbar=False,
-)
-
-cwb_neg_first.sum(dim="ens").mean(dim="time").plot.contourf(
-    ax=axes[0, 1],
-    transform=ccrs.PlateCarree(),
-    add_colorbar=False,
-)
-
-
-awb_pos_last.sum(dim="ens").mean(dim="time").plot.contourf(
-    ax=axes[1, 0],
-    transform=ccrs.PlateCarree(),
-    add_colorbar=False,
-)
-cwb_neg_last.sum(dim="ens").mean(dim="time").plot.contourf(
-    ax=axes[1, 1],
-    transform=ccrs.PlateCarree(),
-    add_colorbar=False,
-)
-
-# add box at the first column, first row, 40-60N, -10, 10 E
-import matplotlib.patches as mpatches
-
-# Define the box coordinates (longitude in 0-360 or -180-180 as per your data)
-# Here, -10 to 10 E is equivalent to 350 to 10 if your data is 0-360, or just -10 to 10 if -180 to 180
-box_lons = [-10, 10, 10, -10, -10]
-box_lats = [40, 40, 60, 60, 40]
-
-axes[0, 0].plot(
-    box_lons,
-    box_lats,
-    transform=ccrs.PlateCarree(),
-    color="k",
-    linewidth=2,
-    linestyle="--",
-)
-
-# add box at the second column, first row, 50-70N, -50, -40 W
-box_lons = [310, 320, 320, 310, 310]
-box_lats = [50, 50, 70, 70, 50]
-axes[0, 1].plot(
-    box_lons,
-    box_lats,
-    transform=ccrs.PlateCarree(),
-    color="k",
-    linewidth=2,
-    linestyle="--",
-)
-
-# add gridlines
-for ax in axes.flatten():
-    ax.set_extent([-180, 180, 0, 90], crs=ccrs.PlateCarree())
-    ax.coastlines()
-    ax.gridlines(draw_labels=True, dms=True, x_inline=False, y_inline=False)
-plt.tight_layout()
-
 
 # %%
 # AWB 40-60N, -10, 10 E
@@ -352,7 +286,7 @@ line_ax2.set_ylabel("")
 line_ax1.set_xlabel("days relative to onset of NAO extremes", fontsize=20)
 line_ax2.set_xlabel("days relative to onset of NAO extremes", fontsize=20)
 
-line_ax1.legend(frameon=False, loc="upper right")
+line_ax1.legend(frameon=False, loc="upper left")
 line_ax1.set_ylabel("WB occurrence")
 plt.tight_layout()
 
