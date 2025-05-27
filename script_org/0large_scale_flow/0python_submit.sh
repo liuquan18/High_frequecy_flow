@@ -9,7 +9,8 @@
 #SBATCH --account=mh0033
 #SBATCH --output=python.%j.out
 
-ens=$1 # ensemble member
+file=$1 # python file to run
+ens=$2 # ensemble member
 
 echo run $file of ens $ens
-mpirun -n 5 python -u 3potential_temperature $ens
+mpirun -n 5 python -u $file $ens
