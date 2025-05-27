@@ -69,7 +69,7 @@ for i, member in enumerate(members_single):
     
     # read pc index
     pc = xr.open_dataset(
-        f"{projected_pc_path}/NAO_pc_{decade}_r{member}_std.nc"
+        f"{projected_pc_path}NAO_pc_{decade}_r{member}_std.nc"
     ).pc
 
     pc = to_dataframe(pc)
