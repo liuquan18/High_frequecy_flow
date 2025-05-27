@@ -75,8 +75,12 @@ theta_2PVU_negs = comm.gather(theta_2PVU_negs, root=0)
 if rank == 0:
 
     # Flatten the gathered lists
-    theta_2PVU_poss = [item for sublist in theta_2PVU_poss for item in sublist]
-    theta_2PVU_negs = [item for sublist in theta_2PVU_negs for item in sublist]
+    theta_2PVU_poss = [item for sublist in theta_2PVU_poss for item in sublist if item is not None]
+    theta_2PVU_negs = [item for sublist in theta_2PVU_negs for item in sublist if item is not None]
+
+    # length info
+    logging.info(f"Rank {rank} - Number of positive composites: {len(theta_2PVU_poss)}")
+    logging.info(f"Rank {rank} - Number of negative composites: {len(theta_2PVU_negs)}")
 
     theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='ens', coords = 'all')
     theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='ens', coords = 'all')
