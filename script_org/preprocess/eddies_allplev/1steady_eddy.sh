@@ -20,7 +20,7 @@ echo "Ensemble member ${member} of variable ${var}"
 
 T_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_hat_daily/r${member}i1p1f1/
 
-T_mmean_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_monthly_ensmean/
+T_mmean_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_hat_monthly_ensmean/
 
 
 Ts_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_steady_daily/r${member}i1p1f1/
