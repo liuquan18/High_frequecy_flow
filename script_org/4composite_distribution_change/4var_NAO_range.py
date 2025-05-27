@@ -1,7 +1,7 @@
 #%%
 import xarray as xr
 import numpy as np
-from src.data_helper.read_NAO_extremes import read_NAO_extremes_single_ens
+from src.data_helper.read_NAO_extremes import read_NAO_extremes_troposphere_single_ens
 from src.composite import composite
 from src.data_helper import read_variable
 import sys
@@ -24,8 +24,8 @@ name = MPI.Get_processor_name()
 def composite_single_ens(var, decade, ens, plev = None, method = 'sum', **kwargs):
     
     # read NAO extremes
-    pos_extreme = read_NAO_extremes_single_ens('pos', decade, ens, dur_threshold=8)
-    neg_extreme = read_NAO_extremes_single_ens('neg', decade, ens, dur_threshold=8)
+    pos_extreme = read_NAO_extremes_troposphere_single_ens(decade, 'pos', ens, dur_threshold=8)
+    neg_extreme = read_NAO_extremes_troposphere_single_ens(decade, 'neg', ens, dur_threshold=8)
     # read variable
     var_field = read_prime_single_ens( decade, ens,var, **kwargs)
     
@@ -33,15 +33,21 @@ def composite_single_ens(var, decade, ens, plev = None, method = 'sum', **kwargs
     if not pos_extreme.empty:
         pos_extreme = pos_extreme[pos_extreme['plev'] == plev] if plev is not None else pos_extreme
         # postive composite
-        var_pos = range_NAO_composite_single_phase(var_field, pos_extreme)
-        var_pos = var_pos.sum(dim='event') # sum over the event
+        if not pos_extreme.empty:
+            var_pos = range_NAO_composite_single_phase(var_field, pos_extreme)
+            var_pos = var_pos.sum(dim='event') # sum over the event
+        else:
+            var_pos = None
     else:
         var_pos = None
     if not neg_extreme.empty:
         neg_extreme = neg_extreme[neg_extreme['plev'] == plev] if plev is not None else neg_extreme
         # negative composite
-        var_neg = range_NAO_composite_single_phase(var_field, neg_extreme)
-        var_neg = var_neg.sum(dim='event')  # sum over the event
+        if not neg_extreme.empty:
+            var_neg = range_NAO_composite_single_phase(var_field, neg_extreme)
+            var_neg = var_neg.sum(dim='event')  # sum over the event
+        else:
+            var_neg = None
     else:
         var_neg = None
     return var_pos, var_neg
@@ -61,7 +67,7 @@ theta_2PVU_negs = []
 for i, member in enumerate(members_single):
     print(f"Rank {rank}, member {member}/{members_single[-1]}")
 
-    theta_2pvu_pos, theta_2pvu_neg = composite_single_ens(var, decade=decade, ens=member, name = name, suffix = suffix)
+    theta_2pvu_pos, theta_2pvu_neg = composite_single_ens(var, decade=decade, ens=member, name = name, suffix = suffix, plev = 25000)
 
     theta_2PVU_poss.append(theta_2pvu_pos)
     theta_2PVU_negs.append(theta_2pvu_neg)
