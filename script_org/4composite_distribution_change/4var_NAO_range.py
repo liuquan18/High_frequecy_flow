@@ -84,6 +84,6 @@ if rank == 0:
     theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='ens', coords = 'all')
 
     # save the results
-    theta_2PVU_poss.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_range/{var}{suffix}_NAO_pos_{decade}.nc')
-    theta_2PVU_negs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_range/{var}{suffix}_NAO_neg_{decade}.nc')
+    theta_2PVU_poss.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_distribution/{var}{suffix}_NAO_pos_{decade}.nc')
+    theta_2PVU_negs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0composite_distribution/{var}{suffix}_NAO_neg_{decade}.nc')
 # %%
