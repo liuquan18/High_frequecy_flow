@@ -17,4 +17,4 @@ ano=$5 # anomaly
 
 echo run $phase for $decade
 
-python 4EP_flux_isentropes.py $phase $decade $isentrope $eddy $ano
+python 4EP_flux.py $phase $decade $isentrope $eddy $ano
