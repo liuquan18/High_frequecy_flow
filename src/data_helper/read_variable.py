@@ -114,20 +114,22 @@ def postprocess(ds, smooth_value=5, remove_zonal=False):
     return ds
 
 
-def read_composite_MPI(var, name, decade, before="15_5", return_as = 'diff', ano = False, smooth_value = 5, remove_zonal = False):
+def read_composite_MPI(var, name, decade, before="15_5", return_as = 'diff', ano = False, smooth_value = 5, remove_zonal = False, allplev = False):
+
+    model_dir = "MPI_GE_CMIP6" if not allplev else "MPI_GE_CMIP6_allplev"
     if ano:
         pos_file = glob.glob(
-            f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_pos_{before}_mean_{decade}.nc"
+            f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/0stat_results/{var}_NAO_pos_{before}_mean_{decade}.nc"
         )
         neg_file = glob.glob(
-            f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results/{var}_NAO_neg_{before}_mean_{decade}.nc"
+            f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/0stat_results/{var}_NAO_neg_{before}_mean_{decade}.nc"
         )
     else:
         pos_file = glob.glob(
-            f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/{var}_NAO_pos_{before}_mean_{decade}.nc"
+            f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/0stat_results_without_ano/{var}_NAO_pos_{before}_mean_{decade}.nc"
         )
         neg_file = glob.glob(
-            f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0stat_results_without_ano/{var}_NAO_neg_{before}_mean_{decade}.nc"
+            f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/0stat_results_without_ano/{var}_NAO_neg_{before}_mean_{decade}.nc"
         )
 
     if len(pos_file) == 0 or len(neg_file) == 0:
