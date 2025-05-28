@@ -42,8 +42,8 @@ def composite_single_ens(var, decade, ens, plev = None, **kwargs):
 decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
 var = sys.argv[2] if len(sys.argv) > 2 else 'ua'
 name = sys.argv[3] if len(sys.argv) > 3 else var
-suffix = sys.argv[4] if len(sys.argv) > 4 else ''
-model_dir = sys.argv[5] if len(sys.argv) > 5 else 'MPI_GE_CMIP6'
+model_dir = sys.argv[4] if len(sys.argv) > 4 else 'MPI_GE_CMIP6'
+suffix = sys.argv[5] if len(sys.argv) > 5 else ''
 # %%
 members = np.arange(1, 51)  # all members
 members_single = np.array_split(members, size)[rank]  # members on this core
