@@ -11,9 +11,10 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
     remove_zonmean = kwargs.get("remove_zonmean", False)
     erase_empty = kwargs.get("erase_zero_line", True)
     comp_path = kwargs.get("comp_path", "0composite_range")
+    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
     
     basedir = (
-        f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{comp_path}/"
+        f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{comp_path}/"
     )
     file_name = basedir + f"{var}{suffix}_NAO_{phase}_{decade}.nc"
     ds = xr.open_dataset(file_name)[name]
