@@ -24,8 +24,8 @@ name = MPI.Get_processor_name()
 def composite_single_ens(var, decade, ens, plev = None, method = 'sum', **kwargs):
     
     # read NAO extremes
-    pos_extreme = read_NAO_extremes_troposphere_single_ens(decade, 'pos', ens, dur_threshold=8)
-    neg_extreme = read_NAO_extremes_troposphere_single_ens(decade, 'neg', ens, dur_threshold=8)
+    pos_extreme = read_NAO_extremes_troposphere_single_ens(decade, 'pos', ens, dur_threshold=7) # 7 days, the same for the others
+    neg_extreme = read_NAO_extremes_troposphere_single_ens(decade, 'neg', ens, dur_threshold=7)
     # read variable
     var_field = read_prime_single_ens( decade, ens,var, **kwargs)
     

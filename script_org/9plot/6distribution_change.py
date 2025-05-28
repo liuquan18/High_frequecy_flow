@@ -296,12 +296,12 @@ for ax in [ax1, hist_ax2, hist_ax3, line_ax1, line_ax2]:
     ax.spines["right"].set_visible(False)
 
 
-# # save as pdf without background
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/slides/agu/agu.pdf",
-#     dpi=500,
-#     transparent=True,
-# )
+# save as pdf without background
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0distribution_change/NAO_distribution_change.pdf",
+    dpi=500,
+    transparent=True,
+)
 # %%
 
 # %%
