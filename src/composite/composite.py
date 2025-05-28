@@ -125,10 +125,10 @@ def date_range_composite(zg, date_range):
     composite = []
     for start_time, end_time in date_range.itertuples(index=False):
 
-
         sel_zg = zg.sel(
             time=slice(start_time, start_time + pd.Timedelta(days=61))
-        )  # note that xarray slice is inclusive on both sides
+        )  
+        sel_zg = sel_zg.isel(time = slice(None, 61)) # ensure we have 61 days
         if sel_zg.time.size < 61:
             if start_time < pd.Timestamp(f"{start_time.year}-05-01"):
                 logging.info(
@@ -165,7 +165,9 @@ def date_range_composite(zg, date_range):
                 sel_zg = xr.concat([sel_zg, add_data], dim="time")
 
         # now change the time coordinate as lag-days
+        
         sel_zg["time"] = np.arange(-30, 31, 1)
+
 
         # put them together
         composite.append(sel_zg)
