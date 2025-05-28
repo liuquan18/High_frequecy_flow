@@ -13,9 +13,10 @@ def read_prime(decade, var="eke", **kwargs):
     name = kwargs.get("name", var)  # default name is the same as var
     plev = kwargs.get("plev", None)
     suffix = kwargs.get("suffix", "_ano")
+    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
 
     time_tag = f"{decade}"
-    data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
+    data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_daily{suffix}/"
     files = glob.glob(data_path + "r*i1p1f1/" + f"*{time_tag}*.nc")
     # sort files
     files.sort(key=lambda x: int(x.split("/")[-2][1:].split("i")[0]))
@@ -39,7 +40,8 @@ def read_prime_single_ens(dec, ens, var, **kwargs):
     name = kwargs.get("name", var)  # default name is the same as var
     plev = kwargs.get("plev", None)
     suffix = kwargs.get("suffix", "_ano")
-    data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var}_daily{suffix}/"
+    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
+    data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_daily{suffix}/"
     files = glob.glob(data_path + f"r{ens}i1p1f1/*{dec}*")
     if len(files) == 0:
         raise ValueError(f"no file found for {var} in {ens}")
@@ -114,9 +116,9 @@ def postprocess(ds, smooth_value=5, remove_zonal=False):
     return ds
 
 
-def read_composite_MPI(var, name, decade, before="15_5", return_as = 'diff', ano = False, smooth_value = 5, remove_zonal = False, allplev = False):
+def read_composite_MPI(var, name, decade, before="15_5", return_as = 'diff', ano = False, smooth_value = 5, remove_zonal = False, **kwargs):
+    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
 
-    model_dir = "MPI_GE_CMIP6" if not allplev else "MPI_GE_CMIP6_allplev"
     if ano:
         pos_file = glob.glob(
             f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/0stat_results/{var}_NAO_pos_{before}_mean_{decade}.nc"
