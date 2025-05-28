@@ -125,8 +125,9 @@ def date_range_composite(zg, date_range):
     composite = []
     for start_time, end_time in date_range.itertuples(index=False):
 
+
         sel_zg = zg.sel(
-            time=slice(start_time, end_time)
+            time=slice(start_time, start_time + pd.Timedelta(days=61))
         )  # note that xarray slice is inclusive on both sides
         if sel_zg.time.size < 61:
             if start_time < pd.Timestamp(f"{start_time.year}-05-01"):
