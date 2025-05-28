@@ -22,7 +22,7 @@ import sys
 import os
 
 #%%
-def EP_flux_isen(vptp, upvp, theta=None, isentrope=True):
+def EP_flux_isen(vptp, upvp, theta=None, isentrope=False):
     """
     vptp: v't'
     upvp: u'v'
