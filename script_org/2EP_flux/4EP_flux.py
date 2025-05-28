@@ -58,7 +58,7 @@ def EP_flux_isen(vptp, upvp, theta=None, isentrope=False):
 
     return F_phi, F_p, div
 
-def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, isentrope=True, eddy='transient'):
+def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, isentrope=False, eddy='transient'):
     """
     Calculate EP flux for a given decade and phase
     """
