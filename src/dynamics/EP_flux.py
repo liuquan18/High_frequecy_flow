@@ -235,7 +235,7 @@ def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = Fal
 			vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
 			# for coordinates
 			theta_ensmean_path=glob.glob(
-				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc"
+				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc"
 			)[0]
 			theta_ensmean = xr.open_dataset(theta_ensmean_path).etheta
 
@@ -243,7 +243,7 @@ def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = Fal
 		else:
 			vptp = read_composite_MPI("vptp", "vptp", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
 			theta_ensmean_path=glob.glob(
-				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc"
+				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc"
 			)[0]
 			theta_ensmean = xr.open_dataset(theta_ensmean_path).theta
 
@@ -252,14 +252,14 @@ def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = Fal
 		if equiv_theta:
 			vptp = read_composite_MPI("vsets", "vsets", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
 			theta_ensmean_path=glob.glob(
-				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc"
+				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/equiv_theta_hat_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc"
 			)[0]
 			theta_ensmean = xr.open_dataset(theta_ensmean_path).etheta
 
 		else:
 			vptp = read_composite_MPI("vsts", "vsts", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False)
 			theta_ensmean_path=glob.glob(
-				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc"
+				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc"
 			)[0]
 			theta_ensmean = xr.open_dataset(theta_ensmean_path).theta
 
