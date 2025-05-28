@@ -44,6 +44,9 @@ var = sys.argv[2] if len(sys.argv) > 2 else 'ua'
 name = sys.argv[3] if len(sys.argv) > 3 else var
 model_dir = sys.argv[4] if len(sys.argv) > 4 else 'MPI_GE_CMIP6'
 suffix = sys.argv[5] if len(sys.argv) > 5 else ''
+
+# report the input
+logging.info(f"Rank {rank} of {size} is processing {var} for decade {decade}, model_dir {model_dir}, name {name}, suffix {suffix}")
 # %%
 members = np.arange(1, 51)  # all members
 members_single = np.array_split(members, size)[rank]  # members on this core
@@ -78,4 +81,3 @@ if rank == 0:
     # save the results
     theta_2PVU_poss.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/0composite_range/{var}{suffix}_NAO_pos_{decade}.nc')
     theta_2PVU_negs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/0composite_range/{var}{suffix}_NAO_neg_{decade}.nc')
-# %%
