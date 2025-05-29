@@ -85,7 +85,7 @@ T_prime(){
 export -f band_filter
 export -f T_prime
 
-parallel -j 2 T_prime ::: 1850 2090
+parallel -j 5 T_prime ::: {1850..2090..10}
 
 # check completion
 for dec in 1850 2090; do
