@@ -42,14 +42,9 @@ def composite_single_ens(var, decade, ens, plev = 85000, time_window = (-10, 5),
         var_pos = var_pos.sel(lon = slice(300, 350), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
         var_neg = var_neg.sel(lon = slice(300, 350), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
 
-        # average over time window
-        var_pos = var_pos.sel(time = slice(time_window[0], time_window[1])).mean(dim='time')
-        var_neg = var_neg.sel(time = slice(time_window[0], time_window[1])).mean(dim='time')
 
-        pos_extreme[var] = var_pos
-        neg_extreme[var] = var_neg
 
-    return pos_extreme, neg_extreme
+    return var_pos, var_neg
 # %%
 # %%
 decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
@@ -88,13 +83,13 @@ if rank == 0:
     theta_2PVU_poss = [item for sublist in theta_2PVU_poss for item in sublist]
     theta_2PVU_negs = [item for sublist in theta_2PVU_negs for item in sublist]
 
-
+#%%
     # concat the results
-    theta_2PVU_poss = pd.concat(theta_2PVU_poss, axis=0)
-    theta_2PVU_negs = pd.concat(theta_2PVU_negs, axis=0)
+    theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='event')
+    theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='event')
 
     # save the results
     save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_distribution/"
 
-    theta_2PVU_poss.to_csv(f'{save_dir}{var}{suffix}_NAO_pos_{decade}.csv', index=False)
-    theta_2PVU_negs.to_csv(f'{save_dir}{var}{suffix}_NAO_neg_{decade}.csv', index=False)
+    theta_2PVU_poss.to_netcdf(f'{save_dir}{var}{suffix}_NAO_pos_{decade}.nc')
+    theta_2PVU_negs.to_netcdf(f'{save_dir}{var}{suffix}_NAO_neg_{decade}.nc')
