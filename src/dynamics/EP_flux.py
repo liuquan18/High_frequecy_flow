@@ -2,7 +2,7 @@
 import xarray as xr
 import numpy as np
 import pandas as pd
-from src.data_helper.read_variable import read_composite_MPI
+from src.data_helper.read_composite import read_comp_var
 import glob
 
 # %%
@@ -223,43 +223,68 @@ def EP_flux(vptp, upvp, dthdp):
 
 
 # %%
-def read_data_all(decade, phase, ano = False, before = '15_5', equiv_theta = False, eddy = 'transient'):
+def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), eddy = 'transient'):
 	"""
 	theta for interpolation
 	steady eddies: usvs
 	transient eddies: upvp
 	"""
 	if eddy == 'transient':
-		upvp = read_composite_MPI("upvp", "upvp", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False, allplev=True)
+		upvp = read_comp_var(
+			var = "upvp",phase = phase, decade = decade, name = "upvp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+			time_window = time_window, method = "mean", erase_zero_line = True,
+		)
+		
 		if equiv_theta:
-			vptp = read_composite_MPI("vpetp", "vpetp", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False, allplev=True)
-			# for coordinates
+			vptp = read_comp_var(
+				var = "vpetp", phase = phase, decade = decade, name = "vpetp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+				time_window = time_window, method = "mean", erase_zero_line = True,
+			)
+			
 			theta_ensmean_path=glob.glob(
-				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/equiv_theta_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc"
+				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/equiv_theta_monthly_ensmean/*{decade}*.nc"
 			)[0]
 			theta_ensmean = xr.open_dataset(theta_ensmean_path).etheta
 
 
 		else:
-			vptp = read_composite_MPI("vptp", "vptp", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False, allplev=True)
+			vptp = read_comp_var(
+				var = "vptp", phase = phase, decade = decade, name = "vptp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+				time_window = time_window, method = "mean", erase_zero_line = True,
+			)
+			# read theta
 			theta_ensmean_path=glob.glob(
-				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc"
+				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/theta_monthly_ensmean/*{decade}*.nc"
 			)[0]
 			theta_ensmean = xr.open_dataset(theta_ensmean_path).theta
-
+		if 'time' in theta_ensmean.dims:
+			theta_ensmean = theta_ensmean.mean(dim = 'time')
+			
+	
 	elif eddy == 'steady':
-		upvp = read_composite_MPI("usvs", "usvs", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False, allplev=True)
+		upvp = read_comp_var(
+			var = "usvs", phase = phase, decade = decade, name = "usvs", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+			time_window = time_window, method = "mean", erase_zero_line = True,
+		)
 		if equiv_theta:
-			vptp = read_composite_MPI("vsets", "vsets", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False, allplev=True)
+			vptp = read_comp_var(
+				var = "vpetp", phase = phase, decade = decade, name = "vpetp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+				time_window = time_window, method = "mean", erase_zero_line = True,
+			)
+			
 			theta_ensmean_path=glob.glob(
-				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/equiv_theta_hat_monthly_ensmean/equiv_theta_monmean_ensmean_185005_185909.nc"
+				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/equiv_theta_hat_monthly_ensmean/*{decade}*.nc"
 			)[0]
 			theta_ensmean = xr.open_dataset(theta_ensmean_path).etheta
-
+		
 		else:
-			vptp = read_composite_MPI("vsts", "vsts", decade = decade, before = before, return_as=phase, ano=ano, smooth_value=None, remove_zonal=False, allplev=True)
+			vptp = read_comp_var(
+				var = "vptp", phase = phase, decade = decade, name = "vptp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+				time_window = time_window, method = "mean", erase_zero_line = True,
+			)
+			# read theta
 			theta_ensmean_path=glob.glob(
-				"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/theta_monthly_ensmean/theta_monmean_ensmean_185005_185909.nc"
+				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/theta_monthly_ensmean/*{decade}*.nc"
 			)[0]
 			theta_ensmean = xr.open_dataset(theta_ensmean_path).theta
 
