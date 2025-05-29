@@ -1400,7 +1400,7 @@ for ax in axes.flatten():
     ax.set_title("")
 
 plt.tight_layout()
-plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/steady_eddies_{time_window}_clim_ano_map.pdf", dpi=300, bbox_inches='tight')
+plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/steady_eddies_{time_window}_clim_ano_map_first.pdf", dpi=300, bbox_inches='tight')
 
 # %%
 # a new plot, the first row shows upvp for pos, neg, diff in the last decade,
