@@ -41,7 +41,7 @@ def to_plot_data(eke):
 
 #%%%
 # config
-time_window = (-10, 5)
+time_window = (-10, 10)  # years
 suffix = "_ano"
 remove_zonmean = False
 
@@ -50,7 +50,7 @@ uhat_levels_div = np.arange(-12, 13, 2)
 upvp_levels_div = np.arange(-15, 16, 5)*2
 vsts_levels_div = np.arange(-3, 3.1, 0.5)
 vptp_levels_div = np.arange(-1.2, 1.3, 0.2)*2
-vptp_levels_low_div = np.arange(-2.4, 2.5, 0.4)*2
+vptp_levels_low_div = np.arange(-4, 4.1, 1)
 scale_hus = 5e4
 
 # %%
@@ -1263,3 +1263,278 @@ plt.tight_layout()
 plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/steady_eddies_{time_window}_clim_ano_diff.pdf", dpi=300, bbox_inches='tight')
 
 # %%
+# map, just upvp map and vpetp low level (850 hPa) map
+# %%
+# a new plot, the first column shows the difference between pos and neg in the first decade,
+# the second column shows the difference between pos and neg in the last decade
+fig, axes = plt.subplots(
+    2,
+    3,
+    figsize=(10, 9),
+    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
+    sharex=True,
+    sharey=False,
+)
+
+
+upvp_pos_first.sel(plev = 25000).plot.contourf(
+    ax=axes[0, 0],
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+upvp_neg_first.sel(plev = 25000).plot.contourf(
+    ax=axes[0, 1],
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+upvp_diff_first.sel(plev = 25000).plot.contourf(
+    ax=axes[0, 2],
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+
+vpetp_pos_first.sel(plev = 85000).plot.contourf(
+    ax=axes[1, 0],
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_low_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_low_div[::2],
+    },
+)
+vpetp_neg_first.sel(plev = 85000).plot.contourf(
+    ax=axes[1, 1],
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_low_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_low_div[::2],
+    },
+)
+vpetp_diff_first.sel(plev = 85000).plot.contourf(
+    ax=axes[1, 2],
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_low_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_low_div[::2],
+    },
+)
+
+
+# add coastlines and gridlines
+for ax in axes[0, :].flatten():
+    ax.coastlines(color="grey", linewidth=1)
+    gl = ax.gridlines(
+        draw_labels=False,
+        linewidth=1,
+        color="grey",
+        alpha=0.5,
+        linestyle="dotted",
+    )
+    ax.xlocator = None
+    ax.ylocator = None
+
+for ax in axes[-1, :]:
+    ax.coastlines(color="grey", linewidth=1)
+    gl = ax.gridlines(
+        draw_labels=False,
+        linewidth=1,
+        color="grey",
+        alpha=0.5,
+        linestyle="dotted",
+    )
+    ax.xlocator = None
+    ax.ylocator = None
+
+for ax in axes.flatten():
+    ax.set_global()
+    ax.set_title("")
+
+plt.tight_layout()
+plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/steady_eddies_{time_window}_clim_ano_map.pdf", dpi=300, bbox_inches='tight')
+
+# %%
+# a new plot, the first row shows upvp for pos, neg, diff in the last decade,
+# the second row shows vpetp for pos, neg, diff in the last decade
+fig, axes = plt.subplots(
+    2,
+    3,
+    figsize=(10, 9),
+    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
+    sharex=True,
+    sharey=False,
+)
+
+upvp_pos_last.sel(plev=25000).plot.contourf(
+    ax=axes[0, 0],
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+upvp_neg_last.sel(plev=25000).plot.contourf(
+    ax=axes[0, 1],
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+upvp_diff_last.sel(plev=25000).plot.contourf(
+    ax=axes[0, 2],
+    transform=ccrs.PlateCarree(),
+    levels=upvp_levels_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{u'v'}$ (m$^2$ s$^{-2}$)",
+        "orientation": "horizontal",
+        "pad": 0.05,
+        "aspect": 30,
+        "ticks": upvp_levels_div,
+    },
+)
+
+vpetp_pos_last.sel(plev=85000).plot.contourf(
+    ax=axes[1, 0],
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_low_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_low_div[::2],
+    },
+)
+vpetp_neg_last.sel(plev=85000).plot.contourf(
+    ax=axes[1, 1],
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_low_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_low_div[::2],
+    },
+)
+vpetp_diff_last.sel(plev=85000).plot.contourf(
+    ax=axes[1, 2],
+    transform=ccrs.PlateCarree(),
+    levels=vptp_levels_low_div,
+    cmap=temp_cmap_div,
+    add_colorbar=True,
+    extend="both",
+    cbar_kwargs={
+        "label": r"$\overline{v'\theta'}$ (K m s$^{-1}$)",
+        "orientation": "horizontal",
+        "pad": 0.06,
+        "aspect": 30,
+        "ticks": vptp_levels_low_div[::2],
+    },
+)
+
+# add coastlines and gridlines
+for ax in axes[0, :].flatten():
+    ax.coastlines(color="grey", linewidth=1)
+    gl = ax.gridlines(
+        draw_labels=False,
+        linewidth=1,
+        color="grey",
+        alpha=0.5,
+        linestyle="dotted",
+    )
+    ax.xlocator = None
+    ax.ylocator = None
+
+for ax in axes[-1, :]:
+    ax.coastlines(color="grey", linewidth=1)
+    gl = ax.gridlines(
+        draw_labels=False,
+        linewidth=1,
+        color="grey",
+        alpha=0.5,
+        linestyle="dotted",
+    )
+    ax.xlocator = None
+    ax.ylocator = None
+
+for ax in axes.flatten():
+    ax.set_global()
+    ax.set_title("")
+
+plt.tight_layout()
+plt.savefig(f"/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/steady_eddies_{time_window}_clim_ano_map_last.pdf", dpi=300, bbox_inches='tight')
+
