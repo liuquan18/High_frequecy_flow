@@ -44,7 +44,8 @@ echo "Ensemble member ${member}"
 output_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var1}_${var2}_daily${suffix}/r${member}i1p1f1/
 mkdir -p ${output_dir}
 
-
+export var1
+export var2
 export var1_path
 export var2_path
 export output_dir
