@@ -83,7 +83,7 @@ if rank == 0:
     theta_2PVU_poss = [item for sublist in theta_2PVU_poss for item in sublist]
     theta_2PVU_negs = [item for sublist in theta_2PVU_negs for item in sublist]
 
-#%%
+
     # concat the results
     theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='event')
     theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='event')
