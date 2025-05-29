@@ -39,8 +39,8 @@ def composite_single_ens(var, decade, ens, plev = 85000, time_window = (-10, 5),
         var_neg = var_neg.sel(plev = plev) if plev is not None else var_neg
 
         # average over domain [-60, -10][40, 60N]
-        var_pos = var_pos.sel(lon = slice(300, 350), lat = slice(40, 60)).mean(dim=['lon', 'lat'])
-        var_neg = var_neg.sel(lon = slice(300, 350), lat = slice(40, 60)).mean(dim=['lon', 'lat'])
+        var_pos = var_pos.sel(lon = slice(300, 350), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
+        var_neg = var_neg.sel(lon = slice(300, 350), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
 
         # average over time window
         var_pos = var_pos.sel(time = slice(time_window[0], time_window[1])).mean(dim='time')
@@ -56,8 +56,8 @@ decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
 var = sys.argv[2] if len(sys.argv) > 2 else 'ua'
 name = sys.argv[3] if len(sys.argv) > 3 else var
 model_dir = sys.argv[4] if len(sys.argv) > 4 else 'MPI_GE_CMIP6'
-suffix = sys.argv[5] if len(sys.argv) > 5 else ''
-
+# suffix = sys.argv[5] if len(sys.argv) > 5 else ''
+suffix = '_ano'
 # report the input
 logging.info(f"Rank {rank} of {size} is processing {var} for decade {decade}, model_dir {model_dir}, name {name}, suffix {suffix}")
 # %%
