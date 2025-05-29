@@ -64,14 +64,14 @@ def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, isentrope=Fals
     """
     # Read data
     logging.info (f"Read data for {phase} phase in {decade}")
-    upvp, vptp, theta = read_data_all(decade, phase, ano=ano, equiv_theta=equiv_theta, eddy=eddy)
+    upvp, vptp, theta = read_data_all(decade, phase, equiv_theta=equiv_theta, eddy=eddy)
 
     # Determine save directory based on isentrope flag
     if isentrope:
         logging.info (f"Calculate EP flux on isentropes for {phase} phase in {decade}")
         save_dir="/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux_isen/"
     else:
-        logging.info (f"Calculate EP flux for {phase} phase in {decade}")
+        logging.info (f"Calculate {eddy} EP flux for {phase} phase in {decade}")
         save_dir="/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux/"
     
     # Calculate EP flux
@@ -105,3 +105,5 @@ if __name__ == "__main__":
     
     # Calculate EP flux for NAO pos and neg phase
     calculate_EP_flux(decade, phase, ano=ano, equiv_theta=True, isentrope=isentrope, eddy=eddy)
+
+# %%
