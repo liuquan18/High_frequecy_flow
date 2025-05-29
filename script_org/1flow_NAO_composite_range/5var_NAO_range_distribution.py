@@ -22,10 +22,10 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 name = MPI.Get_processor_name()
 #%%
-def composite_single_ens(var, decade, ens, plev = 85000, time_window = (-10, 5), **kwargs):
+def composite_single_ens(var, decade, ens, plev = 85000, time_window = (-10, 5), dur_threshold = 7, **kwargs):
     # read NAO extremes
-    pos_extreme = read_NAO_extremes_single_ens('pos', decade, ens)
-    neg_extreme = read_NAO_extremes_single_ens('neg', decade, ens)
+    pos_extreme = read_NAO_extremes_single_ens('pos', decade, ens, dur_threshold = dur_threshold)
+    neg_extreme = read_NAO_extremes_single_ens('neg', decade, ens, dur_threshold = dur_threshold)
 
     # read variable
     var_field = read_prime_single_ens( decade, ens,var, **kwargs)
