@@ -415,3 +415,140 @@ fig.colorbar(
 )
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/steady_EP_flux_divergence.pdf", dpi=300)
 # %%
+# first 10 years, first row for transient, second row for steady
+fig, axes = plt.subplots(2, 3, figsize=(12, 8))
+# first row for transient
+Tdiv_pos_first_zonal.plot.contourf(
+    ax=axes[0, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
+)
+# for pos
+PlotEPfluxArrows(
+    x=T_phi_pos_first_zonal.lat[::3],
+    y=T_phi_pos_first_zonal.plev,
+    ep1=T_phi_pos_first_zonal[:, ::3],
+    ep2=T_p_pos_first_zonal[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale,
+    xlim=[0, 85],
+    ylim=[1000, 200],
+    fig=fig,
+    ax=axes[0, 0],
+)
+# for neg
+Tdiv_neg_first_zonal.plot.contourf(
+    ax=axes[0, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=T_phi_neg_first_zonal.lat[::3],
+    y=T_phi_neg_first_zonal.plev,
+    ep1=T_phi_neg_first_zonal[:, ::3],
+    ep2=T_p_neg_first_zonal[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale,
+    xlim=[0, 85],
+    ylim=[1000, 200],
+    fig=fig,
+    ax=axes[0, 1],
+)
+# third col for difference between positive and negative
+Tdiv_diff_first_zonal = Tdiv_pos_first_zonal - Tdiv_neg_first_zonal
+Tdiv_diff_first_zonal.plot.contourf(
+    ax=axes[0, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=T_phi_pos_first_zonal.lat[::3],
+    y=T_phi_pos_first_zonal.plev,
+    ep1=(T_phi_pos_first_zonal - T_phi_neg_first_zonal)[:, ::3],
+    ep2=(T_p_pos_first_zonal - T_p_neg_first_zonal)[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale_div,
+    xlim=[0, 85],
+    ylim=[1000, 200],
+    fig=fig,
+    ax=axes[0, 2],  
+    draw_key=False,
+)
+# second row for steady
+Sdiv_pos_first_zonal.plot.contourf(
+    ax=axes[1, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
+)
+# for pos
+PlotEPfluxArrows(
+    x=S_phi_pos_first_zonal.lat[::3],
+    y=S_phi_pos_first_zonal.plev,
+    ep1=S_phi_pos_first_zonal[:, ::3],
+    ep2=S_p_pos_first_zonal[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale,
+    xlim=[0, 85],
+    ylim=[1000, 200],
+    fig=fig,
+    ax=axes[1, 0],
+)
+# for neg
+Sdiv_neg_first_zonal.plot.contourf(
+    ax=axes[1, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=S_phi_neg_first_zonal.lat[::3],
+    y=S_phi_neg_first_zonal.plev,
+    ep1=S_phi_neg_first_zonal[:, ::3],
+    ep2=S_p_neg_first_zonal[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale,
+    xlim=[0, 85],
+    ylim=[1000, 200],
+    fig=fig,
+    ax=axes[1, 1],
+    draw_key=True,
+    key_loc=(0.1, -0.35),
+)
+# third col for difference between positive and negative
+Sdiv_diff_first_zonal = Sdiv_pos_first_zonal - Sdiv_neg_first_zonal
+Sdiv_diff_first_zonal.plot.contourf(
+    ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=S_phi_pos_first_zonal.lat[::3],
+    y=S_phi_pos_first_zonal.plev,
+    ep1=(S_phi_pos_first_zonal - S_phi_neg_first_zonal)[:, ::3],
+    ep2=(S_p_pos_first_zonal - S_p_neg_first_zonal)[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale_div,
+    xlim=[0, 85],
+    ylim=[1000, 200],
+    fig=fig,
+    ax=axes[1, 2],
+    draw_key=True,
+    key_loc=(0.1, -0.35),
+)
+for ax in axes.flatten():
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+for ax in axes[:, 0]:
+    ax.set_ylabel("Pressure (hPa)")
+for ax in axes[1, :]:
+    ax.set_xlabel("Latitude (°N)")
+# add colorbar at the bottom
+fig.colorbar(
+    map,
+    ax = axes[:, :2],
+    orientation='horizontal',
+    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
+    shrink=0.5,
+)
+fig.colorbar(
+    diff_map,
+    ax = axes[:, 2],
+    orientation='horizontal',
+    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
+)
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_steady_EP_flux_divergence_first.pdf", dpi=300)
+# %%
