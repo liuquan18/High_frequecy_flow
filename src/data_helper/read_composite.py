@@ -35,8 +35,10 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
 #%%
 def read_comp_var_dist(var, phase, decade, suffix = "_ano", **kwargs):
     name = kwargs.get("name", var)
+    time_window = kwargs.get("time_window", (-5, 5))
     dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_distribution/{var}{suffix}_NAO_{phase}_{decade}.nc"
     ds = xr.open_dataset(dir)
     ds = ds[name]
+    ds = ds.sel(time=slice(*time_window))
 
     return ds
