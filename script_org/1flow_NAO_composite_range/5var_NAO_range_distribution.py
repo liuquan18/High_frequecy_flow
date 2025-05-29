@@ -41,9 +41,9 @@ def composite_single_ens(var, decade, ens, plev = 85000, time_window = (-10, 5),
         # average over domain [-60, -10][40, 60N]
         var_pos = var_pos.sel(lon = slice(300, 350), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
         var_neg = var_neg.sel(lon = slice(300, 350), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
-
-
-
+    else:
+        var_pos = None
+        var_neg = None
     return var_pos, var_neg
 # %%
 # %%
@@ -80,8 +80,8 @@ theta_2PVU_negs = comm.gather(theta_2PVU_negs, root=0)
 if rank == 0:
 
     # Flatten the gathered lists
-    theta_2PVU_poss = [item for sublist in theta_2PVU_poss for item in sublist]
-    theta_2PVU_negs = [item for sublist in theta_2PVU_negs for item in sublist]
+    theta_2PVU_poss = [item for sublist in theta_2PVU_poss for item in sublist if item is not None]
+    theta_2PVU_negs = [item for sublist in theta_2PVU_negs for item in sublist if item is not None]
 
 
     # concat the results
