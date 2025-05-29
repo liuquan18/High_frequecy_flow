@@ -62,10 +62,13 @@ std(){
     if [ "$var1" == "$var2" ]; then
         output_file=${output_dir}${var1}_std_${dec}.nc
         echo "Calculating standard deviation for ${var1} for date: $dec"
-        cdo -r -O -expr,"std=${var1}*${var1}" ${var1_file} ${output_file}
+        var1_name=$(cdo -s showname ${var1_file} | tr -d ' ')
+        cdo -r -O -expr,"std=${var1_name}*${var1_name}" ${var1_file} ${output_file}
     else
         output_file=${output_dir}${var1}_${var2}_cov_${dec}.nc
         echo "Calculating covariance for ${var1} and ${var2} for date: $dec"
+        var1_name=$(cdo -s showname ${var1_file} | tr -d ' ')
+        var2_name=$(cdo -s showname ${var2_file} | tr -d ' ')
         cdo -r -O -expr,"cov=${var1}*${var2}" -merge ${var1_file} ${var2_file} ${output_file}
     fi
 
