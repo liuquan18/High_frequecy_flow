@@ -2,7 +2,7 @@
 import xarray as xr
 import numpy as np
 from src.plotting.util import erase_white_line
-
+import pandas as pd
 # %%
 def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
     name = kwargs.get("name", var)
@@ -30,3 +30,11 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
     elif method == "no_stat":
         pass
     return ds
+
+
+#%%
+def read_comp_var_dist(var, phase, decade, suffix = "_ano"):
+    dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_distribution/{var}{suffix}_NAO_{phase}_{decade}.csv"
+    df = pd.read_csv(dir)
+
+    return df[[var]]
