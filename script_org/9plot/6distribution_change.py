@@ -13,7 +13,9 @@ import cartopy.crs as ccrs
 from src.data_helper.read_NAO_extremes import (
     read_NAO_extremes_troposphere,
 )
-from src.data_helper.read_composite import read_comp_var
+from src.data_helper.read_composite import read_comp_var, read_comp_var_dist
+
+
 # %%
 wb_time_window = (-20, 10)  # days relative to NAO onset
 # %%
@@ -150,6 +152,56 @@ neg_extrems = pd.concat(
 # reanem "extreme_duration" to "count"
 pos_extrems.rename(columns={"extreme_duration": "count"}, inplace=True)
 neg_extrems.rename(columns={"extreme_duration": "count"}, inplace=True)
+
+
+#%%%
+# read heat flux
+vpetp_neg_first = read_comp_var_dist(
+    "vpetp",
+    "neg",
+    1850,
+)
+vpetp_pos_first = read_comp_var_dist(
+    "vpetp",
+    "pos",
+    1850,
+)
+vpetp_neg_last = read_comp_var_dist(
+    "vpetp",
+    "neg",
+    2090,
+)
+vpetp_pos_last = read_comp_var_dist(
+    "vpetp",
+    "pos",
+    2090,
+)
+
+#%%
+# vsets
+vsets_pos_first = read_comp_var_dist(
+    "vsets",
+    "pos",
+    1850,
+)
+vsets_neg_first = read_comp_var_dist(
+    "vsets",
+    "neg",
+    1850,
+)
+vsets_pos_last = read_comp_var_dist(
+    "vsets",
+    "pos",
+    2090,
+)
+vsets_neg_last = read_comp_var_dist(
+    "vsets",
+    "neg",
+    2090,
+)   
+
+
+
 # %%
 cm = 1 / 2.54  # centimeters in inches
 fig = plt.figure(figsize=(36 * cm, 60 * cm))
@@ -303,6 +355,153 @@ plt.savefig(
     transparent=True,
 )
 # %%
+cm = 1 / 2.54  # centimeters in inches
+fig = plt.figure(figsize=(36 * cm, 30 * cm))
+# adjust hratio
+plt.subplots_adjust(hspace=2 * cm, wspace=2 * cm)
+gs = fig.add_gridspec(3, 2, height_ratios=[0.6, 0.6, 0.8])
+
+# Set the default font size
+plt.rcParams.update(
+    {
+        "font.size": 20,
+        "xtick.labelsize": 20,
+        "ytick.labelsize": 20,
+        "axes.labelsize": 25,
+        "axes.titlesize": 25,
+    }
+)
+
+ax1 = fig.add_subplot(gs[0, :])
+
+# neg as negative side of y-axis
+_neg_extremes = neg_extrems.copy()
+_neg_extremes["count"] = -_neg_extremes["count"]
+sns.barplot(
+    data=_neg_extremes,
+    y="plev",
+    x="count",
+    hue="period",
+    hue_order=["last10", "first10"],
+    palette=["C1", "C0"],
+    orient="h",
+    ax=ax1,
+    legend=False,
+    alpha=0.5,
+)
+ax1.set_ylabel("Pressure Level (hPa)")
+
+# pos as positive side of y-axis
+sns.barplot(
+    data=pos_extrems,
+    y="plev",
+    x="count",
+    hue="period",
+    orient="h",
+    ax=ax1,
+    hue_order=["last10", "first10"],
+    palette=["C1", "C0"],
+)
+
+# Set x=0 in the middle
+max_count = max(pos_extrems["count"].max(), -_neg_extremes["count"].min())
+ax1.set_xlim(-max_count, max_count)
+
+# distribution of the transient eddy heat flux
+hist_ax2 = fig.add_subplot(gs[1, 1])
+hist_ax2.hist(
+    vpetp_pos_first,
+    label="first10_pos",
+    color="black",
+    bins=np.arange(-8, 8.1, 0.5),
+    alpha=0.5,
+    histtype="stepfilled",
+)
+hist_ax2.hist(
+    vpetp_pos_last,
+    label="last10_pos",
+    color="red",
+    bins=np.arange(-8, 8.1, 0.5),
+    alpha = 0.5,
+    histtype="stepfilled",
+)
+
+hist_ax3 = fig.add_subplot(gs[1, 0])
+hist_ax3.hist(
+    vpetp_neg_first,
+    label="first10",
+    color="black",
+    bins=np.arange(-8, 8.1, 0.5),
+    alpha=0.5,
+    histtype="stepfilled",
+)
+hist_ax3.hist(
+    vpetp_neg_last,
+    label="last10",
+    color="red",
+    bins=np.arange(-8, 8.1, 0.5),
+    alpha = 0.5,
+    histtype="stepfilled",
+)
+
+hist_ax3.legend()
+hist_ax2.set_ylabel("")
+
+# distribution of the steady eddy heat flux
+hist_ax4 = fig.add_subplot(gs[2, 1])
+hist_ax4.hist(
+    vsets_pos_first,
+    label="first10_pos",
+    color="black",
+    bins=np.arange(-8, 8.1, 0.5),
+    alpha=0.5,
+    histtype="stepfilled",
+)
+hist_ax4.hist(
+    vsets_pos_last,
+    label="last10_pos",
+    color="red",
+    bins=np.arange(-8, 8.1, 0.5),
+    alpha = 0.5,
+    histtype="stepfilled",
+)
+
+hist_ax5 = fig.add_subplot(gs[2, 0])
+hist_ax5.hist(
+    vsets_neg_first,
+    label="first10",
+    color="black",
+    bins=np.arange(-8, 8.1, 0.5),
+    alpha=0.5,
+    histtype="stepfilled",
+)
+hist_ax5.hist(
+    vsets_neg_last,
+    label="last10",
+    color="red",
+    bins=np.arange(-8, 8.1, 0.5),
+    alpha = 0.5,
+    histtype="stepfilled",
+)
+hist_ax5.legend()
+
+
+# no line at the top and right of the plot
+for ax in [ax1, hist_ax2, hist_ax3, hist_ax4, hist_ax5]:
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+for ax in [hist_ax2, hist_ax3, hist_ax4, hist_ax5]:
+    ax.axvline(x=0, color="k", linestyle="--", linewidth=2)
+
+plt.tight_layout()
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0distribution_change/NAO_distribution_change_heat_flux.pdf",
+    dpi=500,
+    transparent=True,
+)
+
 
 # %%
 first_NAO_pos_AWB, first_NAO_neg_AWB, first_NAO_pos_CWB, first_NAO_neg_CWB = NAO_WB(
