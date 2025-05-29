@@ -60,17 +60,17 @@ upvp_clim_first = read_climatology("usvs", "1850", name="usvs")
 upvp_clim_last = read_climatology("usvs", "2090", name="usvs")
 # pos ano
 upvp_pos_first = read_comp_var(
-    "usvs", "pos", 1850, time_window=time_window, name="usvs", suffix=suffix, remove_zonmean=remove_zonmean
+    "usvs", "pos", 1850, time_window=time_window, name="usvs", suffix=suffix, model_dir = 'MPI_GE_CMIP6_allplev'
 )
 upvp_neg_first = read_comp_var(
-    "usvs", "neg", 1850, time_window=time_window, name="usvs", suffix=suffix, remove_zonmean=remove_zonmean
+    "usvs", "neg", 1850, time_window=time_window, name="usvs", suffix=suffix, model_dir = 'MPI_GE_CMIP6_allplev'
 )
 
 upvp_pos_last = read_comp_var(
-    "usvs", "pos", 2090, time_window=time_window, name="usvs", suffix=suffix, remove_zonmean=remove_zonmean
+    "usvs", "pos", 2090, time_window=time_window, name="usvs", suffix=suffix, model_dir = 'MPI_GE_CMIP6_allplev'
 )
 upvp_neg_last = read_comp_var(
-    "usvs", "neg", 2090, time_window=time_window, name="usvs", suffix=suffix, remove_zonmean=remove_zonmean
+    "usvs", "neg", 2090, time_window=time_window, name="usvs", suffix=suffix, model_dir = 'MPI_GE_CMIP6_allplev'
 )
 
 # diff
@@ -84,17 +84,17 @@ vpetp_clim_first = read_climatology("vsets", "1850", name="vsets")
 vpetp_clim_last = read_climatology("vsets", "2090", name="vsets")
 # pos ano
 vpetp_pos_first = read_comp_var(
-    "vsets", "pos", 1850, time_window=time_window, name="vsets", suffix=suffix, remove_zonmean=remove_zonmean
+    "vsets", "pos", 1850, time_window=time_window, name="vsets", suffix=suffix, model_dir = 'MPI_GE_CMIP6_allplev'
 )
 vpetp_neg_first = read_comp_var(
-    "vsets", "neg", 1850, time_window=time_window, name="vsets", suffix=suffix, remove_zonmean=remove_zonmean
+    "vsets", "neg", 1850, time_window=time_window, name="vsets", suffix=suffix, model_dir = 'MPI_GE_CMIP6_allplev'
 )
 
 vpetp_pos_last = read_comp_var(
-    "vsets", "pos", 2090, time_window=time_window, name="vsets", suffix=suffix, remove_zonmean=remove_zonmean
+    "vsets", "pos", 2090, time_window=time_window, name="vsets", suffix=suffix, model_dir = 'MPI_GE_CMIP6_allplev'
 )
 vpetp_neg_last = read_comp_var(
-    "vsets", "neg", 2090, time_window=time_window, name="vsets", suffix=suffix, remove_zonmean=remove_zonmean
+    "vsets", "neg", 2090, time_window=time_window, name="vsets", suffix=suffix, model_dir = 'MPI_GE_CMIP6_allplev'
 )
 
 # diff
