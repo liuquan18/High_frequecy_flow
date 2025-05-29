@@ -39,16 +39,16 @@ def read_EP_flux(
         div = NAL_mean(div)
     elif region == "western":
         T_phi = xr.concat(
-            T_phi.sel(lon = slice(240, None)),
-            T_phi.sel(lon = slice(0, 60)), dim="lon"
+            [T_phi.sel(lon = slice(240, None)),
+            T_phi.sel(lon = slice(0, 60))], dim = "lon"
         )
         F_p = xr.concat(
-            F_p.sel(lon = slice(240, None)),
-            F_p.sel(lon = slice(0, 60)), dim="lon"
+            [F_p.sel(lon = slice(240, None)),
+            F_p.sel(lon = slice(0, 60))], dim = "lon"
         )
         div = xr.concat(
-            div.sel(lon = slice(240, None)),
-            div.sel(lon = slice(0, 60)), dim="lon"
+            [div.sel(lon = slice(240, None)),
+            div.sel(lon = slice(0, 60))], dim = "lon"
         )
     elif region is None:
         # do nothing, return the data as is
@@ -60,9 +60,9 @@ def read_EP_flux(
 
 # %%
 scale = 1e16
-scale_div = 5e14
+scale_div = 1e15
 levels = np.arange(-10, 10.1, 1)
-levels_div = np.arange(-0.8, 0.81, 0.1)
+levels_div = np.arange(-1.5, 1.6, 0.3)
 # %%
 # read transient EP flux for positive and negative phase
 # read data for first decade without region
@@ -200,7 +200,7 @@ PlotEPfluxArrows(
 )
 
 # second row for last decade
-Tdiv_pos_last_zonal.plot.contourf(
+map = Tdiv_pos_last_zonal.plot.contourf(
     ax=axes[1, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
@@ -234,7 +234,7 @@ PlotEPfluxArrows(
 )
 # third col for difference between positive and negative
 Tdiv_diff_last_zonal = Tdiv_pos_last_zonal - Tdiv_neg_last_zonal
-Tdiv_diff_last_zonal.plot.contourf(
+diff_map = Tdiv_diff_last_zonal.plot.contourf(
     ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
@@ -253,9 +253,32 @@ PlotEPfluxArrows(
     key_loc=(0.7, 0.95),
 )
 
+for ax in axes.flatten():
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+for ax in axes[:, 0]:
+    ax.set_ylabel("Pressure (hPa)")
+for ax in axes[1, :]:
+    ax.set_xlabel("Latitude (°N)")
 
+# add colorbar at the bottom
+fig.colorbar(
+    map,
+    ax = axes[:, :2],
+    orientation='horizontal',
+    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
+    shrink=0.5,
+)
+fig.colorbar(
+    diff_map,
+    ax = axes[:, 2],
+    orientation='horizontal',
+    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
+)
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_EP_flux_divergence.pdf", dpi=300)
 #%%
-fig, axes = plt.subplots(2, 3, figsize=(12, 8))
+fig, axes = plt.subplots(2, 3, figsize=(12, 10))
 # first row for first decade (steady eddies)
 Sdiv_pos_first_zonal.plot.contourf(
     ax=axes[0, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
@@ -331,7 +354,7 @@ PlotEPfluxArrows(
     fig=fig,
     ax=axes[1, 0],
 )
-Sdiv_neg_last_zonal.plot.contourf(
+map = Sdiv_neg_last_zonal.plot.contourf(
     ax=axes[1, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
@@ -349,7 +372,7 @@ PlotEPfluxArrows(
 )
 # third col for difference between positive and negative
 Sdiv_diff_last_zonal = Sdiv_pos_last_zonal - Sdiv_neg_last_zonal
-Sdiv_diff_last_zonal.plot.contourf(
+diff_map = Sdiv_diff_last_zonal.plot.contourf(
     ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
@@ -368,4 +391,27 @@ PlotEPfluxArrows(
     key_loc=(0.7, 0.95),
 )
 
+for ax in axes.flatten():
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+for ax in axes[:, 0]:
+    ax.set_ylabel("Pressure (hPa)")
+for ax in axes[1, :]:
+    ax.set_xlabel("Latitude (°N)")
+
+# add colorbar at the bottom
+fig.colorbar(
+    map,
+    ax = axes[:, :2],
+    orientation='horizontal',
+    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
+    shrink=0.5,
+)
+fig.colorbar(
+    diff_map,
+    ax = axes[:, 2],
+    orientation='horizontal',
+    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
+)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/steady_EP_flux_divergence.pdf", dpi=300)
 # %%
