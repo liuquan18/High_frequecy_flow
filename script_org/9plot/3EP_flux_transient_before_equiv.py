@@ -12,7 +12,9 @@ from src.dynamics.EP_flux import (
 
 
 # %%
-def read_EP_flux(phase, decade, ano=False, isentrope=False, region="NPC", smooth=True):
+def read_EP_flux(
+    phase, decade, eddy="transient", ano=False, isentrope=False, region=None
+):
     if isentrope:
         EP_flux_dir = (
             "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux_isen/"
@@ -22,291 +24,215 @@ def read_EP_flux(phase, decade, ano=False, isentrope=False, region="NPC", smooth
             "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux/"
         )
 
-    F_phi = xr.open_dataarray(f"{EP_flux_dir}transient_F_phi_{phase}_{decade}_ano{ano}.nc")
-    F_p = xr.open_dataarray(f"{EP_flux_dir}transient_F_p_{phase}_{decade}_ano{ano}.nc")
-    div = xr.open_dataarray(f"{EP_flux_dir}transient_div_{phase}_{decade}_ano{ano}.nc")
+    T_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_T_phi_{phase}_{decade}_ano{ano}.nc")
+    F_p = xr.open_dataarray(f"{EP_flux_dir}{eddy}_T_p_{phase}_{decade}_ano{ano}.nc")
+    div = xr.open_dataarray(f"{EP_flux_dir}{eddy}_Tdiv_{phase}_{decade}_ano{ano}.nc")
 
     if region == "NPC":
-        F_phi = NPC_mean(F_phi)
+        T_phi = NPC_mean(T_phi)
         F_p = NPC_mean(F_p)
         div = NPC_mean(div)
 
     elif region == "NAL":
-        F_phi = NAL_mean(F_phi)
+        T_phi = NAL_mean(T_phi)
         F_p = NAL_mean(F_p)
         div = NAL_mean(div)
+    elif region == None:
+        # do nothing, return the data as is
+        pass
 
-    return F_phi, F_p, div
+    return T_phi, F_p, div
 
-
-# %%
-# Read data for NPC
-F_phi_pos_first_NPC, F_p_pos_first_NPC, div_pos_first_NPC = read_EP_flux(
-    phase="pos", decade=1850, region="NPC"
-)
-F_phi_neg_first_NPC, F_p_neg_first_NPC, div_neg_first_NPC = read_EP_flux(
-    phase="neg", decade=1850, region="NPC"
-)
-F_phi_pos_last_NPC, F_p_pos_last_NPC, div_pos_last_NPC = read_EP_flux(
-    phase="pos", decade=2090, region="NPC"
-)
-F_phi_neg_last_NPC, F_p_neg_last_NPC, div_neg_last_NPC = read_EP_flux(
-    phase="neg", decade=2090, region="NPC"
-)
-
-# %%
-# Read data for NAL
-F_phi_pos_first_NAL, F_p_pos_first_NAL, div_pos_first_NAL = read_EP_flux(
-    phase="pos", decade=1850, region="NAL"
-)
-F_phi_neg_first_NAL, F_p_neg_first_NAL, div_neg_first_NAL = read_EP_flux(
-    phase="neg", decade=1850, region="NAL"
-)
-F_phi_pos_last_NAL, F_p_pos_last_NAL, div_pos_last_NAL = read_EP_flux(
-    phase="pos", decade=2090, region="NAL"
-)
-F_phi_neg_last_NAL, F_p_neg_last_NAL, div_neg_last_NAL = read_EP_flux(
-    phase="neg", decade=2090, region="NAL"
-)
 
 # %%
 scale = 1e16
-scale_div = 1e15
+scale_div = 5e14
 levels = np.arange(-10, 10.1, 1)
 levels_div = np.arange(-0.8, 0.81, 0.1)
+# %%
+# read transient EP flux for positive and negative phase
+# read data for first decade without region
+T_phi_pos_first, T_p_pos_first, Tdiv_pos_first = read_EP_flux(
+    phase="pos", decade=1850, eddy="transient", ano=False, isentrope=False
+)
+
+T_phi_neg_first, T_p_neg_first, Tdiv_neg_first = read_EP_flux(
+    phase="neg", decade=1850, eddy="transient", ano=False, isentrope=False
+)
+
+
+# last decade without region
+T_phi_pos_last, T_p_pos_last, Tdiv_pos_last = read_EP_flux(
+    phase="pos", decade=2090, eddy="transient", ano=False, isentrope=False
+)
+
+T_phi_neg_last, T_p_neg_last, Tdiv_neg_last = read_EP_flux(
+    phase="neg", decade=2090, eddy="transient", ano=False, isentrope=False
+)
+
+# -1 * p component because the 'plev' was ascending in the data
+T_p_pos_first = -1 * T_p_pos_first
+T_p_pos_last = -1 * T_p_pos_last
+T_p_neg_first = -1 * T_p_neg_first
+T_p_neg_last = -1 * T_p_neg_last
+# zonal mean
+T_phi_pos_first_zonal = T_phi_pos_first.mean(dim="lon")
+T_p_pos_first_zonal = T_p_pos_first.mean(dim="lon")
+T_phi_pos_last_zonal = T_phi_pos_last.mean(dim="lon")
+T_p_pos_last_zonal = T_p_pos_last.mean(dim="lon")
+Tdiv_pos_first_zonal = Tdiv_pos_first.mean(dim="lon")
+Tdiv_pos_last_zonal = Tdiv_pos_last.mean(dim="lon")
+
+T_phi_neg_first_zonal = T_phi_neg_first.mean(dim="lon")
+T_p_neg_first_zonal = T_p_neg_first.mean(dim="lon")
+T_phi_neg_last_zonal = T_phi_neg_last.mean(dim="lon")
+T_p_neg_last_zonal = T_p_neg_last.mean(dim="lon")
+Tdiv_neg_first_zonal = Tdiv_neg_first.mean(dim="lon")
+Tdiv_neg_last_zonal = Tdiv_neg_last.mean(dim="lon")
+
+#%% 
+# read steady EP flux for positive and negative phase
+S_phi_pos_first, S_p_pos_first, Sdiv_pos_first = read_EP_flux(
+    phase="pos", decade=1850, eddy="steady", ano=False, isentrope=False
+)
+S_phi_neg_first, S_p_neg_first, Sdiv_neg_first = read_EP_flux(
+    phase="neg", decade=1850, eddy="steady", ano=False, isentrope=False
+)
+
+S_phi_pos_last, S_p_pos_last, Sdiv_pos_last = read_EP_flux(
+    phase="pos", decade=2090, eddy="steady", ano=False, isentrope=False
+)
+S_phi_neg_last, S_p_neg_last, Sdiv_neg_last = read_EP_flux(
+    phase="neg", decade=2090, eddy="steady", ano=False, isentrope=False
+)
+# -1 * p component because the 'plev' was ascending in the data
+S_p_pos_first = -1 * S_p_pos_first
+S_p_pos_last = -1 * S_p_pos_last
+S_p_neg_first = -1 * S_p_neg_first
+S_p_neg_last = -1 * S_p_neg_last
+# zonal mean
+S_phi_pos_first_zonal = S_phi_pos_first.mean(dim="lon")
+S_p_pos_first_zonal = S_p_pos_first.mean(dim="lon")
+S_phi_pos_last_zonal = S_phi_pos_last.mean(dim="lon")
+S_p_pos_last_zonal = S_p_pos_last.mean(dim="lon")
+Sdiv_pos_first_zonal = Sdiv_pos_first.mean(dim="lon")
+Sdiv_pos_last_zonal = Sdiv_pos_last.mean(dim="lon")
+S_phi_neg_first_zonal = S_phi_neg_first.mean(dim="lon")
+S_p_neg_first_zonal = S_p_neg_first.mean(dim="lon")
+S_phi_neg_last_zonal = S_phi_neg_last.mean(dim="lon")
+S_p_neg_last_zonal = S_p_neg_last.mean(dim="lon")
+Sdiv_neg_first_zonal = Sdiv_neg_first.mean(dim="lon")
+Sdiv_neg_last_zonal = Sdiv_neg_last.mean(dim="lon")
+
 
 # %%
-# plot NPC
-# plot NPC
 fig, axes = plt.subplots(2, 3, figsize=(12, 8))
-
 # first row for first decade
-div_pos_first_NPC.plot.contourf(
+Tdiv_pos_first_zonal.plot.contourf(
     ax=axes[0, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
 )
+
+# for pos
 PlotEPfluxArrows(
-    x=F_phi_pos_first_NPC.lat[::3],
-    y=F_phi_pos_first_NPC.plev,
-    ep1=F_phi_pos_first_NPC[:, ::3],
-    ep2=F_p_pos_first_NPC[:, ::3],
+    x=T_phi_pos_first_zonal.lat[::3],
+    y=T_phi_pos_first_zonal.plev,
+    ep1=T_phi_pos_first_zonal[:, ::3],
+    ep2=T_p_pos_first_zonal[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
     xlim=[0, 85],
+    ylim=[1000, 200],
     fig=fig,
     ax=axes[0, 0],
 )
 
-
-div_neg_first_NPC.plot.contourf(
+# for neg
+Tdiv_neg_first_zonal.plot.contourf(
     ax=axes[0, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
-    x=F_phi_neg_first_NPC.lat[::3],
-    y=F_phi_neg_first_NPC.plev,
-    ep1=F_phi_neg_first_NPC[:, ::3],
-    ep2=F_p_neg_first_NPC[:, ::3],
+    x=T_phi_neg_first_zonal.lat[::3],
+    y=T_phi_neg_first_zonal.plev,
+    ep1=T_phi_neg_first_zonal[:, ::3],
+    ep2=T_p_neg_first_zonal[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
     xlim=[0, 85],
+    ylim=[1000, 200],
     fig=fig,
     ax=axes[0, 1],
 )
-
 # third col for difference between positive and negative
-div_diff_NPC = div_pos_first_NPC - div_neg_first_NPC
-div_diff_NPC.plot.contourf(
+Tdiv_diff_first_zonal = Tdiv_pos_first_zonal - Tdiv_neg_first_zonal
+Tdiv_diff_first_zonal.plot.contourf(
     ax=axes[0, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
-    x=F_phi_pos_first_NPC.lat[::3],
-    y=F_phi_pos_first_NPC.plev,
-    ep1=(F_phi_pos_first_NPC - F_phi_neg_first_NPC)[:, ::3],
-    ep2=(F_p_pos_first_NPC - F_p_neg_first_NPC)[:, ::3],
+    x=T_phi_pos_first_zonal.lat[::3],
+    y=T_phi_pos_first_zonal.plev,
+    ep1=(T_phi_pos_first_zonal - T_phi_neg_first_zonal)[:, ::3],
+    ep2=(T_p_pos_first_zonal - T_p_neg_first_zonal)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
     xlim=[0, 85],
+    ylim=[1000, 200],
     fig=fig,
-    ax=axes[0, 2],
-)
-
-# second row for last decade
-div_pos_last_NPC.plot.contourf(
-    ax=axes[1, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
-)
-PlotEPfluxArrows(
-    x=F_phi_pos_last_NPC.lat[::3],
-    y=F_phi_pos_last_NPC.plev,
-    ep1=F_phi_pos_last_NPC[:, ::3],
-    ep2=F_p_pos_last_NPC[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale,
-    xlim=[0, 85],
-    fig=fig,
-    ax=axes[1, 0],
-)
-div_neg_last_NPC.plot.contourf(
-    ax=axes[1, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
-)
-PlotEPfluxArrows(
-    x=F_phi_neg_last_NPC.lat[::3],
-    y=F_phi_neg_last_NPC.plev,
-    ep1=F_phi_neg_last_NPC[:, ::3],
-    ep2=F_p_neg_last_NPC[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale,
-    xlim=[0, 85],
-    fig=fig,
-    ax=axes[1, 1],
-)
-# third col for difference between positive and negative
-div_diff_NPC_last = div_pos_last_NPC - div_neg_last_NPC
-div_map = div_diff_NPC_last.plot.contourf(
-    ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
-)
-PlotEPfluxArrows(
-    x=F_phi_pos_last_NPC.lat[::3],
-    y=F_phi_pos_last_NPC.plev,
-    ep1=(F_phi_pos_last_NPC - F_phi_neg_last_NPC)[:, ::3],
-    ep2=(F_p_pos_last_NPC - F_p_neg_last_NPC)[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale_div,
-    xlim=[0, 85],
-    fig=fig,
-    ax=axes[1, 2],
+    ax=axes[0, 2],  
     draw_key=True,
     key_loc=(0.7, 0.95),
 )
 
-# add colorbar
-cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
-cbar = fig.colorbar(
-    div_map,
-    cax=cbar_ax,
-    orientation="vertical",
-    label = r"$\nabla \cdot \mathbf{F}$ / m s$^{-1}$ day$^{-1}$",
-)
-
-# add a, b, c, d
-for i, ax in enumerate(axes.flatten()):
-    ax.text(
-        0.02,
-        0.95,
-        f"{chr(97+i)}",
-        transform=ax.transAxes,
-        fontsize=12,
-        fontweight="bold",
-    )
-
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_NPC.pdf",
-    dpi=300,)
-
-# %%
-# new plot for NAL
-fig, axes = plt.subplots(2, 3, figsize=(12, 8))
-
-# first row for first decade
-div_pos_first_NAL.plot.contourf(
-    ax=axes[0, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
-)
-PlotEPfluxArrows(
-    x=F_phi_pos_first_NAL.lat[::3],
-    y=F_phi_pos_first_NAL.plev,
-    ep1=F_phi_pos_first_NAL[:, ::3],
-    ep2=F_p_pos_first_NAL[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale,
-    xlim=[0, 85],
-    fig=fig,
-    ax=axes[0, 0],
-)
-
-div_neg_first_NAL.plot.contourf(
-    ax=axes[0, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
-)
-PlotEPfluxArrows(
-    x=F_phi_neg_first_NAL.lat[::3],
-    y=F_phi_neg_first_NAL.plev,
-    ep1=F_phi_neg_first_NAL[:, ::3],
-    ep2=F_p_neg_first_NAL[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale,
-    xlim=[0, 85],
-    fig=fig,
-    ax=axes[0, 1],
-)
-
-# third col for difference between positive and negative
-div_diff_NAL = div_pos_first_NAL - div_neg_first_NAL
-div_map = div_diff_NAL.plot.contourf(
-    ax=axes[0, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
-)
-PlotEPfluxArrows(
-    x=F_phi_pos_first_NAL.lat[::3],
-    y=F_phi_pos_first_NAL.plev,
-    ep1=(F_phi_pos_first_NAL - F_phi_neg_first_NAL)[:, ::3],
-    ep2=(F_p_pos_first_NAL - F_p_neg_first_NAL)[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale_div,
-    xlim=[0, 85],
-    fig=fig,
-    ax=axes[0, 2],
-)
-
 # second row for last decade
-div_pos_last_NAL.plot.contourf(
+Tdiv_pos_last_zonal.plot.contourf(
     ax=axes[1, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
-    x=F_phi_pos_last_NAL.lat[::3],
-    y=F_phi_pos_last_NAL.plev,
-    ep1=F_phi_pos_last_NAL[:, ::3],
-    ep2=F_p_pos_last_NAL[:, ::3],
+    x=T_phi_pos_last_zonal.lat[::3],
+    y=T_phi_pos_last_zonal.plev,
+    ep1=T_phi_pos_last_zonal[:, ::3],
+    ep2=T_p_pos_last_zonal[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
     xlim=[0, 85],
+    ylim=[1000, 200],
     fig=fig,
     ax=axes[1, 0],
 )
-div_neg_last_NAL.plot.contourf(
+Tdiv_neg_last_zonal.plot.contourf(
     ax=axes[1, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
-    x=F_phi_neg_last_NAL.lat[::3],
-    y=F_phi_neg_last_NAL.plev,
-    ep1=F_phi_neg_last_NAL[:, ::3],
-    ep2=F_p_neg_last_NAL[:, ::3],
+    x=T_phi_neg_last_zonal.lat[::3],
+    y=T_phi_neg_last_zonal.plev,
+    ep1=T_phi_neg_last_zonal[:, ::3],
+    ep2=T_p_neg_last_zonal[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
     xlim=[0, 85],
+    ylim=[1000, 200],
     fig=fig,
     ax=axes[1, 1],
 )
 # third col for difference between positive and negative
-div_diff_NAL_last = div_pos_last_NAL - div_neg_last_NAL
-div_diff_NAL_last.plot.contourf(
+Tdiv_diff_last_zonal = Tdiv_pos_last_zonal - Tdiv_neg_last_zonal
+Tdiv_diff_last_zonal.plot.contourf(
     ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
-    x=F_phi_pos_last_NAL.lat[::3],
-    y=F_phi_pos_last_NAL.plev,
-    ep1=(F_phi_pos_last_NAL - F_phi_neg_last_NAL)[:, ::3],
-    ep2=(F_p_pos_last_NAL - F_p_neg_last_NAL)[:, ::3],
+    x=T_phi_pos_last_zonal.lat[::3],
+    y=T_phi_pos_last_zonal.plev,
+    ep1=(T_phi_pos_last_zonal - T_phi_neg_last_zonal)[:, ::3],
+    ep2=(T_p_pos_last_zonal - T_p_neg_last_zonal)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
     xlim=[0, 85],
+    ylim=[1000, 200],
     fig=fig,
     ax=axes[1, 2],
     draw_key=True,
@@ -314,152 +240,118 @@ PlotEPfluxArrows(
 )
 
 
-# add a, b, c, d
-for i, ax in enumerate(axes.flatten()):
-    ax.text(
-        0.02,
-        0.95,
-        f"{chr(97+i)}",
-        transform=ax.transAxes,
-        fontsize=12,
-        fontweight="bold",
-    )
-
-
-
-# add colorbar
-cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
-cbar = fig.colorbar(
-    div_map,
-    cax=cbar_ax,
-    orientation="vertical",
-    label = r"$\nabla \cdot \mathbf{F}$ / m s$^{-1}$ day$^{-1}$",
-)
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_NAL.pdf",
-    dpi=300,
+#%%
+fig, axes = plt.subplots(2, 3, figsize=(12, 8))
+# first row for first decade (steady eddies)
+Sdiv_pos_first_zonal.plot.contourf(
+    ax=axes[0, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
 )
 
-# %%
-# new plot, only the difference, first row for first decade, second row for last decade
-# first col for NPC, second col for NAL
-fig, axes = plt.subplots(2, 2, figsize=(11, 8))
-# first row for first decade
-div_diff_NPC.plot.contourf(
+# for pos
+PlotEPfluxArrows(
+    x=S_phi_pos_first_zonal.lat[::3],
+    y=S_phi_pos_first_zonal.plev,
+    ep1=S_phi_pos_first_zonal[:, ::3],
+    ep2=S_p_pos_first_zonal[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale,
+    xlim=[0, 85],
+    ylim=[1000, 200],
+    fig=fig,
     ax=axes[0, 0],
-    levels=levels_div,
-    cmap="RdBu_r",
-    add_colorbar=False,
-    extend="both",
+)
+
+# for neg
+Sdiv_neg_first_zonal.plot.contourf(
+    ax=axes[0, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
-    x=F_phi_pos_first_NPC.lat[::3],
-    y=F_phi_pos_first_NPC.plev,
-    ep1=(F_phi_pos_first_NPC - F_phi_neg_first_NPC)[:, ::3],
-    ep2=(F_p_pos_first_NPC - F_p_neg_first_NPC)[:, ::3],
+    x=S_phi_neg_first_zonal.lat[::3],
+    y=S_phi_neg_first_zonal.plev,
+    ep1=S_phi_neg_first_zonal[:, ::3],
+    ep2=S_p_neg_first_zonal[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale,
+    xlim=[0, 85],
+    ylim=[1000, 200],
+    fig=fig,
+    ax=axes[0, 1],
+)
+# third col for difference between positive and negative
+Sdiv_diff_first_zonal = Sdiv_pos_first_zonal - Sdiv_neg_first_zonal
+Sdiv_diff_first_zonal.plot.contourf(
+    ax=axes[0, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=S_phi_pos_first_zonal.lat[::3],
+    y=S_phi_pos_first_zonal.plev,
+    ep1=(S_phi_pos_first_zonal - S_phi_neg_first_zonal)[:, ::3],
+    ep2=(S_p_pos_first_zonal - S_p_neg_first_zonal)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
     xlim=[0, 85],
+    ylim=[1000, 200],
     fig=fig,
-    ax=axes[0, 0],
+    ax=axes[0, 2],  
     draw_key=True,
-    key_loc=(0.1, 0.05),
+    key_loc=(0.7, 0.95),
 )
-div_diff_NAL.plot.contourf(
-    ax=axes[0, 1],
-    levels=levels_div,
-    cmap="RdBu_r",
-    add_colorbar=False,
-    extend="both",
+
+# second row for last decade (steady eddies)
+Sdiv_pos_last_zonal.plot.contourf(
+    ax=axes[1, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
-    x=F_phi_pos_first_NAL.lat[::3],
-    y=F_phi_pos_first_NAL.plev,
-    ep1=(F_phi_pos_first_NAL - F_phi_neg_first_NAL)[:, ::3],
-    ep2=(F_p_pos_first_NAL - F_p_neg_first_NAL)[:, ::3],
+    x=S_phi_pos_last_zonal.lat[::3],
+    y=S_phi_pos_last_zonal.plev,
+    ep1=S_phi_pos_last_zonal[:, ::3],
+    ep2=S_p_pos_last_zonal[:, ::3],
     xscale="linear",
     yscale="linear",
-    scale=scale_div,
+    scale=scale,
     xlim=[0, 85],
-    fig=fig,
-    ax=axes[0, 1],
-)
-# second row for last decade
-div_diff_NPC_last.plot.contourf(
-    ax=axes[1, 0],
-    levels=levels_div,
-    cmap="RdBu_r",
-    add_colorbar=False,
-    extend="both",
-)
-PlotEPfluxArrows(
-    x=F_phi_pos_last_NPC.lat[::3],
-    y=F_phi_pos_last_NPC.plev,
-    ep1=(F_phi_pos_last_NPC - F_phi_neg_last_NPC)[:, ::3],
-    ep2=(F_p_pos_last_NPC - F_p_neg_last_NPC)[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale_div,
-    xlim=[0, 85],
+    ylim=[1000, 200],
     fig=fig,
     ax=axes[1, 0],
 )
-div_map = div_diff_NAL_last.plot.contourf(
-    ax=axes[1, 1],
-    levels=levels_div,
-    cmap="RdBu_r",
-    add_colorbar=False,
-    extend="both",
+Sdiv_neg_last_zonal.plot.contourf(
+    ax=axes[1, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
 )
 PlotEPfluxArrows(
-    x=F_phi_pos_last_NAL.lat[::3],
-    y=F_phi_pos_last_NAL.plev,
-    ep1=(F_phi_pos_last_NAL - F_phi_neg_last_NAL)[:, ::3],
-    ep2=(F_p_pos_last_NAL - F_p_neg_last_NAL)[:, ::3],
+    x=S_phi_neg_last_zonal.lat[::3],
+    y=S_phi_neg_last_zonal.plev,
+    ep1=S_phi_neg_last_zonal[:, ::3],
+    ep2=S_p_neg_last_zonal[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale,
+    xlim=[0, 85],
+    ylim=[1000, 200],
+    fig=fig,
+    ax=axes[1, 1],
+)
+# third col for difference between positive and negative
+Sdiv_diff_last_zonal = Sdiv_pos_last_zonal - Sdiv_neg_last_zonal
+Sdiv_diff_last_zonal.plot.contourf(
+    ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+)
+PlotEPfluxArrows(
+    x=S_phi_pos_last_zonal.lat[::3],
+    y=S_phi_pos_last_zonal.plev,
+    ep1=(S_phi_pos_last_zonal - S_phi_neg_last_zonal)[:, ::3],
+    ep2=(S_p_pos_last_zonal - S_p_neg_last_zonal)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
     xlim=[0, 85],
+    ylim=[1000, 200],
     fig=fig,
-    ax=axes[1, 1],
-)
-for ax in axes.flatten():
-    ax.set_xlim(0, 85)
-    ax.set_xlabel("lat / °N")
-    ax.set_ylabel(r"$\Theta_e$ / K")
-
-
-# add colorbar
-cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
-cbar = fig.colorbar(
-    div_map,
-    cax=cbar_ax,
-    orientation="vertical",
-    label = r"$\nabla \cdot \mathbf{F}$ / m s$^{-1}$ day$^{-1}$",
+    ax=axes[1, 2],
+    draw_key=True,
+    key_loc=(0.7, 0.95),
 )
 
-# add a, b, c, d
-for i, ax in enumerate(axes.flatten()):
-    ax.text(
-        0.02,
-        0.95,
-        f"{chr(97+i)}",
-        transform=ax.transAxes,
-        fontsize=12,
-        fontweight="bold",
-    )
-
-plt.tight_layout(rect=[0, 0, 0.9, 1])  # Leave space on the right for the colorbar
-# add a, b, c, d labels
-for i, ax in enumerate(axes.flatten()):
-    ax.text(
-        0.02,
-        0.95,
-        f"{chr(97+i)}",
-        transform=ax.transAxes,
-        fontsize=12,
-        fontweight="bold",
-    )
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/EP_flux_diff.pdf", dpi=300, bbox_inches="tight")
 # %%
