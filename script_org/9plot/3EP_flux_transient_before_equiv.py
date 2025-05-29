@@ -13,7 +13,7 @@ from src.dynamics.EP_flux import (
 
 # %%
 def read_EP_flux(
-    phase, decade, eddy="transient", ano=False, isentrope=False, region=None
+    phase, decade, eddy="transient", ano=False, isentrope=False, region="western"
 ):
     if isentrope:
         EP_flux_dir = (
@@ -24,9 +24,9 @@ def read_EP_flux(
             "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux/"
         )
 
-    T_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_T_phi_{phase}_{decade}_ano{ano}.nc")
-    F_p = xr.open_dataarray(f"{EP_flux_dir}{eddy}_T_p_{phase}_{decade}_ano{ano}.nc")
-    div = xr.open_dataarray(f"{EP_flux_dir}{eddy}_Tdiv_{phase}_{decade}_ano{ano}.nc")
+    T_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_phi_{phase}_{decade}_ano{ano}.nc")
+    F_p = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_p_{phase}_{decade}_ano{ano}.nc")
+    div = xr.open_dataarray(f"{EP_flux_dir}{eddy}_div_{phase}_{decade}_ano{ano}.nc")
 
     if region == "NPC":
         T_phi = NPC_mean(T_phi)
@@ -37,9 +37,23 @@ def read_EP_flux(
         T_phi = NAL_mean(T_phi)
         F_p = NAL_mean(F_p)
         div = NAL_mean(div)
-    elif region == None:
+    elif region == "western":
+        T_phi = xr.concat(
+            T_phi.sel(lon = slice(240, None)),
+            T_phi.sel(lon = slice(0, 60)), dim="lon"
+        )
+        F_p = xr.concat(
+            F_p.sel(lon = slice(240, None)),
+            F_p.sel(lon = slice(0, 60)), dim="lon"
+        )
+        div = xr.concat(
+            div.sel(lon = slice(240, None)),
+            div.sel(lon = slice(0, 60)), dim="lon"
+        )
+    elif region is None:
         # do nothing, return the data as is
         pass
+
 
     return T_phi, F_p, div
 
