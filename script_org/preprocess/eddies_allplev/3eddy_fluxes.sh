@@ -99,7 +99,7 @@ flux(){
 
 export -f flux
 
-parallel --jobs 2 flux ::: 1850 2090
+parallel --jobs 5 flux ::: {1850..2090..10} 
 
 # check if all files are created
 for dec in 1850 2090; do
