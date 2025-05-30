@@ -38,24 +38,27 @@ def read_prime(decade, var="eke", **kwargs):
 
     return data
 
-def read_prime_decmean(var="eke", **kwargs):
+def read_prime_decmean(var="eke", NAL = True, plev = 85000, **kwargs):
     """
     read high frequency data for all decades
     """
 
-    name = kwargs.get("name", var)  # default name is the same as var
-    plev = kwargs.get("plev", None)
-    suffix = kwargs.get("suffix", "_ano")
-    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
 
-    data_decades = []
-    for decade in range(1850, 2100, 10):
-        data_dec = read_prime(decade, var, **kwargs)
-        data_dec = data_dec.mean(dim="time")
-        data_decades.append(data_dec)
-        logging.info(f"read {var} for decade {decade}")
-    data = xr.concat(data_decades, dim="time")
-
+    base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{var}_ano_decmean/"
+    files = glob.glob(base_dir + "*.nc")
+    if len(files) == 0:
+        raise ValueError(f"no file found for {var} in decmean")
+    data = xr.open_mfdataset(
+        files,
+        combine="by_coords",
+    )
+    data.load()
+    # yearly mean
+    data = data.groupby("time.year").mean(dim="time")
+    if NAL:
+        data = data.sel(lon = slice(300, 350), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
+    if plev is not None:
+        data = data.sel(plev=plev)
     return data
 
 def read_prime_single_ens(dec, ens, var, **kwargs):
