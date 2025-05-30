@@ -3,6 +3,8 @@ import numpy as np
 import glob
 from src.plotting.util import erase_white_line
 import src.dynamics.longitudinal_contrast as lc
+import logging
+
 
 
 def read_prime(decade, var="eke", **kwargs):
@@ -33,6 +35,26 @@ def read_prime(decade, var="eke", **kwargs):
         data = data.sel(plev=plev)
 
     data["ens"] = range(1, 51)
+
+    return data
+
+def read_prime_decmean(var="eke", **kwargs):
+    """
+    read high frequency data for all decades
+    """
+
+    name = kwargs.get("name", var)  # default name is the same as var
+    plev = kwargs.get("plev", None)
+    suffix = kwargs.get("suffix", "_ano")
+    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
+
+    data_decades = []
+    for decade in range(1850, 2100, 10):
+        data_dec = read_prime(decade, var, **kwargs)
+        data_dec = data_dec.mean(dim="time")
+        data_decades.append(data_dec)
+        logging.info(f"read {var} for decade {decade}")
+    data = xr.concat(data_decades, dim="time")
 
     return data
 
