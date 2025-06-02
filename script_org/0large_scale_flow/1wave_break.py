@@ -119,6 +119,7 @@ if rank == 0:
 # %%
 all_decades = np.arange(1850, 2100, 10)
 single_decades = np.array_split(all_decades, size)[rank]
+mf_var = "upvp"  # change to transient flux
 # %%
 for i, dec in enumerate(single_decades):
     logging.info(f"rank {rank} Processing {i+1}/{len(single_decades)}")
@@ -129,7 +130,7 @@ for i, dec in enumerate(single_decades):
     pv = pv.pv
 
     mf_file = glob.glob(mf_path + f"*{dec}*.nc")
-    mf = xr.open_dataset(mf_file[0]).usvs
+    mf = xr.open_dataset(mf_file[0])[mf_var]
 
     stratospheric_array, tropospheric_array, anticyclonic_array, cyclonic_array = wavebreaking(pv, mf)
 
