@@ -37,7 +37,7 @@ def wavebreaking(pv, mflux, mf_var="usvs"):
                                         weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]), # optional
                                         mode="wrap") # optional
     # smooth the mflux
-    smoothed_mflux = wb.calculate_smoothed_field(data=mflux,
+    mflux = wb.calculate_smoothed_field(data=mflux,
                                         passes=5,
                                         weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]), # optional
                                         mode="wrap") # optional
@@ -53,7 +53,7 @@ def wavebreaking(pv, mflux, mf_var="usvs"):
                                     contours=contours, #optional
                                     geo_dis=800, # optional
                                     cont_dis=1200, # optional
-                                    intensity=smoothed_mflux, # optional
+                                    intensity=mflux, # optional
                                     periodic_add=120) # optional
 
 
