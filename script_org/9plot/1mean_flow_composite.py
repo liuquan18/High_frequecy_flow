@@ -272,73 +272,73 @@ thermal_colors = cmocean.cm.thermal(np.linspace(0, 1, len(awb_levels) + 1))[1:]
 cust_cmap = ListedColormap(thermal_colors, name="thermal_custom")
 
 # %%
-# Plot 1: uhat (jet stream), overlay last10 as contour on first10, 1 row x 3 columns
-fig, axes = plt.subplots(
-    nrows=1, ncols=3, figsize=(12, 4),
-    subplot_kw={"projection": ccrs.Orthographic(-30, 90)},
-    constrained_layout=True,
-)
+# # Plot 1: uhat (jet stream), overlay last10 as contour on first10, 1 row x 3 columns
+# fig, axes = plt.subplots(
+#     nrows=1, ncols=3, figsize=(12, 4),
+#     subplot_kw={"projection": ccrs.Orthographic(-30, 90)},
+#     constrained_layout=True,
+# )
 
 
-# Exclude 0 from contour levels
-contour_levels = uhat_levels_div[uhat_levels_div != 0]
+# # Exclude 0 from contour levels
+# contour_levels = uhat_levels_div[uhat_levels_div != 0]
 
-# Positive phase
-cf = uhat_pos_first10.plot.contourf(
-    ax=axes[0], levels=uhat_levels_div, cmap='RdBu_r', add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-uhat_pos_last10.plot.contour(
-    ax=axes[0], levels=contour_levels, colors="black", linewidths=1,
-    transform=ccrs.PlateCarree(),
-)
-axes[0].set_title("Positive phase")
+# # Positive phase
+# cf = uhat_pos_first10.plot.contourf(
+#     ax=axes[0], levels=uhat_levels_div, cmap='RdBu_r', add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# uhat_pos_last10.plot.contour(
+#     ax=axes[0], levels=contour_levels, colors="black", linewidths=1,
+#     transform=ccrs.PlateCarree(),
+# )
+# axes[0].set_title("Positive phase")
 
-# Negative phase
-cf = uhat_neg_first10.plot.contourf(
-    ax=axes[1], levels=uhat_levels_div, cmap='RdBu_r', add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-uhat_neg_last10.plot.contour(
-    ax=axes[1], levels=contour_levels, colors="black", linewidths=1,
-    transform=ccrs.PlateCarree(),
-)
-axes[1].set_title("Negative phase")
+# # Negative phase
+# cf = uhat_neg_first10.plot.contourf(
+#     ax=axes[1], levels=uhat_levels_div, cmap='RdBu_r', add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# uhat_neg_last10.plot.contour(
+#     ax=axes[1], levels=contour_levels, colors="black", linewidths=1,
+#     transform=ccrs.PlateCarree(),
+# )
+# axes[1].set_title("Negative phase")
 
-# Difference
-cf = uhat_NAO_diff_first.plot.contourf(
-    ax=axes[2], levels=uhat_levels_div, cmap='RdBu_r', add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-uhat_NAO_diff_last.plot.contour(
-    ax=axes[2], levels=contour_levels, colors="black", linewidths=1,
-    transform=ccrs.PlateCarree(),
-)
-axes[2].set_title("Difference")
+# # Difference
+# cf = uhat_NAO_diff_first.plot.contourf(
+#     ax=axes[2], levels=uhat_levels_div, cmap='RdBu_r', add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# uhat_NAO_diff_last.plot.contour(
+#     ax=axes[2], levels=contour_levels, colors="black", linewidths=1,
+#     transform=ccrs.PlateCarree(),
+# )
+# axes[2].set_title("Difference")
 
-for ax in axes:
-    ax.coastlines(color="grey", linewidth=1)
-    ax.gridlines(draw_labels=False, linewidth=1, color="grey", alpha=0.5, linestyle="--")
-    ax.set_global()
+# for ax in axes:
+#     ax.coastlines(color="grey", linewidth=1)
+#     ax.gridlines(draw_labels=False, linewidth=1, color="grey", alpha=0.5, linestyle="--")
+#     ax.set_global()
 
-# Add colorbar to the bottom of each column
-for coli, ax in enumerate(axes):
-    fig.colorbar(
-        cf,
-        ax=ax,
-        shrink=0.8,
-        orientation="horizontal",
-        label=r"$\overline{u}$ (m/s)",
-    )
+# # Add colorbar to the bottom of each column
+# for coli, ax in enumerate(axes):
+#     fig.colorbar(
+#         cf,
+#         ax=ax,
+#         shrink=0.8,
+#         orientation="horizontal",
+#         label=r"$\overline{u}$ (m/s)",
+#     )
 
-# add a, b, c labels
-for i, ax in enumerate(axes):
-    ax.text(
-        0.05, 1.05, chr(97 + i), transform=ax.transAxes,
-        fontsize=14, fontweight='bold', va='top', ha='right'
-    )
+# # add a, b, c labels
+# for i, ax in enumerate(axes):
+#     ax.text(
+#         0.05, 1.05, chr(97 + i), transform=ax.transAxes,
+#         fontsize=14, fontweight='bold', va='top', ha='right'
+#     )
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/uhat_composite.pdf", bbox_inches='tight', dpi=300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/uhat_composite.pdf", bbox_inches='tight', dpi=300)
 
 # %%
 
@@ -593,7 +593,7 @@ for i, ax in enumerate(axes.flatten()):
         fontsize=14, fontweight='bold', va='top', ha='right'
     )
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wb_2x3.pdf", bbox_inches='tight', dpi=300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wb_2x3.pdf", bbox_inches='tight', dpi=300)
 
 # %%
 fig, axes = plt.subplots(
