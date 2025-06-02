@@ -41,15 +41,15 @@ def to_plot_data(eke):
 
 #%%%
 # config
-time_window = (-10, 10)  # years
+time_window = (-10, 5)  
 suffix = "_ano"
 remove_zonmean = False
 
 # %%
 uhat_levels_div = np.arange(-12, 13, 2)
-upvp_levels_div = np.arange(-15, 16, 5)*2
+upvp_levels_div = np.arange(-15, 16, 5)
 vsts_levels_div = np.arange(-3, 3.1, 0.5)
-vptp_levels_div = np.arange(-1.2, 1.3, 0.2)*2
+vptp_levels_div = np.arange(-1.2, 1.3, 0.2)
 vptp_levels_low_div = np.arange(-4, 4.1, 1)
 scale_hus = 5e4
 
