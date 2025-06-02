@@ -25,7 +25,7 @@ def remap(ifile, var="ua", plev=None):
     return ofile
 
 # %%
-def wavebreaking(pv, mflux, mf_var="upvp"):
+def wavebreaking(pv, mflux, mf_var="usvs"):
     pv = pv * 1e6
     pv = remap(pv, var = 'pv')
     mflux = remap(mflux, var = mf_var, plev = 25000)
