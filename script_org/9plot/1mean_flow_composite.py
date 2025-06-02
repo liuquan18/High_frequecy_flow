@@ -597,7 +597,7 @@ plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wb_2x
 
 # %%
 fig, axes = plt.subplots(
-    nrows=3, ncols=3, figsize=(12, 12),
+    nrows=3, ncols=3, figsize=(11, 12),
     subplot_kw={"projection": ccrs.Orthographic(-30, 90)},
     constrained_layout=True,
 )
