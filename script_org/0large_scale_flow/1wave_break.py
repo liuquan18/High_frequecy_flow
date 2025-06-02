@@ -81,6 +81,8 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
 node = sys.argv[1]
 ens = int(node)
 logging.info(f"Processing ensemble {ens}")
+mf_var = "upvp"  # change to transient flux
+
 # %%
 #%%
 try:
@@ -94,7 +96,6 @@ except:
     rank = 0
     size = 1
 
-mf_var = "upvp"  # change to transient flux
 
 # %%
 pv_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pv_daily/r{ens}i1p1f1/"
