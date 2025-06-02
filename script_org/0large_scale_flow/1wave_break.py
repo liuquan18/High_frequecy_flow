@@ -36,6 +36,11 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
                                         passes=5,
                                         weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]), # optional
                                         mode="wrap") # optional
+    # smooth the mflux
+    smoothed_mflux = wb.calculate_smoothed_field(data=mflux,
+                                        passes=5,
+                                        weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]), # optional
+                                        mode="wrap") # optional
 
     contours = wb.calculate_contours(data=smoothed,
                                     contour_levels=contour_levels,
@@ -48,7 +53,7 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
                                     contours=contours, #optional
                                     geo_dis=800, # optional
                                     cont_dis=1200, # optional
-                                    intensity=mflux, # optional
+                                    intensity=smoothed_mflux, # optional
                                     periodic_add=120) # optional
 
 
@@ -81,7 +86,7 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
 node = sys.argv[1]
 ens = int(node)
 logging.info(f"Processing ensemble {ens}")
-mf_var = "upvp"  # change to transient flux
+mf_var = "usvs"  # can change to transient flux
 
 # %%
 #%%
