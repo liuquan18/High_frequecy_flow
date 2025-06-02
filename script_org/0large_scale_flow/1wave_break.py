@@ -25,10 +25,10 @@ def remap(ifile, var="ua", plev=None):
     return ofile
 
 # %%
-def wavebreaking(pv, mflux):
+def wavebreaking(pv, mflux, mf_var="upvp"):
     pv = pv * 1e6
     pv = remap(pv, var = 'pv')
-    mflux = remap(mflux, var = 'usvs', plev = 25000)
+    mflux = remap(mflux, var = mf_var, plev = 25000)
     # contour_levels = [-2*1e-6, 2*1e-6]
     contour_levels = [-2, 2]
     
@@ -93,9 +93,12 @@ except:
     logging.warning("::: Warning: Proceeding without mpi4py! :::")
     rank = 0
     size = 1
+
+mf_var = "upvp"  # change to transient flux
+
 # %%
 pv_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pv_daily/r{ens}i1p1f1/"
-mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/upvp_daily/r{ens}i1p1f1/"  # change to transient flux
+mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{mf_var}_daily/r{ens}i1p1f1/"  # change to transient flux
 
 awb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_anticyclonic_daily/r{ens}i1p1f1/"
 cwb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_cyclonic_daily/r{ens}i1p1f1/"
@@ -119,7 +122,7 @@ if rank == 0:
 # %%
 all_decades = np.arange(1850, 2100, 10)
 single_decades = np.array_split(all_decades, size)[rank]
-mf_var = "upvp"  # change to transient flux
+
 # %%
 for i, dec in enumerate(single_decades):
     logging.info(f"rank {rank} Processing {i+1}/{len(single_decades)}")
@@ -132,7 +135,7 @@ for i, dec in enumerate(single_decades):
     mf_file = glob.glob(mf_path + f"*{dec}*.nc")
     mf = xr.open_dataset(mf_file[0])[mf_var]
 
-    stratospheric_array, tropospheric_array, anticyclonic_array, cyclonic_array = wavebreaking(pv, mf)
+    stratospheric_array, tropospheric_array, anticyclonic_array, cyclonic_array = wavebreaking(pv, mf, mf_var=mf_var)
 
 
     # save the data
