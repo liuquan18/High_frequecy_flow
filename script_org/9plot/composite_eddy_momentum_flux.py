@@ -182,7 +182,6 @@ upvp_pos_last.sel(plev=25000).plot.contour(
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="both",
-    linewidths=0.5,
 )
 
 # plot upvp neg (last 10 years)
