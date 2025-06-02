@@ -27,6 +27,7 @@ importlib.reload(util)
 # %%
 from src.data_helper.read_variable import read_climatology
 from src.data_helper.read_composite import read_comp_var
+from matplotlib.patches import Rectangle
 
 
 
@@ -250,6 +251,41 @@ fig.colorbar(
     label=r"$\overline{v'\theta'}$ [K m s$^{-1}$]",
     extend="both",
 )
+
+
+# Define the region in degrees east (lon: 300 to 360, lat: 40 to 80)
+lon_min, lon_max = 300, 360
+lat_min, lat_max = 40, 80
+
+# Create a smooth rectangle region using lines with many points
+num_points = 60
+# Bottom edge
+lons_bottom = np.linspace(lon_min, lon_max, num_points)
+lats_bottom = np.full_like(lons_bottom, lat_min)
+# Right edge
+lats_right = np.linspace(lat_min, lat_max, num_points)
+lons_right = np.full_like(lats_right, lon_max)
+# Top edge
+lons_top = np.linspace(lon_max, lon_min, num_points)
+lats_top = np.full_like(lons_top, lat_max)
+# Left edge
+lats_left = np.linspace(lat_max, lat_min, num_points)
+lons_left = np.full_like(lats_left, lon_min)
+
+# Concatenate to form the closed loop
+lons = np.concatenate([lons_bottom, lons_right, lons_top, lons_left, [lon_min]])
+lats = np.concatenate([lats_bottom, lats_right, lats_top, lats_left, [lat_min]])
+
+axes[1, 1].plot(
+    lons, lats,
+    color='yellow',
+    linestyle='dashed',
+    linewidth=2,
+    transform=ccrs.PlateCarree(),
+    zorder=10,
+)
+
+
 
 # add a, b, c,d
 for i, ax in enumerate(axes.flatten()):
