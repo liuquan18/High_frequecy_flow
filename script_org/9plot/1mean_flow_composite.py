@@ -342,148 +342,148 @@ plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/uhat_
 
 # %%
 
-#%%
-# Plot 2: Potential temperature
-fig, axes = plt.subplots(
-    nrows=2, ncols=3, figsize=(12, 8),
-    subplot_kw={"projection": ccrs.Orthographic(-30, 90)},
-    constrained_layout=True,
-)
-# First 10 years
-theta_pos_first.plot.contourf(
-    ax=axes[0, 0], levels=temp_levels, cmap=temp_cmap_div, add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-theta_neg_first.plot.contourf(
-    ax=axes[0, 1], levels=temp_levels, cmap=temp_cmap_div, add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-theta_diff_first.plot.contourf(
-    ax=axes[0, 2], levels=temp_levels_div, cmap=temp_cmap_div, add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-# Last 10 years
-pos_map = theta_pos_last.plot.contourf(
-    ax=axes[1, 0], levels=temp_levels, cmap=temp_cmap_div, add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-neg_map = theta_neg_last.plot.contourf(
-    ax=axes[1, 1], levels=temp_levels, cmap=temp_cmap_div, add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-diff_map = theta_diff_last.plot.contourf(
-    ax=axes[1, 2], levels=temp_levels_div, cmap=temp_cmap_div, add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-for ax in axes.flatten():
-    ax.coastlines(color="grey", linewidth=1)
-    ax.gridlines(draw_labels=False, linewidth=1, color="grey", alpha=0.5, linestyle="--")
-    ax.set_global()
-axes[0, 0].set_title("Positive phase")
-axes[0, 1].set_title("Negative phase")
-axes[0, 2].set_title("Difference")
+# #%%
+# # Plot 2: Potential temperature
+# fig, axes = plt.subplots(
+#     nrows=2, ncols=3, figsize=(12, 8),
+#     subplot_kw={"projection": ccrs.Orthographic(-30, 90)},
+#     constrained_layout=True,
+# )
+# # First 10 years
+# theta_pos_first.plot.contourf(
+#     ax=axes[0, 0], levels=temp_levels, cmap=temp_cmap_div, add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# theta_neg_first.plot.contourf(
+#     ax=axes[0, 1], levels=temp_levels, cmap=temp_cmap_div, add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# theta_diff_first.plot.contourf(
+#     ax=axes[0, 2], levels=temp_levels_div, cmap=temp_cmap_div, add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# # Last 10 years
+# pos_map = theta_pos_last.plot.contourf(
+#     ax=axes[1, 0], levels=temp_levels, cmap=temp_cmap_div, add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# neg_map = theta_neg_last.plot.contourf(
+#     ax=axes[1, 1], levels=temp_levels, cmap=temp_cmap_div, add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# diff_map = theta_diff_last.plot.contourf(
+#     ax=axes[1, 2], levels=temp_levels_div, cmap=temp_cmap_div, add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# for ax in axes.flatten():
+#     ax.coastlines(color="grey", linewidth=1)
+#     ax.gridlines(draw_labels=False, linewidth=1, color="grey", alpha=0.5, linestyle="--")
+#     ax.set_global()
+# axes[0, 0].set_title("Positive phase")
+# axes[0, 1].set_title("Negative phase")
+# axes[0, 2].set_title("Difference")
 
-# Add wind quiver to each subplot in the theta plot
-# First 10 years
-wnd_quiver = axes[0, 0].quiver(
-    wnd_pos_first["lon"].values[::5],
-    wnd_pos_first.lat[::5],
-    wnd_pos_first["ua"].values[::5, ::5],
-    wnd_pos_first["va"].values[::5, ::5],
-    transform=ccrs.PlateCarree(),
-    scale=wnd_scale,
-    color="black",
-)
-axes[0, 0].quiverkey(
-    wnd_quiver,
-    0.9,
-    0.03,
-    20,
-    r"20 m/s",
-    labelpos="E",
-    transform=axes[0, 0].transAxes,
-    coordinates="axes",
-)
+# # Add wind quiver to each subplot in the theta plot
+# # First 10 years
+# wnd_quiver = axes[0, 0].quiver(
+#     wnd_pos_first["lon"].values[::5],
+#     wnd_pos_first.lat[::5],
+#     wnd_pos_first["ua"].values[::5, ::5],
+#     wnd_pos_first["va"].values[::5, ::5],
+#     transform=ccrs.PlateCarree(),
+#     scale=wnd_scale,
+#     color="black",
+# )
+# axes[0, 0].quiverkey(
+#     wnd_quiver,
+#     0.9,
+#     0.03,
+#     20,
+#     r"20 m/s",
+#     labelpos="E",
+#     transform=axes[0, 0].transAxes,
+#     coordinates="axes",
+# )
 
-wnd_quiver = axes[0, 1].quiver(
-    wnd_neg_first["lon"].values[::5],
-    wnd_neg_first.lat[::5],
-    wnd_neg_first["ua"].values[::5, ::5],
-    wnd_neg_first["va"].values[::5, ::5],
-    transform=ccrs.PlateCarree(),
-    scale=wnd_scale,
-    color="black",
-)
+# wnd_quiver = axes[0, 1].quiver(
+#     wnd_neg_first["lon"].values[::5],
+#     wnd_neg_first.lat[::5],
+#     wnd_neg_first["ua"].values[::5, ::5],
+#     wnd_neg_first["va"].values[::5, ::5],
+#     transform=ccrs.PlateCarree(),
+#     scale=wnd_scale,
+#     color="black",
+# )
 
-wnd_quiver = axes[0, 2].quiver(
-    wnd_diff_first["lon"].values[::5],
-    wnd_diff_first.lat[::5],
-    wnd_diff_first["ua"].values[::5, ::5],
-    wnd_diff_first["va"].values[::5, ::5],
-    transform=ccrs.PlateCarree(),
-    scale=wnd_scale_div,
-    color="black",
-)
+# wnd_quiver = axes[0, 2].quiver(
+#     wnd_diff_first["lon"].values[::5],
+#     wnd_diff_first.lat[::5],
+#     wnd_diff_first["ua"].values[::5, ::5],
+#     wnd_diff_first["va"].values[::5, ::5],
+#     transform=ccrs.PlateCarree(),
+#     scale=wnd_scale_div,
+#     color="black",
+# )
 
-# Last 10 years
-wnd_quiver = axes[1, 0].quiver(
-    wnd_pos_last["lon"].values[::5],
-    wnd_pos_last.lat[::5],
-    wnd_pos_last["ua"].values[::5, ::5],
-    wnd_pos_last["va"].values[::5, ::5],
-    transform=ccrs.PlateCarree(),
-    scale=wnd_scale,
-    color="black",
-)
-axes[1, 0].quiverkey(
-    wnd_quiver,
-    0.9,
-    0.03,
-    20,
-    r"20 m/s",
-    labelpos="E",
-    transform=axes[1, 0].transAxes,
-    coordinates="axes",
-)
+# # Last 10 years
+# wnd_quiver = axes[1, 0].quiver(
+#     wnd_pos_last["lon"].values[::5],
+#     wnd_pos_last.lat[::5],
+#     wnd_pos_last["ua"].values[::5, ::5],
+#     wnd_pos_last["va"].values[::5, ::5],
+#     transform=ccrs.PlateCarree(),
+#     scale=wnd_scale,
+#     color="black",
+# )
+# axes[1, 0].quiverkey(
+#     wnd_quiver,
+#     0.9,
+#     0.03,
+#     20,
+#     r"20 m/s",
+#     labelpos="E",
+#     transform=axes[1, 0].transAxes,
+#     coordinates="axes",
+# )
 
-wnd_quiver = axes[1, 1].quiver(
-    wnd_neg_last["lon"].values[::5],
-    wnd_neg_last.lat[::5],
-    wnd_neg_last["ua"].values[::5, ::5],
-    wnd_neg_last["va"].values[::5, ::5],
-    transform=ccrs.PlateCarree(),
-    scale=wnd_scale,
-    color="black",
-)
+# wnd_quiver = axes[1, 1].quiver(
+#     wnd_neg_last["lon"].values[::5],
+#     wnd_neg_last.lat[::5],
+#     wnd_neg_last["ua"].values[::5, ::5],
+#     wnd_neg_last["va"].values[::5, ::5],
+#     transform=ccrs.PlateCarree(),
+#     scale=wnd_scale,
+#     color="black",
+# )
 
-wnd_quiver = axes[1, 2].quiver(
-    wnd_diff_last["lon"].values[::5],
-    wnd_diff_last.lat[::5],
-    wnd_diff_last["ua"].values[::5, ::5],
-    wnd_diff_last["va"].values[::5, ::5],
-    transform=ccrs.PlateCarree(),
-    scale=wnd_scale_div,
-    color="black",
-)
+# wnd_quiver = axes[1, 2].quiver(
+#     wnd_diff_last["lon"].values[::5],
+#     wnd_diff_last.lat[::5],
+#     wnd_diff_last["ua"].values[::5, ::5],
+#     wnd_diff_last["va"].values[::5, ::5],
+#     transform=ccrs.PlateCarree(),
+#     scale=wnd_scale_div,
+#     color="black",
+# )
 
-# Add colorbar to the bottom of each column
-for coli, map in enumerate([pos_map, neg_map, diff_map]):
-    fig.colorbar(
-        map,
-        ax=axes[:, coli],
-        shrink=0.8,
-        orientation="horizontal",
-        label=r"$\overline{v' \theta}$ (K m s$^{-1}$)",
-    )
+# # Add colorbar to the bottom of each column
+# for coli, map in enumerate([pos_map, neg_map, diff_map]):
+#     fig.colorbar(
+#         map,
+#         ax=axes[:, coli],
+#         shrink=0.8,
+#         orientation="horizontal",
+#         label=r"$\overline{v' \theta}$ (K m s$^{-1}$)",
+#     )
 
-# add a, b, c labels
-for i, ax in enumerate(axes.flatten()):
-    ax.text(
-        0.05, 1.05, chr(97 + i), transform=ax.transAxes,
-        fontsize=14, fontweight='bold', va='top', ha='right'
-    )
+# # add a, b, c labels
+# for i, ax in enumerate(axes.flatten()):
+#     ax.text(
+#         0.05, 1.05, chr(97 + i), transform=ax.transAxes,
+#         fontsize=14, fontweight='bold', va='top', ha='right'
+#     )
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/theta_2x3.pdf", bbox_inches='tight', dpi=300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/theta_2x3.pdf", bbox_inches='tight', dpi=300)
 
 #%%
 # Plot 3: Wave breaking (AWB/CWB)
@@ -594,5 +594,188 @@ for i, ax in enumerate(axes.flatten()):
     )
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wb_2x3.pdf", bbox_inches='tight', dpi=300)
+
+# %%
+fig, axes = plt.subplots(
+    nrows=3, ncols=3, figsize=(12, 12),
+    subplot_kw={"projection": ccrs.Orthographic(-30, 90)},
+    constrained_layout=True,
+)
+
+# --- First row: uhat (jet stream) ---
+contour_levels = uhat_levels_div[uhat_levels_div != 0]
+
+# Positive phase
+cf_uhat_pos = uhat_pos_first10.plot.contourf(
+    ax=axes[0, 0], levels=uhat_levels_div, cmap='RdBu_r', add_colorbar=False,
+    transform=ccrs.PlateCarree(), extend="both",
+)
+uhat_pos_last10.plot.contour(
+    ax=axes[0, 0], levels=contour_levels, colors="black", linewidths=1,
+    transform=ccrs.PlateCarree(),
+)
+axes[0, 0].set_title("Positive phase")
+
+# Negative phase
+cf_uhat_neg = uhat_neg_first10.plot.contourf(
+    ax=axes[0, 1], levels=uhat_levels_div, cmap='RdBu_r', add_colorbar=False,
+    transform=ccrs.PlateCarree(), extend="both",
+)
+uhat_neg_last10.plot.contour(
+    ax=axes[0, 1], levels=contour_levels, colors="black", linewidths=1,
+    transform=ccrs.PlateCarree(),
+)
+axes[0, 1].set_title("Negative phase")
+
+# Difference
+cf_uhat_diff = uhat_NAO_diff_first.plot.contourf(
+    ax=axes[0, 2], levels=uhat_levels_div, cmap='RdBu_r', add_colorbar=False,
+    transform=ccrs.PlateCarree(), extend="both",
+)
+uhat_NAO_diff_last.plot.contour(
+    ax=axes[0, 2], levels=contour_levels, colors="black", linewidths=1,
+    transform=ccrs.PlateCarree(),
+)
+axes[0, 2].set_title("Difference")
+
+# --- Second row: Anticyclonic wave breaking (AWB) ---
+awb_map_pos_first = awb_pos_first.plot.contourf(
+    ax=axes[1, 0], levels=awb_levels, cmap=cust_cmap, add_colorbar=False,
+    transform=ccrs.PlateCarree(), extend="max",
+)
+awb_map_neg_first = awb_neg_first.plot.contourf(
+    ax=axes[1, 1], levels=awb_levels, cmap=cust_cmap, add_colorbar=False,
+    transform=ccrs.PlateCarree(), extend="max",
+)
+awb_map_diff_first = awb_diff_first.plot.contourf(
+    ax=axes[1, 2], levels=awb_levels_div, cmap="coolwarm", add_colorbar=False,
+    transform=ccrs.PlateCarree(), extend="both",
+)
+
+awb_contour_pos_last = awb_pos_last.plot.contour(
+    ax=axes[1, 0], levels=awb_levels, colors="black", linewidths=1,
+    transform=ccrs.PlateCarree(), add_colorbar=False
+)
+awb_contour_neg_last = awb_neg_last.plot.contour(
+    ax=axes[1, 1], levels=awb_levels, colors="black", linewidths=1,
+    transform=ccrs.PlateCarree(), add_colorbar=False
+)
+awb_contour_diff_last = awb_diff_last.plot.contour(
+    ax=axes[1, 2], levels=awb_levels_div[awb_levels_div != 0], colors="black", linewidths=1,
+    transform=ccrs.PlateCarree(), add_colorbar=False
+)
+if 10 in awb_levels:
+    axes[1, 0].clabel(awb_contour_pos_last, [10], fmt='%d', fontsize=8)
+    axes[1, 1].clabel(awb_contour_neg_last, [10], fmt='%d', fontsize=8)
+if np.any(np.isin([-5, 5], awb_levels_div)):
+    axes[1, 2].clabel(awb_contour_diff_last, [-5, 5], fmt='%g', fontsize=8)
+
+# --- Third row: Cyclonic wave breaking (CWB) ---
+cwb_map_pos_first = cwb_pos_first.plot.contourf(
+    ax=axes[2, 0], levels=cwb_levels, cmap=cust_cmap, add_colorbar=False,
+    transform=ccrs.PlateCarree(), extend="max",
+)
+cwb_map_neg_first = cwb_neg_first.plot.contourf(
+    ax=axes[2, 1], levels=cwb_levels, cmap=cust_cmap, add_colorbar=False,
+    transform=ccrs.PlateCarree(), extend="max",
+)
+cwb_map_diff_first = cwb_diff_first.plot.contourf(
+    ax=axes[2, 2], levels=cwb_levels_div, cmap="coolwarm", add_colorbar=False,
+    transform=ccrs.PlateCarree(), extend="both",
+)
+
+cwb_contour_pos_last = cwb_pos_last.plot.contour(
+    ax=axes[2, 0], levels=cwb_levels, colors="black", linewidths=1,
+    transform=ccrs.PlateCarree(), add_colorbar=False
+)
+cwb_contour_neg_last = cwb_neg_last.plot.contour(
+    ax=axes[2, 1], levels=cwb_levels, colors="black", linewidths=1,
+    transform=ccrs.PlateCarree(), add_colorbar=False
+)
+cwb_contour_diff_last = cwb_diff_last.plot.contour(
+    ax=axes[2, 2], levels=cwb_levels_div[cwb_levels_div != 0], colors="black", linewidths=1,
+    transform=ccrs.PlateCarree(), add_colorbar=False
+)
+if 10 in cwb_levels:
+    axes[2, 0].clabel(cwb_contour_pos_last, [10], fmt='%d', fontsize=8)
+    axes[2, 1].clabel(cwb_contour_neg_last, [10], fmt='%d', fontsize=8)
+if np.any(np.isin([-5, 5], cwb_levels_div)):
+    axes[2, 2].clabel(cwb_contour_diff_last, [-5, 5], fmt='%g', fontsize=8)
+
+# --- Formatting ---
+for ax in axes.flatten():
+    ax.coastlines(color="grey", linewidth=1)
+    ax.gridlines(draw_labels=False, linewidth=1, color="grey", alpha=0.5, linestyle="--")
+    ax.set_global()
+
+axes[0, 0].set_title("Positive phase")
+axes[0, 1].set_title("Negative phase")
+axes[0, 2].set_title("Difference")
+axes[1, 0].set_title("AWB Positive phase")
+axes[1, 1].set_title("AWB Negative phase")
+axes[1, 2].set_title("AWB Difference")
+axes[2, 0].set_title("CWB Positive phase")
+axes[2, 1].set_title("CWB Negative phase")
+axes[2, 2].set_title("CWB Difference")
+
+# Colorbars
+# uhat row
+for coli, (cf, label) in enumerate([
+    (cf_uhat_pos, r"$\overline{u}$ (m/s)"),
+    (cf_uhat_neg, r"$\overline{u}$ (m/s)"),
+    (cf_uhat_diff, r"$\overline{u}$ (m/s)")
+]):
+    fig.colorbar(
+        cf,
+        ax=axes[0, coli],
+        shrink=0.6,
+        orientation="horizontal",
+        label=label,
+    )
+# AWB row
+zero_idx_awb = np.argmin(np.abs(awb_levels_div))
+ticks_awb = np.sort(np.unique(np.concatenate([awb_levels_div[zero_idx_awb::-2], awb_levels_div[zero_idx_awb::2]])))
+for coli, (map, label, ticks_, fmt) in enumerate([
+    (awb_map_pos_first, "AWB freq", awb_levels[::2], '%.0f'),
+    (awb_map_neg_first, "AWB freq", awb_levels[::2], '%.0f'),
+    (awb_map_diff_first, "AWB freq diff", ticks_awb, '%.0f')
+]):
+    fig.colorbar(
+        map,
+        ax=axes[1, coli],
+        shrink=0.6,
+        orientation="horizontal",
+        label=label,
+        ticks=ticks_,
+        format=fmt,
+    )
+# CWB row
+zero_idx_cwb = np.argmin(np.abs(cwb_levels_div))
+# For difference, show all ticks in cwb_levels_div (not just a subset)
+for coli, (map, label, ticks_, fmt) in enumerate([
+    (cwb_map_pos_first, "CWB freq", cwb_levels, '%.0f'),
+    (cwb_map_neg_first, "CWB freq", cwb_levels, '%.0f'),
+    (cwb_map_diff_first, "CWB freq diff", cwb_levels_div, '%.0f')
+]):
+    fig.colorbar(
+        map,
+        ax=axes[2, coli],
+        shrink=0.6,
+        orientation="horizontal",
+        label=label,
+        ticks=ticks_,
+        format=fmt,
+    )
+
+# add a, b, c, d, e, f, g, h, i labels
+for i, ax in enumerate(axes.flatten()):
+    ax.text(
+        0.05, 1.05, chr(97 + i), transform=ax.transAxes,
+        fontsize=14, fontweight='bold', va='top', ha='right'
+    )
+    ax.set_title("")
+
+# plt.tight_layout()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/uhat_wb_composite.pdf", bbox_inches='tight', dpi=300)
 
 # %%
