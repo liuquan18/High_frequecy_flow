@@ -182,6 +182,7 @@ upvp_pos_last.sel(plev=25000).plot.contour(
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="both",
+    linewidths=1,
 )
 
 # plot upvp neg (last 10 years)
@@ -194,6 +195,7 @@ upvp_neg_last.sel(plev=25000).plot.contour(
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="both",
+    linewidths=1,
 )
 
 # plot usvs pos (last 10 years)
@@ -206,6 +208,7 @@ usvs_pos_last.sel(plev=25000).plot.contour(
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="both",
+    linewidths=1,
 )
 
 # plot usvs neg (last 10 years)
@@ -218,6 +221,7 @@ line = usvs_neg_last.sel(plev=25000).plot.contour(
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="both",
+    linewidths=1,
 )
 
 # add coastlines and gridlines
