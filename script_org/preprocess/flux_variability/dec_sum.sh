@@ -6,8 +6,8 @@ echo "Node number: $SLURM_NODEID"
 echo "Decade ${decade} for variable ${var}"
 
 
-base_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_daily/
-to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_decmean/
+base_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_daily/
+to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_decmean/
 mkdir -p $to_path
 
 file_name=*${decade}*.nc

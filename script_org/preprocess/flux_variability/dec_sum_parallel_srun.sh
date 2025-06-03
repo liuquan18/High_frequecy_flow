@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=ensmean
+#SBATCH --job-name=enssum
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=25
@@ -8,7 +8,7 @@
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=ensmean.%j.out
+#SBATCH --output=enssum.%j.out
 
 module load cdo/2.5.0-gcc-11.2.0
 module load parallel    
