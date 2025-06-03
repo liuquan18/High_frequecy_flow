@@ -42,6 +42,10 @@ def wavebreaking(pv, mflux, mf_var="usvs"):
                                         weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]), # optional
                                         mode="wrap") # optional
 
+    # make sure that the time of the smoothed data is the same as the mflux
+    mflux['time'] = smoothed['time']
+
+
     contours = wb.calculate_contours(data=smoothed,
                                     contour_levels=contour_levels,
                                     periodic_add=120, # optional
