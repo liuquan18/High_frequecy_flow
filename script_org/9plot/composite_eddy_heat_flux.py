@@ -38,7 +38,7 @@ suffix = "_ano"
 remove_zonmean = False
 
 # %%
-vpetp_levels_div = np.arange(-5, 5.1, 1)
+vpetp_levels_div = np.arange(-4.5, 4.6, 1.5)
 
 scale_hus = 5e4
 
@@ -86,10 +86,16 @@ vsets_neg_last = read_comp_var(
 )
 
 # map smoothing
-vsets_pos_first = map_smooth(vsets_pos_first, 11, 5)
-vsets_neg_first = map_smooth(vsets_neg_first, 11, 5)
-vsets_pos_last = map_smooth(vsets_pos_last, 11, 5)
-vsets_neg_last = map_smooth(vsets_neg_last, 11, 5)
+vpetp_pos_first = map_smooth(vpetp_pos_first, 3, 3)
+vpetp_neg_first = map_smooth(vpetp_neg_first, 3, 3)
+vpetp_pos_last = map_smooth(vpetp_pos_last, 3, 3)
+vpetp_neg_last = map_smooth(vpetp_neg_last, 3, 3)
+
+
+vsets_pos_first = map_smooth(vsets_pos_first, 5, 5)
+vsets_neg_first = map_smooth(vsets_neg_first, 5, 5)
+vsets_pos_last = map_smooth(vsets_pos_last, 5, 5)
+vsets_neg_last = map_smooth(vsets_neg_last, 5, 5)
 # diff
 vsets_diff_first = vsets_pos_first - vsets_neg_first
 vsets_diff_last = vsets_pos_last - vsets_neg_last
