@@ -489,7 +489,7 @@ cust_cmap = ListedColormap(thermal_colors, name="thermal_custom")
 # Plot 3: Wave breaking (AWB/CWB)
 fig, axes = plt.subplots(
     nrows=2, ncols=3, figsize=(12, 8),
-    subplot_kw={"projection": ccrs.Orthographic(-30, 90)},
+    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
     constrained_layout=True,
 )
 # First 10 years
