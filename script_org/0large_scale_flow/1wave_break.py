@@ -104,7 +104,7 @@ except:
 
 # %%
 pv_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pv_daily/r{ens}i1p1f1/"
-mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{mf_var}_daily/r{ens}i1p1f1/"  # change to transient flux
+mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{mf_var}_daily/r{ens}i1p1f1/"  # change to transient flux
 
 awb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_anticyclonic_daily/r{ens}i1p1f1/"
 cwb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_cyclonic_daily/r{ens}i1p1f1/"
