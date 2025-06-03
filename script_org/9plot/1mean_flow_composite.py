@@ -598,7 +598,7 @@ for i, ax in enumerate(axes.flatten()):
 # %%
 fig, axes = plt.subplots(
     nrows=3, ncols=3, figsize=(11, 12),
-    subplot_kw={"projection": ccrs.Orthographic(-30, 90)},
+    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
     constrained_layout=True,
 )
 
