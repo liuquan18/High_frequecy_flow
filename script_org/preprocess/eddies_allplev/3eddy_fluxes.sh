@@ -102,7 +102,7 @@ export -f flux
 parallel --jobs 5 flux ::: {1850..2090..10} 
 
 # check if all files are created
-for dec in 1850 2090; do
+for dec in {1850..2090..10} ; do
 
     outfile="${flux_path}${var1}${var2}_${dec}.nc"
     
