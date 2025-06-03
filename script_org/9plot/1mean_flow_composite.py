@@ -487,113 +487,113 @@ cust_cmap = ListedColormap(thermal_colors, name="thermal_custom")
 
 #%%
 # Plot 3: Wave breaking (AWB/CWB)
-fig, axes = plt.subplots(
-    nrows=2, ncols=3, figsize=(12, 8),
-    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
-    constrained_layout=True,
-)
-# First 10 years
-awb_map_pos_first = awb_pos_first.plot.contourf(
-    ax=axes[0, 0], levels=awb_levels, cmap=cust_cmap, add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="max",
-)
-cwb_contour = cwb_pos_first.plot.contour(
-    ax=axes[0, 0], levels=cwb_levels, colors="black", add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="max",
-)
-if 10 in cwb_levels:
-    axes[0, 0].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
+# fig, axes = plt.subplots(
+#     nrows=2, ncols=3, figsize=(12, 8),
+#     subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
+#     constrained_layout=True,
+# )
+# # First 10 years
+# awb_map_pos_first = awb_pos_first.plot.contourf(
+#     ax=axes[0, 0], levels=awb_levels, cmap=cust_cmap, add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="max",
+# )
+# cwb_contour = cwb_pos_first.plot.contour(
+#     ax=axes[0, 0], levels=cwb_levels, colors="black", add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="max",
+# )
+# if 10 in cwb_levels:
+#     axes[0, 0].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
 
-awb_map_neg_first = awb_neg_first.plot.contourf(
-    ax=axes[0, 1], levels=awb_levels, cmap=cust_cmap, add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="max",
-)
-cwb_contour = cwb_neg_first.plot.contour(
-    ax=axes[0, 1], levels=cwb_levels, colors="black", add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="max",
-)
-if 10 in cwb_levels:
-    axes[0, 1].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
+# awb_map_neg_first = awb_neg_first.plot.contourf(
+#     ax=axes[0, 1], levels=awb_levels, cmap=cust_cmap, add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="max",
+# )
+# cwb_contour = cwb_neg_first.plot.contour(
+#     ax=axes[0, 1], levels=cwb_levels, colors="black", add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="max",
+# )
+# if 10 in cwb_levels:
+#     axes[0, 1].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
 
-zero_idx = np.argmin(np.abs(awb_levels_div))
-ticks = np.sort(np.unique(np.concatenate([awb_levels_div[zero_idx::-2], awb_levels_div[zero_idx::2]])))
-awb_map_diff_first = awb_diff_first.plot.contourf(
-    ax=axes[0, 2], levels=awb_levels_div, cmap="coolwarm", add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-cwb_contour = cwb_diff_first.plot.contour(
-    ax=axes[0, 2], levels=cwb_levels_div[cwb_levels_div != 0], colors="black", add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-axes[0, 2].clabel(cwb_contour, [-5, 5], fmt='%g', fontsize=8)
+# zero_idx = np.argmin(np.abs(awb_levels_div))
+# ticks = np.sort(np.unique(np.concatenate([awb_levels_div[zero_idx::-2], awb_levels_div[zero_idx::2]])))
+# awb_map_diff_first = awb_diff_first.plot.contourf(
+#     ax=axes[0, 2], levels=awb_levels_div, cmap="coolwarm", add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# cwb_contour = cwb_diff_first.plot.contour(
+#     ax=axes[0, 2], levels=cwb_levels_div[cwb_levels_div != 0], colors="black", add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# axes[0, 2].clabel(cwb_contour, [-5, 5], fmt='%g', fontsize=8)
 
-# Last 10 years
-awb_map_pos_last = awb_pos_last.plot.contourf(
-    ax=axes[1, 0], levels=awb_levels, cmap=cust_cmap, add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="max",
-)
-cwb_contour = cwb_pos_last.plot.contour(
-    ax=axes[1, 0], levels=cwb_levels, colors="black", add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="max",
-)
-if 10 in cwb_levels:
-    axes[1, 0].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
+# # Last 10 years
+# awb_map_pos_last = awb_pos_last.plot.contourf(
+#     ax=axes[1, 0], levels=awb_levels, cmap=cust_cmap, add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="max",
+# )
+# cwb_contour = cwb_pos_last.plot.contour(
+#     ax=axes[1, 0], levels=cwb_levels, colors="black", add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="max",
+# )
+# if 10 in cwb_levels:
+#     axes[1, 0].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
 
-awb_map_neg_last = awb_neg_last.plot.contourf(
-    ax=axes[1, 1], levels=awb_levels, cmap=cust_cmap, add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="max",
-)
-cwb_contour = cwb_neg_last.plot.contour(
-    ax=axes[1, 1], levels=cwb_levels, colors="black", add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="max",
-)
-if 10 in cwb_levels:
-    axes[1, 1].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
+# awb_map_neg_last = awb_neg_last.plot.contourf(
+#     ax=axes[1, 1], levels=awb_levels, cmap=cust_cmap, add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="max",
+# )
+# cwb_contour = cwb_neg_last.plot.contour(
+#     ax=axes[1, 1], levels=cwb_levels, colors="black", add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="max",
+# )
+# if 10 in cwb_levels:
+#     axes[1, 1].clabel(cwb_contour, [10], fmt='%d', fontsize=8)
 
-zero_idx = np.argmin(np.abs(awb_levels_div))
-ticks = np.sort(np.unique(np.concatenate([awb_levels_div[zero_idx::-2], awb_levels_div[zero_idx::2]])))
-awb_map_diff_last = awb_diff_last.plot.contourf(
-    ax=axes[1, 2], levels=awb_levels_div, cmap="coolwarm", add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-cwb_contour = cwb_diff_last.plot.contour(
-    ax=axes[1, 2], levels=cwb_levels_div[cwb_levels_div != 0], colors="black", add_colorbar=False,
-    transform=ccrs.PlateCarree(), extend="both",
-)
-axes[1, 2].clabel(cwb_contour, [-5, 5], fmt='%g', fontsize=8)
+# zero_idx = np.argmin(np.abs(awb_levels_div))
+# ticks = np.sort(np.unique(np.concatenate([awb_levels_div[zero_idx::-2], awb_levels_div[zero_idx::2]])))
+# awb_map_diff_last = awb_diff_last.plot.contourf(
+#     ax=axes[1, 2], levels=awb_levels_div, cmap="coolwarm", add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# cwb_contour = cwb_diff_last.plot.contour(
+#     ax=axes[1, 2], levels=cwb_levels_div[cwb_levels_div != 0], colors="black", add_colorbar=False,
+#     transform=ccrs.PlateCarree(), extend="both",
+# )
+# axes[1, 2].clabel(cwb_contour, [-5, 5], fmt='%g', fontsize=8)
 
-for ax in axes.flatten():
-    ax.coastlines(color="grey", linewidth=1)
-    ax.gridlines(draw_labels=False, linewidth=1, color="grey", alpha=0.5, linestyle="--")
-    ax.set_global()
-axes[0, 0].set_title("Positive phase")
-axes[0, 1].set_title("Negative phase")
-axes[0, 2].set_title("Difference")
+# for ax in axes.flatten():
+#     ax.coastlines(color="grey", linewidth=1)
+#     ax.gridlines(draw_labels=False, linewidth=1, color="grey", alpha=0.5, linestyle="--")
+#     ax.set_global()
+# axes[0, 0].set_title("Positive phase")
+# axes[0, 1].set_title("Negative phase")
+# axes[0, 2].set_title("Difference")
 
-# Add colorbar to the bottom of each column
-for coli, (map, label, ticks_, fmt) in enumerate([
-    (awb_map_pos_last, "AWB freq", awb_levels[::2], '%.0f'),
-    (awb_map_neg_last, "AWB freq", awb_levels[::2], '%.0f'),
-    (awb_map_diff_last, "AWB freq diff", ticks, '%.0f')
-]):
-    fig.colorbar(
-        map,
-        ax=axes[:, coli],
-        shrink=0.8,
-        orientation="horizontal",
-        label=label,
-        ticks=ticks_,
-        format=fmt,
-    )
+# # Add colorbar to the bottom of each column
+# for coli, (map, label, ticks_, fmt) in enumerate([
+#     (awb_map_pos_last, "AWB freq", awb_levels[::2], '%.0f'),
+#     (awb_map_neg_last, "AWB freq", awb_levels[::2], '%.0f'),
+#     (awb_map_diff_last, "AWB freq diff", ticks, '%.0f')
+# ]):
+#     fig.colorbar(
+#         map,
+#         ax=axes[:, coli],
+#         shrink=0.8,
+#         orientation="horizontal",
+#         label=label,
+#         ticks=ticks_,
+#         format=fmt,
+#     )
 
-# add a, b, c labels
-for i, ax in enumerate(axes.flatten()):
-    ax.text(
-        0.05, 1.05, chr(97 + i), transform=ax.transAxes,
-        fontsize=14, fontweight='bold', va='top', ha='right'
-    )
+# # add a, b, c labels
+# for i, ax in enumerate(axes.flatten()):
+#     ax.text(
+#         0.05, 1.05, chr(97 + i), transform=ax.transAxes,
+#         fontsize=14, fontweight='bold', va='top', ha='right'
+#     )
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wb_2x3.pdf", bbox_inches='tight', dpi=300)
+# # plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wb_2x3.pdf", bbox_inches='tight', dpi=300)
 
 # %%
 fig, axes = plt.subplots(
