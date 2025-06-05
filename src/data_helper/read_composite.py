@@ -42,3 +42,43 @@ def read_comp_var_dist(var, phase, decade, suffix = "_ano", **kwargs):
     ds = ds.sel(time=slice(*time_window))
 
     return ds
+
+def read_EP_flux(
+    phase, decade, eddy="transient", ano=False, isentrope=False, region="western"
+):
+    EP_flux_dir = (
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
+    )
+
+    F_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_phi_{phase}_{decade}_ano{ano}.nc")
+    F_p = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_p_{phase}_{decade}_ano{ano}.nc")
+
+    div_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_div_phi_{phase}_{decade}_ano{ano}.nc")
+    div_p = xr.open_dataarray(f"{EP_flux_dir}{eddy}_div_p_{phase}_{decade}_ano{ano}.nc")
+
+
+    if region == "western":
+        F_phi = xr.concat(
+            [F_phi.sel(lon = slice(240, None)),
+            F_phi.sel(lon = slice(0, 60))], dim = "lon"
+        )
+        F_p = xr.concat(
+            [F_p.sel(lon = slice(240, None)),
+            F_p.sel(lon = slice(0, 60))], dim = "lon"
+        )
+
+        div_phi = xr.concat(
+            [div_phi.sel(lon = slice(240, None)),
+            div_phi.sel(lon = slice(0, 60))], dim = "lon"
+        )
+        div_p = xr.concat(
+            [div_p.sel(lon = slice(240, None)),
+            div_p.sel(lon = slice(0, 60))], dim = "lon"
+        )
+
+    elif region is None:
+        # do nothing, return the data as is
+        pass
+
+
+    return F_phi, F_p, div_phi, div_p
