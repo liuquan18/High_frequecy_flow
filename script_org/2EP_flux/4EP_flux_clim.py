@@ -29,16 +29,22 @@ def calculate_EP_flux(decade, equiv_theta=True, eddy='transient'):
     model_dir = "MPI_GE_CMIP6_allplev"
     # Read data
     logging.info (f"Read data for {decade}")
-    upvp = read_climatology(var = 'upvp',decade = decade, model_dir=model_dir)
 
-    if equiv_theta:
-        vptp = read_climatology(var = 'vpetp', decade = decade, model_dir=model_dir)
-    else:
-        vptp = read_climatology(var = 'vptp', decade = decade, model_dir=model_dir)
     # read temperature to compute static stability
     if eddy == 'transient':
+        upvp = read_climatology(var = 'upvp',decade = decade, model_dir=model_dir)
+        if equiv_theta:
+            vptp = read_climatology(var = 'vpetp', decade = decade, model_dir=model_dir)
+        else:
+            vptp = read_climatology(var = 'vptp', decade = decade, model_dir=model_dir)
+
         ta = read_climatology(var = 'ta', decade = decade)
     elif eddy == 'steady':
+        upvp = read_climatology(var = 'usvs', decade = decade, model_dir=model_dir)
+        if equiv_theta:
+            vptp = read_climatology(var = 'vsets', decade = decade, model_dir=model_dir)
+        else:
+            vptp = read_climatology(var = 'vsts', decade = decade, model_dir=model_dir)
         ta = read_climatology(var = 'ta_hat', decade = decade, name = 'ta')
     
     logging.info (f"Calculate {eddy} EP flux {decade}")
