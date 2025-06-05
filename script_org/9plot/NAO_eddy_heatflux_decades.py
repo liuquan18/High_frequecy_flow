@@ -9,16 +9,48 @@ import pandas as pd
 import seaborn as sns
 from src.data_helper.read_NAO_extremes import read_NAO_extremes
 from src.data_helper.read_variable import read_prime_decmean, read_prime
+import glob
 
-
+import logging
+logging.basicConfig(level=logging.INFO)
 # %%
-def to_dataframe(ivke_region, region):
-    ivke_region = ivke_region.to_dataframe().reset_index()
-    ivke_region["decade"] = ivke_region["time"].dt.year // 10 * 10
-    ivke_region = ivke_region[["hus", "decade"]].rename(
-        columns={"hus": f"qq_{region}"}
+
+
+def count_wb_dec(wb_type):
+    wbs = []
+    for dec in range(1850, 2100, 10):
+        logging.info(f"Processing {wb_type} for decade {dec}")
+        wb = read_prime(
+        dec, var = wb_type, name = 'flag',suffix = "",
     )
-    return ivke_region
+
+        if wb_type == 'wb_anticyclonic':
+            wb_NA = (xr.concat([wb.sel(lat=slice(30, 60), lon=slice(300, 360)),
+                            wb.sel(lat=slice(30, 60), lon=slice(0, 30)) ], dim = 'lon')
+            .mean(dim=("lat", "lon"))
+            .sum(dim=("ens", "time"))
+        )
+
+        elif wb_type == 'wb_cyclonic':
+            wb_NA = (wb.sel(lat=slice(50, 70), lon=slice(290, 310))
+            .mean(dim=("lat", "lon"))
+            .sum(dim=("ens", "time"))
+        )
+
+        wbs.append(wb_NA)
+
+    wbs = xr.concat(wbs, dim='decade')
+    wbs['decade'] = range(1850, 2100, 10)
+    wb_df = wbs.to_dataframe().reset_index().rename(
+        columns={"flag": f"{wb_type}_count", "decade": "decade"}
+    )
+    return wb_df
+# %%
+awb_count = count_wb_dec("wb_anticyclonic")
+cwb_count = count_wb_dec("wb_cyclonic")
+# save
+awb_count.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wave_breaking_stat/awb_count_decade.csv", index=False)
+cwb_count.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wave_breaking_stat/cwb_count_decade.csv", index=False)
 
 
 #%%
