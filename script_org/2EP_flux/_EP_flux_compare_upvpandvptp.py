@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from aostools.climate import ComputeEPfluxDivXr, PlotEPfluxArrows, GetWavesXr
 # %%
-t = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ta_daily/r1i1p1f1/ta_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").ta
+t = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ta_hat_daily/r1i1p1f1/ta_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").ta
 #################
 #%%
 lon='lon'
@@ -17,8 +17,8 @@ do_ubar=False
 wave=0
 
 # %%
-upvp = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/upvp_daily/r1i1p1f1/upvp_1850.nc").upvp
-vptp = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vptp_daily/r1i1p1f1/vptp_1850.nc").vptp    
+upvp = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/upvp_hat_daily/r1i1p1f1/upvp_1850.nc").upvp
+vptp = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/vptp_hat_daily/r1i1p1f1/vptp_1850.nc").vptp    
 
 
 # %%

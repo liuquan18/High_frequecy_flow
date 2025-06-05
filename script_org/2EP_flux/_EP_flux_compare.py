@@ -4,9 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from aostools.climate import ComputeEPfluxDivXr, PlotEPfluxArrows, GetWavesXr
 # %%
-u = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_daily/r1i1p1f1/ua_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").ua
-v = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/va_daily/r1i1p1f1/va_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").va
-t = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ta_daily/r1i1p1f1/ta_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").ta
+u = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_hat_daily/r1i1p1f1/ua_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").ua
+v = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/va_hat_daily/r1i1p1f1/va_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").va
+t = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ta_hat_daily/r1i1p1f1/ta_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").ta
 #%%
 u = u.isel(time = 0)
 v = v.isel(time = 0)
@@ -19,13 +19,9 @@ eq1, eq2, div1, div2 = ComputeEPfluxDivXr(
     lat = 'lat',
     lon = 'lon',
     pres = 'plev',
-    wave = -1,
+    wave = 0,
 )
 div = div1 + div2
-#%%
-eq1 = eq1.sel(k = slice(1, 6)).sum('k')
-eq2 = eq2.sel(k = slice(1, 6)).sum('k')
-div = div.sel(k = slice(1, 6)).sum('k')
 # %%
 fig, ax = plt.subplots(figsize=(10, 10))
 
