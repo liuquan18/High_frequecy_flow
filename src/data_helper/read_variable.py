@@ -6,7 +6,6 @@ import src.dynamics.longitudinal_contrast as lc
 import logging
 
 
-
 def read_prime(decade, var="eke", **kwargs):
     """
     read high frequency data
@@ -18,7 +17,9 @@ def read_prime(decade, var="eke", **kwargs):
     model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
 
     time_tag = f"{decade}"
-    data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_daily{suffix}/"
+    data_path = (
+        f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_daily{suffix}/"
+    )
     files = glob.glob(data_path + "r*i1p1f1/" + f"*{time_tag}*.nc")
     # sort files
     files.sort(key=lambda x: int(x.split("/")[-2][1:].split("i")[0]))
@@ -39,11 +40,11 @@ def read_prime(decade, var="eke", **kwargs):
 
     return data
 
-def read_prime_decmean(var="eke", NAL = True, plev = 85000, **kwargs):
+
+def read_prime_decmean(var="eke", NAL=True, plev=85000, **kwargs):
     """
     read high frequency data for all decades
     """
-
 
     base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{var}_ano_decmean/"
     files = glob.glob(base_dir + "*.nc")
@@ -57,17 +58,20 @@ def read_prime_decmean(var="eke", NAL = True, plev = 85000, **kwargs):
     # yearly mean
     data = data.groupby("time.year").mean(dim="time")
     if NAL:
-        data = data.sel(lon = slice(300, 350), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
+        data = data.sel(lon=slice(300, 350), lat=slice(40, 80)).mean(dim=["lon", "lat"])
     if plev is not None:
         data = data.sel(plev=plev)
     return data
+
 
 def read_prime_single_ens(dec, ens, var, **kwargs):
     name = kwargs.get("name", var)  # default name is the same as var
     plev = kwargs.get("plev", None)
     suffix = kwargs.get("suffix", "_ano")
     model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
-    data_path = f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_daily{suffix}/"
+    data_path = (
+        f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_daily{suffix}/"
+    )
     files = glob.glob(data_path + f"r{ens}i1p1f1/*{dec}*")
     if len(files) == 0:
         raise ValueError(f"no file found for {var} in {ens}")
@@ -108,7 +112,7 @@ def read_prime_ERA5(var="eke", model="ERA5_allplev", **kwargs):
 
 
 # %%
-def vert_integrate(var, p_B = 100000, p_T = 25000):
+def vert_integrate(var, p_B=100000, p_T=25000):
     var = var.sortby(
         "plev", ascending=False
     )  # make sure plev is in descending order, p_B is larger than p_T
@@ -142,7 +146,17 @@ def postprocess(ds, smooth_value=5, remove_zonal=False):
     return ds
 
 
-def read_composite_MPI(var, name, decade, before="15_5", return_as = 'diff', ano = False, smooth_value = 5, remove_zonal = False, **kwargs):
+def read_composite_MPI(
+    var,
+    name,
+    decade,
+    before="15_5",
+    return_as="diff",
+    ano=False,
+    smooth_value=5,
+    remove_zonal=False,
+    **kwargs,
+):
     model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
 
     if ano:
@@ -175,22 +189,22 @@ def read_composite_MPI(var, name, decade, before="15_5", return_as = 'diff', ano
     except ValueError:
         NAO_pos = NAO_pos.squeeze()
         NAO_neg = NAO_neg.squeeze()
-        
+
     NAO_pos = postprocess(NAO_pos, smooth_value=smooth_value, remove_zonal=remove_zonal)
     NAO_neg = postprocess(NAO_neg, smooth_value=smooth_value, remove_zonal=remove_zonal)
 
     diff = NAO_pos - NAO_neg
 
-    if return_as == 'pos':
+    if return_as == "pos":
         return NAO_pos.compute()
-    elif return_as == 'neg':
+    elif return_as == "neg":
         return NAO_neg.compute()
     else:
         return diff.compute()
 
 
 # %%
-def read_composite_ERA5(var, name, before="15_5", return_as = 'diff'):
+def read_composite_ERA5(var, name, before="15_5", return_as="diff"):
     pos_file = glob.glob(
         f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/0stat_results_without_ano/ERA5_allplev_{var}_NAO_pos_{before}_mean.nc"
     )
@@ -215,17 +229,15 @@ def read_composite_ERA5(var, name, before="15_5", return_as = 'diff'):
     NAO_neg = postprocess(NAO_neg)
 
     diff = NAO_pos - NAO_neg
-    if return_as == 'pos':
+    if return_as == "pos":
         return NAO_pos.compute()
-    elif return_as == 'neg':
+    elif return_as == "neg":
         return NAO_neg.compute()
     else:
         return diff.compute()
 
 
-
-
-def read_climatology(var, decade, **kwargs):
+def read_climatology_uhat(var, decade, **kwargs):
 
     name = kwargs.get("name", var)  # default name is the same as var
     if var == "uhat":

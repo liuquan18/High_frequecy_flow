@@ -26,7 +26,7 @@ importlib.reload(read_variable)
 importlib.reload(util)
 # %%
 from src.data_helper.read_variable import read_composite_MPI  # noqa: E402
-from src.data_helper.read_variable import read_climatology  # noqa: E402
+from src.data_helper.read_variable import read_climatology_uhat  # noqa: E402
 
 
 # %%
@@ -37,7 +37,8 @@ def to_plot_data(eke):
     # Solve the problem on 180 longitude by extending the data
     return eke
 
-#%%
+
+# %%
 #### read ua and va hat
 
 ua_first_diff = read_composite_MPI("ua", "ua", 1850, before="10_0", return_as="diff")
@@ -53,14 +54,24 @@ wind_flux_last_diff = xr.Dataset({"u": ua_last_diff, "v": va_last_diff})  # m/s
 wind_flux_first_diff = wind_flux_first_diff.sel(plev=25000)
 wind_flux_last_diff = wind_flux_last_diff.sel(plev=25000)
 
-#%%
+# %%
 ####### theta on 2PVU
 
 theta_pv_first_diff = read_composite_MPI(
-    "theta2PVU", "theta2PVU", 1850, before="10_0", return_as="diff", ano = False,
+    "theta2PVU",
+    "theta2PVU",
+    1850,
+    before="10_0",
+    return_as="diff",
+    ano=False,
 )
 theta_pv_last_diff = read_composite_MPI(
-    "theta2PVU", "theta2PVU", 2090, before="10_0", return_as="diff", ano = False,
+    "theta2PVU",
+    "theta2PVU",
+    2090,
+    before="10_0",
+    return_as="diff",
+    ano=False,
 )
 
 # %%
@@ -68,8 +79,8 @@ ano = True
 # %%
 ###### read up vp
 # climatology
-upvp_first = read_climatology("upvp", "1850", name="upvp")
-upvp_last = read_climatology("upvp", "2090", name="upvp")
+upvp_first = read_climatology_uhat("upvp", "1850", name="upvp")
+upvp_last = read_climatology_uhat("upvp", "2090", name="upvp")
 # %%
 # diff
 upvp_first_diff = read_composite_MPI(
@@ -102,8 +113,8 @@ vpetp_last_plot = to_plot_data(vpetp_last_profile)
 
 # %%
 # climatology
-vpetp_first_clim = read_climatology("vpetp", "1850")
-vpetp_last_clim = read_climatology("vpetp", "2090")
+vpetp_first_clim = read_climatology_uhat("vpetp", "1850")
+vpetp_last_clim = read_climatology_uhat("vpetp", "2090")
 
 
 # smooth the data
@@ -174,9 +185,13 @@ scale_wind = 60
 # %%
 
 fig, axes = plt.subplots(
-    4,2, figsize=(10, 10), subplot_kw={"projection": ccrs.PlateCarree(-90)},
+    4,
+    2,
+    figsize=(10, 10),
+    subplot_kw={"projection": ccrs.PlateCarree(-90)},
     gridspec_kw={"height_ratios": [0.5, 0.5, 1, 0.5], "width_ratios": [1, 1]},
-    sharex=True, sharey=False
+    sharex=True,
+    sharey=False,
 )
 #
 # Create a 4x2 grid of axes and assign each to a descriptive variable name
@@ -190,14 +205,14 @@ fig, axes = plt.subplots(
 # [3, 0]: map_ax_vpetp_first      - VpEtp map, first period
 # [3, 1]: map_ax_vpetp_last       - VpEtp map, last period
 
-map_ax_meanflow_first  = axes[0, 0]
-map_ax_meanflow_last   = axes[0, 1]
-map_ax_upvp_first      = axes[1, 0]
-map_ax_upvp_last       = axes[1, 1]
-profile_ax_upvp_first  = axes[2, 0]
-profile_ax_upvp_last   = axes[2, 1]
-map_ax_vpetp_first     = axes[3, 0]
-map_ax_vpetp_last      = axes[3, 1]
+map_ax_meanflow_first = axes[0, 0]
+map_ax_meanflow_last = axes[0, 1]
+map_ax_upvp_first = axes[1, 0]
+map_ax_upvp_last = axes[1, 1]
+profile_ax_upvp_first = axes[2, 0]
+profile_ax_upvp_last = axes[2, 1]
+map_ax_vpetp_first = axes[3, 0]
+map_ax_vpetp_last = axes[3, 1]
 
 # theta on 2PVU
 theta_pv_first_diff.plot.contourf(
@@ -236,7 +251,6 @@ last_wind_arrow = map_ax_meanflow_last.quiver(
     transform=ccrs.PlateCarree(),
     scale=scale_wind,
 )
-
 
 
 # upvp map
@@ -279,7 +293,7 @@ vpetp_last_plot.plot.contourf(
 vpetp_first_clim_plot.plot.contour(
     ax=profile_ax_upvp_first,
     transform=ccrs.PlateCarree(),
-    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
+    levels=np.delete(vptp_levels_div * 10, np.where(vptp_levels_div * 10 == 0)),
     add_colorbar=False,
     extend="both",
     colors="black",
@@ -288,7 +302,7 @@ vpetp_first_clim_plot.plot.contour(
 vpetp_last_clim_plot.plot.contour(
     ax=profile_ax_upvp_last,
     transform=ccrs.PlateCarree(),
-    levels=np.delete(vptp_levels_div*10, np.where(vptp_levels_div*10 == 0)),
+    levels=np.delete(vptp_levels_div * 10, np.where(vptp_levels_div * 10 == 0)),
     add_colorbar=False,
     extend="both",
     colors="black",
@@ -382,8 +396,14 @@ for ax in [
     ax.axhline(20, color="gray", linewidth=0.5, linestyle="--")
     ax.axhline(50, color="gray", linewidth=0.5, linestyle="--")
     # add x ticks for longitude
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
-                      linewidth=2, color='gray', alpha=0.5, linestyle='--')
+    gl = ax.gridlines(
+        crs=ccrs.PlateCarree(),
+        draw_labels=True,
+        linewidth=2,
+        color="gray",
+        alpha=0.5,
+        linestyle="--",
+    )
     gl.xlabels_top = False
     gl.xlabels_bottom = True
     gl.ylabels_left = False

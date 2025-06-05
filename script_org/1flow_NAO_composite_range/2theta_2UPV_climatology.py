@@ -4,7 +4,7 @@ import numpy as np
 from src.dynamics.theta_on_pv import theta_on_2pvu
 
 # %%
-from src.data_helper.read_variable import read_climatology
+from src.data_helper.read_variable import read_climatology_uhat
 
 # %%
 import importlib
@@ -17,24 +17,24 @@ def theta2UPV(
     equiv_theta=False,
 ):
     if equiv_theta:
-        theta = read_climatology(
+        theta = read_climatology_uhat(
             "equiv_theta",
             decade,
             name="etheta",
         )
     else:
-        theta = read_climatology(
+        theta = read_climatology_uhat(
             "theta",
             decade,
             name="theta",
         )
-    uwnd = read_climatology(
+    uwnd = read_climatology_uhat(
         "ua",
         decade,
         name="ua",
     )
 
-    vwnd = read_climatology(
+    vwnd = read_climatology_uhat(
         "va",
         decade,
         name="va",
@@ -55,7 +55,7 @@ last_clima = theta2UPV(
     2090,
     equiv_theta=False,
 )
-#%%
+# %%
 first_clima.name = "theta2UPV"
 last_clima.name = "theta2UPV"
 # %%

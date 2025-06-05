@@ -25,13 +25,12 @@ import importlib
 importlib.reload(read_variable)
 importlib.reload(util)
 # %%
-from src.data_helper.read_variable import read_climatology
+from src.data_helper.read_variable import read_climatology_uhat
 from src.data_helper.read_composite import read_comp_var
 from matplotlib.patches import Rectangle
 
 
-
-#%%%
+# %%%
 # config
 time_window = (-10, 5)
 suffix = "_ano"
@@ -45,21 +44,45 @@ scale_hus = 5e4
 # %%
 ###### read vpetp
 # climatology
-vpetp_clim_first = read_climatology("vpetp", "1850", name="vpetp")
-vpetp_clim_last = read_climatology("vpetp", "2090", name="vpetp")
+vpetp_clim_first = read_climatology_uhat("vpetp", "1850", name="vpetp")
+vpetp_clim_last = read_climatology_uhat("vpetp", "2090", name="vpetp")
 # pos ano
 vpetp_pos_first = read_comp_var(
-    "vpetp", "pos", 1850, time_window=time_window, name="vpetp", suffix=suffix, remove_zonmean=remove_zonmean
+    "vpetp",
+    "pos",
+    1850,
+    time_window=time_window,
+    name="vpetp",
+    suffix=suffix,
+    remove_zonmean=remove_zonmean,
 )
 vpetp_neg_first = read_comp_var(
-    "vpetp", "neg", 1850, time_window=time_window, name="vpetp", suffix=suffix, remove_zonmean=remove_zonmean
+    "vpetp",
+    "neg",
+    1850,
+    time_window=time_window,
+    name="vpetp",
+    suffix=suffix,
+    remove_zonmean=remove_zonmean,
 )
 
 vpetp_pos_last = read_comp_var(
-    "vpetp", "pos", 2090, time_window=time_window, name="vpetp", suffix=suffix, remove_zonmean=remove_zonmean
+    "vpetp",
+    "pos",
+    2090,
+    time_window=time_window,
+    name="vpetp",
+    suffix=suffix,
+    remove_zonmean=remove_zonmean,
 )
 vpetp_neg_last = read_comp_var(
-    "vpetp", "neg", 2090, time_window=time_window, name="vpetp", suffix=suffix, remove_zonmean=remove_zonmean
+    "vpetp",
+    "neg",
+    2090,
+    time_window=time_window,
+    name="vpetp",
+    suffix=suffix,
+    remove_zonmean=remove_zonmean,
 )
 
 # diff
@@ -67,22 +90,46 @@ vpetp_diff_first = vpetp_pos_first - vpetp_neg_first
 vpetp_diff_last = vpetp_pos_last - vpetp_neg_last
 
 # %%
-vsets_clim_first = read_climatology("vsets", "1850", name="vsets")
-vsets_clim_last = read_climatology("vsets", "2090", name="vsets")
+vsets_clim_first = read_climatology_uhat("vsets", "1850", name="vsets")
+vsets_clim_last = read_climatology_uhat("vsets", "2090", name="vsets")
 
-# pos ano   
+# pos ano
 vsets_pos_first = read_comp_var(
-    "vsets", "pos", 1850, time_window=time_window, name="vsets", suffix=suffix, remove_zonmean=remove_zonmean
+    "vsets",
+    "pos",
+    1850,
+    time_window=time_window,
+    name="vsets",
+    suffix=suffix,
+    remove_zonmean=remove_zonmean,
 )
 vsets_neg_first = read_comp_var(
-    "vsets", "neg", 1850, time_window=time_window, name="vsets", suffix=suffix, remove_zonmean=remove_zonmean
+    "vsets",
+    "neg",
+    1850,
+    time_window=time_window,
+    name="vsets",
+    suffix=suffix,
+    remove_zonmean=remove_zonmean,
 )
 
 vsets_pos_last = read_comp_var(
-    "vsets", "pos", 2090, time_window=time_window, name="vsets", suffix=suffix, remove_zonmean=remove_zonmean
+    "vsets",
+    "pos",
+    2090,
+    time_window=time_window,
+    name="vsets",
+    suffix=suffix,
+    remove_zonmean=remove_zonmean,
 )
 vsets_neg_last = read_comp_var(
-    "vsets", "neg", 2090, time_window=time_window, name="vsets", suffix=suffix, remove_zonmean=remove_zonmean
+    "vsets",
+    "neg",
+    2090,
+    time_window=time_window,
+    name="vsets",
+    suffix=suffix,
+    remove_zonmean=remove_zonmean,
 )
 
 # map smoothing
@@ -117,7 +164,7 @@ vsets_pos_ax = axes[1, 0]
 vsets_neg_ax = axes[1, 1]
 
 # plot vpetp pos
-vpetp_pos_first.sel(plev = 85000).plot.contourf(
+vpetp_pos_first.sel(plev=85000).plot.contourf(
     x="lon",
     y="lat",
     ax=vpetp_pos_ax,
@@ -125,11 +172,11 @@ vpetp_pos_first.sel(plev = 85000).plot.contourf(
     cmap="RdBu_r",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
-    extend =  "both",
+    extend="both",
 )
 
 # plot vpetp neg
-vpetp_neg_first.sel(plev = 85000).plot.contourf(
+vpetp_neg_first.sel(plev=85000).plot.contourf(
     x="lon",
     y="lat",
     ax=vpetp_neg_ax,
@@ -137,11 +184,11 @@ vpetp_neg_first.sel(plev = 85000).plot.contourf(
     cmap="RdBu_r",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
-    extend =  "both",
+    extend="both",
 )
 
 # plot vsets pos
-vsets_pos_first.sel(plev = 85000).plot.contourf(
+vsets_pos_first.sel(plev=85000).plot.contourf(
     x="lon",
     y="lat",
     ax=vsets_pos_ax,
@@ -149,11 +196,11 @@ vsets_pos_first.sel(plev = 85000).plot.contourf(
     cmap="RdBu_r",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
-    extend =  "both",
+    extend="both",
 )
 
 # plot vsets neg
-map = vsets_neg_first.sel(plev = 85000).plot.contourf(
+map = vsets_neg_first.sel(plev=85000).plot.contourf(
     x="lon",
     y="lat",
     ax=vsets_neg_ax,
@@ -161,7 +208,7 @@ map = vsets_neg_first.sel(plev = 85000).plot.contourf(
     cmap="RdBu_r",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
-    extend =  "both",
+    extend="both",
 )
 
 # Use levels without zero and black contour lines
@@ -173,7 +220,7 @@ vpetp_pos_last.sel(plev=85000).plot.contour(
     y="lat",
     ax=vpetp_pos_ax,
     levels=levels_no_zero,
-    colors='k',
+    colors="k",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="both",
@@ -186,7 +233,7 @@ vpetp_neg_last.sel(plev=85000).plot.contour(
     y="lat",
     ax=vpetp_neg_ax,
     levels=levels_no_zero,
-    colors='k',
+    colors="k",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="both",
@@ -199,7 +246,7 @@ vsets_pos_last.sel(plev=85000).plot.contour(
     y="lat",
     ax=vsets_pos_ax,
     levels=levels_no_zero,
-    colors='k',
+    colors="k",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="both",
@@ -212,7 +259,7 @@ line = vsets_neg_last.sel(plev=85000).plot.contour(
     y="lat",
     ax=vsets_neg_ax,
     levels=levels_no_zero,
-    colors='k',
+    colors="k",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
     extend="both",
@@ -283,14 +330,14 @@ lons = np.concatenate([lons_bottom, lons_right, lons_top, lons_left, [lon_min]])
 lats = np.concatenate([lats_bottom, lats_right, lats_top, lats_left, [lat_min]])
 
 axes[1, 1].plot(
-    lons, lats,
-    color='yellow',
-    linestyle='dashed',
+    lons,
+    lats,
+    color="yellow",
+    linestyle="dashed",
     linewidth=2,
     transform=ccrs.PlateCarree(),
     zorder=10,
 )
-
 
 
 # add a, b, c,d
@@ -307,8 +354,11 @@ for i, ax in enumerate(axes.flatten()):
     )
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_pos_neg.pdf", 
-                 dpi = 300, bbox_inches='tight')
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_pos_neg.pdf",
+    dpi=300,
+    bbox_inches="tight",
+)
 
 
 # %%
