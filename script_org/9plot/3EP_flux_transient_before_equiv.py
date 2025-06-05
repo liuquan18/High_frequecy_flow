@@ -4,551 +4,410 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-from src.dynamics.EP_flux import (
-    NPC_mean,
-    PlotEPfluxArrows,
-    NAL_mean,
-)
+from src.dynamics.EP_flux import PlotEPfluxArrows
+from src.data_helper import read_composite
+
+import importlib
+importlib.reload(read_composite)
+
+read_EP_flux = read_composite.read_EP_flux
 
 
 # %%
-def read_EP_flux(
-    phase, decade, eddy="transient", ano=False, isentrope=False, region="western"
-):
-    if isentrope:
-        EP_flux_dir = (
-            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux_isen/"
-        )
-    else:
-        EP_flux_dir = (
-            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0EP_flux/"
-        )
-
-    T_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_phi_{phase}_{decade}_ano{ano}.nc")
-    F_p = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_p_{phase}_{decade}_ano{ano}.nc")
-    div = xr.open_dataarray(f"{EP_flux_dir}{eddy}_div_{phase}_{decade}_ano{ano}.nc")
-
-    if region == "NPC":
-        T_phi = NPC_mean(T_phi)
-        F_p = NPC_mean(F_p)
-        div = NPC_mean(div)
-
-    elif region == "NAL":
-        T_phi = NAL_mean(T_phi)
-        F_p = NAL_mean(F_p)
-        div = NAL_mean(div)
-    elif region == "western":
-        T_phi = xr.concat(
-            [T_phi.sel(lon = slice(240, None)),
-            T_phi.sel(lon = slice(0, 60))], dim = "lon"
-        )
-        F_p = xr.concat(
-            [F_p.sel(lon = slice(240, None)),
-            F_p.sel(lon = slice(0, 60))], dim = "lon"
-        )
-        div = xr.concat(
-            [div.sel(lon = slice(240, None)),
-            div.sel(lon = slice(0, 60))], dim = "lon"
-        )
-    elif region is None:
-        # do nothing, return the data as is
-        pass
-
-
-    return T_phi, F_p, div
-
-
-# %%
-scale = 1e16
+scale = 3e16
 scale_div = 1e15
-levels = np.arange(-10, 10.1, 1)
-levels_div = np.arange(-1.5, 1.6, 0.3)
+levels = np.arange(-20, 20.1, 5)
+levels_div = np.arange(-3, 3.1, 0.5)
 # %%
 # read transient EP flux for positive and negative phase
-# read data for first decade without region
-T_phi_pos_first, T_p_pos_first, Tdiv_pos_first = read_EP_flux(
-    phase="pos", decade=1850, eddy="transient", ano=False, isentrope=False
+# read data for first decade with region = western
+Tphi_pos_first, Tp_pos_first, Tdivphi_pos_first, Tdiv_p_pos_first = read_EP_flux(
+    phase="pos", decade=1850, eddy="transient", ano=False,lon_mean=True,
+)
+Tphi_neg_first, Tp_neg_first, Tdivphi_neg_first, Tdiv_p_neg_first = read_EP_flux(
+    phase="neg", decade=1850, eddy="transient", ano=False,lon_mean=True,
 )
 
-T_phi_neg_first, T_p_neg_first, Tdiv_neg_first = read_EP_flux(
-    phase="neg", decade=1850, eddy="transient", ano=False, isentrope=False
+
+# last decade region
+Tphi_pos_last, Tp_pos_last, Tdivphi_pos_last, Tdiv_p_pos_last = read_EP_flux(
+    phase="pos", decade=2090, eddy="transient", ano=False,lon_mean=True,
 )
-
-
-# last decade without region
-T_phi_pos_last, T_p_pos_last, Tdiv_pos_last = read_EP_flux(
-    phase="pos", decade=2090, eddy="transient", ano=False, isentrope=False
+Tphi_neg_last, Tp_neg_last, Tdivphi_neg_last, Tdiv_p_neg_last = read_EP_flux(
+    phase="neg", decade=2090, eddy="transient", ano=False,lon_mean=True,
 )
-
-T_phi_neg_last, T_p_neg_last, Tdiv_neg_last = read_EP_flux(
-    phase="neg", decade=2090, eddy="transient", ano=False, isentrope=False
-)
-
-# -1 * p component because the 'plev' was ascending in the data
-T_p_pos_first = -1 * T_p_pos_first
-T_p_pos_last = -1 * T_p_pos_last
-T_p_neg_first = -1 * T_p_neg_first
-T_p_neg_last = -1 * T_p_neg_last
-# zonal mean
-T_phi_pos_first_zonal = T_phi_pos_first.mean(dim="lon")
-T_p_pos_first_zonal = T_p_pos_first.mean(dim="lon")
-T_phi_pos_last_zonal = T_phi_pos_last.mean(dim="lon")
-T_p_pos_last_zonal = T_p_pos_last.mean(dim="lon")
-Tdiv_pos_first_zonal = Tdiv_pos_first.mean(dim="lon")
-Tdiv_pos_last_zonal = Tdiv_pos_last.mean(dim="lon")
-
-T_phi_neg_first_zonal = T_phi_neg_first.mean(dim="lon")
-T_p_neg_first_zonal = T_p_neg_first.mean(dim="lon")
-T_phi_neg_last_zonal = T_phi_neg_last.mean(dim="lon")
-T_p_neg_last_zonal = T_p_neg_last.mean(dim="lon")
-Tdiv_neg_first_zonal = Tdiv_neg_first.mean(dim="lon")
-Tdiv_neg_last_zonal = Tdiv_neg_last.mean(dim="lon")
 
 #%% 
 # read steady EP flux for positive and negative phase
-S_phi_pos_first, S_p_pos_first, Sdiv_pos_first = read_EP_flux(
-    phase="pos", decade=1850, eddy="steady", ano=False, isentrope=False
+Sphi_pos_first, Sp_pos_first, Sdivphi_pos_first, Sdiv_p_pos_first = read_EP_flux(
+    phase="pos", decade=1850, eddy="steady", ano=False,lon_mean=True,
 )
-S_phi_neg_first, S_p_neg_first, Sdiv_neg_first = read_EP_flux(
-    phase="neg", decade=1850, eddy="steady", ano=False, isentrope=False
+Sphi_neg_first, Sp_neg_first, Sdivphi_neg_first, Sdiv_p_neg_first = read_EP_flux(
+    phase="neg", decade=1850, eddy="steady", ano=False,lon_mean=True,
 )
 
-S_phi_pos_last, S_p_pos_last, Sdiv_pos_last = read_EP_flux(
-    phase="pos", decade=2090, eddy="steady", ano=False, isentrope=False
+# last decade 
+Sphi_pos_last, Sp_pos_last, Sdivphi_pos_last, Sdiv_p_pos_last = read_EP_flux(
+    phase="pos", decade=2090, eddy="steady", ano=False,lon_mean=True,
 )
-S_phi_neg_last, S_p_neg_last, Sdiv_neg_last = read_EP_flux(
-    phase="neg", decade=2090, eddy="steady", ano=False, isentrope=False
+Sphi_neg_last, Sp_neg_last, Sdivphi_neg_last, Sdiv_p_neg_last = read_EP_flux(
+    phase="neg", decade=2090, eddy="steady", ano=False,lon_mean=True,
 )
-# -1 * p component because the 'plev' was ascending in the data
-S_p_pos_first = -1 * S_p_pos_first
-S_p_pos_last = -1 * S_p_pos_last
-S_p_neg_first = -1 * S_p_neg_first
-S_p_neg_last = -1 * S_p_neg_last
-# zonal mean
-S_phi_pos_first_zonal = S_phi_pos_first.mean(dim="lon")
-S_p_pos_first_zonal = S_p_pos_first.mean(dim="lon")
-S_phi_pos_last_zonal = S_phi_pos_last.mean(dim="lon")
-S_p_pos_last_zonal = S_p_pos_last.mean(dim="lon")
-Sdiv_pos_first_zonal = Sdiv_pos_first.mean(dim="lon")
-Sdiv_pos_last_zonal = Sdiv_pos_last.mean(dim="lon")
-S_phi_neg_first_zonal = S_phi_neg_first.mean(dim="lon")
-S_p_neg_first_zonal = S_p_neg_first.mean(dim="lon")
-S_phi_neg_last_zonal = S_phi_neg_last.mean(dim="lon")
-S_p_neg_last_zonal = S_p_neg_last.mean(dim="lon")
-Sdiv_neg_first_zonal = Sdiv_neg_first.mean(dim="lon")
-Sdiv_neg_last_zonal = Sdiv_neg_last.mean(dim="lon")
 
 
 # %%
-fig, axes = plt.subplots(2, 3, figsize=(12, 8))
+# transient eddies
+fig, axes = plt.subplots(2, 3, figsize=(12, 8), sharey=True, sharex=True)
 # first row for first decade
-Tdiv_pos_first_zonal.plot.contourf(
-    ax=axes[0, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
-)
 
-# for pos
+# first col for positive phase
+(Tdivphi_pos_first + Tdiv_p_pos_first).plot.contourf(
+    ax=axes[0, 0], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim = [100000, 10000],
+    xlim = [0,90],
+)
 PlotEPfluxArrows(
-    x=T_phi_pos_first_zonal.lat[::3],
-    y=T_phi_pos_first_zonal.plev,
-    ep1=T_phi_pos_first_zonal[:, ::3],
-    ep2=T_p_pos_first_zonal[:, ::3],
+    x=Tphi_pos_first.lat[::3],
+    y=Tphi_pos_first.plev,
+    ep1=Tphi_pos_first[:, ::3],
+    ep2=Tp_pos_first[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
     ax=axes[0, 0],
+    draw_key=True,
+    key_loc=(0.7, 0.95),
 )
-
-# for neg
-Tdiv_neg_first_zonal.plot.contourf(
-    ax=axes[0, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
+# second col for negative phase
+(Tdivphi_neg_first + Tdiv_p_neg_first).plot.contourf(
+    ax=axes[0, 1], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim = [100000, 10000],
+    xlim = [0,90],
 )
 PlotEPfluxArrows(
-    x=T_phi_neg_first_zonal.lat[::3],
-    y=T_phi_neg_first_zonal.plev,
-    ep1=T_phi_neg_first_zonal[:, ::3],
-    ep2=T_p_neg_first_zonal[:, ::3],
+    x=Tphi_neg_first.lat[::3],
+    y=Tphi_neg_first.plev,
+    ep1=Tphi_neg_first[:, ::3],
+    ep2=Tp_neg_first[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
     ax=axes[0, 1],
+    draw_key=True,
+    key_loc=(0.7, 0.95),
 )
 # third col for difference between positive and negative
-Tdiv_diff_first_zonal = Tdiv_pos_first_zonal - Tdiv_neg_first_zonal
-Tdiv_diff_first_zonal.plot.contourf(
-    ax=axes[0, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+Tdiv_diff_first = (Tdivphi_pos_first - Tdivphi_neg_first) + (Tdiv_p_pos_first - Tdiv_p_neg_first)
+Tdiv_diff_first.plot.contourf(
+    ax=axes[0, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False,
+    ylim = [100000, 10000],
+    xlim = [0,90],
 )
 PlotEPfluxArrows(
-    x=T_phi_pos_first_zonal.lat[::3],
-    y=T_phi_pos_first_zonal.plev,
-    ep1=(T_phi_pos_first_zonal - T_phi_neg_first_zonal)[:, ::3],
-    ep2=(T_p_pos_first_zonal - T_p_neg_first_zonal)[:, ::3],
+    x=Tphi_pos_first.lat[::3],
+    y=Tphi_pos_first.plev,
+    ep1=(Tphi_pos_first - Tphi_neg_first)[:, ::3],
+    ep2=(Tp_pos_first - Tp_neg_first)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
-    ax=axes[0, 2],  
+    ax=axes[0, 2],
     draw_key=True,
     key_loc=(0.7, 0.95),
 )
 
 # second row for last decade
-map = Tdiv_pos_last_zonal.plot.contourf(
-    ax=axes[1, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
+# first col for positive phase
+pos_color = (Tdivphi_pos_last + Tdiv_p_pos_last).plot.contourf(
+    ax=axes[1, 0], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim = [100000, 10000],
+    xlim = [0,90],
 )
 PlotEPfluxArrows(
-    x=T_phi_pos_last_zonal.lat[::3],
-    y=T_phi_pos_last_zonal.plev,
-    ep1=T_phi_pos_last_zonal[:, ::3],
-    ep2=T_p_pos_last_zonal[:, ::3],
+    x=Tphi_pos_last.lat[::3],
+    y=Tphi_pos_last.plev,
+    ep1=Tphi_pos_last[:, ::3],
+    ep2=Tp_pos_last[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
     ax=axes[1, 0],
 )
-Tdiv_neg_last_zonal.plot.contourf(
-    ax=axes[1, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
+# second col for negative phase
+neg_color = (Tdivphi_neg_last + Tdiv_p_neg_last).plot.contourf(
+    ax=axes[1, 1], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim = [100000, 10000],
+    xlim = [0,90],
 )
 PlotEPfluxArrows(
-    x=T_phi_neg_last_zonal.lat[::3],
-    y=T_phi_neg_last_zonal.plev,
-    ep1=T_phi_neg_last_zonal[:, ::3],
-    ep2=T_p_neg_last_zonal[:, ::3],
+    x=Tphi_neg_last.lat[::3],
+    y=Tphi_neg_last.plev,
+    ep1=Tphi_neg_last[:, ::3],
+    ep2=Tp_neg_last[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
     ax=axes[1, 1],
 )
 # third col for difference between positive and negative
-Tdiv_diff_last_zonal = Tdiv_pos_last_zonal - Tdiv_neg_last_zonal
-diff_map = Tdiv_diff_last_zonal.plot.contourf(
-    ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+Tdiv_diff_last = (Tdivphi_pos_last - Tdivphi_neg_last) + (Tdiv_p_pos_last - Tdiv_p_neg_last)
+diff_color = Tdiv_diff_last.plot.contourf(
+    ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False,
+    ylim = [100000, 10000],
+    xlim = [0,90],
 )
 PlotEPfluxArrows(
-    x=T_phi_pos_last_zonal.lat[::3],
-    y=T_phi_pos_last_zonal.plev,
-    ep1=(T_phi_pos_last_zonal - T_phi_neg_last_zonal)[:, ::3],
-    ep2=(T_p_pos_last_zonal - T_p_neg_last_zonal)[:, ::3],
+    x=Tphi_pos_last.lat[::3],
+    y=Tphi_pos_last.plev,
+    ep1=(Tphi_pos_last - Tphi_neg_last)[:, ::3],
+    ep2=(Tp_pos_last - Tp_neg_last)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
     ax=axes[1, 2],
-    draw_key=True,
-    key_loc=(0.7, 0.95),
 )
 
-for ax in axes.flatten():
+# add cax under the second row
+
+fig.colorbar(
+    pos_color,
+    ax=axes[:, 0],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"$\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+)
+
+fig.colorbar(
+    neg_color,
+    ax=axes[:, 1],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"$\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+)
+
+fig.colorbar(
+    diff_color,
+    ax=axes[:, 2],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"diff $\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+)
+
+# no y labels from second row on, no x labels at the frist row
+for ax in axes[0, :]:
     ax.set_xlabel("")
-    ax.set_ylabel("")
 for ax in axes[:, 0]:
-    ax.set_ylabel("Pressure (hPa)")
-for ax in axes[1, :]:
-    ax.set_xlabel("Latitude (°N)")
+    ax.set_ylabel("Pressure [Pa]")
 
-# add colorbar at the bottom
-fig.colorbar(
-    map,
-    ax = axes[:, :2],
-    orientation='horizontal',
-    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
-    shrink=0.5,
-)
-fig.colorbar(
-    diff_map,
-    ax = axes[:, 2],
-    orientation='horizontal',
-    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
-)
-
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_EP_flux_divergence.pdf", dpi=300)
-#%%
-fig, axes = plt.subplots(2, 3, figsize=(12, 10))
-# first row for first decade (steady eddies)
-Sdiv_pos_first_zonal.plot.contourf(
-    ax=axes[0, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
-)
-
-# for pos
-PlotEPfluxArrows(
-    x=S_phi_pos_first_zonal.lat[::3],
-    y=S_phi_pos_first_zonal.plev,
-    ep1=S_phi_pos_first_zonal[:, ::3],
-    ep2=S_p_pos_first_zonal[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
-    fig=fig,
-    ax=axes[0, 0],
-)
-
-# for neg
-Sdiv_neg_first_zonal.plot.contourf(
-    ax=axes[0, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
-)
-PlotEPfluxArrows(
-    x=S_phi_neg_first_zonal.lat[::3],
-    y=S_phi_neg_first_zonal.plev,
-    ep1=S_phi_neg_first_zonal[:, ::3],
-    ep2=S_p_neg_first_zonal[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
-    fig=fig,
-    ax=axes[0, 1],
-)
-# third col for difference between positive and negative
-Sdiv_diff_first_zonal = Sdiv_pos_first_zonal - Sdiv_neg_first_zonal
-Sdiv_diff_first_zonal.plot.contourf(
-    ax=axes[0, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
-)
-PlotEPfluxArrows(
-    x=S_phi_pos_first_zonal.lat[::3],
-    y=S_phi_pos_first_zonal.plev,
-    ep1=(S_phi_pos_first_zonal - S_phi_neg_first_zonal)[:, ::3],
-    ep2=(S_p_pos_first_zonal - S_p_neg_first_zonal)[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale_div,
-    xlim=[0, 85],
-    ylim=[1000, 200],
-    fig=fig,
-    ax=axes[0, 2],  
-    draw_key=True,
-    key_loc=(0.7, 0.95),
-)
-
-# second row for last decade (steady eddies)
-Sdiv_pos_last_zonal.plot.contourf(
-    ax=axes[1, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
-)
-PlotEPfluxArrows(
-    x=S_phi_pos_last_zonal.lat[::3],
-    y=S_phi_pos_last_zonal.plev,
-    ep1=S_phi_pos_last_zonal[:, ::3],
-    ep2=S_p_pos_last_zonal[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
-    fig=fig,
-    ax=axes[1, 0],
-)
-map = Sdiv_neg_last_zonal.plot.contourf(
-    ax=axes[1, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
-)
-PlotEPfluxArrows(
-    x=S_phi_neg_last_zonal.lat[::3],
-    y=S_phi_neg_last_zonal.plev,
-    ep1=S_phi_neg_last_zonal[:, ::3],
-    ep2=S_p_neg_last_zonal[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
-    fig=fig,
-    ax=axes[1, 1],
-)
-# third col for difference between positive and negative
-Sdiv_diff_last_zonal = Sdiv_pos_last_zonal - Sdiv_neg_last_zonal
-diff_map = Sdiv_diff_last_zonal.plot.contourf(
-    ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
-)
-PlotEPfluxArrows(
-    x=S_phi_pos_last_zonal.lat[::3],
-    y=S_phi_pos_last_zonal.plev,
-    ep1=(S_phi_pos_last_zonal - S_phi_neg_last_zonal)[:, ::3],
-    ep2=(S_p_pos_last_zonal - S_p_neg_last_zonal)[:, ::3],
-    xscale="linear",
-    yscale="linear",
-    scale=scale_div,
-    xlim=[0, 85],
-    ylim=[1000, 200],
-    fig=fig,
-    ax=axes[1, 2],
-    draw_key=True,
-    key_loc=(0.7, 0.95),
-)
-
-for ax in axes.flatten():
-    ax.set_xlabel("")
+for ax in axes[:, 1:].flat:
     ax.set_ylabel("")
-for ax in axes[:, 0]:
-    ax.set_ylabel("Pressure (hPa)")
-for ax in axes[1, :]:
-    ax.set_xlabel("Latitude (°N)")
 
-# add colorbar at the bottom
-fig.colorbar(
-    map,
-    ax = axes[:, :2],
-    orientation='horizontal',
-    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
-    shrink=0.5,
+for ax in axes[1, :]:
+    ax.set_xlabel("Latitude [°N]")
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0EP_flux/transient_EP_flux.pdf",
+    bbox_inches="tight",
+    dpi=300,
 )
-fig.colorbar(
-    diff_map,
-    ax = axes[:, 2],
-    orientation='horizontal',
-    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
-)
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/steady_EP_flux_divergence.pdf", dpi=300)
+
+
 # %%
-# first 10 years, first row for transient, second row for steady
-fig, axes = plt.subplots(2, 3, figsize=(12, 8))
-# first row for transient
-Tdiv_pos_first_zonal.plot.contourf(
-    ax=axes[0, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
+# steady eddies
+fig, axes = plt.subplots(2, 3, figsize=(12, 8), sharey=True, sharex=True)
+# first row for first decade
+
+# first col for positive phase
+(Sdivphi_pos_first + Sdiv_p_pos_first).plot.contourf(
+    ax=axes[0, 0], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
 )
-# for pos
 PlotEPfluxArrows(
-    x=T_phi_pos_first_zonal.lat[::3],
-    y=T_phi_pos_first_zonal.plev,
-    ep1=T_phi_pos_first_zonal[:, ::3],
-    ep2=T_p_pos_first_zonal[:, ::3],
+    x=Sphi_pos_first.lat[::3],
+    y=Sphi_pos_first.plev,
+    ep1=Sphi_pos_first[:, ::3],
+    ep2=Sp_pos_first[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
     ax=axes[0, 0],
+    draw_key=True,
+    key_loc=(0.7, 0.95),
 )
-# for neg
-Tdiv_neg_first_zonal.plot.contourf(
-    ax=axes[0, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
+# second col for negative phase
+(Sdivphi_neg_first + Sdiv_p_neg_first).plot.contourf(
+    ax=axes[0, 1], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
 )
 PlotEPfluxArrows(
-    x=T_phi_neg_first_zonal.lat[::3],
-    y=T_phi_neg_first_zonal.plev,
-    ep1=T_phi_neg_first_zonal[:, ::3],
-    ep2=T_p_neg_first_zonal[:, ::3],
+    x=Sphi_neg_first.lat[::3],
+    y=Sphi_neg_first.plev,
+    ep1=Sphi_neg_first[:, ::3],
+    ep2=Sp_neg_first[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
     ax=axes[0, 1],
+    draw_key=True,
+    key_loc=(0.7, 0.95),
 )
 # third col for difference between positive and negative
-Tdiv_diff_first_zonal = Tdiv_pos_first_zonal - Tdiv_neg_first_zonal
-Tdiv_diff_first_zonal.plot.contourf(
-    ax=axes[0, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+Sdiv_diff_first = (Sdivphi_pos_first - Sdivphi_neg_first) + (Sdiv_p_pos_first - Sdiv_p_neg_first)
+Sdiv_diff_first.plot.contourf(
+    ax=axes[0, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
 )
 PlotEPfluxArrows(
-    x=T_phi_pos_first_zonal.lat[::3],
-    y=T_phi_pos_first_zonal.plev,
-    ep1=(T_phi_pos_first_zonal - T_phi_neg_first_zonal)[:, ::3],
-    ep2=(T_p_pos_first_zonal - T_p_neg_first_zonal)[:, ::3],
+    x=Sphi_pos_first.lat[::3],
+    y=Sphi_pos_first.plev,
+    ep1=(Sphi_pos_first - Sphi_neg_first)[:, ::3],
+    ep2=(Sp_pos_first - Sp_neg_first)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
-    ax=axes[0, 2],  
-    draw_key=False,
+    ax=axes[0, 2],
+    draw_key=True,
+    key_loc=(0.7, 0.95),
 )
-# second row for steady
-Sdiv_pos_first_zonal.plot.contourf(
-    ax=axes[1, 0], levels=levels, cmap="RdBu_r", add_colorbar=False
+
+# second row for last decade
+# first col for positive phase
+pos_color = (Sdivphi_pos_last + Sdiv_p_pos_last).plot.contourf(
+    ax=axes[1, 0], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
 )
-# for pos
 PlotEPfluxArrows(
-    x=S_phi_pos_first_zonal.lat[::3],
-    y=S_phi_pos_first_zonal.plev,
-    ep1=S_phi_pos_first_zonal[:, ::3],
-    ep2=S_p_pos_first_zonal[:, ::3],
+    x=Sphi_pos_last.lat[::3],
+    y=Sphi_pos_last.plev,
+    ep1=Sphi_pos_last[:, ::3],
+    ep2=Sp_pos_last[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
     ax=axes[1, 0],
 )
-# for neg
-Sdiv_neg_first_zonal.plot.contourf(
-    ax=axes[1, 1], levels=levels, cmap="RdBu_r", add_colorbar=False
+# second col for negative phase
+neg_color = (Sdivphi_neg_last + Sdiv_p_neg_last).plot.contourf(
+    ax=axes[1, 1], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
 )
 PlotEPfluxArrows(
-    x=S_phi_neg_first_zonal.lat[::3],
-    y=S_phi_neg_first_zonal.plev,
-    ep1=S_phi_neg_first_zonal[:, ::3],
-    ep2=S_p_neg_first_zonal[:, ::3],
+    x=Sphi_neg_last.lat[::3],
+    y=Sphi_neg_last.plev,
+    ep1=Sphi_neg_last[:, ::3],
+    ep2=Sp_neg_last[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
     ax=axes[1, 1],
-    draw_key=True,
-    key_loc=(0.1, -0.35),
 )
 # third col for difference between positive and negative
-Sdiv_diff_first_zonal = Sdiv_pos_first_zonal - Sdiv_neg_first_zonal
-Sdiv_diff_first_zonal.plot.contourf(
-    ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False
+Sdiv_diff_last = (Sdivphi_pos_last - Sdivphi_neg_last) + (Sdiv_p_pos_last - Sdiv_p_neg_last)
+diff_color = Sdiv_diff_last.plot.contourf(
+    ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
 )
 PlotEPfluxArrows(
-    x=S_phi_pos_first_zonal.lat[::3],
-    y=S_phi_pos_first_zonal.plev,
-    ep1=(S_phi_pos_first_zonal - S_phi_neg_first_zonal)[:, ::3],
-    ep2=(S_p_pos_first_zonal - S_p_neg_first_zonal)[:, ::3],
+    x=Sphi_pos_last.lat[::3],
+    y=Sphi_pos_last.plev,
+    ep1=(Sphi_pos_last - Sphi_neg_last)[:, ::3],
+    ep2=(Sp_pos_last - Sp_neg_last)[:, ::3],
     xscale="linear",
     yscale="linear",
     scale=scale_div,
-    xlim=[0, 85],
-    ylim=[1000, 200],
+    xlim=[0, 90],
+    ylim=[100000, 10000],
     fig=fig,
     ax=axes[1, 2],
-    draw_key=True,
-    key_loc=(0.1, -0.35),
-)
-for ax in axes.flatten():
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-for ax in axes[:, 0]:
-    ax.set_ylabel("Pressure (hPa)")
-for ax in axes[1, :]:
-    ax.set_xlabel("Latitude (°N)")
-# add colorbar at the bottom
-fig.colorbar(
-    map,
-    ax = axes[:, :2],
-    orientation='horizontal',
-    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
-    shrink=0.5,
-)
-fig.colorbar(
-    diff_map,
-    ax = axes[:, 2],
-    orientation='horizontal',
-    label='EP flux divergence (m s$^{-1}$ day$^{-1}$)',
 )
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/transient_steady_EP_flux_divergence_first.pdf", dpi=300)
+# add cax under the second row
+
+fig.colorbar(
+    pos_color,
+    ax=axes[:, 0],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"$\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+)
+
+fig.colorbar(
+    neg_color,
+    ax=axes[:, 1],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"$\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+)
+
+fig.colorbar(
+    diff_color,
+    ax=axes[:, 2],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"diff $\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+)
+
+# no y labels from second row on, no x labels at the first row
+for ax in axes[0, :]:
+    ax.set_xlabel("")
+for ax in axes[:, 0]:
+    ax.set_ylabel("Pressure [Pa]")
+
+for ax in axes[:, 1:].flat:
+    ax.set_ylabel("")
+
+for ax in axes[1, :]:
+    ax.set_xlabel("Latitude [°N]")
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0EP_flux/steady_EP_flux.pdf",
+    bbox_inches="tight",
+    dpi=300,
+)
+
 # %%
