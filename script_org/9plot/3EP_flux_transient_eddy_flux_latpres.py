@@ -339,3 +339,119 @@ plt.savefig(
     dpi=300,
 )
 # %%
+levels_vq_clima = np.arange(-30, 30.1, 5)
+levels_uv_clima = np.arange(-1, 1.1, 0.1)
+levels_vt_clima = np.arange(-30, 30.1, 5)
+
+#%%
+# plot the climatology
+fig, axes = plt.subplots(2, 3, figsize=(12, 8), sharey=True, sharex=True)
+# v'q' transient
+vq_color = (Tdivphi_clima_first + Tdiv_p_clima_first).plot.contourf(
+    ax=axes[0, 0], levels=levels_vq_clima, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+(Tdivphi_clima_last + Tdiv_p_clima_last).plot.contour(
+    ax=axes[0, 0], levels=[l for l in levels_vq_clima if l != 0], colors="k", linewidths=0.5,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+
+# u'v' transient
+uv_color = Tdivphi_clima_first.plot.contourf(
+    ax=axes[0, 1], levels=levels_uv_clima, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+Tdivphi_clima_last.plot.contour(
+    ax=axes[0, 1], levels=[l for l in levels_uv_clima if l != 0], colors="k", linewidths=0.5,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+
+# v't' transient
+vt_color = Tdiv_p_clima_first.plot.contourf(
+    ax=axes[0, 2], levels=levels_vt_clima, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+Tdiv_p_clima_last.plot.contour(
+    ax=axes[0, 2], levels=[l for l in levels_vt_clima if l != 0], colors="k", linewidths=0.5,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+
+# v'q' steady
+(Sdivphi_clima_first + Sdiv_p_clima_first).plot.contourf(
+    ax=axes[1, 0], levels=levels_vq_clima, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+(Sdivphi_clima_last + Sdiv_p_clima_last).plot.contour(
+    ax=axes[1, 0], levels=[l for l in levels_vq_clima if l != 0], colors="k", linewidths=0.5,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+# u'v' steady
+Sdivphi_clima_first.plot.contourf(
+    ax=axes[1, 1], levels=levels_uv_clima, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+Sdivphi_clima_last.plot.contour(
+    ax=axes[1, 1], levels=[l for l in levels_uv_clima if l != 0], colors="k", linewidths=0.5,  
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+# v't' steady
+Sdiv_p_clima_first.plot.contourf(
+    ax=axes[1, 2], levels=levels_vt_clima, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+Sdiv_p_clima_last.plot.contour(
+    ax=axes[1, 2], levels=[l for l in levels_vt_clima if l != 0], colors="k", linewidths=0.5,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+
+fig.colorbar(
+    vq_color,
+    ax=axes[:, 0],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"$v'q'$ [m$^2$ s$^{-2}$]",
+)
+fig.colorbar(
+    uv_color,
+    ax=axes[:, 1],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"$\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
+)
+fig.colorbar(
+    vt_color,
+    ax=axes[:, 2],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-2}$]",
+)
+for ax in axes[0, :]:
+    ax.set_xlabel("")
+for ax in axes[:, 0]:
+    ax.set_ylabel("Pressure [Pa]")
+for ax in axes[:, 1:].flat:
+    ax.set_ylabel("")
+for ax in axes[1, :]:
+    ax.set_xlabel("Latitude [°N]")
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0EP_flux/climatological_flux_component.pdf",
+    bbox_inches="tight",
+    dpi=300,
+)
+
+# %%
