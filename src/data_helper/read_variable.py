@@ -41,6 +41,51 @@ def read_prime(decade, var="eke", **kwargs):
     return data
 
 
+def read_prime_single_ens(dec, ens, var, **kwargs):
+    name = kwargs.get("name", var)  # default name is the same as var
+    plev = kwargs.get("plev", None)
+    suffix = kwargs.get("suffix", "_ano")
+    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
+    data_path = (
+        f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_daily{suffix}/"
+    )
+    files = glob.glob(data_path + f"r{ens}i1p1f1/*{dec}*")
+    if len(files) == 0:
+        raise ValueError(f"no file found for {var} in {ens}")
+    data = xr.open_dataset(files[0])
+    data = data[name]
+    if plev is not None:
+        data = data.sel(plev=plev)
+    data = data.squeeze()
+
+    return data
+#####################################################################
+def read_climatology(var, decade, **kwargs):
+    """
+    read climatology data for a given variable and decade
+    """
+
+    name = kwargs.get("name", var)  # default name is the same as var
+    plev = kwargs.get("plev", None)
+    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
+
+    data_path = (
+        f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_monthly_ensmean/"
+    )
+    files = glob.glob(data_path + f"{var}_monmean_ensmean_{decade}*.nc")
+    if len(files) == 0:
+        raise ValueError(f"no file found for {var} in {decade}")
+    data = xr.open_dataset(files[0])
+    data = data[name]
+
+    if plev is not None:
+        data = data.sel(plev=plev)
+
+    return data
+
+
+
+
 def read_prime_decmean(var="eke", NAL=True, plev=85000, **kwargs):
     """
     read high frequency data for all decades
@@ -64,26 +109,7 @@ def read_prime_decmean(var="eke", NAL=True, plev=85000, **kwargs):
     return data
 
 
-def read_prime_single_ens(dec, ens, var, **kwargs):
-    name = kwargs.get("name", var)  # default name is the same as var
-    plev = kwargs.get("plev", None)
-    suffix = kwargs.get("suffix", "_ano")
-    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
-    data_path = (
-        f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_daily{suffix}/"
-    )
-    files = glob.glob(data_path + f"r{ens}i1p1f1/*{dec}*")
-    if len(files) == 0:
-        raise ValueError(f"no file found for {var} in {ens}")
-    data = xr.open_dataset(files[0])
-    data = data[name]
-    if plev is not None:
-        data = data.sel(plev=plev)
-    data = data.squeeze()
-
-    return data
-
-
+#####################################################################
 def read_prime_ERA5(var="eke", model="ERA5_allplev", **kwargs):
 
     name = kwargs.get("name", var)  # default name is the same as var
