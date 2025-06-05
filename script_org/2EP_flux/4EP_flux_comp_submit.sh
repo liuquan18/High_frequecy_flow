@@ -16,4 +16,4 @@ ano=$4 # anomaly
 
 echo run $phase for $decade
 
-python 4EP_flux.py $phase $decade $eddy $ano
+python 4EP_flux_comp.py $phase $decade $eddy $ano
