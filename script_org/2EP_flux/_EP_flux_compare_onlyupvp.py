@@ -4,14 +4,29 @@ import numpy as np
 import matplotlib.pyplot as plt
 from aostools.climate import ComputeEPfluxDivXr, PlotEPfluxArrows, GetWavesXr
 # %%
-v = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/va_daily/r1i1p1f1/va_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").va
+v = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/va_hat_daily/r1i1p1f1/va_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").va
 t = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ta_daily/r1i1p1f1/ta_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").ta
 
 upvp = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/usvs_daily/r1i1p1f1/usvs_1850.nc").usvs
+
 #%%
 v = v.isel(time = 0)
 t = t.isel(time = 0)
 upvp = upvp.isel(time = 0)
+#%% hand upvp
+u = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_daily/r1i1p1f1/ua_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").ua
+v = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/va_hat_daily/r1i1p1f1/va_day_MPI-ESM1-2-LR_r1i1p1f1_gn_18500501-18590930.nc").va
+
+u = u.isel(time = 0)
+v = v.isel(time = 0)
+up = (u-u.mean('lon'))
+vp = (v-v.mean('lon'))
+upvp = up*vp
+
+
+
+
+
 # %%
 ##############################################
 # only upvp
@@ -35,6 +50,7 @@ f      = 2*Omega*sinlat
 
 # %%
 #
+wave = 0
 # pressure quantitites
 pp0 = (p0/t[p])**kappa
 # convert to potential temperature
@@ -54,14 +70,8 @@ if time in dthdp.dims:
         dthdp = dthdp.mean(time)
     elif ref == 'instant':
         dthdp = dthdp
-# now get wave component
-if isinstance(wave,list):
-    vpTp = GetWavesXr(v,t,dim=lon,wave=-1).sel(k=slice(1, 6)).sum('k')
-elif wave == 0:
-    vpTp = (v - v_bar)*(t - t_bar)
-    vpTp = vpTp.mean(lon)  # vpTp = bar(v'Th')
-else:
-    vpTp = GetWavesXr(v,t,dim=lon,wave=wave) # vpTp = bar(v'Th'_{k=wave})
+vpTp = (v - v_bar)*(t - t_bar)
+vpTp = vpTp.mean(lon)  # vpTp = bar(v'Th')
 t_bar = vpTp/dthdp # t_bar = bar(v'Th')/(dTh_bar/dp)
 #
 
