@@ -42,9 +42,9 @@ def read_comp_var_dist(var, phase, decade, suffix = "_ano", **kwargs):
     ds = ds.sel(time=slice(*time_window))
 
     return ds
-
+#%%
 def read_EP_flux(
-    phase, decade, eddy="transient", ano=False, isentrope=False, region="western"
+    phase, decade, eddy="transient", ano=False, region="western", lon_mean = False
 ):
     EP_flux_dir = (
         "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
@@ -80,5 +80,15 @@ def read_EP_flux(
         # do nothing, return the data as is
         pass
 
+    if lon_mean:
+        F_phi = F_phi.mean(dim="lon", keep_attrs=True)
+        F_p = F_p.mean(dim="lon", keep_attrs=True)
+        div_phi = div_phi.mean(dim="lon", keep_attrs=True)
+        div_p = div_p.mean(dim="lon", keep_attrs=True)
+    else:
+        F_phi = erase_white_line(F_phi)
+        F_p = erase_white_line(F_p)
+        div_phi = erase_white_line(div_phi)
+        div_p = erase_white_line(div_p)
 
     return F_phi, F_p, div_phi, div_p
