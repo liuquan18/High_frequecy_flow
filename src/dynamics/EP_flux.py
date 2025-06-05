@@ -166,13 +166,6 @@ def EP_flux(vptp, upvp, dthdp):
 		upvp = u'v' [m2/s]
 		dthdp = d(theta)/dp [K/Pa]  either from stat_stab() or eff_stat_stab_xr()
 	'''
-	# check if the 'plev' coordinate is in Pa and convert to hPa
-	if 'plev' in vptp.coords and vptp['plev'].max() > 1000:
-		vptp = vptp.assign_coords(plev=vptp['plev'] / 100)
-	if 'plev' in upvp.coords and upvp['plev'].max() > 1000:
-		upvp = upvp.assign_coords(plev=upvp['plev'] / 100)
-	if 'plev' in dthdp.coords and dthdp['plev'].max() > 1000:
-		dthdp = dthdp.assign_coords(plev=dthdp['plev'] / 100)
 
 	# constants
 	a0    = 6371000.  # earth radius in m
@@ -212,15 +205,20 @@ def EP_flux(vptp, upvp, dthdp):
 	# convert to m/s/day
 	div1 = div1*86400
 	div2 = div2*86400
-	div = div1 + div2 # divergence
+	
 
 	ep1_cart.name = 'ep1'
 	ep2_cart.name = 'ep2'
-	div.name = 'div'
+	div1.name = 'div'
+	div1.attrs['units'] = 'm/s2/day'
+	div1.attrs['long_name'] = 'divergence of Horizonaltal component of Eliassen-Palm flux'
+
+	div2.name = 'div2'
+	div2.attrs['units'] = 'm/s2/day'
+	div2.attrs['long_name'] = 'divergence of Vertical component of Eliassen-Palm flux'
 
 	return ep1_cart.transpose('plev','lat','lon'), ep2_cart.transpose('plev','lat','lon'),\
-	div.transpose('plev','lat','lon')
-
+			div1.transpose('plev','lat','lon'), div2.transpose('plev','lat','lon')
 
 # %%
 def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), eddy = 'transient'):
