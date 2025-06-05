@@ -86,9 +86,6 @@ def read_EP_flux(
         div_phi = div_phi.mean(dim="lon", keep_attrs=True)
         div_p = div_p.mean(dim="lon", keep_attrs=True)
     else:
-        F_phi = erase_white_line(F_phi)
-        F_p = erase_white_line(F_p)
-        div_phi = erase_white_line(div_phi)
-        div_p = erase_white_line(div_p)
+        pass
 
     return F_phi, F_p, div_phi, div_p
