@@ -81,6 +81,9 @@ def read_climatology(var, decade, **kwargs):
     if plev is not None:
         data = data.sel(plev=plev)
 
+    if "time" in data.dims:
+        data = data.mean(dim="time")
+
     return data
 
 
