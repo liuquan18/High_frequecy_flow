@@ -241,25 +241,19 @@ def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), edd
 				time_window = time_window, method = "mean", erase_zero_line = True,
 			)
 			
-			theta_ensmean_path=glob.glob(
-				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/equiv_theta_monthly_ensmean/*{decade}*.nc"
-			)[0]
-			theta_ensmean = xr.open_dataset(theta_ensmean_path).etheta
-
 
 		else:
 			vptp = read_comp_var(
 				var = "vptp", phase = phase, decade = decade, name = "vptp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
 				time_window = time_window, method = "mean", erase_zero_line = True,
 			)
-			# read theta
-			theta_ensmean_path=glob.glob(
-				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/theta_monthly_ensmean/*{decade}*.nc"
-			)[0]
-			theta_ensmean = xr.open_dataset(theta_ensmean_path).theta
-		if 'time' in theta_ensmean.dims:
-			theta_ensmean = theta_ensmean.mean(dim = 'time')
-			
+		
+		# read temperature to compute static stability
+		# transient the original 
+		ta = read_comp_var(
+			var = "ta", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+			time_window = time_window, method = "mean", erase_zero_line = True,
+		)
 	
 	elif eddy == 'steady':
 		upvp = read_comp_var(
@@ -272,30 +266,25 @@ def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), edd
 				time_window = time_window, method = "mean", erase_zero_line = True,
 			)
 			
-			theta_ensmean_path=glob.glob(
-				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/equiv_theta_hat_monthly_ensmean/*{decade}*.nc"
-			)[0]
-			theta_ensmean = xr.open_dataset(theta_ensmean_path).etheta
 		
 		else:
 			vptp = read_comp_var(
 				var = "vptp", phase = phase, decade = decade, name = "vptp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
 				time_window = time_window, method = "mean", erase_zero_line = True,
 			)
-			# read theta
-			theta_ensmean_path=glob.glob(
-				f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/theta_monthly_ensmean/*{decade}*.nc"
-			)[0]
-			theta_ensmean = xr.open_dataset(theta_ensmean_path).theta
+
+		# read temperature to compute static stability
+		# ta_hat
+		ta = read_comp_var(
+			var = "ta_hat", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+			time_window = time_window, method = "mean", erase_zero_line = True,
+		)
 
 	else:
 		raise ValueError("eddy must be either 'transient' or 'steady'", f"but got {eddy}")
 
-	
-	if 'time' in theta_ensmean.dims:
-		theta_ensmean = theta_ensmean.mean(dim = 'time')
 
-	return upvp, vptp, theta_ensmean
+	return upvp, vptp, ta
 
 def NPC_mean(arr):
     return arr.sel(lon = slice(120, 240)).mean(dim = 'lon')
