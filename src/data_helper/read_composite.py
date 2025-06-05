@@ -50,7 +50,7 @@ def read_EP_flux(
         "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
     )
 
-    if phase not in ["pos", "neg"]:
+    if phase in ["pos", "neg"]:
         F_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_phi_{phase}_{decade}_ano{ano}.nc")
         F_p = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_p_{phase}_{decade}_ano{ano}.nc")
 
@@ -63,6 +63,8 @@ def read_EP_flux(
 
         div_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_div_phi_clima_{decade}.nc")
         div_p = xr.open_dataarray(f"{EP_flux_dir}{eddy}_div_p_clima_{decade}.nc")
+    else:
+        raise ValueError("Phase must be 'pos', 'neg', or 'clima'.")
     if region == "western":
         F_phi = xr.concat(
             [F_phi.sel(lon = slice(240, None)),
