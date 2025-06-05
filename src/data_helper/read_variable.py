@@ -67,7 +67,7 @@ def read_climatology(var, decade, **kwargs):
 
     name = kwargs.get("name", var)  # default name is the same as var
     plev = kwargs.get("plev", None)
-    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
+    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6_allplev")
 
     data_path = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_monthly_ensmean/"
