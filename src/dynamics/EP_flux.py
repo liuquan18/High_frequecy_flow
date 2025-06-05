@@ -260,14 +260,14 @@ def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), edd
 		)
 		if equiv_theta:
 			vptp = read_comp_var(
-				var = "vpetp", phase = phase, decade = decade, name = "vpetp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+				var = "vsets", phase = phase, decade = decade, name = "vsets", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
 				time_window = time_window, method = "mean", erase_zero_line = True,
 			)
 			
 		
 		else:
 			vptp = read_comp_var(
-				var = "vptp", phase = phase, decade = decade, name = "vptp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+				var = "vsts", phase = phase, decade = decade, name = "vsts", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
 				time_window = time_window, method = "mean", erase_zero_line = True,
 			)
 
