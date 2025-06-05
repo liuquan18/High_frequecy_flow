@@ -338,9 +338,9 @@ def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',ysca
 	#
 	def Deltas(z,zlim):
 		# if zlim is None:
-		# return np.max(z)-np.min(z)
+		return np.max(z)-np.min(z)
 		# else:
-		return zlim[1]-zlim[0]
+		# return zlim[1]-zlim[0]
 	# Scale EP vector components as in Edmon, Hoskins & McIntyre JAS 1980:
 	cosphi = np.cos(np.deg2rad(x))
 	a0 = 6376000.0 # Earth radius [m]
