@@ -284,11 +284,6 @@ def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), edd
 
 	return upvp, vptp, ta
 
-def NPC_mean(arr):
-    return arr.sel(lon = slice(120, 240)).mean(dim = 'lon')
-
-def NAL_mean(arr):
-    return arr.sel(lon = slice(270, 330)).mean(dim = 'lon')
 
 #%%
 ## helper function: Get actual width and height of axes
