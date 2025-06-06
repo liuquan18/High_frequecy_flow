@@ -210,7 +210,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-1} day^{-1}$]",
+    label=r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m$^2$ s$^{-1}$ day$^{-1}$]",
 )
 
 # no y labels from second row on, no x labels at the frist row
@@ -343,7 +343,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-1} day^{-1}$]",
+    label=r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m$^2$ s$^{-1}$ day$^{-1}$]",
 )
 
 for ax in axes[0, :]:
@@ -474,7 +474,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-1} day^{-1}$]",
+    label=r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m$^2$ s$^{-1}$ day$^{-1}$]",
 )
 for ax in axes[0, :]:
     ax.set_xlabel("")
