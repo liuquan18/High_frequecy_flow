@@ -192,7 +192,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$v'q'$ [m$^2$ s$^{-2}$]",
+    label=r"$v'q'$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 
 fig.colorbar(
@@ -201,7 +201,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
+    label=r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 
 fig.colorbar(
@@ -210,7 +210,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-2}$]",
+    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 
 # no y labels from second row on, no x labels at the frist row
@@ -325,7 +325,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$v'q'$ [m$^2$ s$^{-2}$]",
+    label=r"$v'q'$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 
 fig.colorbar(
@@ -334,7 +334,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$- \frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
+    label=r"$- \frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 
 fig.colorbar(
@@ -343,7 +343,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-2}$]",
+    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 
 for ax in axes[0, :]:
@@ -458,7 +458,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$v'q'$ [m$^2$ s$^{-2}$]",
+    label=r"$v'q'$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 fig.colorbar(
     uv_color,
@@ -466,7 +466,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$- \frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
+    label=r"$- \frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 fig.colorbar(
     vt_color,
@@ -474,7 +474,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-2}$]",
+    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 for ax in axes[0, :]:
     ax.set_xlabel("")

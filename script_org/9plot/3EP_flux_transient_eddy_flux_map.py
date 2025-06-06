@@ -379,19 +379,19 @@ fig.colorbar(
     vq_color,
     cax=cax_vq,
     orientation="horizontal",
-    label=r"$v'q'$ [m$^2$ s$^{-2}$]",
+    label=r"$v'q'$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 fig.colorbar(
     uv_color,
     cax=cax_uv,
     orientation="horizontal",
-    label=r"$- \frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
+    label=r"$- \frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 fig.colorbar(
     vt_color,
     cax=cax_vt,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-2}$]",
+    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 
 # no y labels from second row on, no x labels at the frist row
@@ -578,19 +578,19 @@ fig.colorbar(
     vq_color,
     cax=cax_vq,
     orientation="horizontal",
-    label=r"$v'q'$ [m$^2$ s$^{-2}$]",
+    label=r"$v'q'$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 fig.colorbar(
     uv_color,
     cax=cax_uv,
     orientation="horizontal",
-    label=r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
+    label=r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 fig.colorbar(
     vt_color,
     cax=cax_vt,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-2}$]",
+    label=r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-1} day^{-1}$]",
 )
 
 for ax in axes[0, :]:
@@ -651,7 +651,7 @@ vq_color = (
         transform=ccrs.PlateCarree(),
         cbar_kwargs={
             "orientation": "horizontal",
-            "label": r"$v'q'$ [m$^2$ s$^{-2}$]",
+            "label": r"$v'q'$ [m$^2$ s$^{-1} day^{-1}$]",
             "shrink": 0.8,
             "pad": 0.05,
         },
@@ -677,7 +677,7 @@ uv_color = Tdivphi_clima_first.sel(plev=25000).plot.contourf(
     transform=ccrs.PlateCarree(),
     cbar_kwargs={
         "orientation": "horizontal",
-        "label": r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
+        "label": r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-1} day^{-1}$]",
         "shrink": 0.8,
         "pad": 0.05,
     },
@@ -701,7 +701,7 @@ vt_color = Tdiv_p_clima_first.sel(plev=85000).plot.contourf(
     transform=ccrs.PlateCarree(),
     cbar_kwargs={
         "orientation": "horizontal",
-        "label": r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-2}$]",
+        "label": r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-1} day^{-1}$]",
         "shrink": 0.8,
         "pad": 0.05,
     },
@@ -725,7 +725,7 @@ Tdiv_p_clima_last.sel(plev=85000).plot.contour(
     transform=ccrs.PlateCarree(),
     cbar_kwargs={
         "orientation": "horizontal",
-        "label": r"$v'q'$ [m$^2$ s$^{-2}$]",
+        "label": r"$v'q'$ [m$^2$ s$^{-1} day^{-1}$]",
         "shrink": 0.8,
         "pad": 0.05,
     },
@@ -749,7 +749,7 @@ Sdivphi_clima_first.sel(plev=25000).plot.contourf(
     transform=ccrs.PlateCarree(),
     cbar_kwargs={
         "orientation": "horizontal",
-        "label": r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
+        "label": r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-1} day^{-1}$]",
         "shrink": 0.8,
         "pad": 0.05,
     },
@@ -773,7 +773,7 @@ Sdiv_p_clima_first.sel(plev=85000).plot.contourf(
     transform=ccrs.PlateCarree(),
     cbar_kwargs={
         "orientation": "horizontal",
-        "label": r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-2}$]",
+        "label": r"$\frac{\partial}{\partial z} (\frac{f_0}{N^2}\overline{v'\theta_e'})$ [m$^2$ s$^{-1} day^{-1}$]",
         "shrink": 0.8,
         "pad": 0.05,
     },
