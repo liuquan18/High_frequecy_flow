@@ -13,11 +13,21 @@ module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
 member=$1
+eddy=$2 # transient or steady
 
 
-up_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_prime_daily/r${member}i1p1f1/
-vp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/va_prime_daily/r${member}i1p1f1/
-output_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/M2_daily/r${member}i1p1f1/
+if [ "$eddy" = "transient" ]; then
+    up_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_prime_daily/r${member}i1p1f1/
+    vp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/va_prime_daily/r${member}i1p1f1/
+    output_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/M2_prime_daily/r${member}i1p1f1/
+elif [ "$eddy" = "steady" ]; then
+    up_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_steady_daily/r${member}i1p1f1/
+    vp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/va_steady_daily/r${member}i1p1f1/
+    output_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/M2_steady_daily/r${member}i1p1f1/
+else
+    echo "Unknown eddy type: $eddy"
+    exit 1
+fi
 
 mkdir -p ${output_dir}
 export up_path
