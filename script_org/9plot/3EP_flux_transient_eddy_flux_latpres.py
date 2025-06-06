@@ -105,11 +105,13 @@ vq_color = (Tdivphi_pos_first_ano + Tdiv_p_pos_first_ano).plot.contourf(
     ax=axes[0, 0], levels=levels_vq, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 (Tdivphi_pos_last_ano + Tdiv_p_pos_last_ano).plot.contour(
     ax=axes[0, 0], levels=[l for l in levels_vq if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 
 # second col for u'v'
@@ -117,11 +119,13 @@ uv_color = Tdivphi_pos_first_ano.plot.contourf(
     ax=axes[0, 1], levels=levels_uv, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Tdivphi_pos_last_ano.plot.contour(
     ax=axes[0, 1], levels=[l for l in levels_uv if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 
 # third col for v't'
@@ -129,11 +133,13 @@ vt_color = Tdiv_p_pos_first_ano.plot.contourf(
     ax=axes[0, 2], levels=levels_vt, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Tdiv_p_pos_last_ano.plot.contour(
     ax=axes[0, 2], levels=[l for l in levels_vt if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 
 # second row for neg
@@ -142,33 +148,39 @@ pos_color = (Tdivphi_neg_first_ano + Tdiv_p_neg_first_ano).plot.contourf(
     ax=axes[1, 0], levels=levels_vq, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 (Tdivphi_neg_last_ano + Tdiv_p_neg_last_ano).plot.contour(
     ax=axes[1, 0], levels=[l for l in levels_vq if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 # second col for u'v'
 neg_color = Tdivphi_neg_first_ano.plot.contourf(
     ax=axes[1, 1], levels=levels_uv, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Tdivphi_neg_last_ano.plot.contour(
     ax=axes[1, 1], levels=[l for l in levels_uv if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 # third col for v't'    
 diff_color = Tdiv_p_neg_first_ano.plot.contourf(
     ax=axes[1, 2], levels=levels_vt, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Tdiv_p_neg_last_ano.plot.contour(
     ax=axes[1, 2], levels=[l for l in levels_vt if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )   
 
 
@@ -229,11 +241,13 @@ vq_color = (Sdivphi_pos_first_ano + Sdiv_p_pos_first_ano).plot.contourf(
     ax=axes[0, 0], levels=levels_vq, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 (Sdivphi_pos_last_ano + Sdiv_p_pos_last_ano).plot.contour(
     ax=axes[0, 0], levels=[l for l in levels_vq if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 
 # u'v'
@@ -241,11 +255,13 @@ uv_color = Sdivphi_pos_first_ano.plot.contourf(
     ax=axes[0, 1], levels=levels_uv, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Sdivphi_pos_last_ano.plot.contour(
     ax=axes[0, 1], levels=[l for l in levels_uv if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 
 # v't'
@@ -253,11 +269,13 @@ vt_color = Sdiv_p_pos_first_ano.plot.contourf(
     ax=axes[0, 2], levels=levels_vt, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Sdiv_p_pos_last_ano.plot.contour(
     ax=axes[0, 2], levels=[l for l in levels_vt if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 
 # second row for neg
@@ -266,33 +284,39 @@ Sdiv_p_pos_last_ano.plot.contour(
     ax=axes[1, 0], levels=levels_vq, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 (Sdivphi_neg_last_ano + Sdiv_p_neg_last_ano).plot.contour(
     ax=axes[1, 0], levels=[l for l in levels_vq if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 # u'v'
 Sdivphi_neg_first_ano.plot.contourf(
     ax=axes[1, 1], levels=levels_uv, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Sdivphi_neg_last_ano.plot.contour(
     ax=axes[1, 1], levels=[l for l in levels_uv if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 # v't'
 Sdiv_p_neg_first_ano.plot.contourf(
     ax=axes[1, 2], levels=levels_vt, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Sdiv_p_neg_last_ano.plot.contour(
     ax=axes[1, 2], levels=[l for l in levels_vt if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 
 fig.colorbar(
@@ -351,11 +375,13 @@ vq_color = (Tdivphi_clima_first + Tdiv_p_clima_first).plot.contourf(
     ax=axes[0, 0], levels=levels_vq_clima, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 (Tdivphi_clima_last + Tdiv_p_clima_last).plot.contour(
     ax=axes[0, 0], levels=[l for l in levels_vq_clima if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 
 # u'v' transient
@@ -363,11 +389,13 @@ uv_color = Tdivphi_clima_first.plot.contourf(
     ax=axes[0, 1], levels=levels_uv_clima, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Tdivphi_clima_last.plot.contour(
     ax=axes[0, 1], levels=[l for l in levels_uv_clima if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 
 # v't' transient
@@ -375,11 +403,13 @@ vt_color = Tdiv_p_clima_first.plot.contourf(
     ax=axes[0, 2], levels=levels_vt_clima, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Tdiv_p_clima_last.plot.contour(
     ax=axes[0, 2], levels=[l for l in levels_vt_clima if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 
 # v'q' steady
@@ -387,33 +417,39 @@ Tdiv_p_clima_last.plot.contour(
     ax=axes[1, 0], levels=levels_vq_clima, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 (Sdivphi_clima_last + Sdiv_p_clima_last).plot.contour(
     ax=axes[1, 0], levels=[l for l in levels_vq_clima if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 # u'v' steady
 Sdivphi_clima_first.plot.contourf(
     ax=axes[1, 1], levels=levels_uv_clima, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Sdivphi_clima_last.plot.contour(
     ax=axes[1, 1], levels=[l for l in levels_uv_clima if l != 0], colors="k", linewidths=0.5,  
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 # v't' steady
 Sdiv_p_clima_first.plot.contourf(
     ax=axes[1, 2], levels=levels_vt_clima, cmap="RdBu_r", add_colorbar=False,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 Sdiv_p_clima_last.plot.contour(
     ax=axes[1, 2], levels=[l for l in levels_vt_clima if l != 0], colors="k", linewidths=0.5,
     ylim=[100000, 10000],
     xlim=[0, 90],
+    extend="both",
 )
 
 fig.colorbar(

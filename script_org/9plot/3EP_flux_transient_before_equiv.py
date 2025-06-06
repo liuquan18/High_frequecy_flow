@@ -193,7 +193,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+    label=r"$\nabla \cdot \mathcal{F}$ [m$^2$ s$^{-2}$]",
 )
 
 fig.colorbar(
@@ -202,7 +202,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+    label=r"$\nabla \cdot \mathcal{F}$ [m$^2$ s$^{-2}$]",
 )
 
 fig.colorbar(
@@ -211,7 +211,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"diff $\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+    label=r"diff $\nabla \cdot \mathcal{F}$ [m$^2$ s$^{-2}$]",
 )
 
 # no y labels from second row on, no x labels at the frist row
@@ -371,7 +371,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+    label=r"$\nabla \cdot \mathcal{F}$ [m$^2$ s$^{-2}$]",
 )
 
 fig.colorbar(
@@ -380,7 +380,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+    label=r"$\nabla \cdot \mathcal{F}$ [m$^2$ s$^{-2}$]",
 )
 
 fig.colorbar(
@@ -389,7 +389,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"diff $\nabla \cdot \mathbf{F}$ [m$^2$ s$^{-2}$]",
+    label=r"diff $\nabla \cdot \mathcal{F}$ [m$^2$ s$^{-2}$]",
 )
 
 # no y labels from second row on, no x labels at the first row
