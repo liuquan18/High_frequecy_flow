@@ -126,38 +126,6 @@ def eff_stat_stab_xr(T):
 
 	return stat_stability
 
-#%%
-def plev_to_isentrope(var, theta, var_name = 'F_phi', theta_name = 'theta', t_bins = np.arange(280, 360, 2)):
-	"""
-	Interpolate the variable to isentropic levels based on the potential temperature.
-	Parameters:
-	- var: xarray DataArray of the variable to be interpolated.
-	- theta: xarray DataArray of potential temperature.
-	Returns:
-	- var_isentrope: xarray DataArray of the variable interpolated to isentropic levels.
-	"""
-	# Interpolate to isentropic levels
-	ds = xr.Dataset(
-		{
-			var_name: var,
-			theta_name: theta,
-		}
-	)
-	df = ds.to_dataframe().reset_index()
-	# Drop NaN values
-	df = df.dropna()
-
-	# interpolate
-	isen_df = df.groupby(['lat','lon']).apply(
-		bin_var_theta,
-		var = var_name,
-		t_bins = t_bins
-	)
-
-	isen_xr = isen_df.to_xarray()
-	
-	return isen_xr.transpose('theta', 'lat', 'lon')
-
 
 def EP_flux(vptp, upvp, dthdp):
 	'''
