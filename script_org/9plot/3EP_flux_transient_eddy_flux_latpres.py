@@ -201,7 +201,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
+    label=r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
 )
 
 fig.colorbar(
@@ -334,7 +334,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
+    label=r"$- \frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
 )
 
 fig.colorbar(
@@ -466,7 +466,7 @@ fig.colorbar(
     orientation="horizontal",
     fraction=0.05,
     pad=0.1,
-    label=r"$\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
+    label=r"$- \frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-2}$]",
 )
 fig.colorbar(
     vt_color,
