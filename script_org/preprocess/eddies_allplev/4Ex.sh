@@ -1,4 +1,14 @@
 #!/bin/bash
+#SBATCH --job-name=Ex
+#SBATCH --time=01:30:00
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks=5
+#SBATCH --mem=200G
+#SBATCH --mail-type=FAIL
+#SBATCH --account=mh0033
+#SBATCH --output=Ex.%j.out
+
 module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
