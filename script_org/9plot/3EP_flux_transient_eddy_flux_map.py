@@ -613,11 +613,11 @@ for ax in axes.flat:
     )
     ax.set_title("")
 
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0EP_flux/steady_flux_component_map.pdf",
-#     bbox_inches="tight",
-#     dpi=300,
-# )
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0EP_flux/steady_flux_component_map.pdf",
+    bbox_inches="tight",
+    dpi=300,
+)
 # %%
 levels_vq_clima = np.arange(-30, 30.1, 5)
 levels_uv_clima = np.arange(-5, 6, 1)
