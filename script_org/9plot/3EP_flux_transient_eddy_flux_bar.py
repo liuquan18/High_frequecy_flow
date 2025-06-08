@@ -212,13 +212,13 @@ SEx_clima_last, SEy_clima_last = read_E_div(
 # fldmean over [300, 360, 40, 80]
 def to_dataframe(ds, var_name, phase, decade):
 
+    ds = ds.sel(lat=slice(40, 80), lon=slice(300, 360))
     # create weights
     weights = np.cos(np.deg2rad(ds.lat))
     weights.name = "weights"
     ds = ds.weighted(weights)
     
-    ds = ds.sel(lat=slice(40, 80), lon=slice(300, 360)).mean(
-    dim=["lat", "lon"])
+    ds = ds.mean(dim=["lat", "lon"])
 
     df = ds.to_dataframe(var_name).reset_index()
     df['phase'] = phase
@@ -368,7 +368,7 @@ steady_dfs = steady_dfs.loc[:, ~steady_dfs.columns.duplicated()]
 steady_dfs = steady_dfs[['plev', 'phase', 'decade', 'M2', 'N', 'P']]
 
 #%%
-fig, axes = plt.subplots(2, 2, figsize=(10, 10), sharex=True, sharey='row')
+fig, axes = plt.subplots(2, 3, figsize=(12, 10), sharex=True, sharey='row')
 
 plevs = [25000, 85000]
 phases = ['clima', 'pos', 'neg']
@@ -436,6 +436,30 @@ for row, plev in enumerate(plevs):
             legend_handles = handles
             legend_labels = labels_
 
+    # add a thrid column for sum of transient and steady
+
+    ax_sum = axes[row, 2]
+    for j, decade in enumerate([1850, 2090]):
+        # Offset: -bar_width/2-gap/2 for 1850, +bar_width/2+gap/2 for 2090
+        offset = (-bar_width/2-gap/2) if j == 0 else (bar_width/2+gap/2)
+        # Sum the two dataframes
+        df_sum = transient_dfs.copy()
+        df_sum = df_sum.copy()
+        df_sum[['P', 'N', 'M2']] = df_sum[['P', 'N', 'M2']].values + steady_dfs[['P', 'N', 'M2']].values
+        df_pivot = get_stacked_data(df_sum, plev, decade)
+        bottom_pos = np.zeros(len(phases))
+        bottom_neg = np.zeros(len(phases))
+        for i, comp in enumerate(components):
+            vals = df_pivot[comp].values
+            pos_vals = np.where(vals > 0, vals, 0)
+            neg_vals = np.where(vals < 0, vals, 0)
+            bars_pos = ax_sum.bar(x + offset, pos_vals, bar_width, bottom=bottom_pos, color=colors[i],
+                                  label=f"{comp} {decade}" if (row == 1 and j == 0) else None,
+                                  hatch=hatches[j], edgecolor='k')
+            bottom_pos += pos_vals
+            bars_neg = ax_sum.bar(x + offset, neg_vals, bar_width, bottom=bottom_neg, color=colors[i],
+                                  hatch=hatches[j], edgecolor='k')
+            bottom_neg += neg_vals
 # add hline at y=0 for all axes
 for ax in axes.flat:
     ax.axhline(0, color='k', linewidth=0.5, linestyle='--')
@@ -456,7 +480,7 @@ plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vq_co
 
 
 # %%
-fig, axes = plt.subplots(2, 2, figsize=(10, 10), sharex=True, sharey='row')
+fig, axes = plt.subplots(2, 3, figsize=(12, 10), sharex=True, sharey='row')
 
 plevs = [25000, 85000]
 phases = ['clima', 'pos', 'neg']
@@ -487,6 +511,7 @@ for row, plev in enumerate(plevs):
     else:
         components = components_all
         colors = colors_all
+    # --- First two columns: transient and steady ---
     for col, (df, label) in enumerate(zip([transient_dfs, steady_dfs], ["Transient", "Steady"])):
         ax = axes[row, col]
         for j, decade in enumerate([1850, 2090]):
@@ -531,6 +556,40 @@ for row, plev in enumerate(plevs):
             legend_handles = handles
             legend_labels = labels_
 
+    # --- Third column: sum of transient and steady ---
+    ax_sum = axes[row, 2]
+    for j, decade in enumerate([1850, 2090]):
+        offset = (-bar_width/2-gap/2) if j == 0 else (bar_width/2+gap/2)
+        # Sum the two dataframes
+        df_sum = transient_dfs.copy()
+        df_sum = df_sum.copy()
+        df_sum[['P', 'N', 'M2']] = df_sum[['P', 'N', 'M2']].values + steady_dfs[['P', 'N', 'M2']].values
+        df_pivot = get_stacked_data(df_sum, plev, decade, components)
+        bottom_pos = np.zeros(len(phases))
+        bottom_neg = np.zeros(len(phases))
+        for i, comp in enumerate(components):
+            vals = df_pivot[comp].values
+            pos_vals = np.where(vals > 0, vals, 0)
+            neg_vals = np.where(vals < 0, vals, 0)
+            bars_pos = ax_sum.bar(x + offset, pos_vals, bar_width, bottom=bottom_pos, color=colors[i],
+                                 label=f"{comp} {decade}" if (row == 1 and j == 0) else None,
+                                 hatch=hatches[j], edgecolor='k')
+            bottom_pos += pos_vals
+            bars_neg = ax_sum.bar(x + offset, neg_vals, bar_width, bottom=bottom_neg, color=colors[i],
+                                 hatch=hatches[j], edgecolor='k')
+            bottom_neg += neg_vals
+    ax_sum.set_title(f"Sum, plev={plev}")
+    if row == 1:
+        ax_sum.set_xlabel("Phase")
+    ax_sum.set_xticks(x)
+    ax_sum.set_xticklabels(phases)
+    # Only set y-label for first column
+    if row == 0:
+        ax_sum.set_ylabel("")
+    # Remove y-tick labels for sum column to indicate different scale
+    # Optionally, you can set a different y-limits for the sum column
+    # ax_sum.set_ylim(custom_min, custom_max)  # Set as needed
+
 # add hline at y=0 for all axes
 for ax in axes.flat:
     ax.axhline(0, color='k', linewidth=0.5, linestyle='--')
@@ -545,6 +604,6 @@ if legend_handles is not None and legend_labels is not None:
     axes[1, 0].legend(legend_handles, legend_labels, title="Component / Decade", loc="lower left")
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vq_component_bar.pdf",)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vq_component_bar.pdf",)
 
 # %%
