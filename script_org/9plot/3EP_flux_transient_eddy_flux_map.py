@@ -9,20 +9,22 @@ from src.data_helper import read_composite
 from src.plotting.util import erase_white_line, map_smooth
 import importlib
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from src.data_helper.read_variable import read_climatology
+from metpy.units import units
+import metpy.calc as mpcalc
 
 importlib.reload(read_composite)
 
 read_EP_flux = read_composite.read_EP_flux
-
+read_E_div = read_composite.read_E_div
+read_comp_var = read_composite.read_comp_var
 
 # %%
-levels_vq = np.arange(-3, 3.1, 0.5)
-levels_uv = np.arange(-1.5, 1.6, 0.5)
-levels_vt = np.arange(-3, 3.1, 0.5)
+
 # %%
 # read transient EP flux for positive and negative phase
 # read data for first decade with region = western
-Tphi_pos_first, Tp_pos_first, Tdivphi_pos_first, Tdiv_p_pos_first = read_EP_flux(
+_, _, Tdivphi_pos_first, Tdiv_p_pos_first = read_EP_flux(
     phase="pos",
     decade=1850,
     eddy="transient",
@@ -30,7 +32,7 @@ Tphi_pos_first, Tp_pos_first, Tdivphi_pos_first, Tdiv_p_pos_first = read_EP_flux
     lon_mean=False,
     region=None,
 )
-Tphi_neg_first, Tp_neg_first, Tdivphi_neg_first, Tdiv_p_neg_first = read_EP_flux(
+_, _, Tdivphi_neg_first, Tdiv_p_neg_first = read_EP_flux(
     phase="neg",
     decade=1850,
     eddy="transient",
@@ -41,7 +43,7 @@ Tphi_neg_first, Tp_neg_first, Tdivphi_neg_first, Tdiv_p_neg_first = read_EP_flux
 
 
 # last decade region
-Tphi_pos_last, Tp_pos_last, Tdivphi_pos_last, Tdiv_p_pos_last = read_EP_flux(
+_, _, Tdivphi_pos_last, Tdiv_p_pos_last = read_EP_flux(
     phase="pos",
     decade=2090,
     eddy="transient",
@@ -49,7 +51,7 @@ Tphi_pos_last, Tp_pos_last, Tdivphi_pos_last, Tdiv_p_pos_last = read_EP_flux(
     lon_mean=False,
     region=None,
 )
-Tphi_neg_last, Tp_neg_last, Tdivphi_neg_last, Tdiv_p_neg_last = read_EP_flux(
+_, _, Tdivphi_neg_last, Tdiv_p_neg_last = read_EP_flux(
     phase="neg",
     decade=2090,
     eddy="transient",
@@ -59,7 +61,7 @@ Tphi_neg_last, Tp_neg_last, Tdivphi_neg_last, Tdiv_p_neg_last = read_EP_flux(
 )
 # %%
 # read climatological EP flux
-Tphi_clima_first, Tp_clima_first, Tdivphi_clima_first, Tdiv_p_clima_first = (
+_, _, Tdivphi_clima_first, Tdiv_p_clima_first = (
     read_EP_flux(
         phase="clima",
         decade=1850,
@@ -69,7 +71,7 @@ Tphi_clima_first, Tp_clima_first, Tdivphi_clima_first, Tdiv_p_clima_first = (
         region=None,
     )
 )
-Tphi_clima_last, Tp_clima_last, Tdivphi_clima_last, Tdiv_p_clima_last = read_EP_flux(
+_, _, Tdivphi_clima_last, Tdiv_p_clima_last = read_EP_flux(
     phase="clima",
     decade=2090,
     eddy="transient",
@@ -115,10 +117,70 @@ Tdivphi_pos_last_ano = map_smooth(Tdivphi_pos_last_ano, 5, 5)
 Tdiv_p_pos_last_ano = map_smooth(Tdiv_p_pos_last_ano, 5, 5)
 Tdivphi_neg_last_ano = map_smooth(Tdivphi_neg_last_ano, 5, 5)
 Tdiv_p_neg_last_ano = map_smooth(Tdiv_p_neg_last_ano, 5, 5)
+#%%
+
+TEx_pos_first, _ = read_E_div(
+    phase="pos",
+    decade=1850,
+    eddy="transient",
+)
+TEx_neg_first, _ = read_E_div(
+    phase="neg",
+    decade=1850,
+    eddy="transient",
+)
+TEx_pos_last, _ = read_E_div(
+    phase="pos",
+    decade=2090,
+    eddy="transient",
+)
+TEx_neg_last, _ = read_E_div(
+    phase="neg",
+    decade=2090,
+    eddy="transient",
+)
+
+# read climatological E_div_x
+TEx_clima_first, _ = read_E_div(
+    phase="clima",
+    decade=1850,
+    eddy="transient",
+)
+TEx_clima_last, _ = read_E_div(
+    phase="clima",
+    decade=2090,
+    eddy="transient",
+)
+
+#%%
+TEx_pos_first_ano = TEx_pos_first - TEx_clima_first
+TEx_neg_first_ano = TEx_neg_first - TEx_clima_first
+TEx_pos_last_ano = TEx_pos_last - TEx_clima_last
+TEx_neg_last_ano = TEx_neg_last - TEx_clima_last
+
+# erase white line
+TEx_pos_first_ano = erase_white_line(TEx_pos_first_ano)
+TEx_neg_first_ano = erase_white_line(TEx_neg_first_ano)
+TEx_pos_last_ano = erase_white_line(TEx_pos_last_ano)
+TEx_neg_last_ano = erase_white_line(TEx_neg_last_ano)
+
+# erase white line for climatology
+TEx_clima_first = erase_white_line(TEx_clima_first)
+TEx_clima_last = erase_white_line(TEx_clima_last)
+
+#%%
+# smooth the data
+TEx_pos_first_ano = map_smooth(TEx_pos_first_ano, 5, 5)
+TEx_neg_first_ano = map_smooth(TEx_neg_first_ano, 5, 5)
+TEx_pos_last_ano = map_smooth(TEx_pos_last_ano, 5, 5)
+TEx_neg_last_ano = map_smooth(TEx_neg_last_ano, 5, 5)
+
+TEx_clima_first = map_smooth(TEx_clima_first, 5, 5)
+TEx_clima_last = map_smooth(TEx_clima_last, 5, 5)
 
 # %%
 # read steady EP flux for positive and negative phase
-Sphi_pos_first, Sp_pos_first, Sdivphi_pos_first, Sdiv_p_pos_first = read_EP_flux(
+_, _, Sdivphi_pos_first, Sdiv_p_pos_first = read_EP_flux(
     phase="pos",
     decade=1850,
     eddy="steady",
@@ -126,7 +188,7 @@ Sphi_pos_first, Sp_pos_first, Sdivphi_pos_first, Sdiv_p_pos_first = read_EP_flux
     lon_mean=False,
     region=None,
 )
-Sphi_neg_first, Sp_neg_first, Sdivphi_neg_first, Sdiv_p_neg_first = read_EP_flux(
+_, _, Sdivphi_neg_first, Sdiv_p_neg_first = read_EP_flux(
     phase="neg",
     decade=1850,
     eddy="steady",
@@ -136,7 +198,7 @@ Sphi_neg_first, Sp_neg_first, Sdivphi_neg_first, Sdiv_p_neg_first = read_EP_flux
 )
 
 # last decade
-Sphi_pos_last, Sp_pos_last, Sdivphi_pos_last, Sdiv_p_pos_last = read_EP_flux(
+_, _, Sdivphi_pos_last, Sdiv_p_pos_last = read_EP_flux(
     phase="pos",
     decade=2090,
     eddy="steady",
@@ -144,7 +206,7 @@ Sphi_pos_last, Sp_pos_last, Sdivphi_pos_last, Sdiv_p_pos_last = read_EP_flux(
     lon_mean=False,
     region=None,
 )
-Sphi_neg_last, Sp_neg_last, Sdivphi_neg_last, Sdiv_p_neg_last = read_EP_flux(
+_, _, Sdivphi_neg_last, Sdiv_p_neg_last = read_EP_flux(
     phase="neg",
     decade=2090,
     eddy="steady",
@@ -154,7 +216,7 @@ Sphi_neg_last, Sp_neg_last, Sdivphi_neg_last, Sdiv_p_neg_last = read_EP_flux(
 )
 # %%
 # read climatological EP flux
-Sphi_clima_first, Sp_clima_first, Sdivphi_clima_first, Sdiv_p_clima_first = (
+_, _, Sdivphi_clima_first, Sdiv_p_clima_first = (
     read_EP_flux(
         phase="clima",
         decade=1850,
@@ -164,7 +226,7 @@ Sphi_clima_first, Sp_clima_first, Sdivphi_clima_first, Sdiv_p_clima_first = (
         region=None,
     )
 )
-Sphi_clima_last, Sp_clima_last, Sdivphi_clima_last, Sdiv_p_clima_last = read_EP_flux(
+_, _, Sdivphi_clima_last, Sdiv_p_clima_last = read_EP_flux(
     phase="clima",
     decade=2090,
     eddy="steady",
@@ -211,10 +273,98 @@ Sdivphi_pos_last_ano = map_smooth(Sdivphi_pos_last_ano, 5, 5)
 Sdiv_p_pos_last_ano = map_smooth(Sdiv_p_pos_last_ano, 5, 5)
 Sdivphi_neg_last_ano = map_smooth(Sdivphi_neg_last_ano, 5, 5)
 Sdiv_p_neg_last_ano = map_smooth(Sdiv_p_neg_last_ano, 5, 5)
+#%%
 
+# read E_div_x for steady eddies
+SEx_pos_first, _ = read_E_div(
+    phase="pos",
+    decade=1850,
+    eddy="steady",
+)
+SEx_neg_first, _ = read_E_div(
+    phase="neg",
+    decade=1850,
+    eddy="steady",
+)
+
+SEx_pos_last, _ = read_E_div(
+    phase="pos",
+    decade=2090,
+    eddy="steady",
+)
+SEx_neg_last, _ = read_E_div(
+    phase="neg",
+    decade=2090,
+    eddy="steady",
+)
+# read climatological E_div_x for steady
+SEx_clima_first, _ = read_E_div(
+    phase="clima",
+    decade=1850,
+    eddy="steady",
+)
+SEx_clima_last, _ = read_E_div(
+    phase="clima",
+    decade=2090,
+    eddy="steady",
+)
+
+#%%
+# anomaly
+SEx_pos_first_ano = SEx_pos_first - SEx_clima_first
+SEx_neg_first_ano = SEx_neg_first - SEx_clima_first
+
+SEx_pos_last_ano = SEx_pos_last - SEx_clima_last
+SEx_neg_last_ano = SEx_neg_last - SEx_clima_last
+#%%
+# erase white line
+SEx_pos_first_ano = erase_white_line(SEx_pos_first_ano)
+SEx_neg_first_ano = erase_white_line(SEx_neg_first_ano)
+SEx_pos_last_ano = erase_white_line(SEx_pos_last_ano)
+SEx_neg_last_ano = erase_white_line(SEx_neg_last_ano)
+
+# erase white line for climatology
+SEx_clima_first = erase_white_line(SEx_clima_first)
+SEx_clima_last = erase_white_line(SEx_clima_last)
+
+#%%
+# smooth the data
+SEx_pos_first_ano = map_smooth(SEx_pos_first_ano, 5, 5)
+SEx_neg_first_ano = map_smooth(SEx_neg_first_ano, 5, 5)
+SEx_pos_last_ano = map_smooth(SEx_pos_last_ano, 5, 5)
+SEx_neg_last_ano = map_smooth(SEx_neg_last_ano, 5, 5)
+
+SEx_clima_first = map_smooth(SEx_clima_first, 5, 5)
+SEx_clima_last = map_smooth(SEx_clima_last, 5, 5)
+
+
+
+#%%
+# (v'^2 - u'^2) - (u'v') note that the minus sign is already included in the definition of Tdivphi
+Txy_pos_first = (TEx_pos_first_ano + Tdivphi_pos_first_ano).sel(plev=25000)
+Txy_neg_first = (TEx_neg_first_ano + Tdivphi_neg_first_ano).sel(plev=25000)
+Txy_pos_last = (TEx_pos_last_ano + Tdivphi_pos_last_ano).sel(plev=25000)
+Txy_neg_last = (TEx_neg_last_ano + Tdivphi_neg_last_ano).sel(plev=25000)
+# steady eddies
+Sxy_pos_first = (SEx_pos_first_ano + Sdivphi_pos_first_ano).sel(plev=25000)
+Sxy_neg_first = (SEx_neg_first_ano + Sdivphi_neg_first_ano).sel(plev=25000)
+Sxy_pos_last = (SEx_pos_last_ano + Sdivphi_pos_last_ano).sel(plev=25000)
+Sxy_neg_last = (SEx_neg_last_ano + Sdivphi_neg_last_ano).sel(plev=25000)
+#%%
+# sum of transient and steady eddies
+Div_xy_pos_first = Txy_pos_first + Sxy_pos_first
+Div_xy_neg_first = Txy_neg_first + Sxy_neg_first
+
+Div_xy_pos_last = Txy_pos_last + Sxy_pos_last
+Div_xy_neg_last = Txy_neg_last + Sxy_neg_last
+
+#%%
+levels_vq = np.arange(-3, 3.1, 0.5)
+levels_uv = np.arange(-4, 5, 1)
+levels_vt = np.arange(-10, 10.1, 2)
 
 # %%
-# transient eddies
+# divergence x, y
 fig, axes = plt.subplots(
     2,
     3,
@@ -223,35 +373,28 @@ fig, axes = plt.subplots(
     sharex=True,
     sharey=False,
 )
-# first row for pos
-# contourf for first decade
-# contour for last decade
-# v'q'
-vq_color = (
-    (Tdivphi_pos_first_ano + Tdiv_p_pos_first_ano)
-    .sel(plev=85000)
-    .plot.contourf(
-        ax=axes[0, 0],
-        levels=levels_vq,
-        cmap="RdBu_r",
-        add_colorbar=False,
-        extend="both",
-        transform=ccrs.PlateCarree(),
-    )
-)
-
-
-(Tdivphi_pos_last_ano + Tdiv_p_pos_last_ano).sel(plev=85000).plot.contour(
+# first row for Div_xy at 25000 Pa
+# sum of transient and steady eddies
+sum_color = Div_xy_pos_first.plot.contourf(
     ax=axes[0, 0],
-    levels=[l for l in levels_vq if l != 0],
+    levels=levels_uv,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+
+Div_xy_pos_last.plot.contour(
+    ax=axes[0, 0],
+    levels=[l for l in levels_uv if l != 0],
     colors="k",
     linewidths=0.5,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
 
-# second col for u'v'
-uv_color = Tdivphi_pos_first_ano.sel(plev=25000).plot.contourf(
+# transient
+trans_color = Txy_pos_first.plot.contourf(
     ax=axes[0, 1],
     levels=levels_uv,
     cmap="RdBu_r",
@@ -259,7 +402,8 @@ uv_color = Tdivphi_pos_first_ano.sel(plev=25000).plot.contourf(
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-Tdivphi_pos_last_ano.sel(plev=25000).plot.contour(
+
+Txy_pos_last.plot.contour(
     ax=axes[0, 1],
     levels=[l for l in levels_uv if l != 0],
     colors="k",
@@ -268,57 +412,35 @@ Tdivphi_pos_last_ano.sel(plev=25000).plot.contour(
     transform=ccrs.PlateCarree(),
 )
 
-# third col for v't'
-vt_color = Tdiv_p_pos_first_ano.sel(plev=85000).plot.contourf(
+# steady
+steady_color = Sxy_pos_first.plot.contourf(
     ax=axes[0, 2],
-    levels=levels_vt,
+    levels=levels_uv,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-Tdiv_p_pos_last_ano.sel(plev=85000).plot.contour(
+Sxy_pos_last.plot.contour(
     ax=axes[0, 2],
-    levels=[l for l in levels_vt if l != 0],
+    levels=[l for l in levels_uv if l != 0],
     colors="k",
     linewidths=0.5,
     transform=ccrs.PlateCarree(),
     extend="both",
 )
-# second row for neg
-# first col for v'q'
-vq_color_neg = (
-    (Tdivphi_neg_first_ano + Tdiv_p_neg_first_ano)
-    .sel(plev=85000)
-    .plot.contourf(
-        ax=axes[1, 0],
-        levels=levels_vq,
-        cmap="RdBu_r",
-        add_colorbar=False,
-        extend="both",
-        transform=ccrs.PlateCarree(),
-    )
-)
-(Tdivphi_neg_last_ano + Tdiv_p_neg_last_ano).sel(plev=85000).plot.contour(
+
+# second row for negative phase
+sum_color_neg = Div_xy_neg_first.plot.contourf(
     ax=axes[1, 0],
-    levels=[l for l in levels_vq if l != 0],
-    colors="k",
-    linewidths=0.5,
-    extend="both",
-    transform=ccrs.PlateCarree(),
-)
-
-# second col for u'v'
-uv_color_neg = Tdivphi_neg_first_ano.sel(plev=25000).plot.contourf(
-    ax=axes[1, 1],
     levels=levels_uv,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-Tdivphi_neg_last_ano.sel(plev=25000).plot.contour(
-    ax=axes[1, 1],
+Div_xy_neg_last.plot.contour(
+    ax=axes[1, 0],
     levels=[l for l in levels_uv if l != 0],
     colors="k",
     linewidths=0.5,
@@ -326,26 +448,41 @@ Tdivphi_neg_last_ano.sel(plev=25000).plot.contour(
     transform=ccrs.PlateCarree(),
 )
 
-# third col for v't'
-vt_color_neg = Tdiv_p_neg_first_ano.sel(plev=85000).plot.contourf(
-    ax=axes[1, 2],
-    levels=levels_vt,
+#transient
+Txy_xy_neg_first = Txy_neg_first.plot.contourf(
+    ax=axes[1, 1],
+    levels=levels_uv,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-Tdiv_p_neg_last_ano.sel(plev=85000).plot.contour(
+Txy_neg_last.plot.contour(
+    ax=axes[1, 1],
+    levels=[l for l in levels_uv if l != 0],
+    colors="k",
+    linewidths=0.5,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+# steady
+Sxy_xy_neg_first = Sxy_neg_first.plot.contourf(
     ax=axes[1, 2],
-    levels=[l for l in levels_vt if l != 0],
+    levels=levels_uv,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+Sxy_neg_last.plot.contour(
+    ax=axes[1, 2],
+    levels=[l for l in levels_uv if l != 0],
     colors="k",
     linewidths=0.5,
     transform=ccrs.PlateCarree(),
     extend="both",
 )
 
-
-# add cax under the second row
 
 # Add colorbar axes using fig.add_axes for better alignment with tight_layout
 
@@ -376,35 +513,25 @@ cax_vt = fig.add_axes([
 ])
 
 fig.colorbar(
-    vq_color,
+    sum_color,
     cax=cax_vq,
     orientation="horizontal",
-    label=r"$v'q'$ [m$^2$ s$^{-1} day^{-1}$]",
+    label=r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})-\frac{\partial}{\partial y} (\overline{u'v'})$",
 )
 fig.colorbar(
-    uv_color,
+    trans_color,
     cax=cax_uv,
     orientation="horizontal",
-    label=r"$- \frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-1} day^{-1}$]",
+    label=r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})-\frac{\partial}{\partial y} (\overline{u'v'})$ [m s$^{-1}$ day$^{-1}$]",
 )
 fig.colorbar(
-    vt_color,
+    steady_color,
     cax=cax_vt,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m$^2$ s$^{-1}$ day$^{-1}$]",
+    label=r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})-\frac{\partial}{\partial y} (\overline{u'v'})$",
 )
 
 # no y labels from second row on, no x labels at the frist row
-for ax in axes[0, :]:
-    ax.set_xlabel("")
-for ax in axes[:, 0]:
-    ax.set_ylabel("Pressure [Pa]")
-
-for ax in axes[:, 1:].flat:
-    ax.set_ylabel("")
-
-for ax in axes[1, :]:
-    ax.set_xlabel("Latitude [°N]")
 
 for ax in axes.flat:
     ax.coastlines(color="grey", linewidth=1)
@@ -417,18 +544,31 @@ for ax in axes.flat:
     )
     ax.set_title("")
 
+# save
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0EP_flux/transient_flux_component_map.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_div_xy_map.pdf",
     bbox_inches="tight",
     dpi=300,
 )
 #%%
-Slevels_vq = np.arange(-10, 10.1, 2)
-Slevels_uv = np.arange(-1.5, 1.6, 0.5)
-Slevels_vt = np.arange(-10, 10.1, 2)
+# vertical compoenent at 85000 Pa
+sum_div_p_pos_first = (Tdiv_p_pos_first_ano + Sdiv_p_pos_first_ano).sel(plev=85000)
+trans_div_p_pos_first = Tdiv_p_pos_first_ano.sel(plev=85000)
+steady_div_p_pos_first = Sdiv_p_pos_first_ano.sel(plev=85000)
 
+sum_div_p_neg_first = (Tdiv_p_neg_first_ano + Sdiv_p_neg_first_ano).sel(plev=85000)
+trans_div_p_neg_first = Tdiv_p_neg_first_ano.sel(plev=85000)
+steady_div_p_neg_first = Sdiv_p_neg_first_ano.sel(plev=85000)
+
+# last
+sum_div_p_pos_last = (Tdiv_p_pos_last_ano + Sdiv_p_pos_last_ano).sel(plev=85000)
+trans_div_p_pos_last = Tdiv_p_pos_last_ano.sel(plev=85000)
+steady_div_p_pos_last = Sdiv_p_pos_last_ano.sel(plev=85000)
+
+sum_div_p_neg_last = (Tdiv_p_neg_last_ano + Sdiv_p_neg_last_ano).sel(plev=85000)
+trans_div_neg_last = Tdiv_p_neg_last_ano.sel(plev=85000)
+steady_div_p_neg_last = Sdiv_p_neg_last_ano.sel(plev=85000)
 #%%
-# steady eddies
 fig, axes = plt.subplots(
     2,
     3,
@@ -437,121 +577,118 @@ fig, axes = plt.subplots(
     sharex=True,
     sharey=False,
 )
-# first row for pos
-# v'q'
-vq_color = (
-    (Sdivphi_pos_first_ano + Sdiv_p_pos_first_ano)
-    .sel(plev=85000)
-    .plot.contourf(
-        ax=axes[0, 0],
-        levels=Slevels_vq,
-        cmap="RdBu_r",
-        add_colorbar=False,
-        extend="both",
-        transform=ccrs.PlateCarree(),
-    )
-)
-(Sdivphi_pos_last_ano + Sdiv_p_pos_last_ano).sel(plev=85000).plot.contour(
+
+sum_color = sum_div_p_pos_first.plot.contourf(
     ax=axes[0, 0],
-    levels=[l for l in Slevels_vq if l != 0],
-    colors="k",
-    linewidths=0.5,
-    extend="both",
-    transform=ccrs.PlateCarree(),
-)
-# u'v'
-uv_color = Sdivphi_pos_first_ano.sel(plev=25000).plot.contourf(
-    ax=axes[0, 1],
-    levels=Slevels_uv,
+    levels=levels_vt,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-Sdivphi_pos_last_ano.sel(plev=25000).plot.contour(
-    ax=axes[0, 1],
-    levels=[l for l in Slevels_uv if l != 0],
+sum_div_p_pos_last.plot.contour(
+    ax=axes[0, 0],
+    levels=[l for l in levels_vt if l != 0],
     colors="k",
     linewidths=0.5,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-# v't'
-vt_color = Sdiv_p_pos_first_ano.sel(plev=85000).plot.contourf(
-    ax=axes[0, 2],
-    levels=Slevels_vt,
+
+# transient
+trans_color = trans_div_p_pos_first.plot.contourf(
+    ax=axes[0, 1],
+    levels=levels_vt/4,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-Sdiv_p_pos_last_ano.sel(plev=85000).plot.contour(
+trans_div_p_pos_last.plot.contour(
+    ax=axes[0, 1],
+    levels=[l for l in levels_vt/4 if l != 0],
+    colors="k",
+    linewidths=0.5,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+
+# steady
+steady_color = steady_div_p_pos_first.plot.contourf(
     ax=axes[0, 2],
-    levels=[l for l in Slevels_vt if l != 0],
+    levels=levels_vt,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+steady_div_p_pos_last.plot.contour(
+    ax=axes[0, 2],
+    levels=[l for l in levels_vt if l != 0],
     colors="k",
     linewidths=0.5,
     transform=ccrs.PlateCarree(),
     extend="both",
 )
-# second row for neg
-# v'q'
-vq_color_neg = (
-    (Sdivphi_neg_first_ano + Sdiv_p_neg_first_ano)
-    .sel(plev=85000)
-    .plot.contourf(
-        ax=axes[1, 0],
-        levels=Slevels_vq,
-        cmap="RdBu_r",
-        add_colorbar=False,
-        extend="both",
-        transform=ccrs.PlateCarree(),
-    )
-)
-(Sdivphi_neg_last_ano + Sdiv_p_neg_last_ano).sel(plev=85000).plot.contour(
+# second row for negative phase
+sum_color_neg = sum_div_p_neg_first.plot.contourf(
     ax=axes[1, 0],
-    levels=[l for l in Slevels_vq if l != 0],
-    colors="k",
-    linewidths=0.5,
-    extend="both",
-    transform=ccrs.PlateCarree(),
-)
-# u'v'
-uv_color_neg = Sdivphi_neg_first_ano.sel(plev=25000).plot.contourf(
-    ax=axes[1, 1],
-    levels=Slevels_uv,
+    levels=levels_vt,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-Sdivphi_neg_last_ano.sel(plev=25000).plot.contour(
-    ax=axes[1, 1],
-    levels=[l for l in Slevels_uv if l != 0],
+sum_div_p_neg_last.plot.contour(
+    ax=axes[1, 0],
+    levels=[l for l in levels_vt if l != 0],
     colors="k",
     linewidths=0.5,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-# v't'
-vt_color_neg = Sdiv_p_neg_first_ano.sel(plev=85000).plot.contourf(
-    ax=axes[1, 2],
-    levels=Slevels_vt,
+# transient
+trans_color = trans_div_neg_last.plot.contourf(
+    ax=axes[1, 1],
+    levels=levels_vt/4,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-Sdiv_p_neg_last_ano.sel(plev=85000).plot.contour(
-    ax=axes[1, 2],
-    levels=[l for l in Slevels_vt if l != 0],
+trans_div_neg_last.plot.contour(
+    ax=axes[1, 1],
+    levels=[l for l in levels_vt/4 if l != 0],
     colors="k",
     linewidths=0.5,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+
+# steady
+steady_color = steady_div_p_neg_last.plot.contourf(
+    ax=axes[1, 2],
+    levels=levels_vt,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+steady_div_p_neg_last.plot.contour(
+    ax=axes[1, 2],
+    levels=[l for l in levels_vt if l != 0],
+    colors="k",
+    linewidths=0.5, 
     transform=ccrs.PlateCarree(),
     extend="both",
 )
 
+# Add colorbar axes using fig.add_axes for better alignment with tight_layout
+
+# Get position of the bottom row axes to align colorbars
 fig.tight_layout()
-fig.subplots_adjust(bottom=0.12)
+fig.subplots_adjust(bottom=0.12)  # leave space for colorbars
+# Calculate colorbar axes positions (shrink by 0.8)
 width_shrink = axes[1, 0].get_position().width * 0.8
 offset = (axes[1, 0].get_position().width - width_shrink) / 2
 
@@ -575,32 +712,26 @@ cax_vt = fig.add_axes([
 ])
 
 fig.colorbar(
-    vq_color,
+    sum_color,
     cax=cax_vq,
     orientation="horizontal",
-    label=r"$v'q'$ [m$^2$ s$^{-1} day^{-1}$]",
+    label= r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+
 )
 fig.colorbar(
-    uv_color,
+    trans_color,
     cax=cax_uv,
     orientation="horizontal",
-    label=r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-1} day^{-1}$]",
+    label= r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
 )
 fig.colorbar(
-    vt_color,
+    steady_color,
     cax=cax_vt,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m$^2$ s$^{-1}$ day$^{-1}$]",
+    label= r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
 )
 
-for ax in axes[0, :]:
-    ax.set_xlabel("")
-for ax in axes[:, 0]:
-    ax.set_ylabel("Pressure [Pa]")
-for ax in axes[:, 1:].flat:
-    ax.set_ylabel("")
-for ax in axes[1, :]:
-    ax.set_xlabel("Latitude [°N]")
+# no y labels from second row on, no x labels at the frist row
 
 for ax in axes.flat:
     ax.coastlines(color="grey", linewidth=1)
@@ -613,22 +744,56 @@ for ax in axes.flat:
     )
     ax.set_title("")
 
+# save
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0EP_flux/steady_flux_component_map.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_div_p_map.pdf",
     bbox_inches="tight",
     dpi=300,
 )
-# %%
-levels_vq_clima = np.arange(-30, 30.1, 5)
-levels_uv_clima = np.arange(-5, 6, 1)
-levels_vt_clima = np.arange(-30, 30.1, 5)
 
-Slevels_vq_clima = np.arange(-50, 50.1, 10)
-Slevels_uv_clima = np.arange(-5, 6, 1)
-Slevels_vt_clima = np.arange(-50, 50.1, 10)
+#%%
+# E_x
+sum_Ex_pos_first = (TEx_pos_first_ano + SEx_pos_first_ano).sel(plev=25000)
+sum_Ex_neg_first = (TEx_neg_first_ano + SEx_neg_first_ano).sel(plev=25000)
 
-# %%
-# plot the climatology maps (matching the style of previous plots)
+sum_Ex_pos_last = (TEx_pos_last_ano + SEx_pos_last_ano).sel(plev=25000)
+sum_Ex_neg_last = (TEx_neg_last_ano + SEx_neg_last_ano).sel(plev=25000)
+
+trans_Ex_pos_first = TEx_pos_first_ano.sel(plev=25000)
+trans_Ex_neg_first = TEx_neg_first_ano.sel(plev=25000)
+
+trans_Ex_pos_last = TEx_pos_last_ano.sel(plev=25000)
+trans_Ex_neg_last = TEx_neg_last_ano.sel(plev=25000)
+
+steady_Ex_pos_first = SEx_pos_first_ano.sel(plev=25000)
+steady_Ex_neg_first = SEx_neg_first_ano.sel(plev=25000)
+
+steady_Ex_pos_last = SEx_pos_last_ano.sel(plev=25000)
+steady_Ex_neg_last = SEx_neg_last_ano.sel(plev=25000)
+#%%
+#E_y
+sum_Ey_pos_first = (Tdivphi_pos_first_ano + Sdivphi_pos_first_ano).sel(plev=25000)
+sum_Ey_neg_first = (Tdivphi_neg_first_ano + Sdivphi_neg_first_ano).sel(plev=25000)
+
+sum_Ey_pos_last = (Tdivphi_pos_last_ano + Sdivphi_pos_last_ano).sel(plev=25000)
+sum_Ey_neg_last = (Tdivphi_neg_last_ano + Sdivphi_neg_last_ano).sel(plev=25000)
+
+trans_Ey_pos_first = Tdivphi_pos_first_ano.sel(plev=25000)
+trans_Ey_neg_first  = Tdivphi_neg_first_ano.sel(plev=25000)
+
+trans_Ey_pos_last = Tdivphi_pos_last_ano.sel(plev=25000)
+trans_Ey_neg_last = Tdivphi_neg_last_ano.sel(plev=25000)
+
+steady_Ey_pos_first = Sdivphi_pos_first_ano.sel(plev=25000)
+steady_Ey_neg_first = Sdivphi_neg_first_ano.sel(plev=25000)
+
+steady_Ey_pos_last = Sdivphi_pos_last_ano.sel(plev=25000)
+steady_Ey_neg_last = Sdivphi_neg_last_ano.sel(plev=25000)
+
+#%%
+levels_Ey = np.arange(-2, 2.1, 0.5)
+#%%
+# plot E_y
 fig, axes = plt.subplots(
     2,
     3,
@@ -637,167 +802,161 @@ fig, axes = plt.subplots(
     sharex=True,
     sharey=False,
 )
-
-# v'q' transient
-vq_color = (
-    (Tdivphi_clima_first + Tdiv_p_clima_first)
-    .sel(plev=85000)
-    .plot.contourf(
-        ax=axes[0, 0],
-        levels=levels_vq_clima,
-        cmap="RdBu_r",
-        add_colorbar=True,
-        extend="both",
-        transform=ccrs.PlateCarree(),
-        cbar_kwargs={
-            "orientation": "horizontal",
-            "label": r"$v'q'$ [m$^2$ s$^{-1} day^{-1}$]",
-            "shrink": 0.8,
-            "pad": 0.05,
-        },
-
-    )
-)
-(Tdivphi_clima_last + Tdiv_p_clima_last).sel(plev=85000).plot.contour(
+# first row for pos
+sum_color = sum_Ey_pos_first.plot.contourf(
     ax=axes[0, 0],
-    levels=[l for l in levels_vq_clima if l != 0],
+    levels=levels_Ey,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+sum_Ey_pos_last.plot.contour(
+    ax=axes[0, 0],
+    levels=[l for l in levels_Ey if l != 0],
     colors="k",
     linewidths=0.5,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-
-# u'v' transient
-uv_color = Tdivphi_clima_first.sel(plev=25000).plot.contourf(
+# transient
+trans_color = trans_Ey_pos_first.plot.contourf(
     ax=axes[0, 1],
-    levels=levels_uv_clima,
+    levels=levels_Ey/2,
     cmap="RdBu_r",
-    add_colorbar=True,
+    add_colorbar=False,
     extend="both",
     transform=ccrs.PlateCarree(),
-    cbar_kwargs={
-        "orientation": "horizontal",
-        "label": r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-1} day^{-1}$]",
-        "shrink": 0.8,
-        "pad": 0.05,
-    },
 )
-Tdivphi_clima_last.sel(plev=25000).plot.contour(
+trans_Ey_pos_last.plot.contour(
     ax=axes[0, 1],
-    levels=[l for l in levels_uv_clima if l != 0],
+    levels=[l for l in levels_Ey/2 if l != 0],
     colors="k",
     linewidths=0.5,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-
-# v't' transient
-vt_color = Tdiv_p_clima_first.sel(plev=85000).plot.contourf(
+# steady
+steady_color = steady_Ey_pos_first.plot.contourf(
+    ax=axes[0, 2],  
+    levels=levels_Ey,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+steady_Ey_pos_last.plot.contour(
     ax=axes[0, 2],
-    levels=levels_vt_clima,
-    cmap="RdBu_r",
-    add_colorbar=True,
-    extend="both",
-    transform=ccrs.PlateCarree(),
-    cbar_kwargs={
-        "orientation": "horizontal",
-        "label": r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m$^2$ s$^{-1}$ day$^{-1}$]",
-        "shrink": 0.8,
-        "pad": 0.05,
-    },
-)
-Tdiv_p_clima_last.sel(plev=85000).plot.contour(
-    ax=axes[0, 2],
-    levels=[l for l in levels_vt_clima if l != 0],
+    levels=[l for l in levels_Ey if l != 0],
     colors="k",
     linewidths=0.5,
-    extend="both",
     transform=ccrs.PlateCarree(),
+    extend="both",
 )
-
-# v'q' steady
-(Sdivphi_clima_first + Sdiv_p_clima_first).sel(plev=85000).plot.contourf(
+# second row for neg
+sum_color_neg = sum_Ey_neg_first.plot.contourf(
     ax=axes[1, 0],
-    levels=Slevels_vq_clima,
+    levels=levels_Ey,
     cmap="RdBu_r",
-    add_colorbar=True,
+    add_colorbar=False,
     extend="both",
     transform=ccrs.PlateCarree(),
-    cbar_kwargs={
-        "orientation": "horizontal",
-        "label": r"$v'q'$ [m$^2$ s$^{-1} day^{-1}$]",
-        "shrink": 0.8,
-        "pad": 0.05,
-    },
 )
-(Sdivphi_clima_last + Sdiv_p_clima_last).sel(plev=85000).plot.contour(
+sum_Ey_neg_last.plot.contour(
     ax=axes[1, 0],
-    levels=[l for l in Slevels_vq_clima if l != 0],
+    levels=[l for l in levels_Ey if l != 0],
     colors="k",
     linewidths=0.5,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-
-# u'v' steady
-Sdivphi_clima_first.sel(plev=25000).plot.contourf(
+# transient
+trans_color = trans_Ey_neg_first.plot.contourf(
     ax=axes[1, 1],
-    levels=Slevels_uv_clima,
+    levels=levels_Ey/2,
     cmap="RdBu_r",
-    add_colorbar=True,
+    add_colorbar=False,
     extend="both",
     transform=ccrs.PlateCarree(),
-    cbar_kwargs={
-        "orientation": "horizontal",
-        "label": r"$-\frac{\partial}{\partial y} \overline{u'v'}$ [m$^2$ s$^{-1} day^{-1}$]",
-        "shrink": 0.8,
-        "pad": 0.05,
-    },
 )
-Sdivphi_clima_last.sel(plev=25000).plot.contour(
+trans_Ey_neg_last.plot.contour(
     ax=axes[1, 1],
-    levels=[l for l in Slevels_uv_clima if l != 0],
+    levels=[l for l in levels_Ey/2 if l != 0],
     colors="k",
     linewidths=0.5,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
-
-# v't' steady
-Sdiv_p_clima_first.sel(plev=85000).plot.contourf(
+# steady
+steady_color = steady_Ey_neg_first.plot.contourf(
     ax=axes[1, 2],
-    levels=Slevels_vt_clima,
+    levels=levels_Ey,
     cmap="RdBu_r",
-    add_colorbar=True,
+    add_colorbar=False,
     extend="both",
     transform=ccrs.PlateCarree(),
-    cbar_kwargs={
-        "orientation": "horizontal",
-        "label":r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m$^2$ s$^{-1}$ day$^{-1}$]",
-        "shrink": 0.8,
-        "pad": 0.05,
-    },
 )
-Sdiv_p_clima_last.sel(plev=85000).plot.contour(
+steady_Ey_neg_last.plot.contour(
     ax=axes[1, 2],
-    levels=[l for l in Slevels_vt_clima if l != 0],
+    levels=[l for l in levels_Ey if l != 0],
     colors="k",
     linewidths=0.5,
-    extend="both",
     transform=ccrs.PlateCarree(),
+    extend="both",
 )
 
 
+# Add colorbar axes using fig.add_axes for better alignment with tight_layout
 
-# Axis labels and formatting
-for ax in axes[0, :]:
-    ax.set_xlabel("")
-for ax in axes[:, 0]:
-    ax.set_ylabel("Pressure [Pa]")
-for ax in axes[:, 1:].flat:
-    ax.set_ylabel("")
-for ax in axes[1, :]:
-    ax.set_xlabel("Latitude [°N]")
+# Get position of the bottom row axes to align colorbars
+fig.tight_layout()
+fig.subplots_adjust(bottom=0.12)  # leave space for colorbars
+# Calculate colorbar axes positions (shrink by 0.8)
+width_shrink = axes[1, 0].get_position().width * 0.8
+offset = (axes[1, 0].get_position().width - width_shrink) / 2
+
+cax_vq = fig.add_axes([
+    axes[1, 0].get_position().x0 + offset,
+    0.08,
+    width_shrink,
+    0.02
+])
+cax_uv = fig.add_axes([
+    axes[1, 1].get_position().x0 + offset,
+    0.08,
+    width_shrink,
+    0.02
+])
+cax_vt = fig.add_axes([
+    axes[1, 2].get_position().x0 + offset,
+    0.08,
+    width_shrink,
+    0.02
+])
+
+fig.colorbar(
+    sum_color,
+    cax=cax_vq,
+    orientation="horizontal",
+    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
+
+)
+fig.colorbar(
+    trans_color,
+    cax=cax_uv,
+    orientation="horizontal",
+    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
+    # ticks label every 2
+    ticks = levels_Ey[::2] / 2  # levels_Ey/2 is used for transients
+)
+fig.colorbar(
+    steady_color,
+    cax=cax_vt,
+    orientation="horizontal",
+    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
+)
+
+# no y labels from second row on, no x labels at the frist row
 
 for ax in axes.flat:
     ax.coastlines(color="grey", linewidth=1)
@@ -810,8 +969,192 @@ for ax in axes.flat:
     )
     ax.set_title("")
 
+# save
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0EP_flux/climatological_flux_component_map.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_Ey_map.pdf",
+    bbox_inches="tight",
+    dpi=300,
+)
+
+# %%
+levels_Ex = np.arange(-5, 5.1, 1)
+# plot E_x
+fig, axes = plt.subplots(
+    2,
+    3,
+    figsize=(12, 9),
+    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
+    sharex=True,
+    sharey=False,
+)
+# first row for pos
+sum_color = sum_Ex_pos_first.plot.contourf(
+    ax=axes[0, 0],
+    levels=levels_Ex,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+sum_Ex_pos_last.plot.contour(
+    ax=axes[0, 0],
+    levels=[l for l in levels_Ex if l != 0],
+    colors="k",
+    linewidths=0.5,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+# transient
+trans_color = trans_Ex_pos_first.plot.contourf(
+    ax=axes[0, 1],
+    levels=levels_Ex/2,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+trans_Ex_pos_last.plot.contour(
+    ax=axes[0, 1],
+    levels=[l for l in levels_Ex/2 if l != 0],
+    colors="k",
+    linewidths=0.5,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+# steady
+steady_color = steady_Ex_pos_first.plot.contourf(
+    ax=axes[0, 2],  
+    levels=levels_Ex,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+steady_Ex_pos_last.plot.contour(
+    ax=axes[0, 2],
+    levels=[l for l in levels_Ex if l != 0],
+    colors="k",
+    linewidths=0.5,
+    transform=ccrs.PlateCarree(),
+    extend="both",
+)
+# second row for neg
+sum_color_neg = sum_Ex_neg_first.plot.contourf(
+    ax=axes[1, 0],
+    levels=levels_Ex,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+sum_Ex_neg_last.plot.contour(
+    ax=axes[1, 0],
+    levels=[l for l in levels_Ex if l != 0],
+    colors="k",
+    linewidths=0.5,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+# transient
+trans_color = trans_Ex_neg_first.plot.contourf(
+    ax=axes[1, 1],
+    levels=levels_Ex/2,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+trans_Ex_neg_last.plot.contour(
+    ax=axes[1, 1],
+    levels=[l for l in levels_Ex/2 if l != 0],
+    colors="k",
+    linewidths=0.5,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+# steady
+steady_color = steady_Ex_neg_first.plot.contourf(
+    ax=axes[1, 2],
+    levels=levels_Ex,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+steady_Ex_neg_last.plot.contour(
+    ax=axes[1, 2],
+    levels=[l for l in levels_Ex if l != 0],
+    colors="k",
+    linewidths=0.5,
+    transform=ccrs.PlateCarree(),
+    extend="both",
+)
+
+# Add colorbar axes using fig.add_axes for better alignment with tight_layout
+
+# Get position of the bottom row axes to align colorbars
+fig.tight_layout()
+fig.subplots_adjust(bottom=0.12)  # leave space for colorbars
+# Calculate colorbar axes positions (shrink by 0.8)
+width_shrink = axes[1, 0].get_position().width * 0.8
+offset = (axes[1, 0].get_position().width - width_shrink) / 2
+
+cax_vq = fig.add_axes([
+    axes[1, 0].get_position().x0 + offset,
+    0.08,
+    width_shrink,
+    0.02
+])
+cax_uv = fig.add_axes([
+    axes[1, 1].get_position().x0 + offset,
+    0.08,
+    width_shrink,
+    0.02
+])
+cax_vt = fig.add_axes([
+    axes[1, 2].get_position().x0 + offset,
+    0.08,
+    width_shrink,
+    0.02
+])
+
+fig.colorbar(
+    sum_color,
+    cax=cax_vq,
+    orientation="horizontal",
+    label= r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$",
+)
+fig.colorbar(
+    trans_color,
+    cax=cax_uv,
+    orientation="horizontal",
+    label= r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$",
+    # ticks label every 2
+    ticks = levels_Ex[::2] / 2  # levels_Ex/2 is used for transients
+)
+fig.colorbar(
+    steady_color,
+    cax=cax_vt,
+    orientation="horizontal",
+    label= r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$",
+)
+
+# no y labels from second row on, no x labels at the frist row
+
+for ax in axes.flat:
+    ax.coastlines(color="grey", linewidth=1)
+    gl = ax.gridlines(
+        draw_labels=False,
+        linewidth=1,
+        color="grey",
+        alpha=0.5,
+        linestyle="dotted",
+    )
+    ax.set_title("")
+
+# save
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_Ex_map.pdf",
     bbox_inches="tight",
     dpi=300,
 )
