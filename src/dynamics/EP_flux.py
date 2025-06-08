@@ -428,5 +428,12 @@ def E_div(M2, upvp):
     dM2dx.attrs['long_name'] = 'x divergence (2M)'
     dupvpdy.attrs['long_name'] = 'y divergence (N)'
 
-    
-    return dM2dx.metpy.dequantify(), dupvpdy.metpy.dequantify()
+    dM2dx = dM2dx.metpy.dequantify()
+    dupvpdy = dupvpdy.metpy.dequantify()
+
+	# drop variable 'metpy_crs'
+    if 'metpy_crs' in dM2dx.coords:
+        dM2dx = dM2dx.drop_vars('metpy_crs')
+    if 'metpy_crs' in dupvpdy.coords:
+        dupvpdy = dupvpdy.drop_vars('metpy_crs')
+    return dM2dx, dupvpdy
