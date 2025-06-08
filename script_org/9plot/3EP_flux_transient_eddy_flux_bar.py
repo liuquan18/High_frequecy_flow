@@ -512,7 +512,7 @@ for ax in axes[:,0]:
 
 # Move the legend to axes[1,1] lower left (since transient is now in col 1)
 if legend_handles is not None and legend_labels is not None:
-    axes[1, 1].legend(legend_handles, legend_labels, title="Component / Decade", loc="lower left")
+    axes[1, 0].legend(legend_handles, legend_labels, title="Component / Decade", loc="lower left", ncol=2, frameon=True)
 
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vq_component_bar_withheat.pdf",
