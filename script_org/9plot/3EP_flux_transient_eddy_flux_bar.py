@@ -460,7 +460,7 @@ for row, plev in enumerate(plevs):
     if row == 1:
         handles, labels_ = ax.get_legend_handles_labels()
         label_map = {
-            "P": r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+            "P": r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
             "N": r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
             "M2": r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$"
         }
@@ -586,7 +586,7 @@ for row, plev in enumerate(plevs):
     if row == 1:
         handles, labels_ = ax_sum.get_legend_handles_labels()
         label_map = {
-            "P": r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+            "P": r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
             "N": r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
             "M2": r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$"
         }
