@@ -379,23 +379,15 @@ def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',ysca
 		return Fphi*dx,Fp*dy,ax
 	else:
 		return Fphi*dx,Fp*dy
-def E_div(decade, phase, eddy='prime', **kwargs):
+	
+#%%
+def E_div(M2, upvp):
+
     """
-    Calculate the E-vector divergence for a given decade and phase
-    """
-    # Read data
-    logging.info(f"Read data for {phase} phase in {decade}")
-
-    M2 = read_comp_var(f'M2_{eddy}', phase, decade, time_window = (-10, 5), name = 'M2', model_dir = 'MPI_GE_CMIP6_allplev')
-    if eddy == 'transient':
-        upvp = read_comp_var('upvp', phase, decade, time_window = (-10, 5), name = 'upvp', model_dir = 'MPI_GE_CMIP6_allplev')
-    else:
-        upvp = read_comp_var('usvs', phase, decade, time_window = (-10, 5), name = 'usvs', model_dir = 'MPI_GE_CMIP6_allplev')
-
-    # Calculate the divergence of the E-vector
-    logging.info(f"Calculate E-vector divergence for {phase} phase in {decade}")
-
-    upvp = -1 * upvp  # flip the sign of the E-vector
+    M2: v'^2 - u'^2 [m^2/s^2]
+    upvp: u'v' [m^2/s^2]
+    """	
+    upvp = -1 * upvp  
     M2 = M2.metpy.assign_crs(
         grid_mapping_name='latitude_longitude',
         earth_radius=6371229.0
@@ -435,7 +427,6 @@ def E_div(decade, phase, eddy='prime', **kwargs):
     dupvpdy.attrs['units'] = 'm/s/day'
     dM2dx.attrs['long_name'] = 'x divergence (2M)'
     dupvpdy.attrs['long_name'] = 'y divergence (N)'
-    logging.info(f"Finished calculating E-vector divergence for {phase} phase in {decade}")
 
     
     return dM2dx.metpy.dequantify(), dupvpdy.metpy.dequantify()
