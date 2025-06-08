@@ -604,6 +604,7 @@ if legend_handles is not None and legend_labels is not None:
     axes[1, 0].legend(legend_handles, legend_labels, title="Component / Decade", loc="lower left")
 
 plt.tight_layout()
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vq_component_bar.pdf",)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vq_component_bar.pdf",
+            bbox_inches='tight', dpi=300)
 
 # %%
