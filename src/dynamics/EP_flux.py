@@ -4,7 +4,11 @@ import numpy as np
 import pandas as pd
 from src.data_helper.read_composite import read_comp_var
 import glob
-
+from metpy.units import units
+import metpy.calc as mpcalc
+import logging
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 # %%
 # constants
 kappa 		= 2./7.
@@ -178,15 +182,17 @@ def EP_flux(vptp, upvp, dthdp):
 	ep1_cart.name = 'ep1'
 	ep2_cart.name = 'ep2'
 	div1.name = 'div'
-	div1.attrs['units'] = 'm/s2/day'
+	div1.attrs['units'] = 'm/s/day'
 	div1.attrs['long_name'] = 'divergence of Horizonaltal component of Eliassen-Palm flux'
 
 	div2.name = 'div2'
-	div2.attrs['units'] = 'm/s2/day'
+	div2.attrs['units'] = 'm/s/day'
 	div2.attrs['long_name'] = 'divergence of Vertical component of Eliassen-Palm flux'
 
 	return ep1_cart.transpose('plev','lat','lon'), ep2_cart.transpose('plev','lat','lon'),\
 			div1.transpose('plev','lat','lon'), div2.transpose('plev','lat','lon')
+
+
 
 # %%
 def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), eddy = 'transient'):
@@ -373,18 +379,63 @@ def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',ysca
 		return Fphi*dx,Fp*dy,ax
 	else:
 		return Fphi*dx,Fp*dy
-#%%
-def bin_var_theta(df_all, var="F_phi", t_bins = np.arange(240, 400, 5)):
+def E_div(decade, phase, eddy='prime', **kwargs):
+    """
+    Calculate the E-vector divergence for a given decade and phase
+    """
+    # Read data
+    logging.info(f"Read data for {phase} phase in {decade}")
 
-    var_bined = (
-        df_all[[var]]
-        .groupby(pd.cut(df_all["etheta"], bins=t_bins), observed=True)
-        .mean()
+    M2 = read_comp_var(f'M2_{eddy}', phase, decade, time_window = (-10, 5), name = 'M2', model_dir = 'MPI_GE_CMIP6_allplev')
+    if eddy == 'transient':
+        upvp = read_comp_var('upvp', phase, decade, time_window = (-10, 5), name = 'upvp', model_dir = 'MPI_GE_CMIP6_allplev')
+    else:
+        upvp = read_comp_var('usvs', phase, decade, time_window = (-10, 5), name = 'usvs', model_dir = 'MPI_GE_CMIP6_allplev')
+
+    # Calculate the divergence of the E-vector
+    logging.info(f"Calculate E-vector divergence for {phase} phase in {decade}")
+
+    upvp = -1 * upvp  # flip the sign of the E-vector
+    M2 = M2.metpy.assign_crs(
+        grid_mapping_name='latitude_longitude',
+        earth_radius=6371229.0
     )
-    # add one column called tas_diff, which is the middle value of the bin
-    var_bined["theta"] = var_bined.index.map(
-        lambda x: x.mid
-    )  
-    # make the tas_diff as the index
-    var_bined = var_bined.set_index("theta")
-    return var_bined
+    upvp = upvp.metpy.assign_crs(
+        grid_mapping_name='latitude_longitude',
+        earth_radius=6371229.0
+    )
+    M2 = M2 * units('m^2/s^2')
+    upvp = upvp * units('m^2/s^2')
+
+    # calculate the divergence
+    dM2dx, dupvpdy = mpcalc.vector_derivative(
+        M2, upvp, return_only=('du/dx', 'dv/dy')
+    )
+
+    # convet to xarray DataArray
+    dM2dx = xr.DataArray(
+        dM2dx,
+        coords=M2.coords,
+        dims=M2.dims,
+        attrs=M2.attrs
+    )
+    dupvpdy = xr.DataArray(
+        dupvpdy,
+        coords=upvp.coords,
+        dims=upvp.dims,
+        attrs=upvp.attrs
+    )
+
+    # conver to m/s/day
+    dM2dx = dM2dx * 86400  # seconds in a day
+    dupvpdy = dupvpdy * 86400  # seconds in a day
+
+    # add attributes
+    dM2dx.attrs['units'] = 'm/s/day'
+    dupvpdy.attrs['units'] = 'm/s/day'
+    dM2dx.attrs['long_name'] = 'x divergence (2M)'
+    dupvpdy.attrs['long_name'] = 'y divergence (N)'
+    logging.info(f"Finished calculating E-vector divergence for {phase} phase in {decade}")
+
+    
+    return dM2dx.metpy.dequantify(), dupvpdy.metpy.dequantify()
