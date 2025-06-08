@@ -467,7 +467,7 @@ for row, plev in enumerate(plevs):
         labels_ = [label_map.get(l.split()[0], l) for l in labels_]
         handles += [Patch(facecolor='white', edgecolor='k', hatch=hatches[0], label='1850'),
                     Patch(facecolor='white', edgecolor='k', hatch=hatches[1], label='2090')]
-        labels_ += ['1850', '2090']
+        labels_ += ['1850s', '2090s']
         legend_handles = handles
         legend_labels = labels_
 
@@ -507,6 +507,8 @@ for ax in axes.flat:
 for ax in axes.flat:
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
+for ax in axes[:,0]:
+    ax.set_ylabel("divergence [m s$^{-1}$ day $^{-1}$]")
 
 # Move the legend to axes[1,1] lower left (since transient is now in col 1)
 if legend_handles is not None and legend_labels is not None:
@@ -593,7 +595,7 @@ for row, plev in enumerate(plevs):
         labels_ = [label_map.get(l.split()[0], l) for l in labels_]
         handles += [Patch(facecolor='white', edgecolor='k', hatch=hatches[0], label='1850'),
                     Patch(facecolor='white', edgecolor='k', hatch=hatches[1], label='2090')]
-        labels_ += ['1850', '2090']
+        labels_ += ['1850s', '2090s']
         legend_handles = handles
         legend_labels = labels_
 
@@ -657,10 +659,12 @@ for row, plev in enumerate(plevs):
     else:
         ax.set_ylabel("")
 
+
 # add hline at y=0 for all axes
 for ax in axes.flat:
     ax.axhline(0, color='k', linewidth=0.5, linestyle='--')
-
+for ax in axes[:,0]:
+    ax.set_ylabel("divergence [m s$^{-1}$ day $^{-1}$]")
 # remove spines of top and right axes
 for ax in axes.flat:
     ax.spines['top'].set_visible(False)
