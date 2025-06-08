@@ -36,7 +36,14 @@ Tphi_pos_last, Tp_pos_last, Tdivphi_pos_last, Tdiv_p_pos_last = read_EP_flux(
 Tphi_neg_last, Tp_neg_last, Tdivphi_neg_last, Tdiv_p_neg_last = read_EP_flux(
     phase="neg", decade=2090, eddy="transient", ano=False,lon_mean=True,
 )
-
+#%%
+# read climatological EP flux 
+Tphi_clima_first, Tp_clima_first, Tdivphi_clima_first, Tdiv_p_clima_first = read_EP_flux(
+    phase="clima", decade=1850, eddy="transient", ano=False,lon_mean=True,
+)
+Tphi_clima_last, Tp_clima_last, Tdivphi_clima_last, Tdiv_p_clima_last = read_EP_flux(
+    phase="clima", decade=2090, eddy="transient", ano=False,lon_mean=True,
+)
 #%% 
 # read steady EP flux for positive and negative phase
 Sphi_pos_first, Sp_pos_first, Sdivphi_pos_first, Sdiv_p_pos_first = read_EP_flux(
@@ -53,7 +60,14 @@ Sphi_pos_last, Sp_pos_last, Sdivphi_pos_last, Sdiv_p_pos_last = read_EP_flux(
 Sphi_neg_last, Sp_neg_last, Sdivphi_neg_last, Sdiv_p_neg_last = read_EP_flux(
     phase="neg", decade=2090, eddy="steady", ano=False,lon_mean=True,
 )
-
+#%%
+# read climatological EP flux
+Sphi_clima_first, Sp_clima_first, Sdivphi_clima_first, Sdiv_p_clima_first = read_EP_flux(
+    phase="clima", decade=1850, eddy="steady", ano=False,lon_mean=True,
+)
+Sphi_clima_last, Sp_clima_last, Sdivphi_clima_last, Sdiv_p_clima_last = read_EP_flux(
+    phase="clima", decade=2090, eddy="steady", ano=False,lon_mean=True,
+)
 
 # %%
 # transient eddies
@@ -409,5 +423,169 @@ plt.savefig(
     bbox_inches="tight",
     dpi=300,
 )
+
+# %%
+# plot climatology
+fig, axes = plt.subplots(2, 3, figsize=(12, 8), sharey=True, sharex=True)
+# first row for transient eddies
+# first decade
+Tdivphi_clima_first.plot.contourf(
+    ax=axes[0, 0], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+PlotEPfluxArrows(
+    x=Tphi_clima_first.lat[::3],
+    y=Tphi_clima_first.plev,
+    ep1=Tphi_clima_first[:, ::3],
+    ep2=Tp_clima_first[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale,
+    xlim=[0, 90],
+    ylim=[100000, 10000],
+    fig=fig,
+    ax=axes[0, 0],
+    draw_key=True,
+    key_loc=(0.7, 0.95),
+)
+# last decade
+Tdivphi_clima_last.plot.contourf(
+    ax=axes[0, 1], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+PlotEPfluxArrows(
+    x=Tphi_clima_last.lat[::3],
+    y=Tphi_clima_last.plev,
+    ep1=Tphi_clima_last[:, ::3],
+    ep2=Tp_clima_last[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale,
+    xlim=[0, 90],
+    ylim=[100000, 10000],
+    fig=fig,
+    ax=axes[0, 1],
+    draw_key=True,
+    key_loc=(0.7, 0.95),
+)
+# difference between first and last decade
+Tdiv_diff_clima = Tdivphi_clima_last - Tdivphi_clima_first
+Tdiv_diff_clima.plot.contourf(
+    ax=axes[0, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+PlotEPfluxArrows(
+    x=Tphi_clima_first.lat[::3],
+    y=Tphi_clima_first.plev,
+    ep1=(Tphi_clima_last - Tphi_clima_first)[:, ::3],
+    ep2=(Tp_clima_last - Tp_clima_first)[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale_div,
+    xlim=[0, 90],
+    ylim=[100000, 10000],
+    fig=fig,
+    ax=axes[0, 2],
+    draw_key=True,
+    key_loc=(0.7, 0.95),
+)
+# second row for steady eddies
+# first decade
+first_color = Sdivphi_clima_first.plot.contourf(
+    ax=axes[1, 0], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+PlotEPfluxArrows(
+    x=Sphi_clima_first.lat[::3],
+    y=Sphi_clima_first.plev,
+    ep1=Sphi_clima_first[:, ::3],
+    ep2=Sp_clima_first[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale,
+    xlim=[0, 90],
+    ylim=[100000, 10000],
+    fig=fig,
+    ax=axes[1, 0],
+)
+# last decade
+second_color = Sdivphi_clima_last.plot.contourf(
+    ax=axes[1, 1], levels=levels, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+PlotEPfluxArrows(
+    x=Sphi_clima_last.lat[::3],
+    y=Sphi_clima_last.plev,
+    ep1=Sphi_clima_last[:, ::3],
+    ep2=Sp_clima_last[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale,
+    xlim=[0, 90],
+    ylim=[100000, 10000],
+    fig=fig,
+    ax=axes[1, 1],
+)
+# difference between first and last decade
+Sdiv_diff_clima = Sdivphi_clima_last - Sdivphi_clima_first
+diff_color = Sdiv_diff_clima.plot.contourf(
+    ax=axes[1, 2], levels=levels_div, cmap="RdBu_r", add_colorbar=False,
+    ylim=[100000, 10000],
+    xlim=[0, 90],
+)
+PlotEPfluxArrows(
+    x=Sphi_clima_first.lat[::3],
+    y=Sphi_clima_first.plev,
+    ep1=(Sphi_clima_last - Sphi_clima_first)[:, ::3],
+    ep2=(Sp_clima_last - Sp_clima_first)[:, ::3],
+    xscale="linear",
+    yscale="linear",
+    scale=scale_div,
+    xlim=[0, 90],
+    ylim=[100000, 10000],
+    fig=fig,
+    ax=axes[1, 2],
+    draw_key=True,
+    key_loc=(0.7, 0.95),
+)   
+# add cax under the second row
+fig.colorbar(
+    first_color,
+    ax=axes[:, 0],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"$\nabla \cdot \mathcal{F}$ [m$^2$ s$^{-2}$]",
+)
+fig.colorbar(
+    second_color,
+    ax=axes[:, 1],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"$\nabla \cdot \mathcal{F}$ [m$^2$ s$^{-2}$]",
+)
+fig.colorbar(
+    diff_color,
+    ax=axes[:, 2],
+    orientation="horizontal",
+    fraction=0.05,
+    pad=0.1,
+    label=r"diff $\nabla \cdot \mathcal{F}$ [m$^2$ s$^{-2}$]",
+)
+# no y labels from second row on, no x labels at the first row
+for ax in axes[0, :]:
+    ax.set_xlabel("")
+for ax in axes[:, 0]:
+    ax.set_ylabel("Pressure [Pa]")
+for ax in axes[:, 1:].flat:
+    ax.set_ylabel("")   
+for ax in axes[1, :]:
+    ax.set_xlabel("Latitude [°N]")
 
 # %%
