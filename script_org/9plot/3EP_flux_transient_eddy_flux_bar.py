@@ -372,11 +372,11 @@ fig, axes = plt.subplots(2, 3, figsize=(12, 10), sharex=True, sharey='row')
 
 plevs = [25000, 85000]
 phases = ['clima', 'pos', 'neg']
-components = ['P', 'N', 'M2']
-colors = ['#F8766D', "#189424", '#4C72B0']  # warm to cool: P, N, M2
+components_all = ['P', 'N', 'M2']
+colors_all = ['#F8766D', "#189424", '#4C72B0']  # warm to cool: P, N, M2
 hatches = [None, '//']  # 1850: no hatch, 2090: dotted hatch
 
-def get_stacked_data(df, plev, decade):
+def get_stacked_data(df, plev, decade, components):
     df_plot = df[(df['decade'] == decade) & (df['plev'] == plev)].copy()
     df_plot['phase'] = pd.Categorical(df_plot['phase'], categories=phases, ordered=True)
     df_long = df_plot.melt(id_vars=['phase'], value_vars=components, var_name='component', value_name='value')
@@ -392,61 +392,19 @@ legend_handles = None
 legend_labels = None
 
 for row, plev in enumerate(plevs):
-    for col, (df, label) in enumerate(zip([transient_dfs, steady_dfs], ["Transient", "Steady"])):
-        ax = axes[row, col]
-        for j, decade in enumerate([1850, 2090]):
-            # Offset: -bar_width/2-gap/2 for 1850, +bar_width/2+gap/2 for 2090
-            offset = (-bar_width/2-gap/2) if j == 0 else (bar_width/2+gap/2)
-            df_pivot = get_stacked_data(df, plev, decade)
-            bottom_pos = np.zeros(len(phases))
-            bottom_neg = np.zeros(len(phases))
-            for i, comp in enumerate(components):
-                vals = df_pivot[comp].values
-                pos_vals = np.where(vals > 0, vals, 0)
-                neg_vals = np.where(vals < 0, vals, 0)
-                # Plot positive stack
-                bars_pos = ax.bar(x + offset, pos_vals, bar_width, bottom=bottom_pos, color=colors[i],
-                                  label=f"{comp} {decade}" if (row == 0 and j == 0) else None,
-                                  hatch=hatches[j], edgecolor='k')
-                bottom_pos += pos_vals
-                # Plot negative stack
-                bars_neg = ax.bar(x + offset, neg_vals, bar_width, bottom=bottom_neg, color=colors[i],
-                                  hatch=hatches[j], edgecolor='k')
-                bottom_neg += neg_vals
-        ax.set_title(f"{label}, plev={plev}")
-        if row == 1:
-            ax.set_xlabel("Phase")
-        if col == 0:
-            ax.set_ylabel("div")
-        ax.set_xticks(x)
-        ax.set_xticklabels(phases)
-        if row == 0 and col == 0:
-            handles, labels_ = ax.get_legend_handles_labels()
-            # Rename component labels
-            label_map = {
-                "P": r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
-                "N": r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
-                "M2": r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$"
-            }
-            labels_ = [label_map.get(l.split()[0], l) for l in labels_]
-            # Add a legend entry for hatches
-            handles += [Patch(facecolor='white', edgecolor='k', hatch=hatches[0], label='1850'),
-                        Patch(facecolor='white', edgecolor='k', hatch=hatches[1], label='2090')]
-            labels_ += ['1850', '2090']
-            legend_handles = handles
-            legend_labels = labels_
+    # For plev=25000, only show N and M2; for 85000, show all
+    components = components_all
+    colors = colors_all
 
-    # add a thrid column for sum of transient and steady
-
-    ax_sum = axes[row, 2]
+    # --- First column: sum of transient and steady (was third) ---
+    ax_sum = axes[row, 0]
     for j, decade in enumerate([1850, 2090]):
-        # Offset: -bar_width/2-gap/2 for 1850, +bar_width/2+gap/2 for 2090
         offset = (-bar_width/2-gap/2) if j == 0 else (bar_width/2+gap/2)
         # Sum the two dataframes
         df_sum = transient_dfs.copy()
         df_sum = df_sum.copy()
         df_sum[['P', 'N', 'M2']] = df_sum[['P', 'N', 'M2']].values + steady_dfs[['P', 'N', 'M2']].values
-        df_pivot = get_stacked_data(df_sum, plev, decade)
+        df_pivot = get_stacked_data(df_sum, plev, decade, components)
         bottom_pos = np.zeros(len(phases))
         bottom_neg = np.zeros(len(phases))
         for i, comp in enumerate(components):
@@ -454,27 +412,107 @@ for row, plev in enumerate(plevs):
             pos_vals = np.where(vals > 0, vals, 0)
             neg_vals = np.where(vals < 0, vals, 0)
             bars_pos = ax_sum.bar(x + offset, pos_vals, bar_width, bottom=bottom_pos, color=colors[i],
-                                  label=f"{comp} {decade}" if (row == 1 and j == 0) else None,
-                                  hatch=hatches[j], edgecolor='k')
+                                 label=f"{comp} {decade}" if (row == 1 and j == 0) else None,
+                                 hatch=hatches[j], edgecolor='k')
             bottom_pos += pos_vals
             bars_neg = ax_sum.bar(x + offset, neg_vals, bar_width, bottom=bottom_neg, color=colors[i],
-                                  hatch=hatches[j], edgecolor='k')
+                                 hatch=hatches[j], edgecolor='k')
             bottom_neg += neg_vals
+    ax_sum.set_title(f"Sum, plev={plev}")
+    if row == 1:
+        ax_sum.set_xlabel("Phase")
+    ax_sum.set_xticks(x)
+    ax_sum.set_xticklabels(phases)
+    if row == 0:
+        ax_sum.set_ylabel("")
+    # Remove y-tick labels for sum column to indicate different scale
+    # Optionally, you can set a different y-limits for the sum column
+    # ax_sum.set_ylim(custom_min, custom_max)  # Set as needed
+
+    # --- Second column: transient (was first) ---
+    ax = axes[row, 1]
+    df = transient_dfs
+    label = "Transient"
+    for j, decade in enumerate([1850, 2090]):
+        offset = (-bar_width/2-gap/2) if j == 0 else (bar_width/2+gap/2)
+        df_pivot = get_stacked_data(df, plev, decade, components)
+        bottom_pos = np.zeros(len(phases))
+        bottom_neg = np.zeros(len(phases))
+        for i, comp in enumerate(components):
+            vals = df_pivot[comp].values
+            pos_vals = np.where(vals > 0, vals, 0)
+            neg_vals = np.where(vals < 0, vals, 0)
+            bars_pos = ax.bar(x + offset, pos_vals, bar_width, bottom=bottom_pos, color=colors[i],
+                              label=f"{comp} {decade}" if (row == 1 and j == 0) else None,
+                              hatch=hatches[j], edgecolor='k')
+            bottom_pos += pos_vals
+            bars_neg = ax.bar(x + offset, neg_vals, bar_width, bottom=bottom_neg, color=colors[i],
+                              hatch=hatches[j], edgecolor='k')
+            bottom_neg += neg_vals
+    ax.set_title(f"{label}, plev={plev}")
+    if row == 1:
+        ax.set_xlabel("Phase")
+    ax.set_xticks(x)
+    ax.set_xticklabels(phases)
+    if row == 1:
+        ax.set_ylabel("div")
+    # Only collect legend from the second row (row==1) and second column (col==1)
+    if row == 1:
+        handles, labels_ = ax.get_legend_handles_labels()
+        label_map = {
+            "P": r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+            "N": r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
+            "M2": r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$"
+        }
+        labels_ = [label_map.get(l.split()[0], l) for l in labels_]
+        handles += [Patch(facecolor='white', edgecolor='k', hatch=hatches[0], label='1850'),
+                    Patch(facecolor='white', edgecolor='k', hatch=hatches[1], label='2090')]
+        labels_ += ['1850', '2090']
+        legend_handles = handles
+        legend_labels = labels_
+
+    # --- Third column: steady (was second) ---
+    ax = axes[row, 2]
+    df = steady_dfs
+    label = "Steady"
+    for j, decade in enumerate([1850, 2090]):
+        offset = (-bar_width/2-gap/2) if j == 0 else (bar_width/2+gap/2)
+        df_pivot = get_stacked_data(df, plev, decade, components)
+        bottom_pos = np.zeros(len(phases))
+        bottom_neg = np.zeros(len(phases))
+        for i, comp in enumerate(components):
+            vals = df_pivot[comp].values
+            pos_vals = np.where(vals > 0, vals, 0)
+            neg_vals = np.where(vals < 0, vals, 0)
+            bars_pos = ax.bar(x + offset, pos_vals, bar_width, bottom=bottom_pos, color=colors[i],
+                              label=f"{comp} {decade}" if (row == 1 and j == 0) else None,
+                              hatch=hatches[j], edgecolor='k')
+            bottom_pos += pos_vals
+            bars_neg = ax.bar(x + offset, neg_vals, bar_width, bottom=bottom_neg, color=colors[i],
+                              hatch=hatches[j], edgecolor='k')
+            bottom_neg += neg_vals
+    ax.set_title(f"{label}, plev={plev}")
+    if row == 1:
+        ax.set_xlabel("Phase")
+    ax.set_xticks(x)
+    ax.set_xticklabels(phases)
+    if row == 0:
+        ax.set_ylabel("")
+
 # add hline at y=0 for all axes
 for ax in axes.flat:
     ax.axhline(0, color='k', linewidth=0.5, linestyle='--')
 
-# romove spinelines of top and right axes
+# remove spines of top and right axes
 for ax in axes.flat:
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
-# Move the legend to axes[1,0] lower left
+# Move the legend to axes[1,1] lower left (since transient is now in col 1)
 if legend_handles is not None and legend_labels is not None:
-    axes[1, 0].legend(legend_handles, legend_labels, title="Component / Decade", loc="lower left")
+    axes[1, 1].legend(legend_handles, legend_labels, title="Component / Decade", loc="lower left")
 
 plt.tight_layout()
-
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vq_component_bar_withheat.pdf",
             bbox_inches='tight', dpi=300)
 
@@ -511,53 +549,9 @@ for row, plev in enumerate(plevs):
     else:
         components = components_all
         colors = colors_all
-    # --- First two columns: transient and steady ---
-    for col, (df, label) in enumerate(zip([transient_dfs, steady_dfs], ["Transient", "Steady"])):
-        ax = axes[row, col]
-        for j, decade in enumerate([1850, 2090]):
-            offset = (-bar_width/2-gap/2) if j == 0 else (bar_width/2+gap/2)
-            df_pivot = get_stacked_data(df, plev, decade, components)
-            bottom_pos = np.zeros(len(phases))
-            bottom_neg = np.zeros(len(phases))
-            for i, comp in enumerate(components):
-                vals = df_pivot[comp].values
-                pos_vals = np.where(vals > 0, vals, 0)
-                neg_vals = np.where(vals < 0, vals, 0)
-                # Plot positive stack
-                bars_pos = ax.bar(x + offset, pos_vals, bar_width, bottom=bottom_pos, color=colors[i],
-                                  label=f"{comp} {decade}" if (row == 1 and j == 0) else None,
-                                  hatch=hatches[j], edgecolor='k')
-                bottom_pos += pos_vals
-                # Plot negative stack
-                bars_neg = ax.bar(x + offset, neg_vals, bar_width, bottom=bottom_neg, color=colors[i],
-                                  hatch=hatches[j], edgecolor='k')
-                bottom_neg += neg_vals
-        ax.set_title(f"{label}, plev={plev}")
-        if row == 1:
-            ax.set_xlabel("Phase")
-        if col == 0:
-            ax.set_ylabel("div")
-        ax.set_xticks(x)
-        ax.set_xticklabels(phases)
-        # Only collect legend from the second row (row==1) and first column (col==0)
-        if row == 1 and col == 0:
-            handles, labels_ = ax.get_legend_handles_labels()
-            # Rename component labels
-            label_map = {
-                "P": r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
-                "N": r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
-                "M2": r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$"
-            }
-            labels_ = [label_map.get(l.split()[0], l) for l in labels_]
-            # Add a legend entry for hatches
-            handles += [Patch(facecolor='white', edgecolor='k', hatch=hatches[0], label='1850'),
-                        Patch(facecolor='white', edgecolor='k', hatch=hatches[1], label='2090')]
-            labels_ += ['1850', '2090']
-            legend_handles = handles
-            legend_labels = labels_
 
-    # --- Third column: sum of transient and steady ---
-    ax_sum = axes[row, 2]
+    # --- First column: sum of transient and steady ---
+    ax_sum = axes[row, 0]
     for j, decade in enumerate([1850, 2090]):
         offset = (-bar_width/2-gap/2) if j == 0 else (bar_width/2+gap/2)
         # Sum the two dataframes
@@ -583,12 +577,85 @@ for row, plev in enumerate(plevs):
         ax_sum.set_xlabel("Phase")
     ax_sum.set_xticks(x)
     ax_sum.set_xticklabels(phases)
-    # Only set y-label for first column
     if row == 0:
+        ax_sum.set_ylabel("div")
+    else:
         ax_sum.set_ylabel("")
-    # Remove y-tick labels for sum column to indicate different scale
-    # Optionally, you can set a different y-limits for the sum column
-    # ax_sum.set_ylim(custom_min, custom_max)  # Set as needed
+
+    # Only collect legend from the second row (row==1) and first column (col==0)
+    if row == 1:
+        handles, labels_ = ax_sum.get_legend_handles_labels()
+        label_map = {
+            "P": r"$\frac{\partial}{\partial z} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+            "N": r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
+            "M2": r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$"
+        }
+        labels_ = [label_map.get(l.split()[0], l) for l in labels_]
+        handles += [Patch(facecolor='white', edgecolor='k', hatch=hatches[0], label='1850'),
+                    Patch(facecolor='white', edgecolor='k', hatch=hatches[1], label='2090')]
+        labels_ += ['1850', '2090']
+        legend_handles = handles
+        legend_labels = labels_
+
+    # --- Second column: transient ---
+    ax = axes[row, 1]
+    df = transient_dfs
+    label = "Transient"
+    for j, decade in enumerate([1850, 2090]):
+        offset = (-bar_width/2-gap/2) if j == 0 else (bar_width/2+gap/2)
+        df_pivot = get_stacked_data(df, plev, decade, components)
+        bottom_pos = np.zeros(len(phases))
+        bottom_neg = np.zeros(len(phases))
+        for i, comp in enumerate(components):
+            vals = df_pivot[comp].values
+            pos_vals = np.where(vals > 0, vals, 0)
+            neg_vals = np.where(vals < 0, vals, 0)
+            bars_pos = ax.bar(x + offset, pos_vals, bar_width, bottom=bottom_pos, color=colors[i],
+                              label=f"{comp} {decade}" if (row == 1 and j == 0) else None,
+                              hatch=hatches[j], edgecolor='k')
+            bottom_pos += pos_vals
+            bars_neg = ax.bar(x + offset, neg_vals, bar_width, bottom=bottom_neg, color=colors[i],
+                              hatch=hatches[j], edgecolor='k')
+            bottom_neg += neg_vals
+    ax.set_title(f"{label}, plev={plev}")
+    if row == 1:
+        ax.set_xlabel("Phase")
+    ax.set_xticks(x)
+    ax.set_xticklabels(phases)
+    if row == 0:
+        ax.set_ylabel("")
+    else:
+        ax.set_ylabel("")
+
+    # --- Third column: steady ---
+    ax = axes[row, 2]
+    df = steady_dfs
+    label = "Steady"
+    for j, decade in enumerate([1850, 2090]):
+        offset = (-bar_width/2-gap/2) if j == 0 else (bar_width/2+gap/2)
+        df_pivot = get_stacked_data(df, plev, decade, components)
+        bottom_pos = np.zeros(len(phases))
+        bottom_neg = np.zeros(len(phases))
+        for i, comp in enumerate(components):
+            vals = df_pivot[comp].values
+            pos_vals = np.where(vals > 0, vals, 0)
+            neg_vals = np.where(vals < 0, vals, 0)
+            bars_pos = ax.bar(x + offset, pos_vals, bar_width, bottom=bottom_pos, color=colors[i],
+                              label=f"{comp} {decade}" if (row == 1 and j == 0) else None,
+                              hatch=hatches[j], edgecolor='k')
+            bottom_pos += pos_vals
+            bars_neg = ax.bar(x + offset, neg_vals, bar_width, bottom=bottom_neg, color=colors[i],
+                              hatch=hatches[j], edgecolor='k')
+            bottom_neg += neg_vals
+    ax.set_title(f"{label}, plev={plev}")
+    if row == 1:
+        ax.set_xlabel("Phase")
+    ax.set_xticks(x)
+    ax.set_xticklabels(phases)
+    if row == 0:
+        ax.set_ylabel("")
+    else:
+        ax.set_ylabel("")
 
 # add hline at y=0 for all axes
 for ax in axes.flat:
@@ -599,9 +666,9 @@ for ax in axes.flat:
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
-# Move the legend to axes[1,0] lower left
+# Move the legend to axes[1,0] lower left (since sum is now in col 0)
 if legend_handles is not None and legend_labels is not None:
-    axes[1, 0].legend(legend_handles, legend_labels, title="Component / Decade", loc="lower left")
+    axes[1, 0].legend(legend_handles, legend_labels, title="Component / Decade", loc="lower left", frameon=True, ncol=2)
 
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vq_component_bar.pdf",
