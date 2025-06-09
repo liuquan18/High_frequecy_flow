@@ -57,10 +57,17 @@ def read_EP_flux(
         EP_flux_dir = (
         "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux_distribution/"
     )
-    else:
+    elif not keep_time:
         EP_flux_dir = (
             "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
         )
+
+    # clima is always in old folder
+    if phase == 'clima':
+        EP_flux_dir = (
+            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
+        )
+
 
     if phase in ["pos", "neg"]:
         F_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_phi_{phase}_{decade}_ano{ano}.nc")
