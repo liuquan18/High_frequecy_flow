@@ -3,6 +3,8 @@ import xarray as xr
 import numpy as np
 from src.plotting.util import erase_white_line
 import pandas as pd
+import logging
+
 # %%
 def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
     name = kwargs.get("name", var)
@@ -10,9 +12,13 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
     suffix = kwargs.get("suffix", "")
     remove_zonmean = kwargs.get("remove_zonmean", False)
     erase_empty = kwargs.get("erase_zero_line", True)
-    comp_path = kwargs.get("comp_path", "0composite_range")
     model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
-    
+    if time_window == 'all':
+        logging.info("-30 to 30 days will be used as time window and time will be kept")
+        comp_path = "0composite_distribution"
+    else:
+        comp_path =  "0composite_range"
+
     basedir = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{comp_path}/"
     )
