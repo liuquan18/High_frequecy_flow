@@ -1435,7 +1435,7 @@ wndflux_neg_last_ano = xr.Dataset({
 
 #%%
 levels_Ey = np.arange(-2, 2.1, 0.5)
-wnd_scale = 50
+wnd_scale = 150
 #%%
 # plot E_y
 fig, axes = plt.subplots(
@@ -1465,13 +1465,13 @@ sum_Ey_pos_last.plot.contour(
 )
 # quiver for wind anomaly
 sum_arrows = axes[0, 0].quiver(
-    wndflux_pos_first_ano.lon.values[::6],
-    wndflux_pos_first_ano.lat.values[::6],
-    wndflux_pos_first_ano.u.values[::6, ::6],
-    wndflux_pos_first_ano.v.values[::6, ::6],
+    wndflux_pos_first.lon.values[::6],
+    wndflux_pos_first.lat.values[::6],
+    wndflux_pos_first.u.values[::6, ::6],
+    wndflux_pos_first.v.values[::6, ::6],
     scale=wnd_scale,
     transform=ccrs.PlateCarree(),
-    color="purple",
+    color="k",
     width=0.005,
 )
 
@@ -1532,13 +1532,13 @@ sum_Ey_neg_last.plot.contour(
 
 # quiver for wind anomaly
 sum_arrows_neg = axes[1, 0].quiver(
-    wndflux_neg_first_ano.lon.values[::6],
-    wndflux_neg_first_ano.lat.values[::6],
-    wndflux_neg_first_ano.u.values[::6, ::6],
-    wndflux_neg_first_ano.v.values[::6, ::6],
+    wndflux_neg_first.lon.values[::6],
+    wndflux_neg_first.lat.values[::6],
+    wndflux_neg_first.u.values[::6, ::6],
+    wndflux_neg_first.v.values[::6, ::6],
     scale=wnd_scale,
     transform=ccrs.PlateCarree(),
-    color="purple",
+    color="k",
     width=0.005,
 )
 
@@ -1611,14 +1611,14 @@ fig.colorbar(
     sum_color,
     cax=cax_vq,
     orientation="horizontal",
-    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
+    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m s$^{-1}$ day$^{-1}$]",
 
 )
 fig.colorbar(
     trans_color,
     cax=cax_uv,
     orientation="horizontal",
-    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
+    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m s$^{-1}$ day$^{-1}$]",
     # ticks label every 2
     ticks = levels_Ey[::2] / 2  # levels_Ey/2 is used for transients
 )
@@ -1626,7 +1626,7 @@ fig.colorbar(
     steady_color,
     cax=cax_vt,
     orientation="horizontal",
-    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$",
+    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m s$^{-1}$ day$^{-1}$]",
 )
 
 # no y labels from second row on, no x labels at the frist row
@@ -1666,6 +1666,10 @@ plt.savefig(
     bbox_inches="tight",
     dpi=300,
 )
+
+# %%
+
+# %%
 
 # %%
 levels_Ex = np.arange(-5, 5.1, 1)
