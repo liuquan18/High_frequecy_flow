@@ -883,6 +883,7 @@ steady_arrows_neg = axes[1, 2].quiver(
 # Add colorbar axes using fig.add_axes for better alignment with tight_layout
 
 # Get position of the bottom row axes to align colorbars
+fig.tight_layout()
 fig.subplots_adjust(wspace=-0.03, hspace=-0.5, top = 1., bottom = 0.15)
 
 # Calculate colorbar axes positions (shrink by 0.8)
@@ -984,6 +985,23 @@ qk = axes[1, 2].quiverkey(
     labelsep=0.05,
 )
 
+
+# Add panel labels a, b, c, ...
+for i, ax in enumerate(axes.flat):
+    # Place label slightly outside top-left of each subplot
+    ax.text(
+        0.1,
+        0.5,
+        f"{chr(97 + i)}",
+        transform=ax.transAxes,
+        fontsize=13,
+        fontweight="bold",
+        va="top",
+        ha="right",
+        bbox=dict(facecolor="white", edgecolor="none", alpha=0.8, pad=0.2),
+        zorder=10,
+    )
+
 # save
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_div_p_map.pdf",
@@ -996,11 +1014,13 @@ plt.savefig(
 fig, axes = plt.subplots(
     2,
     3,
-    figsize=(12, 9),
-    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
+    figsize=(10, 5),
+    subplot_kw={"projection": ccrs.NorthPolarStereo(-40, 80)},
     sharex=True,
     sharey=False,
 )
+
+plt.subplots_adjust(wspace=-0.2, hspace=-0.2)
 
 sum_color = sum_div_p_pos_first.plot.contourf(
     ax=axes[0, 0],
@@ -1085,7 +1105,7 @@ steady_arrows = axes[0, 2].quiver(
     qsflux_pos_last_ano.lat.values[::5],
     qsflux_pos_last_ano.u.values[::5, ::5],
     qsflux_pos_last_ano.v.values[::5, ::5],
-    scale=qscale,
+    scale=qscale_steady,
     transform=ccrs.PlateCarree(),
     color="green",
     width=0.005,
@@ -1140,7 +1160,7 @@ trans_div_neg_last.plot.contour(
 )
 
 # quiver for vapor flux anomaly (last 10 years)
-axes[1, 1].quiver(
+trans_arrows_neg = axes[1, 1].quiver(
     qpflux_neg_last_ano.lon.values[::5],
     qpflux_neg_last_ano.lat.values[::5],
     qpflux_neg_last_ano.u.values[::5, ::5],
@@ -1169,22 +1189,22 @@ steady_div_p_neg_last.plot.contour(
     extend="both",
 )
 
-axes[1, 2].quiver(
+steady_arrows_neg = axes[1, 2].quiver(
     qsflux_neg_last_ano.lon.values[::5],
     qsflux_neg_last_ano.lat.values[::5],
     qsflux_neg_last_ano.u.values[::5, ::5],
     qsflux_neg_last_ano.v.values[::5, ::5],
-    scale=qscale,
+    scale=qscale_steady,
     transform=ccrs.PlateCarree(),
     color="green",
     width=0.005,
 )
 
 # Add colorbar axes using fig.add_axes for better alignment with tight_layout
-
-# Get position of the bottom row axes to align colorbars
 fig.tight_layout()
-fig.subplots_adjust(bottom=0.12)  # leave space for colorbars
+# Get position of the bottom row axes to align colorbars
+fig.subplots_adjust(wspace=-0.03, hspace=-0.5, top = 1., bottom = 0.15)
+
 # Calculate colorbar axes positions (shrink by 0.8)
 width_shrink = axes[1, 0].get_position().width * 0.8
 offset = (axes[1, 0].get_position().width - width_shrink) / 2
@@ -1212,20 +1232,20 @@ fig.colorbar(
     sum_color,
     cax=cax_vq,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m s$^{-1}$ day$^{-1}$]",
 
 )
 fig.colorbar(
     trans_color,
     cax=cax_uv,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m s$^{-1}$ day$^{-1}$]",
 )
 fig.colorbar(
     steady_color,
     cax=cax_vt,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m s$^{-1}$ day$^{-1}$]",
 )
 
 # no y labels from second row on, no x labels at the frist row
@@ -1239,8 +1259,70 @@ for ax in axes.flat:
         alpha=0.5,
         linestyle="dotted",
     )
+    gl.xlocator = mticker.FixedLocator([-180,-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180])
+    gl.ylocator = mticker.FixedLocator([10, 30, 50, 70, 90])
     ax.set_title("")
+    ax.set_extent([-180, 180, 20, 90], crs=ccrs.PlateCarree())
+    clip_map(ax)
 
+# add quiver key for the second row
+qk = axes[1, 0].quiverkey(
+    sum_arrows_neg,
+    0.6,
+    -0.05,
+    2,
+    r"2 $m s^{-1} g kg ^{-1}$",
+    labelpos="E",
+    coordinates="axes",
+    fontproperties={"size": 10},
+    labelsep=0.05,
+
+)
+
+qk = axes[1, 1].quiverkey(
+    trans_arrows_neg,
+    0.6,
+    -0.05,
+    2,
+    r"2 $m s^{-1} g kg ^{-1}$",
+    labelpos="E",
+    coordinates="axes",
+    fontproperties={"size": 10},
+    labelsep=0.05,
+)
+
+qk = axes[1, 2].quiverkey(
+    steady_arrows_neg,
+    0.6,
+    -0.05,
+    2,
+    r"2 $m s^{-1} g kg ^{-1}$",
+    labelpos="E",
+    coordinates="axes",
+    fontproperties={"size": 10},
+    labelsep=0.05,
+)
+# Add panel labels a, b, c, ... with adjusted positions for the subplot layout
+for i, ax in enumerate(axes.flat):
+    # Place label slightly outside top-left of each subplot
+    ax.text(
+        0.1,
+        0.5,
+        f"{chr(97 + i)}",
+        transform=ax.transAxes,
+        fontsize=13,
+        fontweight="bold",
+        va="top",
+        ha="right",
+        bbox=dict(facecolor="white", edgecolor="none", alpha=0.8, pad=0.2),
+        zorder=10,
+    )
+# save
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_div_p_map_last_arrow.pdf",
+    bbox_inches="tight",
+    dpi=300,
+)
 # %%
 
 #%%
@@ -1283,14 +1365,84 @@ steady_Ey_pos_last = Sdivphi_pos_last_ano.sel(plev=25000)
 steady_Ey_neg_last = Sdivphi_neg_last_ano.sel(plev=25000)
 
 #%%
+# read ua, va
+ua_pos_first = read_comp_var("ua", phase="pos", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+ua_neg_first = read_comp_var("ua", phase="neg", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+ua_pos_last = read_comp_var("ua", phase="pos", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+ua_neg_last = read_comp_var("ua", phase="neg", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+
+va_pos_first = read_comp_var("va", phase="pos", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+va_neg_first = read_comp_var("va", phase="neg", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+va_pos_last = read_comp_var("va", phase="pos", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+va_neg_last = read_comp_var("va", phase="neg", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+#%%
+# to flux
+wndflux_pos_first = xr.Dataset({
+    "u": ua_pos_first,
+    "v": va_pos_first,
+})
+wndflux_neg_first = xr.Dataset({
+    "u": ua_neg_first,
+    "v": va_neg_first,
+})
+wndflux_pos_last = xr.Dataset({
+    "u": ua_pos_last,
+    "v": va_pos_last,
+})
+wndflux_neg_last = xr.Dataset({
+    "u": ua_neg_last,
+    "v": va_neg_last,
+})
+
+#%%
+# climatology
+ua_clima_first = read_climatology("ua", 1850, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+ua_clima_last = read_climatology("ua", 2090, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+va_clima_first = read_climatology("va", 1850, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+va_clima_last = read_climatology("va", 2090, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+
+#%%
+# to anomaly
+ua_pos_first_ano = ua_pos_first - ua_clima_first
+ua_neg_first_ano = ua_neg_first - ua_clima_first
+ua_pos_last_ano = ua_pos_last - ua_clima_last
+ua_neg_last_ano = ua_neg_last - ua_clima_last
+
+va_pos_first_ano = va_pos_first - va_clima_first
+va_neg_first_ano = va_neg_first - va_clima_first
+va_pos_last_ano = va_pos_last - va_clima_last
+va_neg_last_ano = va_neg_last - va_clima_last
+
+# to flux
+wndflux_pos_first_ano = xr.Dataset({
+    "u": ua_pos_first_ano,
+    "v": va_pos_first_ano,
+})
+
+wndflux_neg_first_ano = xr.Dataset({
+    "u": ua_neg_first_ano,
+    "v": va_neg_first_ano,
+})
+wndflux_pos_last_ano = xr.Dataset({
+    "u": ua_pos_last_ano,
+    "v": va_pos_last_ano,
+})
+wndflux_neg_last_ano = xr.Dataset({ 
+    "u": ua_neg_last_ano,
+    "v": va_neg_last_ano,
+})
+
+
+#%%
 levels_Ey = np.arange(-2, 2.1, 0.5)
+wnd_scale = 50
 #%%
 # plot E_y
 fig, axes = plt.subplots(
     2,
     3,
     figsize=(12, 9),
-    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
+    subplot_kw={"projection": ccrs.NorthPolarStereo(-40, 80)},
     sharex=True,
     sharey=False,
 )
@@ -1311,6 +1463,21 @@ sum_Ey_pos_last.plot.contour(
     extend="both",
     transform=ccrs.PlateCarree(),
 )
+# quiver for wind anomaly
+sum_arrows = axes[0, 0].quiver(
+    wndflux_pos_first_ano.lon.values[::6],
+    wndflux_pos_first_ano.lat.values[::6],
+    wndflux_pos_first_ano.u.values[::6, ::6],
+    wndflux_pos_first_ano.v.values[::6, ::6],
+    scale=wnd_scale,
+    transform=ccrs.PlateCarree(),
+    color="purple",
+    width=0.005,
+)
+
+
+
+
 # transient
 trans_color = trans_Ey_pos_first.plot.contourf(
     ax=axes[0, 1],
@@ -1362,6 +1529,19 @@ sum_Ey_neg_last.plot.contour(
     extend="both",
     transform=ccrs.PlateCarree(),
 )
+
+# quiver for wind anomaly
+sum_arrows_neg = axes[1, 0].quiver(
+    wndflux_neg_first_ano.lon.values[::6],
+    wndflux_neg_first_ano.lat.values[::6],
+    wndflux_neg_first_ano.u.values[::6, ::6],
+    wndflux_neg_first_ano.v.values[::6, ::6],
+    scale=wnd_scale,
+    transform=ccrs.PlateCarree(),
+    color="purple",
+    width=0.005,
+)
+
 # transient
 trans_color = trans_Ey_neg_first.plot.contourf(
     ax=axes[1, 1],
@@ -1402,7 +1582,8 @@ steady_Ey_neg_last.plot.contour(
 
 # Get position of the bottom row axes to align colorbars
 fig.tight_layout()
-fig.subplots_adjust(bottom=0.12)  # leave space for colorbars
+fig.subplots_adjust(wspace=-0.03, hspace=-0.5, top = 1., bottom = 0.15)
+
 # Calculate colorbar axes positions (shrink by 0.8)
 width_shrink = axes[1, 0].get_position().width * 0.8
 offset = (axes[1, 0].get_position().width - width_shrink) / 2
@@ -1460,7 +1641,25 @@ for ax in axes.flat:
         linestyle="dotted",
     )
     ax.set_title("")
-
+    ax.set_extent([-180, 180, 20, 90], crs=ccrs.PlateCarree())
+    gl.xlocator = mticker.FixedLocator([-180,-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180])
+    gl.ylocator = mticker.FixedLocator([10, 30, 50, 70, 90])
+    clip_map(ax)
+# Add panel labels a, b, c, ... 
+for i, ax in enumerate(axes.flat):
+    # Place label slightly outside top-left of each subplot
+    ax.text(
+        0.1,
+        0.5,
+        f"{chr(97 + i)}",
+        transform=ax.transAxes,
+        fontsize=13,
+        fontweight="bold",
+        va="top",
+        ha="right",
+        bbox=dict(facecolor="white", edgecolor="none", alpha=0.8, pad=0.2),
+        zorder=10,
+    )
 # save
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_Ey_map.pdf",
