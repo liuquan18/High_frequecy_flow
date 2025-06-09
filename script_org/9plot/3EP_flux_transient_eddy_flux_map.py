@@ -488,12 +488,11 @@ Sxy_neg_last.plot.contour(
     extend="both",
 )
 
-
 # Add colorbar axes using fig.add_axes for better alignment with tight_layout
 
-# Get position of the bottom row axes to align colorbars
 fig.tight_layout()
-fig.subplots_adjust(bottom=0.12)  # leave space for colorbars
+fig.subplots_adjust(wspace=-0.03, hspace=-0.5, top=1., bottom=0.15)
+
 # Calculate colorbar axes positions (shrink by 0.8)
 width_shrink = axes[1, 0].get_position().width * 0.8
 offset = (axes[1, 0].get_position().width - width_shrink) / 2
@@ -521,7 +520,7 @@ fig.colorbar(
     sum_color,
     cax=cax_vq,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})-\frac{\partial}{\partial y} (\overline{u'v'})$",
+    label=r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})-\frac{\partial}{\partial y} (\overline{u'v'})$ [m s$^{-1}$ day$^{-1}$]",
 )
 fig.colorbar(
     trans_color,
@@ -533,11 +532,10 @@ fig.colorbar(
     steady_color,
     cax=cax_vt,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})-\frac{\partial}{\partial y} (\overline{u'v'})$",
+    label=r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})-\frac{\partial}{\partial y} (\overline{u'v'})$ [m s$^{-1}$ day$^{-1}$]",
 )
 
-# no y labels from second row on, no x labels at the frist row
-
+# no y labels from second row on, no x labels at the first row
 for ax in axes.flat:
     ax.coastlines(color="grey", linewidth=1)
     gl = ax.gridlines(
@@ -548,6 +546,25 @@ for ax in axes.flat:
         linestyle="dotted",
     )
     ax.set_title("")
+    ax.set_extent([-180, 180, 20, 90], crs=ccrs.PlateCarree())
+    gl.xlocator = mticker.FixedLocator([-180,-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180])
+    gl.ylocator = mticker.FixedLocator([10, 30, 50, 70, 90])
+    clip_map(ax)
+
+# Add panel labels a, b, c, ...
+for i, ax in enumerate(axes.flat):
+    ax.text(
+        0.1,
+        0.5,
+        f"{chr(97 + i)}",
+        transform=ax.transAxes,
+        fontsize=13,
+        fontweight="bold",
+        va="top",
+        ha="right",
+        bbox=dict(facecolor="white", edgecolor="none", alpha=0.8, pad=0.2),
+        zorder=10,
+    )
 
 # save
 plt.savefig(
@@ -1690,10 +1707,13 @@ fig, axes = plt.subplots(
     2,
     3,
     figsize=(12, 9),
-    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
+    subplot_kw={"projection": ccrs.NorthPolarStereo(-40, 80)},
     sharex=True,
     sharey=False,
 )
+
+plt.subplots_adjust(wspace=-0.2, hspace=-0.2)
+
 # first row for pos
 sum_color = sum_Ex_pos_first.plot.contourf(
     ax=axes[0, 0],
@@ -1798,10 +1818,9 @@ steady_Ex_neg_last.plot.contour(
 )
 
 # Add colorbar axes using fig.add_axes for better alignment with tight_layout
-
-# Get position of the bottom row axes to align colorbars
 fig.tight_layout()
-fig.subplots_adjust(bottom=0.12)  # leave space for colorbars
+fig.subplots_adjust(wspace=-0.03, hspace=-0.5, top=1., bottom=0.15)
+
 # Calculate colorbar axes positions (shrink by 0.8)
 width_shrink = axes[1, 0].get_position().width * 0.8
 offset = (axes[1, 0].get_position().width - width_shrink) / 2
@@ -1829,25 +1848,23 @@ fig.colorbar(
     sum_color,
     cax=cax_vq,
     orientation="horizontal",
-    label= r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$",
+    label=r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$ [m s$^{-1}$ day$^{-1}$]",
 )
 fig.colorbar(
     trans_color,
     cax=cax_uv,
     orientation="horizontal",
-    label= r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$",
-    # ticks label every 2
-    ticks = levels_Ex[::2] / 2  # levels_Ex/2 is used for transients
+    label=r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$ [m s$^{-1}$ day$^{-1}$]",
+    ticks=levels_Ex[::2] / 2
 )
 fig.colorbar(
     steady_color,
     cax=cax_vt,
     orientation="horizontal",
-    label= r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$",
+    label=r"$\frac{\partial}{\partial x} (\overline{v'^2 - u'^2})$ [m s$^{-1}$ day$^{-1}$]",
 )
 
-# no y labels from second row on, no x labels at the frist row
-
+# no y labels from second row on, no x labels at the first row
 for ax in axes.flat:
     ax.coastlines(color="grey", linewidth=1)
     gl = ax.gridlines(
@@ -1858,6 +1875,25 @@ for ax in axes.flat:
         linestyle="dotted",
     )
     ax.set_title("")
+    ax.set_extent([-180, 180, 20, 90], crs=ccrs.PlateCarree())
+    gl.xlocator = mticker.FixedLocator([-180,-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180])
+    gl.ylocator = mticker.FixedLocator([10, 30, 50, 70, 90])
+    clip_map(ax)
+
+# Add panel labels a, b, c, ...
+for i, ax in enumerate(axes.flat):
+    ax.text(
+        0.1,
+        0.5,
+        f"{chr(97 + i)}",
+        transform=ax.transAxes,
+        fontsize=13,
+        fontweight="bold",
+        va="top",
+        ha="right",
+        bbox=dict(facecolor="white", edgecolor="none", alpha=0.8, pad=0.2),
+        zorder=10,
+    )
 
 # save
 plt.savefig(
