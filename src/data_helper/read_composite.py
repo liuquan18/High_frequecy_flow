@@ -16,6 +16,7 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
     if time_window == 'all':
         logging.info("-30 to 30 days will be used as time window and time will be kept")
         comp_path = "0composite_distribution"
+        time_window = (-30, 30)
     else:
         comp_path =  "0composite_range"
 
