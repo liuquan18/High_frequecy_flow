@@ -15,12 +15,15 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from src.data_helper.read_variable import read_climatology
 from metpy.units import units
 import metpy.calc as mpcalc
+import src.plotting.util as util
 
 importlib.reload(read_composite)
+importlib.reload(util)
 
 read_EP_flux = read_composite.read_EP_flux
 read_E_div = read_composite.read_E_div
 read_comp_var = read_composite.read_comp_var
+clip_map = util.clip_map
 
 
 # %%
@@ -837,7 +840,7 @@ trans_div_neg_last.plot.contour(
 )
 
 # quiver for vapor flux anomaly
-axes[1, 1].quiver(
+trans_arrows_neg = axes[1, 1].quiver(
     qpflux_neg_first_ano.lon.values[::5],
     qpflux_neg_first_ano.lat.values[::5],
     qpflux_neg_first_ano.u.values[::5, ::5],
@@ -866,7 +869,7 @@ steady_div_p_neg_last.plot.contour(
     extend="both",
 )
 
-axes[1, 2].quiver(
+steady_arrows_neg = axes[1, 2].quiver(
     qsflux_neg_first_ano.lon.values[::5],
     qsflux_neg_first_ano.lat.values[::5],
     qsflux_neg_first_ano.u.values[::5, ::5],
@@ -880,8 +883,8 @@ axes[1, 2].quiver(
 # Add colorbar axes using fig.add_axes for better alignment with tight_layout
 
 # Get position of the bottom row axes to align colorbars
-fig.tight_layout()
-fig.subplots_adjust(bottom=0.12)  # leave space for colorbars
+fig.subplots_adjust(wspace=-0.03, hspace=-0.5, top = 1., bottom = 0.15)
+
 # Calculate colorbar axes positions (shrink by 0.8)
 width_shrink = axes[1, 0].get_position().width * 0.8
 offset = (axes[1, 0].get_position().width - width_shrink) / 2
@@ -909,20 +912,20 @@ fig.colorbar(
     sum_color,
     cax=cax_vq,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m s$^{-1}$ day$^{-1}$]",
 
 )
 fig.colorbar(
     trans_color,
     cax=cax_uv,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m s$^{-1}$ day$^{-1}$]",
 )
 fig.colorbar(
     steady_color,
     cax=cax_vt,
     orientation="horizontal",
-    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m s$^{-1}$ day$^{-1}$]",
 )
 
 # no y labels from second row on, no x labels at the frist row
@@ -940,33 +943,53 @@ for ax in axes.flat:
     gl.ylocator = mticker.FixedLocator([10, 30, 50, 70, 90])
     ax.set_title("")
     ax.set_extent([-180, 180, 20, 90], crs=ccrs.PlateCarree())
+    clip_map(ax)
 
 
-    # ---- Create a sector-shaped boundary ----
-    # Parameters for the wedge shape (sector)
-    radius = 1.0
-    center = np.array([0.5, 0.5])
-    theta1 = 200  # degrees
-    theta2 = 340
+# add quiver key for the second row
+qk = axes[1, 0].quiverkey(
+    sum_arrows_neg,
+    0.6,
+    -0.05,
+    2,
+    r"2 $m s^{-1} g kg ^{-1}$",
+    labelpos="E",
+    coordinates="axes",
+    fontproperties={"size": 10},
+    labelsep=0.05,
 
-    # Create theta values for the arc
-    theta = np.deg2rad(np.linspace(theta1, theta2, 100))
-    arc = np.column_stack([0.5 + 0.5 * np.cos(theta), 0.5 + 0.5 * np.sin(theta)])
-    verts = np.vstack([[0.5, 0.5], arc, [0.5, 0.5]])  # center to arc to center
+)
 
-    # Create path
-    sector_path = mpath.Path(verts)
+qk = axes[1, 1].quiverkey(
+    trans_arrows_neg,
+    0.6,
+    -0.05,
+    2,
+    r"2 $m s^{-1} g kg ^{-1}$",
+    labelpos="E",
+    coordinates="axes",
+    fontproperties={"size": 10},
+    labelsep=0.05,
+)
 
-    # Apply the custom boundary to the axes
-    ax.set_boundary(sector_path, transform=ax.transAxes)
+qk = axes[1, 2].quiverkey(
+    steady_arrows_neg,
+    0.6,
+    -0.05,
+    2,
+    r"2 $m s^{-1} g kg ^{-1}$",
+    labelpos="E",
+    coordinates="axes",
+    fontproperties={"size": 10},
+    labelsep=0.05,
+)
 
-plt.tight_layout(w_pad=-2, h_pad=-5)
 # save
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_div_p_map.pdf",
-#     bbox_inches="tight",
-#     dpi=300,
-# )
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_div_p_map.pdf",
+    bbox_inches="tight",
+    dpi=300,
+)
 # %%
 
 #%%
