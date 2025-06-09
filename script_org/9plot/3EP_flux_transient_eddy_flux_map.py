@@ -1902,8 +1902,8 @@ plt.savefig(
     dpi=300,
 )
 #%%
-levels_vt_prime = np.arange(-1, 1.1, 0.2)
-levels_vt_steady = np.arange(-2, 2.1, 0.5)
+levels_vt_prime = np.arange(-20, 21, 4)
+levels_vt_steady = np.arange(-60, 61, 10)
 # %%
 # plot the climatology of the eddy heat flux of transient (first col) and steady (last col) components
 # first row first 10, second row last 10 years
@@ -1918,7 +1918,7 @@ fig, axes = plt.subplots(
 
 # first 10 years
 # transient
-prime_color = Tdivphi_clima_first.sel(plev = 85000).plot.contourf(
+prime_color = Tdiv_p_clima_first.sel(plev = 85000).plot.contourf(
     ax=axes[0, 0],
     levels=levels_vt_prime,
     cmap="RdBu_r",
@@ -1928,7 +1928,7 @@ prime_color = Tdivphi_clima_first.sel(plev = 85000).plot.contourf(
 )
 
 # steady
-steady_color = Sdivphi_clima_first.sel(plev = 85000).plot.contourf(
+steady_color = Sdiv_p_clima_first.sel(plev = 85000).plot.contourf(
     ax=axes[0, 1],
     levels=levels_vt_steady,
     cmap="RdBu_r",
@@ -1939,7 +1939,7 @@ steady_color = Sdivphi_clima_first.sel(plev = 85000).plot.contourf(
 
 # second 10 years
 # transient
-prime_color = Tdivphi_clima_last.sel(plev = 85000).plot.contourf(
+prime_color = Tdiv_p_clima_last.sel(plev = 85000).plot.contourf(
     ax=axes[1, 0],
     levels=levels_vt_prime,
     cmap="RdBu_r",
@@ -1948,7 +1948,7 @@ prime_color = Tdivphi_clima_last.sel(plev = 85000).plot.contourf(
     transform=ccrs.PlateCarree(),
 )
 # steady
-steady_color = Sdivphi_clima_last.sel(plev = 85000).plot.contourf(
+steady_color = Sdiv_p_clima_last.sel(plev = 85000).plot.contourf(
     ax=axes[1, 1],
     levels=levels_vt_steady,
     cmap="RdBu_r",  
