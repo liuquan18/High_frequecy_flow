@@ -197,61 +197,62 @@ def EP_flux(vptp, upvp, dthdp):
 
 
 # %%
-def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), eddy = 'transient'):
+def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), eddy = 'transient', **kwargs):
 	"""
 	theta for interpolation
 	steady eddies: usvs
 	transient eddies: upvp
 	"""
+	method = kwargs.get('method', 'mean')  # default method is 'mean'
 	if eddy == 'transient':
 		upvp = read_comp_var(
 			var = "upvp",phase = phase, decade = decade, name = "upvp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-			time_window = time_window, method = "mean", erase_zero_line = True,
+			time_window = time_window, method = method, erase_zero_line = True,
 		)
 		
 		if equiv_theta:
 			vptp = read_comp_var(
 				var = "vpetp", phase = phase, decade = decade, name = "vpetp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-				time_window = time_window, method = "mean", erase_zero_line = True,
+				time_window = time_window, method = method, erase_zero_line = True,
 			)
 			
 
 		else:
 			vptp = read_comp_var(
 				var = "vptp", phase = phase, decade = decade, name = "vptp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-				time_window = time_window, method = "mean", erase_zero_line = True,
+				time_window = time_window, method = method, erase_zero_line = True,
 			)
 		
 		# read temperature to compute static stability
 		# transient the original 
 		ta = read_comp_var(
 			var = "ta", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-			time_window = time_window, method = "mean", erase_zero_line = True,
+			time_window = time_window, method = method, erase_zero_line = True,
 		)
 	
 	elif eddy == 'steady':
 		upvp = read_comp_var(
 			var = "usvs", phase = phase, decade = decade, name = "usvs", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-			time_window = time_window, method = "mean", erase_zero_line = True,
+			time_window = time_window, method = method, erase_zero_line = True,
 		)
 		if equiv_theta:
 			vptp = read_comp_var(
 				var = "vsets", phase = phase, decade = decade, name = "vsets", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-				time_window = time_window, method = "mean", erase_zero_line = True,
+				time_window = time_window, method = method, erase_zero_line = True,
 			)
 			
 		
 		else:
 			vptp = read_comp_var(
 				var = "vsts", phase = phase, decade = decade, name = "vsts", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-				time_window = time_window, method = "mean", erase_zero_line = True,
+				time_window = time_window, method = method, erase_zero_line = True,
 			)
 
 		# read temperature to compute static stability
 		# ta_hat
 		ta = read_comp_var(
 			var = "ta_hat", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-			time_window = time_window, method = "mean", erase_zero_line = True,
+			time_window = time_window, method = method, erase_zero_line = True,
 		)
 
 	else:
