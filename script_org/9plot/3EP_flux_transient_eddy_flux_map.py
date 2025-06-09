@@ -19,7 +19,6 @@ read_EP_flux = read_composite.read_EP_flux
 read_E_div = read_composite.read_E_div
 read_comp_var = read_composite.read_comp_var
 
-# %%
 
 # %%
 # read transient EP flux for positive and negative phase
@@ -569,6 +568,72 @@ sum_div_p_neg_last = (Tdiv_p_neg_last_ano + Sdiv_p_neg_last_ano).sel(plev=85000)
 trans_div_neg_last = Tdiv_p_neg_last_ano.sel(plev=85000)
 steady_div_p_neg_last = Sdiv_p_neg_last_ano.sel(plev=85000)
 #%%
+# read vapor flux
+upqp_pos_first = read_comp_var("upqp", phase="pos", decade=1850, time_window=(-10, 5), ano = False).sel(plev = 85000)
+upqp_neg_first = read_comp_var("upqp", phase="neg", decade=1850, time_window=(-10, 5), ano = False).sel(plev = 85000)
+upqp_pos_last = read_comp_var("upqp", phase="pos", decade=2090, time_window=(-10, 5), ano = False).sel(plev = 85000)
+upqp_neg_last = read_comp_var("upqp", phase="neg", decade=2090, time_window=(-10, 5), ano = False).sel(plev = 85000)
+
+#
+vpqp_pos_first = read_comp_var("vpqp", phase="pos", decade=1850, time_window=(-10, 5), ano = False).sel(plev = 85000)
+vpqp_neg_first = read_comp_var("vpqp", phase="neg", decade=1850, time_window=(-10, 5), ano = False).sel(plev = 85000)
+vpqp_pos_last = read_comp_var("vpqp", phase="pos", decade=2090, time_window=(-10, 5), ano = False).sel(plev = 85000)
+vpqp_neg_last = read_comp_var("vpqp", phase="neg", decade=2090, time_window=(-10, 5), ano = False).sel(plev = 85000)
+
+# # to flux
+qpflux_pos_first = xr.Dataset(
+    {"u": upqp_pos_first*1e3, "v": vpqp_pos_first*1e3}
+)
+qpflux_neg_first = xr.Dataset(
+    {"u": upqp_neg_first*1e3, "v": vpqp_neg_first*1e3}
+)
+qpflux_pos_last = xr.Dataset(
+    {"u": upqp_pos_last*1e3, "v": vpqp_pos_last*1e3}
+)
+qpflux_neg_last = xr.Dataset(
+    {"u": upqp_neg_last*1e3, "v": vpqp_neg_last*1e3}
+)
+#%%
+usqs_pos_first = read_comp_var("usqs", phase="pos", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+usqs_neg_first = read_comp_var("usqs", phase="neg", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+
+usqs_pos_last = read_comp_var("usqs", phase="pos", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+usqs_neg_last = read_comp_var("usqs", phase="neg", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+
+vsqs_pos_first = read_comp_var("vsqs", phase="pos", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+vsqs_neg_first = read_comp_var("vsqs", phase="neg", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+
+vsqs_pos_last = read_comp_var("vsqs", phase="pos", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+vsqs_neg_last = read_comp_var("vsqs", phase="neg", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+
+# to flux
+qsflux_pos_first = xr.Dataset(
+    {"u": usqs_pos_first*1e3, "v": vsqs_pos_first*1e3}
+)
+qsflux_neg_first = xr.Dataset(
+    {"u": usqs_neg_first*1e3, "v": vsqs_neg_first*1e3}
+)
+
+qsflux_pos_last = xr.Dataset(
+    {"u": usqs_pos_last*1e3, "v": vsqs_pos_last*1e3}
+)
+
+qsflux_neg_last = xr.Dataset(
+    {"u": usqs_neg_last*1e3, "v": vsqs_neg_last*1e3}
+)
+
+#%%
+qsumflux_pos_first = (qpflux_pos_first + qsflux_pos_first)
+qsumflux_neg_first = (qpflux_neg_first + qsflux_neg_first)
+qsumflux_pos_last = (qpflux_pos_last + qsflux_pos_last)
+qsumflux_neg_last = (qpflux_neg_last + qsflux_neg_last  )
+#%%
+levels_vt = np.arange(-12, 13, 3)
+levels_vt_prime = np.arange(-4, 5, 1)
+qscale_sum = 80
+qscale = 80
+
+#%%
 fig, axes = plt.subplots(
     2,
     3,
@@ -595,10 +660,23 @@ sum_div_p_pos_last.plot.contour(
     transform=ccrs.PlateCarree(),
 )
 
+# quiver for vapor flux
+sum_arrows = axes[0, 0].quiver(
+    qsumflux_pos_first.lon.values[::5],
+    qsumflux_pos_first.lat.values[::5],
+    qsumflux_pos_first.u.values[::5, ::5],
+    qsumflux_pos_first.v.values[::5, ::5],
+    scale=qscale_sum,
+    transform=ccrs.PlateCarree(),
+    color = "green",
+    width=0.005,
+)
+
+
 # transient
 trans_color = trans_div_p_pos_first.plot.contourf(
     ax=axes[0, 1],
-    levels=levels_vt/4,
+    levels=levels_vt_prime,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
@@ -606,12 +684,25 @@ trans_color = trans_div_p_pos_first.plot.contourf(
 )
 trans_div_p_pos_last.plot.contour(
     ax=axes[0, 1],
-    levels=[l for l in levels_vt/4 if l != 0],
+    levels=[l for l in levels_vt_prime if l != 0],
     colors="k",
     linewidths=0.5,
     extend="both",
     transform=ccrs.PlateCarree(),
 )
+
+# quiver for vapor flux
+trans_arrows = axes[0, 1].quiver(
+    qpflux_pos_first.lon.values[::5],
+    qpflux_pos_first.lat.values[::5],
+    qpflux_pos_first.u.values[::5, ::5],
+    qpflux_pos_first.v.values[::5, ::5],
+    scale=qscale,
+    transform=ccrs.PlateCarree(),
+    color = "green",
+    width=0.005,
+)
+
 
 # steady
 steady_color = steady_div_p_pos_first.plot.contourf(
@@ -630,6 +721,19 @@ steady_div_p_pos_last.plot.contour(
     transform=ccrs.PlateCarree(),
     extend="both",
 )
+
+# quiver for vapor flux
+steady_arrows = axes[0, 2].quiver(
+    qsflux_pos_first.lon.values[::5],
+    qsflux_pos_first.lat.values[::5],
+    qsflux_pos_first.u.values[::5, ::5],
+    qsflux_pos_first.v.values[::5, ::5],
+    scale=qscale,
+    transform=ccrs.PlateCarree(),
+    color = "green",
+    width=0.005,
+)
+
 # second row for negative phase
 sum_color_neg = sum_div_p_neg_first.plot.contourf(
     ax=axes[1, 0],
@@ -647,10 +751,24 @@ sum_div_p_neg_last.plot.contour(
     extend="both",
     transform=ccrs.PlateCarree(),
 )
+
+# quiver for vapor flux
+sum_arrows_neg = axes[1, 0].quiver(
+    qsumflux_neg_first.lon.values[::5],
+    qsumflux_neg_first.lat.values[::5],
+    qsumflux_neg_first.u.values[::5, ::5],
+    qsumflux_neg_first.v.values[::5, ::5],
+    scale=qscale_sum,
+    transform=ccrs.PlateCarree(),
+    color = "green",
+    width=0.005,
+)
+
+
 # transient
 trans_color = trans_div_neg_last.plot.contourf(
     ax=axes[1, 1],
-    levels=levels_vt/4,
+    levels=levels_vt_prime,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
@@ -658,11 +776,23 @@ trans_color = trans_div_neg_last.plot.contourf(
 )
 trans_div_neg_last.plot.contour(
     ax=axes[1, 1],
-    levels=[l for l in levels_vt/4 if l != 0],
+    levels=[l for l in levels_vt_prime if l != 0],
     colors="k",
     linewidths=0.5,
     extend="both",
     transform=ccrs.PlateCarree(),
+)
+
+# quiver for vapor flux
+axes[1,1].quiver(
+    qpflux_neg_first.lon.values[::5],
+    qpflux_neg_first.lat.values[::5],
+    qpflux_neg_first.u.values[::5, ::5],
+    qpflux_neg_first.v.values[::5, ::5],
+    scale=qscale,
+    transform=ccrs.PlateCarree(),
+    color = "green",
+    width=0.005,
 )
 
 # steady
@@ -681,6 +811,17 @@ steady_div_p_neg_last.plot.contour(
     linewidths=0.5, 
     transform=ccrs.PlateCarree(),
     extend="both",
+)
+
+axes[1, 2].quiver(
+    qsflux_neg_first.lon.values[::5],
+    qsflux_neg_first.lat.values[::5],
+    qsflux_neg_first.u.values[::5, ::5],
+    qsflux_neg_first.v.values[::5, ::5],
+    scale=qscale,
+    transform=ccrs.PlateCarree(),
+    color = "green",
+    width=0.005,
 )
 
 # Add colorbar axes using fig.add_axes for better alignment with tight_layout
@@ -745,11 +886,11 @@ for ax in axes.flat:
     ax.set_title("")
 
 # save
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_div_p_map.pdf",
-    bbox_inches="tight",
-    dpi=300,
-)
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_div_p_map.pdf",
+#     bbox_inches="tight",
+#     dpi=300,
+# )
 
 #%%
 # E_x
