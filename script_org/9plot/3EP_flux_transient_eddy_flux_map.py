@@ -693,7 +693,7 @@ qscale_steady =20
 fig, axes = plt.subplots(
     2,
     3,
-    figsize=(10, 5),
+    figsize=(12, 9),
     subplot_kw={"projection": ccrs.NorthPolarStereo(-40, 80)},
     sharex=True,
     sharey=False,
@@ -1014,7 +1014,7 @@ plt.savefig(
 fig, axes = plt.subplots(
     2,
     3,
-    figsize=(10, 5),
+    figsize=(12, 9),
     subplot_kw={"projection": ccrs.NorthPolarStereo(-40, 80)},
     sharex=True,
     sharey=False,
@@ -1628,9 +1628,20 @@ fig.colorbar(
     orientation="horizontal",
     label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m s$^{-1}$ day$^{-1}$]",
 )
+# add quiver key for the second row
+qk = axes[1, 0].quiverkey(
+    sum_arrows_neg,
+    0.6,
+    -0.05,
+    10,
+    r"10 $m s^{-1}$",
+    labelpos="E",
+    coordinates="axes",
+    fontproperties={"size": 10},
+    labelsep=0.05,
+)
 
 # no y labels from second row on, no x labels at the frist row
-
 for ax in axes.flat:
     ax.coastlines(color="grey", linewidth=1)
     gl = ax.gridlines(
