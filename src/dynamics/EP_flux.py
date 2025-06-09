@@ -189,8 +189,10 @@ def EP_flux(vptp, upvp, dthdp):
 	div2.attrs['units'] = 'm/s/day'
 	div2.attrs['long_name'] = 'divergence of Vertical component of Eliassen-Palm flux'
 
-	return ep1_cart.transpose('plev','lat','lon'), ep2_cart.transpose('plev','lat','lon'),\
-			div1.transpose('plev','lat','lon'), div2.transpose('plev','lat','lon')
+	original_dims = upvp.dims
+
+	return ep1_cart.transpose(*original_dims), ep2_cart.transpose(*original_dims),\
+			div1.transpose(*original_dims), div2.transpose(*original_dims)
 
 
 
