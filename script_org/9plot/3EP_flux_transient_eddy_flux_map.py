@@ -1471,7 +1471,7 @@ sum_arrows = axes[0, 0].quiver(
     wndflux_pos_first.v.values[::6, ::6],
     scale=wnd_scale,
     transform=ccrs.PlateCarree(),
-    color="k",
+    color="purple",
     width=0.005,
 )
 
@@ -1538,7 +1538,7 @@ sum_arrows_neg = axes[1, 0].quiver(
     wndflux_neg_first.v.values[::6, ::6],
     scale=wnd_scale,
     transform=ccrs.PlateCarree(),
-    color="k",
+    color="purple",
     width=0.005,
 )
 
