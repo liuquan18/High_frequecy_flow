@@ -594,6 +594,29 @@ qpflux_neg_last = xr.Dataset(
     {"u": upqp_neg_last*1e3, "v": vpqp_neg_last*1e3}
 )
 #%%
+# read climatological vapor flux
+upqp_clima_first = read_climatology("upqp", 1850, model_dir = 'MPI_GE_CMIP6').sel(plev = 85000)
+upqp_clima_last = read_climatology("upqp", 2090, model_dir = 'MPI_GE_CMIP6').sel(plev = 85000)
+
+vpqp_clima_first = read_climatology("vpqp", 1850, model_dir = 'MPI_GE_CMIP6').sel(plev = 85000)
+vpqp_clima_last = read_climatology("vpqp", 2090, model_dir = 'MPI_GE_CMIP6').sel(plev = 85000)
+
+# to flux
+qpflux_clima_first = xr.Dataset(
+    {"u": upqp_clima_first*1e3, "v": vpqp_clima_first*1e3}
+)
+qpflux_clima_last = xr.Dataset(
+    {"u": upqp_clima_last*1e3, "v": vpqp_clima_last*1e3}
+)
+#%%
+# anomaly
+qpflux_pos_first_ano = qpflux_pos_first - qpflux_clima_first
+qpflux_neg_first_ano = qpflux_neg_first - qpflux_clima_first
+qpflux_pos_last_ano = qpflux_pos_last - qpflux_clima_last
+qpflux_neg_last_ano = qpflux_neg_last - qpflux_clima_last
+
+
+#%%
 usqs_pos_first = read_comp_var("usqs", phase="pos", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
 usqs_neg_first = read_comp_var("usqs", phase="neg", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
 
@@ -621,6 +644,26 @@ qsflux_pos_last = xr.Dataset(
 qsflux_neg_last = xr.Dataset(
     {"u": usqs_neg_last*1e3, "v": vsqs_neg_last*1e3}
 )
+#%%
+# read climatological vapor flux
+usqs_clima_first = read_climatology("usqs", 1850, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+usqs_clima_last = read_climatology("usqs", 2090, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+vsqs_clima_first = read_climatology("vsqs", 1850, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+vsqs_clima_last = read_climatology("vsqs", 2090, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
+
+# to flux
+qsflux_clima_first = xr.Dataset(
+    {"u": usqs_clima_first*1e3, "v": vsqs_clima_first*1e3}
+)
+qsflux_clima_last = xr.Dataset(
+    {"u": usqs_clima_last*1e3, "v": vsqs_clima_last*1e3}
+)
+
+# anomaly
+qsflux_pos_first_ano = qsflux_pos_first - qsflux_clima_first
+qsflux_neg_first_ano = qsflux_neg_first - qsflux_clima_first
+qsflux_pos_last_ano = qsflux_pos_last - qsflux_clima_last
+qsflux_neg_last_ano = qsflux_neg_last - qsflux_clima_last
 
 #%%
 qsumflux_pos_first = (qpflux_pos_first + qsflux_pos_first)
@@ -628,10 +671,17 @@ qsumflux_neg_first = (qpflux_neg_first + qsflux_neg_first)
 qsumflux_pos_last = (qpflux_pos_last + qsflux_pos_last)
 qsumflux_neg_last = (qpflux_neg_last + qsflux_neg_last  )
 #%%
+# anomaly
+qsumflux_pos_first_ano = (qpflux_pos_first_ano + qsflux_pos_first_ano)
+qsumflux_neg_first_ano = (qpflux_neg_first_ano + qsflux_neg_first_ano)
+qsumflux_pos_last_ano = (qpflux_pos_last_ano + qsflux_pos_last_ano)
+qsumflux_neg_last_ano = (qpflux_neg_last_ano + qsflux_neg_last_ano)
+#%%
 levels_vt = np.arange(-12, 13, 3)
 levels_vt_prime = np.arange(-4, 5, 1)
-qscale_sum = 80
-qscale = 80
+qscale_sum = 20
+qscale = 10
+qscale_steady = 20
 
 #%%
 fig, axes = plt.subplots(
@@ -660,18 +710,17 @@ sum_div_p_pos_last.plot.contour(
     transform=ccrs.PlateCarree(),
 )
 
-# quiver for vapor flux
+# quiver for vapor flux anomaly
 sum_arrows = axes[0, 0].quiver(
-    qsumflux_pos_first.lon.values[::5],
-    qsumflux_pos_first.lat.values[::5],
-    qsumflux_pos_first.u.values[::5, ::5],
-    qsumflux_pos_first.v.values[::5, ::5],
+    qsumflux_pos_first_ano.lon.values[::5],
+    qsumflux_pos_first_ano.lat.values[::5],
+    qsumflux_pos_first_ano.u.values[::5, ::5],
+    qsumflux_pos_first_ano.v.values[::5, ::5],
     scale=qscale_sum,
     transform=ccrs.PlateCarree(),
-    color = "green",
+    color="green",
     width=0.005,
 )
-
 
 # transient
 trans_color = trans_div_p_pos_first.plot.contourf(
@@ -691,18 +740,17 @@ trans_div_p_pos_last.plot.contour(
     transform=ccrs.PlateCarree(),
 )
 
-# quiver for vapor flux
+# quiver for vapor flux anomaly
 trans_arrows = axes[0, 1].quiver(
-    qpflux_pos_first.lon.values[::5],
-    qpflux_pos_first.lat.values[::5],
-    qpflux_pos_first.u.values[::5, ::5],
-    qpflux_pos_first.v.values[::5, ::5],
+    qpflux_pos_first_ano.lon.values[::5],
+    qpflux_pos_first_ano.lat.values[::5],
+    qpflux_pos_first_ano.u.values[::5, ::5],
+    qpflux_pos_first_ano.v.values[::5, ::5],
     scale=qscale,
     transform=ccrs.PlateCarree(),
-    color = "green",
+    color="green",
     width=0.005,
 )
-
 
 # steady
 steady_color = steady_div_p_pos_first.plot.contourf(
@@ -722,15 +770,15 @@ steady_div_p_pos_last.plot.contour(
     extend="both",
 )
 
-# quiver for vapor flux
+# quiver for vapor flux anomaly
 steady_arrows = axes[0, 2].quiver(
-    qsflux_pos_first.lon.values[::5],
-    qsflux_pos_first.lat.values[::5],
-    qsflux_pos_first.u.values[::5, ::5],
-    qsflux_pos_first.v.values[::5, ::5],
-    scale=qscale,
+    qsflux_pos_first_ano.lon.values[::5],
+    qsflux_pos_first_ano.lat.values[::5],
+    qsflux_pos_first_ano.u.values[::5, ::5],
+    qsflux_pos_first_ano.v.values[::5, ::5],
+    scale=qscale_steady,
     transform=ccrs.PlateCarree(),
-    color = "green",
+    color="green",
     width=0.005,
 )
 
@@ -752,18 +800,17 @@ sum_div_p_neg_last.plot.contour(
     transform=ccrs.PlateCarree(),
 )
 
-# quiver for vapor flux
+# quiver for vapor flux anomaly
 sum_arrows_neg = axes[1, 0].quiver(
-    qsumflux_neg_first.lon.values[::5],
-    qsumflux_neg_first.lat.values[::5],
-    qsumflux_neg_first.u.values[::5, ::5],
-    qsumflux_neg_first.v.values[::5, ::5],
+    qsumflux_neg_first_ano.lon.values[::5],
+    qsumflux_neg_first_ano.lat.values[::5],
+    qsumflux_neg_first_ano.u.values[::5, ::5],
+    qsumflux_neg_first_ano.v.values[::5, ::5],
     scale=qscale_sum,
     transform=ccrs.PlateCarree(),
-    color = "green",
+    color="green",
     width=0.005,
 )
-
 
 # transient
 trans_color = trans_div_neg_last.plot.contourf(
@@ -783,15 +830,15 @@ trans_div_neg_last.plot.contour(
     transform=ccrs.PlateCarree(),
 )
 
-# quiver for vapor flux
-axes[1,1].quiver(
-    qpflux_neg_first.lon.values[::5],
-    qpflux_neg_first.lat.values[::5],
-    qpflux_neg_first.u.values[::5, ::5],
-    qpflux_neg_first.v.values[::5, ::5],
+# quiver for vapor flux anomaly
+axes[1, 1].quiver(
+    qpflux_neg_first_ano.lon.values[::5],
+    qpflux_neg_first_ano.lat.values[::5],
+    qpflux_neg_first_ano.u.values[::5, ::5],
+    qpflux_neg_first_ano.v.values[::5, ::5],
     scale=qscale,
     transform=ccrs.PlateCarree(),
-    color = "green",
+    color="green",
     width=0.005,
 )
 
@@ -808,19 +855,19 @@ steady_div_p_neg_last.plot.contour(
     ax=axes[1, 2],
     levels=[l for l in levels_vt if l != 0],
     colors="k",
-    linewidths=0.5, 
+    linewidths=0.5,
     transform=ccrs.PlateCarree(),
     extend="both",
 )
 
 axes[1, 2].quiver(
-    qsflux_neg_first.lon.values[::5],
-    qsflux_neg_first.lat.values[::5],
-    qsflux_neg_first.u.values[::5, ::5],
-    qsflux_neg_first.v.values[::5, ::5],
-    scale=qscale,
+    qsflux_neg_first_ano.lon.values[::5],
+    qsflux_neg_first_ano.lat.values[::5],
+    qsflux_neg_first_ano.u.values[::5, ::5],
+    qsflux_neg_first_ano.v.values[::5, ::5],
+    scale=qscale_steady,
     transform=ccrs.PlateCarree(),
-    color = "green",
+    color="green",
     width=0.005,
 )
 
@@ -856,20 +903,20 @@ fig.colorbar(
     sum_color,
     cax=cax_vq,
     orientation="horizontal",
-    label= r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
 
 )
 fig.colorbar(
     trans_color,
     cax=cax_uv,
     orientation="horizontal",
-    label= r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
 )
 fig.colorbar(
     steady_color,
     cax=cax_vt,
     orientation="horizontal",
-    label= r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
 )
 
 # no y labels from second row on, no x labels at the frist row
@@ -884,6 +931,7 @@ for ax in axes.flat:
         linestyle="dotted",
     )
     ax.set_title("")
+    ax.set_extent([-120, 60, -90, 90], crs=ccrs.PlateCarree())
 
 # save
 # plt.savefig(
@@ -891,6 +939,258 @@ for ax in axes.flat:
 #     bbox_inches="tight",
 #     dpi=300,
 # )
+# %%
+
+# %%
+
+#%%
+fig, axes = plt.subplots(
+    2,
+    3,
+    figsize=(12, 9),
+    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
+    sharex=True,
+    sharey=False,
+)
+
+sum_color = sum_div_p_pos_first.plot.contourf(
+    ax=axes[0, 0],
+    levels=levels_vt,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+sum_div_p_pos_last.plot.contour(
+    ax=axes[0, 0],
+    levels=[l for l in levels_vt if l != 0],
+    colors="k",
+    linewidths=0.5,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+
+# quiver for vapor flux anomaly (last 10 years)
+sum_arrows = axes[0, 0].quiver(
+    qsumflux_pos_last_ano.lon.values[::5],
+    qsumflux_pos_last_ano.lat.values[::5],
+    qsumflux_pos_last_ano.u.values[::5, ::5],
+    qsumflux_pos_last_ano.v.values[::5, ::5],
+    scale=qscale_sum,
+    transform=ccrs.PlateCarree(),
+    color="green",
+    width=0.005,
+)
+
+# transient
+trans_color = trans_div_p_pos_first.plot.contourf(
+    ax=axes[0, 1],
+    levels=levels_vt_prime,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+trans_div_p_pos_last.plot.contour(
+    ax=axes[0, 1],
+    levels=[l for l in levels_vt_prime if l != 0],
+    colors="k",
+    linewidths=0.5,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+
+# quiver for vapor flux anomaly (last 10 years)
+trans_arrows = axes[0, 1].quiver(
+    qpflux_pos_last_ano.lon.values[::5],
+    qpflux_pos_last_ano.lat.values[::5],
+    qpflux_pos_last_ano.u.values[::5, ::5],
+    qpflux_pos_last_ano.v.values[::5, ::5],
+    scale=qscale,
+    transform=ccrs.PlateCarree(),
+    color="green",
+    width=0.005,
+)
+
+# steady
+steady_color = steady_div_p_pos_first.plot.contourf(
+    ax=axes[0, 2],
+    levels=levels_vt,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+steady_div_p_pos_last.plot.contour(
+    ax=axes[0, 2],
+    levels=[l for l in levels_vt if l != 0],
+    colors="k",
+    linewidths=0.5,
+    transform=ccrs.PlateCarree(),
+    extend="both",
+)
+
+# quiver for vapor flux anomaly (last 10 years)
+steady_arrows = axes[0, 2].quiver(
+    qsflux_pos_last_ano.lon.values[::5],
+    qsflux_pos_last_ano.lat.values[::5],
+    qsflux_pos_last_ano.u.values[::5, ::5],
+    qsflux_pos_last_ano.v.values[::5, ::5],
+    scale=qscale,
+    transform=ccrs.PlateCarree(),
+    color="green",
+    width=0.005,
+)
+
+# second row for negative phase
+sum_color_neg = sum_div_p_neg_first.plot.contourf(
+    ax=axes[1, 0],
+    levels=levels_vt,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+sum_div_p_neg_last.plot.contour(
+    ax=axes[1, 0],
+    levels=[l for l in levels_vt if l != 0],
+    colors="k",
+    linewidths=0.5,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+
+# quiver for vapor flux anomaly (last 10 years)
+sum_arrows_neg = axes[1, 0].quiver(
+    qsumflux_neg_last_ano.lon.values[::5],
+    qsumflux_neg_last_ano.lat.values[::5],
+    qsumflux_neg_last_ano.u.values[::5, ::5],
+    qsumflux_neg_last_ano.v.values[::5, ::5],
+    scale=qscale_sum,
+    transform=ccrs.PlateCarree(),
+    color="green",
+    width=0.005,
+)
+
+# transient
+trans_color = trans_div_neg_last.plot.contourf(
+    ax=axes[1, 1],
+    levels=levels_vt_prime,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+trans_div_neg_last.plot.contour(
+    ax=axes[1, 1],
+    levels=[l for l in levels_vt_prime if l != 0],
+    colors="k",
+    linewidths=0.5,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+
+# quiver for vapor flux anomaly (last 10 years)
+axes[1, 1].quiver(
+    qpflux_neg_last_ano.lon.values[::5],
+    qpflux_neg_last_ano.lat.values[::5],
+    qpflux_neg_last_ano.u.values[::5, ::5],
+    qpflux_neg_last_ano.v.values[::5, ::5],
+    scale=qscale,
+    transform=ccrs.PlateCarree(),
+    color="green",
+    width=0.005,
+)
+
+# steady
+steady_color = steady_div_p_neg_last.plot.contourf(
+    ax=axes[1, 2],
+    levels=levels_vt,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+)
+steady_div_p_neg_last.plot.contour(
+    ax=axes[1, 2],
+    levels=[l for l in levels_vt if l != 0],
+    colors="k",
+    linewidths=0.5,
+    transform=ccrs.PlateCarree(),
+    extend="both",
+)
+
+axes[1, 2].quiver(
+    qsflux_neg_last_ano.lon.values[::5],
+    qsflux_neg_last_ano.lat.values[::5],
+    qsflux_neg_last_ano.u.values[::5, ::5],
+    qsflux_neg_last_ano.v.values[::5, ::5],
+    scale=qscale,
+    transform=ccrs.PlateCarree(),
+    color="green",
+    width=0.005,
+)
+
+# Add colorbar axes using fig.add_axes for better alignment with tight_layout
+
+# Get position of the bottom row axes to align colorbars
+fig.tight_layout()
+fig.subplots_adjust(bottom=0.12)  # leave space for colorbars
+# Calculate colorbar axes positions (shrink by 0.8)
+width_shrink = axes[1, 0].get_position().width * 0.8
+offset = (axes[1, 0].get_position().width - width_shrink) / 2
+
+cax_vq = fig.add_axes([
+    axes[1, 0].get_position().x0 + offset,
+    0.08,
+    width_shrink,
+    0.02
+])
+cax_uv = fig.add_axes([
+    axes[1, 1].get_position().x0 + offset,
+    0.08,
+    width_shrink,
+    0.02
+])
+cax_vt = fig.add_axes([
+    axes[1, 2].get_position().x0 + offset,
+    0.08,
+    width_shrink,
+    0.02
+])
+
+fig.colorbar(
+    sum_color,
+    cax=cax_vq,
+    orientation="horizontal",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+
+)
+fig.colorbar(
+    trans_color,
+    cax=cax_uv,
+    orientation="horizontal",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+)
+fig.colorbar(
+    steady_color,
+    cax=cax_vt,
+    orientation="horizontal",
+    label=r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$",
+)
+
+# no y labels from second row on, no x labels at the frist row
+
+for ax in axes.flat:
+    ax.coastlines(color="grey", linewidth=1)
+    gl = ax.gridlines(
+        draw_labels=False,
+        linewidth=1,
+        color="grey",
+        alpha=0.5,
+        linestyle="dotted",
+    )
+    ax.set_title("")
 
 #%%
 # E_x
