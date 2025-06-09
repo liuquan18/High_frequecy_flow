@@ -1434,7 +1434,8 @@ wndflux_neg_last_ano = xr.Dataset({
 
 
 #%%
-levels_Ey = np.arange(-2, 2.1, 0.5)
+levels_Ey = np.arange(-3, 3.1, 0.5)
+levels_Ey_prime = np.arange(-1.5, 1.6, 0.5)
 wnd_scale = 150
 #%%
 # plot E_y
@@ -1465,10 +1466,10 @@ sum_Ey_pos_last.plot.contour(
 )
 # quiver for wind anomaly
 sum_arrows = axes[0, 0].quiver(
-    wndflux_pos_first.lon.values[::6],
+    wndflux_pos_first.lon.values[::7],
     wndflux_pos_first.lat.values[::6],
-    wndflux_pos_first.u.values[::6, ::6],
-    wndflux_pos_first.v.values[::6, ::6],
+    wndflux_pos_first.u.values[::6, ::7],
+    wndflux_pos_first.v.values[::6, ::7],
     scale=wnd_scale,
     transform=ccrs.PlateCarree(),
     color="purple",
@@ -1481,7 +1482,7 @@ sum_arrows = axes[0, 0].quiver(
 # transient
 trans_color = trans_Ey_pos_first.plot.contourf(
     ax=axes[0, 1],
-    levels=levels_Ey/2,
+    levels=levels_Ey_prime,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
@@ -1489,7 +1490,7 @@ trans_color = trans_Ey_pos_first.plot.contourf(
 )
 trans_Ey_pos_last.plot.contour(
     ax=axes[0, 1],
-    levels=[l for l in levels_Ey/2 if l != 0],
+    levels=[l for l in levels_Ey_prime if l != 0],
     colors="k",
     linewidths=0.5,
     extend="both",
@@ -1532,10 +1533,10 @@ sum_Ey_neg_last.plot.contour(
 
 # quiver for wind anomaly
 sum_arrows_neg = axes[1, 0].quiver(
-    wndflux_neg_first.lon.values[::6],
+    wndflux_neg_first.lon.values[::7],
     wndflux_neg_first.lat.values[::6],
-    wndflux_neg_first.u.values[::6, ::6],
-    wndflux_neg_first.v.values[::6, ::6],
+    wndflux_neg_first.u.values[::6, ::7],
+    wndflux_neg_first.v.values[::6, ::7],
     scale=wnd_scale,
     transform=ccrs.PlateCarree(),
     color="purple",
@@ -1545,7 +1546,7 @@ sum_arrows_neg = axes[1, 0].quiver(
 # transient
 trans_color = trans_Ey_neg_first.plot.contourf(
     ax=axes[1, 1],
-    levels=levels_Ey/2,
+    levels=levels_Ey_prime,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
@@ -1553,7 +1554,7 @@ trans_color = trans_Ey_neg_first.plot.contourf(
 )
 trans_Ey_neg_last.plot.contour(
     ax=axes[1, 1],
-    levels=[l for l in levels_Ey/2 if l != 0],
+    levels=[l for l in levels_Ey_prime if l != 0],
     colors="k",
     linewidths=0.5,
     extend="both",
