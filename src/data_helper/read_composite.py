@@ -118,8 +118,11 @@ def read_EP_flux(
     return F_phi, F_p, div_phi, div_p
 
 #%%
-def read_E_div(phase, decade, eddy = 'transient'):
-    E_div_dir =  "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
+def read_E_div(phase, decade, eddy = 'transient', keep_time = False):
+    if keep_time:
+        E_div_dir =  "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux_distribution/"
+    else:
+        E_div_dir =  "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
 
     E_div_x = xr.open_dataarray(f"{E_div_dir}{eddy}_E_div_x_{phase}_{decade}.nc")
     E_div_y = xr.open_dataarray(f"{E_div_dir}{eddy}_E_div_y_{phase}_{decade}.nc")
