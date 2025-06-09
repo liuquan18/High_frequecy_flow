@@ -22,7 +22,7 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 name = MPI.Get_processor_name()
 #%%
-def composite_single_ens(var, decade, ens, plev = 85000, time_window = (-10, 5), dur_threshold = 7, **kwargs):
+def composite_single_ens(var, decade, ens, plev = 85000, dur_threshold = 7, **kwargs):
     # read NAO extremes
     pos_extreme = read_NAO_extremes_single_ens('pos', decade, ens, dur_threshold = dur_threshold)
     neg_extreme = read_NAO_extremes_single_ens('neg', decade, ens, dur_threshold = dur_threshold)
@@ -39,8 +39,8 @@ def composite_single_ens(var, decade, ens, plev = 85000, time_window = (-10, 5),
         var_neg = var_neg.sel(plev = plev) if plev is not None else var_neg
 
         # average over domain [-60, -10][40, 60N]
-        var_pos = var_pos.sel(lon = slice(300, 350), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
-        var_neg = var_neg.sel(lon = slice(300, 350), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
+        var_pos = var_pos.sel(lon = slice(300, 360), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
+        var_neg = var_neg.sel(lon = slice(300, 360), lat = slice(40, 80)).mean(dim=['lon', 'lat'])
     else:
         var_pos = None
         var_neg = None
