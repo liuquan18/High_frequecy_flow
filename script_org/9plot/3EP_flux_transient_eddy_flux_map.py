@@ -3,6 +3,9 @@ import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
+import matplotlib.path as mpath
+import matplotlib.ticker as mticker
+
 
 from src.dynamics.EP_flux import PlotEPfluxArrows
 from src.data_helper import read_composite
@@ -681,17 +684,20 @@ levels_vt = np.arange(-12, 13, 3)
 levels_vt_prime = np.arange(-4, 5, 1)
 qscale_sum = 20
 qscale = 10
-qscale_steady = 20
+qscale_steady =20
 
 #%%
 fig, axes = plt.subplots(
     2,
     3,
-    figsize=(12, 9),
-    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
+    figsize=(10, 5),
+    subplot_kw={"projection": ccrs.NorthPolarStereo(-40, 80)},
     sharex=True,
     sharey=False,
 )
+
+plt.subplots_adjust(wspace=-0.2, hspace=-0.2)
+
 
 sum_color = sum_div_p_pos_first.plot.contourf(
     ax=axes[0, 0],
@@ -930,17 +936,37 @@ for ax in axes.flat:
         alpha=0.5,
         linestyle="dotted",
     )
+    gl.xlocator = mticker.FixedLocator([-180,-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180])
+    gl.ylocator = mticker.FixedLocator([10, 30, 50, 70, 90])
     ax.set_title("")
-    ax.set_extent([-120, 60, -90, 90], crs=ccrs.PlateCarree())
+    ax.set_extent([-180, 180, 20, 90], crs=ccrs.PlateCarree())
 
+
+    # ---- Create a sector-shaped boundary ----
+    # Parameters for the wedge shape (sector)
+    radius = 1.0
+    center = np.array([0.5, 0.5])
+    theta1 = 200  # degrees
+    theta2 = 340
+
+    # Create theta values for the arc
+    theta = np.deg2rad(np.linspace(theta1, theta2, 100))
+    arc = np.column_stack([0.5 + 0.5 * np.cos(theta), 0.5 + 0.5 * np.sin(theta)])
+    verts = np.vstack([[0.5, 0.5], arc, [0.5, 0.5]])  # center to arc to center
+
+    # Create path
+    sector_path = mpath.Path(verts)
+
+    # Apply the custom boundary to the axes
+    ax.set_boundary(sector_path, transform=ax.transAxes)
+
+plt.tight_layout(w_pad=-2, h_pad=-5)
 # save
 # plt.savefig(
 #     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/transient_div_p_map.pdf",
 #     bbox_inches="tight",
 #     dpi=300,
 # )
-# %%
-
 # %%
 
 #%%
@@ -1191,6 +1217,8 @@ for ax in axes.flat:
         linestyle="dotted",
     )
     ax.set_title("")
+
+# %%
 
 #%%
 # E_x
