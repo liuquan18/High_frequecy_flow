@@ -51,11 +51,16 @@ def read_comp_var_dist(var, phase, decade, suffix = "_ano", **kwargs):
     return ds
 #%%
 def read_EP_flux(
-    phase, decade, eddy="transient", ano=False, region="western", lon_mean = False
+    phase, decade, eddy="transient", ano=False, region="western", lon_mean = False, keep_time = False,
 ):
-    EP_flux_dir = (
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
+    if keep_time:
+        EP_flux_dir = (
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux_distribution/"
     )
+    else:
+        EP_flux_dir = (
+            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
+        )
 
     if phase in ["pos", "neg"]:
         F_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_phi_{phase}_{decade}_ano{ano}.nc")
