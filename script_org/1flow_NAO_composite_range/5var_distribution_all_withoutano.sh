@@ -1,5 +1,11 @@
 #!/bin/bash
 
+sbatch 5var_NAO_range_distribution_submit.sh 1850 upvp upvp MPI_GE_CMIP6_allplev
+sbatch 5var_NAO_range_distribution_submit.sh 2090 upvp upvp MPI_GE_CMIP6_allplev
+
+sbatch 5var_NAO_range_distribution_submit.sh 1850 usvs usvs MPI_GE_CMIP6_allplev
+sbatch 5var_NAO_range_distribution_submit.sh 2090 usvs usvs MPI_GE_CMIP6_allplev
+
 sbatch 5var_NAO_range_distribution_submit.sh 1850 vpetp vpetp MPI_GE_CMIP6_allplev #no suffix
 sbatch 5var_NAO_range_distribution_submit.sh 2090 vpetp vpetp MPI_GE_CMIP6_allplev 
 
