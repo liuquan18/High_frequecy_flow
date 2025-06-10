@@ -56,7 +56,7 @@ def calculate_EP_flux(decade, ens, equiv_theta=True, eddy='transient',suffix = '
 
 
 
-    upvp, vptp, ta = read_data_all_dec(decade, ens, equiv_theta=equiv_theta, eddy=eddy, ano = ano, model_dir = 'MPI_GE_CMIP6_allplev', suffix = suffix)
+    upvp, vptp, ta = read_data_all_dec(decade, ens, equiv_theta=equiv_theta, eddy=eddy, model_dir = 'MPI_GE_CMIP6_allplev', suffix = suffix)
 
     logging.info (f"Calculate {eddy} EP flux for {ens} ens in {decade}")
     phi_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fphi_{eddy}_daily/r{ens}i1p1f1/"
