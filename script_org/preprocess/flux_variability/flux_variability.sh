@@ -17,26 +17,9 @@ var1=$2
 var2=$3
 suffix=$4
 
-if [ "$var1" == "vpetp" ]; then
-    var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_daily${suffix}/r${member}i1p1f1/
-elif [ "$var1" == "vsets" ]; then
-    var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_daily${suffix}/r${member}i1p1f1/
-else
-    # error
-    echo "Invalid variable: $var1"
-    # exit 1
-fi
+var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_daily${suffix}/r${member}i1p1f1/
 
-if [ "$var2" == "vpetp" ]; then
-    var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var2}_daily${suffix}/r${member}i1p1f1/
-elif [ "$var2" == "vsets" ]; then
-    var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var2}_daily${suffix}/r${member}i1p1f1/
-else
-    # error
-    echo "Invalid variable: $var2"
-    # exit 1
-fi
-
+var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var2}_daily${suffix}/r${member}i1p1f1/
 
 echo "Ensemble member ${member}"
 
