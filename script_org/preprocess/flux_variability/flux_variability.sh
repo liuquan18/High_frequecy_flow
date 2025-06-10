@@ -24,7 +24,11 @@ var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${va
 echo "Ensemble member ${member}"
 
 # create output directory
-output_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_${var2}_daily${suffix}/r${member}i1p1f1/
+if [ "$var1" == "$var2" ]; then
+    output_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_std${suffix}/r${member}i1p1f1/
+else
+    output_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_${var2}_cov${suffix}/r${member}i1p1f1/
+fi
 mkdir -p ${output_dir}
 
 export var1
