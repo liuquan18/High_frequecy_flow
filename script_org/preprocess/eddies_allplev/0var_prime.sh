@@ -88,7 +88,7 @@ export -f T_prime
 parallel -j 5 T_prime ::: {1850..2090..10}
 
 # check completion
-for dec in 1850 2090; do
+for dec in {1850..2090..10}; do
     if [ ! -f ${Tp_path}/*${dec}*.nc ]; then
         echo "Decade ${dec} is missing"
         echo "Recalculate decade ${dec}"
