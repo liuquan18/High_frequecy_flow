@@ -3,7 +3,7 @@
 #SBATCH --time=01:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=5
+#SBATCH --ntasks=10
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
@@ -21,7 +21,10 @@ suffix=$4
 var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_daily${suffix}/r${member}i1p1f1/
 var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var2}_daily${suffix}/r${member}i1p1f1/
 
-output_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_add_${var2}_daily${suffix}/r${member}i1p1f1/
+var1_no_transient=${var1//transient/}
+output_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1_no_transient}sum_daily${suffix}/r${member}i1p1f1/
+
+echo "Ensemble member ${member}"
 
 mkdir -p ${output_dir}
 export var1
@@ -40,9 +43,9 @@ sum(){
         return
     fi
     output_file=${output_dir}${var1}_${var2}_daily_${dec}.nc
-    cdo -O add ${var1_file} ${var2_file} ${output_file}
+    cdo -P 2 -O -add -sellevel,85000 ${var1_file} -sellevel,85000 ${var2_file} ${output_file}
 }
 
 export -f sum
 
-parallel --jobs 5 --bar sum ::: {1850..2090..10}
+parallel --jobs 10 --bar sum ::: {1850..2090..10}
