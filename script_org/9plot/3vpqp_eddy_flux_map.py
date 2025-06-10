@@ -14,6 +14,7 @@ import importlib
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from src.data_helper.read_variable import read_climatology
 from metpy.units import units
+import numpy as np
 import metpy.calc as mpcalc
 import src.plotting.util as util
 
@@ -1658,6 +1659,39 @@ qk = axes[1, 0].quiverkey(
     fontproperties={"size": 10},
     labelsep=0.05,
 )
+
+# draw box over the region lon[300, 360], lat[40, 80]
+# Draw a smooth box over lon[300, 360], lat[40, 80] on axes[1,2]
+lons = np.linspace(300, 360, 200)
+lats = np.linspace(40, 80, 200)
+
+# Bottom edge: lon 300->360, lat=40
+lon_b = lons
+lat_b = np.full_like(lons, 40)
+# Right edge: lon=360, lat 40->80
+lon_r = np.full_like(lats, 360)
+lat_r = lats
+# Top edge: lon 360->300, lat=80
+lon_t = lons[::-1]
+lat_t = np.full_like(lons, 80)
+# Left edge: lon=300, lat 80->40
+lon_l = np.full_like(lats, 300)
+lat_l = lats[::-1]
+
+lon_box = np.concatenate([lon_b, lon_r, lon_t, lon_l, [lon_b[0]]])
+lat_box = np.concatenate([lat_b, lat_r, lat_t, lat_l, [lat_b[0]]])
+
+axes[0, 1].plot(
+    lon_box, lat_box,
+    color="yellow",
+    linestyle="dotted",
+    linewidth=2,
+    transform=ccrs.PlateCarree(),
+    zorder=20,
+)
+
+
+
 
 # no y labels from second row on, no x labels at the frist row
 for ax in axes.flat:
