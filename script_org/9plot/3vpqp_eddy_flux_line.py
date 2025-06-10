@@ -417,7 +417,7 @@ sum_dfs_clima = transient_dfs_clima.copy()
 for col in ['M2', 'N', 'P']:
     sum_dfs_clima[col] = transient_dfs_clima[col] + steady_dfs_clima[col]
 # %%
-fig, axes = plt.subplots(2, 3, figsize=(12, 10), sharex=False, sharey='row')
+fig, axes = plt.subplots(2, 3, figsize=(10, 10), sharex=False, sharey='row')
 # first row: 250 hPa, sum of M2 and N
 # first col: sum of transient and steady
 
@@ -599,8 +599,33 @@ phase_handles = [
 ]
 
 # Place legends: first col for decade, second for phase
-decade_legend = axes[1, 2].legend(handles=decade_handles, title='decade', loc='upper left', bbox_to_anchor=(.1, 1), frameon=False)
-phase_legend = axes[1, 2].legend(handles=phase_handles, title='phase', loc='upper left', bbox_to_anchor=(0.5, 1), frameon=False)
+decade_legend = axes[1, 2].legend(handles=decade_handles, title='decade', loc='upper left', bbox_to_anchor=(0.3, 1), frameon=False)
+phase_legend = axes[1, 2].legend(handles=phase_handles, title='phase', loc='upper left', bbox_to_anchor=(0.7, 1), frameon=False)
 axes[1, 2].add_artist(decade_legend)
 
+
+for ax in axes[0,:].flat:
+    ax.set_xlabel("")
+
+for ax in axes[1,:].flat:
+    ax.set_xlabel("Days relative to extreme onset")
+
+axes[0, 0].set_ylabel(r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day ${-1}$]",)
+axes[1, 0].set_ylabel(r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day ${-1}$]",)
+
+# remove top and right spines
+for ax in axes.flat:
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    # Add grid lines only at x=0 and y=0
+    ax.axvline(0, color='gray', linestyle='-', alpha=0.5, zorder=0)
+plt.tight_layout()
+
+# save figure
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vpqp_eddy_flux_line.pdf",
+    bbox_inches='tight',
+    dpi=300,
+    transparent=True
+)
 # %%
