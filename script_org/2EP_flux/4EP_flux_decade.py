@@ -40,8 +40,8 @@ def read_data_all_dec(decade, ens, eddy = 'transient', equiv_theta = True, **kwa
             P = 'vpts'
         T = 'ta_hat'
 
-    upvp = read_prime_single_ens(decade, ens, N, **kwargs)
-    vptp = read_prime_single_ens(decade, ens, P, **kwargs)
+    upvp = read_prime_single_ens(decade, ens, N, name = N,**kwargs) 
+    vptp = read_prime_single_ens(decade, ens, P, name = P, **kwargs)
     ta = read_prime_single_ens(decade, ens, T, name = 'ta', **kwargs)
 
     
