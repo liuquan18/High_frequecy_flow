@@ -87,6 +87,26 @@ def read_climatology(var, decade, **kwargs):
     return data
 
 
+def read_climatology_decmean(var, plev = 85000, NAL = True, **kwargs):
+    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6_allplev")
+
+    base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_monthly_ensmean/"
+    files = glob.glob(base_dir + "*.nc")
+
+    if len(files) == 0:
+        raise ValueError(f"no file found for {var}_monthly_ensmean")
+    data = xr.open_mfdataset(
+        files,
+        combine="by_coords",
+    )
+    data.load()
+    data = data.groupby("time.year").mean(dim="time")
+    if NAL:
+        data = data.sel(lon=slice(300, 360), lat=slice(40, 80)).mean(dim=["lon", "lat"])
+    if plev is not None:
+        data = data.sel(plev=plev)
+
+    return data
 
 
 def read_prime_decmean(var="eke", NAL=True, plev=85000, **kwargs):
@@ -106,7 +126,7 @@ def read_prime_decmean(var="eke", NAL=True, plev=85000, **kwargs):
     # yearly mean
     data = data.groupby("time.year").mean(dim="time")
     if NAL:
-        data = data.sel(lon=slice(300, 350), lat=slice(40, 80)).mean(dim=["lon", "lat"])
+        data = data.sel(lon=slice(300, 360), lat=slice(40, 80)).mean(dim=["lon", "lat"])
     if plev is not None:
         data = data.sel(plev=plev)
     return data
