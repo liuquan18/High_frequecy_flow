@@ -629,3 +629,121 @@ plt.savefig(
     transparent=True
 )
 # %%
+
+# plot one row of y = "M2"
+fig, axes = plt.subplots(1, 3, figsize=(10, 5), sharex=False, sharey=True)
+
+custom_palette = {1850: 'black', 2090: 'red'}
+first_color = 'black'
+second_color = 'red'
+
+# First col: sum of transient and steady
+sns.lineplot(
+    data=sum_dfs[sum_dfs['plev'] == 25000],
+    x='time',
+    y='M2',
+    style='phase',
+    hue='decade',
+    ax=axes[0],
+    palette=custom_palette,
+    errorbar=("ci", 95)
+)
+axes[0].axhline(
+    y=sum_dfs_clima[(sum_dfs_clima['plev'] == 25000) & (sum_dfs_clima['decade'] == 1850)]['M2'].values[0],
+    color=first_color,
+    linestyle='dotted',
+    label='first-clima'
+)
+axes[0].axhline(
+    y=sum_dfs_clima[(sum_dfs_clima['plev'] == 25000) & (sum_dfs_clima['decade'] == 2090)]['M2'].values[0],
+    color=second_color,
+    linestyle='dotted',
+    label='last-clima'
+)
+
+# Second col: transient
+sns.lineplot(
+    data=transient_dfs[transient_dfs['plev'] == 25000],
+    x='time',
+    y='M2',
+    style='phase',
+    hue='decade',
+    ax=axes[1],
+    palette=custom_palette,
+    errorbar=("ci", 95)
+)
+axes[1].axhline(
+    y=transient_dfs_clima[(transient_dfs_clima['plev'] == 25000) & (transient_dfs_clima['decade'] == 1850)]['M2'].values[0],
+    color=first_color,
+    linestyle='dotted',
+    label='first-clima'
+)
+axes[1].axhline(
+    y=transient_dfs_clima[(transient_dfs_clima['plev'] == 25000) & (transient_dfs_clima['decade'] == 2090)]['M2'].values[0],
+    color=second_color,
+    linestyle='dotted',
+    label='last-clima'
+)
+
+# Third col: steady
+sns.lineplot(
+    data=steady_dfs[steady_dfs['plev'] == 25000],
+    x='time',
+    y='M2',
+    style='phase',
+    hue='decade',
+    ax=axes[2],
+    palette=custom_palette,
+    errorbar=("ci", 95)
+)
+axes[2].axhline(
+    y=steady_dfs_clima[(steady_dfs_clima['plev'] == 25000) & (steady_dfs_clima['decade'] == 1850)]['M2'].values[0],
+    color=first_color,
+    linestyle='dotted',
+    label='first-clima'
+)
+axes[2].axhline(
+    y=steady_dfs_clima[(steady_dfs_clima['plev'] == 25000) & (steady_dfs_clima['decade'] == 2090)]['M2'].values[0],
+    color=second_color,
+    linestyle='dotted',
+    label='last-clima'
+)
+
+# Only show legend on last col, remove from others
+for ax in axes[:-1]:
+    ax.get_legend().remove()
+
+# Custom legend handles
+decade_handles = [
+    Line2D([0], [0], color='black', lw=2, label='1850'),
+    Line2D([0], [0], color='red', lw=2, label='2090'),
+]
+phase_handles = [
+    Line2D([0], [0], color='black', lw=2, linestyle='-', label='pos'),
+    Line2D([0], [0], color='black', lw=2, linestyle='--', label='neg'),
+    Line2D([0], [0], color='black', lw=2, linestyle='dotted', label='clima'),
+]
+decade_legend = axes[2].legend(handles=decade_handles, title='decade', loc='upper left', bbox_to_anchor=(0.3, 1), frameon=False)
+phase_legend = axes[2].legend(handles=phase_handles, title='phase', loc='upper left', bbox_to_anchor=(0.7, 1), frameon=False)
+axes[2].add_artist(decade_legend)
+
+for ax in axes:
+    ax.set_xlabel("Days relative to extreme onset")
+axes[0].set_ylabel(r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day ${-1}$]")
+
+for ax in axes:
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.axvline(0, color='gray', linestyle='-', alpha=0.5, zorder=0)
+
+plt.tight_layout()
+
+# save
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/M2_eddy_flux_line.pdf",
+    bbox_inches='tight',
+    dpi=300,
+    transparent=True
+)
+
+# %%
