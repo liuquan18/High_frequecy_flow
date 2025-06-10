@@ -593,14 +593,14 @@ decade_handles = [
 
 # Phase legend (styles)
 phase_handles = [
-    Line2D([0], [0], color='black', lw=2, linestyle='-', label='pos'),
-    Line2D([0], [0], color='black', lw=2, linestyle='--', label='neg'),
-    Line2D([0], [0], color='black', lw=2, linestyle='dotted', label='clima'),
+    Line2D([0], [0], color='black', lw=2, linestyle='-', label='pos NAO'),
+    Line2D([0], [0], color='black', lw=2, linestyle='--', label='neg NAO'),
+    Line2D([0], [0], color='black', lw=2, linestyle='dotted', label='climatology'),
 ]
 
 # Place legends: first col for decade, second for phase
-decade_legend = axes[1, 2].legend(handles=decade_handles, title='decade', loc='upper left', bbox_to_anchor=(0.3, 1), frameon=False)
-phase_legend = axes[1, 2].legend(handles=phase_handles, title='phase', loc='upper left', bbox_to_anchor=(0.7, 1), frameon=False)
+decade_legend = axes[1, 2].legend(handles=decade_handles, title='decade', loc='upper left', bbox_to_anchor=(0.1, 1), frameon=False)
+phase_legend = axes[1, 2].legend(handles=phase_handles, title='phase', loc='upper left', bbox_to_anchor=(0.5, 1), frameon=False)
 axes[1, 2].add_artist(decade_legend)
 
 
@@ -700,8 +700,9 @@ axes[2].axhline(
     y=steady_dfs_clima[(steady_dfs_clima['plev'] == 25000) & (steady_dfs_clima['decade'] == 1850)]['M2'].values[0],
     color=first_color,
     linestyle='dotted',
-    label='first-clima'
+    label='first-clima',
 )
+
 axes[2].axhline(
     y=steady_dfs_clima[(steady_dfs_clima['plev'] == 25000) & (steady_dfs_clima['decade'] == 2090)]['M2'].values[0],
     color=second_color,
@@ -719,12 +720,12 @@ decade_handles = [
     Line2D([0], [0], color='red', lw=2, label='2090'),
 ]
 phase_handles = [
-    Line2D([0], [0], color='black', lw=2, linestyle='-', label='pos'),
-    Line2D([0], [0], color='black', lw=2, linestyle='--', label='neg'),
-    Line2D([0], [0], color='black', lw=2, linestyle='dotted', label='clima'),
+    Line2D([0], [0], color='black', lw=2, linestyle='-', label='pos NAO'),
+    Line2D([0], [0], color='black', lw=2, linestyle='--', label='neg NAO'),
+    Line2D([0], [0], color='black', lw=2, linestyle='dotted', label='climatology'),
 ]
-decade_legend = axes[2].legend(handles=decade_handles, title='decade', loc='upper left', bbox_to_anchor=(0.3, 1), frameon=False)
-phase_legend = axes[2].legend(handles=phase_handles, title='phase', loc='upper left', bbox_to_anchor=(0.7, 1), frameon=False)
+decade_legend = axes[2].legend(handles=decade_handles, title='decade', loc='upper left', bbox_to_anchor=(0.1, 1), frameon=False)
+phase_legend = axes[2].legend(handles=phase_handles, title='phase', loc='upper left', bbox_to_anchor=(0.5, 1), frameon=False)
 axes[2].add_artist(decade_legend)
 
 for ax in axes:
