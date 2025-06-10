@@ -450,12 +450,11 @@ qsumflux_neg_first = (qpflux_neg_first + qsflux_neg_first)
 qsumflux_pos_last = (qpflux_pos_last + qsflux_pos_last)
 qsumflux_neg_last = (qpflux_neg_last + qsflux_neg_last)
 #%%
-levels_vt = np.arange(-30, 31, 5)
+levels_vt = np.arange(-60, 61, 10)
 levels_vt_prime = np.arange(-12, 13, 2)
-qscale_sum = 200
+qscale_sum = 150
 qscale = 100
-qscale_steady =200
-
+qscale_steady =150
 #%%
 fig, axes = plt.subplots(
     2,
@@ -719,8 +718,8 @@ qk = axes[1, 0].quiverkey(
     sum_arrows_neg,
     0.6,
     -0.05,
-    2,
-    r"2 $m s^{-1} g kg ^{-1}$",
+    10,
+    r"10 $m s^{-1} g kg ^{-1}$",
     labelpos="E",
     coordinates="axes",
     fontproperties={"size": 10},
@@ -732,8 +731,8 @@ qk = axes[1, 1].quiverkey(
     trans_arrows_neg,
     0.6,
     -0.05,
-    2,
-    r"2 $m s^{-1} g kg ^{-1}$",
+    10,
+    r"10 $m s^{-1} g kg ^{-1}$",
     labelpos="E",
     coordinates="axes",
     fontproperties={"size": 10},
@@ -744,8 +743,8 @@ qk = axes[1, 2].quiverkey(
     steady_arrows_neg,
     0.6,
     -0.05,
-    2,
-    r"2 $m s^{-1} g kg ^{-1}$",
+    10,
+    r"10 $m s^{-1} g kg ^{-1}$",
     labelpos="E",
     coordinates="axes",
     fontproperties={"size": 10},
@@ -1685,7 +1684,7 @@ plt.savefig(
     dpi=300,
 )
 #%%
-levels_vt_prime = np.arange(-20, 21, 4)
+levels_vt_prime = np.arange(-12, 13, 2)
 levels_vt_steady = np.arange(-60, 61, 10)
 # %%
 # plot the climatology of the eddy heat flux of transient (first col) and steady (last col) components
