@@ -17,9 +17,9 @@ var1=$2
 var2=$3
 suffix=$4
 
-var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_daily${suffix}/r${member}i1p1f1/
+var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_daily_ano${suffix}/r${member}i1p1f1/
 
-var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var2}_daily${suffix}/r${member}i1p1f1/
+var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var2}_daily_ano${suffix}/r${member}i1p1f1/
 
 echo "Ensemble member ${member}"
 
