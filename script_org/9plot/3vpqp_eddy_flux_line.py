@@ -618,7 +618,7 @@ for ax in axes.flat:
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     # Add grid lines only at x=0 and y=0
-    ax.axvline(0, color='gray', linestyle='-', alpha=0.5, zorder=0)
+    ax.axvline(0, color='k', linestyle='-',  lw = 0.5, zorder=0)
 plt.tight_layout()
 
 # save figure
