@@ -86,7 +86,6 @@ def calculate_EP_flux(decade, ens, equiv_theta=True, eddy='transient',suffix = '
 # %%
 node = sys.argv[1]
 ens = int(node)
-logging.info(f"Processing ensemble {ens}")
 # %%
 #%%
 try:
@@ -107,7 +106,9 @@ for i,dec in enumerate(single_decades):
     logging.info(f"rank {rank} Processing {i+1}/{len(single_decades)}")
 
     # calculate EP flux
+    logging.info(f"Calculate transient EP flux for {ens} ens in {dec}")
     calculate_EP_flux(decade=dec, ens=ens, equiv_theta=True, eddy='transient', suffix = '')
 
     # calculate steady EP flux
+    logging.info(f"Calculate steady EP flux for {ens} ens in {dec}")
     calculate_EP_flux(decade=dec, ens=ens, equiv_theta=True, eddy='steady', suffix = '')
