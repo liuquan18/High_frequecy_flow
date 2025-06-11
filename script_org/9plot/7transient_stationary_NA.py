@@ -49,16 +49,16 @@ def coslat_weights(ds):
     return weights / weights.sum()
 
 # For vpetp (lat: 40 to 80)
-vpetp_lat_slice = vpetp_first.sel(lat=slice(40, 80)).lat
-vpetp_weights = coslat_weights(vpetp_first.sel(lat=slice(40, 80)))
-vpetp_first_profile = vpetp_first.sel(lat=slice(40, 80)).weighted(vpetp_weights).mean(dim='lat')
-vpetp_last_profile = vpetp_last.sel(lat=slice(40, 80)).weighted(vpetp_weights).mean(dim='lat')
+vpetp_lat_slice = vpetp_first.sel(lat=slice(20, 60)).lat
+vpetp_weights = coslat_weights(vpetp_first.sel(lat=slice(20, 60)))
+vpetp_first_profile = vpetp_first.sel(lat=slice(20, 60)).weighted(vpetp_weights).mean(dim='lat')
+vpetp_last_profile = vpetp_last.sel(lat=slice(20, 60)).weighted(vpetp_weights).mean(dim='lat')
 
 # For vsets (lat: 40 to 90)
-vsets_lat_slice = vsets_first.sel(lat=slice(40, 80)).lat
+vsets_lat_slice = vsets_first.sel(lat=slice(20, 60)).lat
 vsets_weights = coslat_weights(vsets_first.sel(lat=slice(40, 90)))
-vsets_first_profile = vsets_first.sel(lat=slice(40, 80)).weighted(vsets_weights).mean(dim='lat')
-vsets_last_profile = vsets_last.sel(lat=slice(40, 80)).weighted(vsets_weights).mean(dim='lat')
+vsets_first_profile = vsets_first.sel(lat=slice(20, 60)).weighted(vsets_weights).mean(dim='lat')
+vsets_last_profile = vsets_last.sel(lat=slice(20, 60)).weighted(vsets_weights).mean(dim='lat')
 # %%
 vptp_levels = np.arange(-10, 11, 2)
 vsts_levels = np.arange(-10, 11, 2)
@@ -124,4 +124,67 @@ fig.subplots_adjust(bottom=0.25)
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_flux_profile.pdf",
             bbox_inches='tight', dpi=300)
 
+# %%
+eke_levels = np.arange(80, 120, 5)
+zg_levels = np.arange(-100, 101, 20)
+#%%
+fig, axes = plt.subplots(
+    1,
+    2,
+    figsize=(12, 6),
+    subplot_kw={"projection": ccrs.Orthographic(-40, 80)},
+)
+
+for ax in axes:
+    ax.coastlines(color='grey', linewidth=1)
+    ax.gridlines()
+    ax.set_global()
+
+# Plot vpetp
+eke_first.sel(plev = 25000).plot.contourf(
+    ax=axes[0],
+    levels=eke_levels,
+    cmap='viridis',
+    add_colorbar=True,
+    extend='max',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"$eke$ (m$^2$ s$^{-2}$)", "shrink": 0.6},
+)
+
+erase_white_line(eke_last).sel(plev = 25000).plot.contour(
+    ax=axes[0],
+    levels=[l for l in eke_levels if l != 0],
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+
+# plot zg
+erase_white_line(zg_first).sel(plev = 25000).plot.contourf(
+    ax=axes[1],
+    levels=zg_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"zg (m)", "shrink": 0.6},
+)
+erase_white_line(zg_last).sel(plev = 25000).plot.contour(
+    ax=axes[1],
+    levels=[l for l in zg_levels if l != 0],
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+axes[0].set_title("")
+axes[1].set_title("")
+
+# add a, b
+axes[0].text(0.1, 1., "a", transform=axes[0].transAxes, fontsize=16, fontweight='bold')
+axes[1].text(0.1, 1., "b", transform=axes[1].transAxes, fontsize=16, fontweight='bold')
+plt.tight_layout()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eke_zg_250hPa.pdf",
+            bbox_inches='tight', dpi=300)
 # %%
