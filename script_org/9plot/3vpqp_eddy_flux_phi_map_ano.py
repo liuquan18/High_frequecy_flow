@@ -44,15 +44,15 @@ scale_hus = 5e4
 # %%
 ###### read vpetp
 # climatology
-vpetp_clim_first = read_climatology("Fdiv_phi_steady", "1850", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
-vpetp_clim_last = read_climatology("Fdiv_phi_steady", "2090", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
+vpetp_clim_first = read_climatology("Fdiv_phi_steady", "1850", name='div',model_dir = 'MPI_GE_CMIP6_allplev')
+vpetp_clim_last = read_climatology("Fdiv_phi_steady", "2090", name='div',model_dir = 'MPI_GE_CMIP6_allplev')
 # pos ano
 vpetp_pos_first = read_comp_var(
     "Fdiv_phi_transient",
     "pos",
     1850,
     time_window=time_window,
-    name='div2',
+    name='div',
     suffix=suffix,
     remove_zonmean=remove_zonmean,
     model_dir = 'MPI_GE_CMIP6_allplev'
@@ -62,7 +62,7 @@ vpetp_neg_first = read_comp_var(
     "neg",
     1850,
     time_window=time_window,
-    name='div2',
+    name='div',
     suffix=suffix,
     remove_zonmean=remove_zonmean,
     model_dir = 'MPI_GE_CMIP6_allplev'
@@ -74,7 +74,7 @@ vpetp_pos_last = read_comp_var(
     "pos",
     2090,
     time_window=time_window,
-    name='div2',
+    name='div',
     suffix=suffix,
     remove_zonmean=remove_zonmean,
     model_dir = 'MPI_GE_CMIP6_allplev'
@@ -84,15 +84,15 @@ vpetp_neg_last = read_comp_var(
     "neg",
     2090,
     time_window=time_window,
-    name='div2',
+    name='div',
     suffix=suffix,
     remove_zonmean=remove_zonmean,
     model_dir = 'MPI_GE_CMIP6_allplev'
 )
 
 # %%
-vsets_clim_first = read_climatology("Fdiv_phi_steady", "1850", name='div2', model_dir = 'MPI_GE_CMIP6_allplev')
-vsets_clim_last = read_climatology("Fdiv_phi_steady", "2090", name='div2', model_dir = 'MPI_GE_CMIP6_allplev')
+vsets_clim_first = read_climatology("Fdiv_phi_steady", "1850", name='div', model_dir = 'MPI_GE_CMIP6_allplev')
+vsets_clim_last = read_climatology("Fdiv_phi_steady", "2090", name='div', model_dir = 'MPI_GE_CMIP6_allplev')
 
 # pos ano
 vsets_pos_first = read_comp_var(
@@ -100,7 +100,7 @@ vsets_pos_first = read_comp_var(
     "pos",
     1850,
     time_window=time_window,
-    name='div2',
+    name='div',
     suffix=suffix,
     remove_zonmean=remove_zonmean,
     model_dir = 'MPI_GE_CMIP6_allplev'
@@ -110,7 +110,7 @@ vsets_neg_first = read_comp_var(
     "neg",
     1850,
     time_window=time_window,
-    name='div2',
+    name='div',
     suffix=suffix,
     remove_zonmean=remove_zonmean,
     model_dir = 'MPI_GE_CMIP6_allplev'
@@ -121,7 +121,7 @@ vsets_pos_last = read_comp_var(
     "pos",
     2090,
     time_window=time_window,
-    name='div2',
+    name='div',
     suffix=suffix,
     remove_zonmean=remove_zonmean,
     model_dir = 'MPI_GE_CMIP6_allplev'
@@ -131,7 +131,7 @@ vsets_neg_last = read_comp_var(
     "neg",
     2090,
     time_window=time_window,
-    name='div2',
+    name='div',
     suffix=suffix,
     remove_zonmean=remove_zonmean,
     model_dir = 'MPI_GE_CMIP6_allplev'
@@ -157,124 +157,82 @@ vsets_pos_first = erase_white_line(vsets_pos_first)
 vsets_neg_first = erase_white_line(vsets_neg_first)
 vsets_pos_last = erase_white_line(vsets_pos_last)
 vsets_neg_last = erase_white_line(vsets_neg_last)
+#%%
+# read ua, va
+ua_pos_first = read_comp_var("ua", phase="pos", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+ua_neg_first = read_comp_var("ua", phase="neg", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+ua_pos_last = read_comp_var("ua", phase="pos", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+ua_neg_last = read_comp_var("ua", phase="neg", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+
+va_pos_first = read_comp_var("va", phase="pos", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+va_neg_first = read_comp_var("va", phase="neg", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+va_pos_last = read_comp_var("va", phase="pos", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+va_neg_last = read_comp_var("va", phase="neg", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+#%%
+# to flux
+wndflux_pos_first = xr.Dataset({
+    "u": ua_pos_first,
+    "v": va_pos_first,
+})
+wndflux_neg_first = xr.Dataset({
+    "u": ua_neg_first,
+    "v": va_neg_first,
+})
+wndflux_pos_last = xr.Dataset({
+    "u": ua_pos_last,
+    "v": va_pos_last,
+})
+wndflux_neg_last = xr.Dataset({
+    "u": ua_neg_last,
+    "v": va_neg_last,
+})
 
 #%%
-# read vapor flux
-upqp_pos_first = read_comp_var("upqp", phase="pos", decade=1850, time_window=(-10, 5), ano = False).sel(plev = 85000)
-upqp_neg_first = read_comp_var("upqp", phase="neg", decade=1850, time_window=(-10, 5), ano = False).sel(plev = 85000)
-upqp_pos_last = read_comp_var("upqp", phase="pos", decade=2090, time_window=(-10, 5), ano = False).sel(plev = 85000)
-upqp_neg_last = read_comp_var("upqp", phase="neg", decade=2090, time_window=(-10, 5), ano = False).sel(plev = 85000)
+# climatology
+ua_clima_first = read_climatology("ua", 1850, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+ua_clima_last = read_climatology("ua", 2090, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+va_clima_first = read_climatology("va", 1850, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
+va_clima_last = read_climatology("va", 2090, model_dir = 'MPI_GE_CMIP6').sel(plev=25000)
 
-#
-vpqp_pos_first = read_comp_var("vpqp", phase="pos", decade=1850, time_window=(-10, 5), ano = False).sel(plev = 85000)
-vpqp_neg_first = read_comp_var("vpqp", phase="neg", decade=1850, time_window=(-10, 5), ano = False).sel(plev = 85000)
-vpqp_pos_last = read_comp_var("vpqp", phase="pos", decade=2090, time_window=(-10, 5), ano = False).sel(plev = 85000)
-vpqp_neg_last = read_comp_var("vpqp", phase="neg", decade=2090, time_window=(-10, 5), ano = False).sel(plev = 85000)
-
-# # to flux
-qpflux_pos_first = xr.Dataset(
-    {"u": upqp_pos_first*1e3, "v": vpqp_pos_first*1e3}
-)
-qpflux_neg_first = xr.Dataset(
-    {"u": upqp_neg_first*1e3, "v": vpqp_neg_first*1e3}
-)
-qpflux_pos_last = xr.Dataset(
-    {"u": upqp_pos_last*1e3, "v": vpqp_pos_last*1e3}
-)
-qpflux_neg_last = xr.Dataset(
-    {"u": upqp_neg_last*1e3, "v": vpqp_neg_last*1e3}
-)
 #%%
-# read climatological vapor flux
-upqp_clima_first = read_climatology("upqp", 1850, model_dir = 'MPI_GE_CMIP6').sel(plev = 85000)
-upqp_clima_last = read_climatology("upqp", 2090, model_dir = 'MPI_GE_CMIP6').sel(plev = 85000)
+# to anomaly
+ua_pos_first_ano = ua_pos_first - ua_clima_first
+ua_neg_first_ano = ua_neg_first - ua_clima_first
+ua_pos_last_ano = ua_pos_last - ua_clima_last
+ua_neg_last_ano = ua_neg_last - ua_clima_last
 
-vpqp_clima_first = read_climatology("vpqp", 1850, model_dir = 'MPI_GE_CMIP6').sel(plev = 85000)
-vpqp_clima_last = read_climatology("vpqp", 2090, model_dir = 'MPI_GE_CMIP6').sel(plev = 85000)
+va_pos_first_ano = va_pos_first - va_clima_first
+va_neg_first_ano = va_neg_first - va_clima_first
+va_pos_last_ano = va_pos_last - va_clima_last
+va_neg_last_ano = va_neg_last - va_clima_last
 
 # to flux
-qpflux_clima_first = xr.Dataset(
-    {"u": upqp_clima_first*1e3, "v": vpqp_clima_first*1e3}
-)
-qpflux_clima_last = xr.Dataset(
-    {"u": upqp_clima_last*1e3, "v": vpqp_clima_last*1e3}
-)
-#%%
-# anomaly
-qpflux_pos_first_ano = qpflux_pos_first - qpflux_clima_first
-qpflux_neg_first_ano = qpflux_neg_first - qpflux_clima_first
-qpflux_pos_last_ano = qpflux_pos_last - qpflux_clima_last
-qpflux_neg_last_ano = qpflux_neg_last - qpflux_clima_last
+wndflux_pos_first_ano = xr.Dataset({
+    "u": ua_pos_first_ano,
+    "v": va_pos_first_ano,
+})
 
-
-#%%
-usqs_pos_first = read_comp_var("usqs", phase="pos", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-usqs_neg_first = read_comp_var("usqs", phase="neg", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-
-usqs_pos_last = read_comp_var("usqs", phase="pos", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-usqs_neg_last = read_comp_var("usqs", phase="neg", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-
-vsqs_pos_first = read_comp_var("vsqs", phase="pos", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-vsqs_neg_first = read_comp_var("vsqs", phase="neg", decade=1850, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-
-vsqs_pos_last = read_comp_var("vsqs", phase="pos", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-vsqs_neg_last = read_comp_var("vsqs", phase="neg", decade=2090, time_window=(-10, 5), ano = False, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-
-# to flux
-qsflux_pos_first = xr.Dataset(
-    {"u": usqs_pos_first*1e3, "v": vsqs_pos_first*1e3}
-)
-qsflux_neg_first = xr.Dataset(
-    {"u": usqs_neg_first*1e3, "v": vsqs_neg_first*1e3}
-)
-
-qsflux_pos_last = xr.Dataset(
-    {"u": usqs_pos_last*1e3, "v": vsqs_pos_last*1e3}
-)
-
-qsflux_neg_last = xr.Dataset(
-    {"u": usqs_neg_last*1e3, "v": vsqs_neg_last*1e3}
-)
-#%%
-# read climatological vapor flux
-usqs_clima_first = read_climatology("usqs", 1850, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-usqs_clima_last = read_climatology("usqs", 2090, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-vsqs_clima_first = read_climatology("vsqs", 1850, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-vsqs_clima_last = read_climatology("vsqs", 2090, model_dir = 'MPI_GE_CMIP6_allplev').sel(plev = 85000)
-
-# to flux
-qsflux_clima_first = xr.Dataset(
-    {"u": usqs_clima_first*1e3, "v": vsqs_clima_first*1e3}
-)
-qsflux_clima_last = xr.Dataset(
-    {"u": usqs_clima_last*1e3, "v": vsqs_clima_last*1e3}
-)
-
-# anomaly
-qsflux_pos_first_ano = qsflux_pos_first - qsflux_clima_first
-qsflux_neg_first_ano = qsflux_neg_first - qsflux_clima_first
-qsflux_pos_last_ano = qsflux_pos_last - qsflux_clima_last
-qsflux_neg_last_ano = qsflux_neg_last - qsflux_clima_last
+wndflux_neg_first_ano = xr.Dataset({
+    "u": ua_neg_first_ano,
+    "v": va_neg_first_ano,
+})
+wndflux_pos_last_ano = xr.Dataset({
+    "u": ua_pos_last_ano,
+    "v": va_pos_last_ano,
+})
+wndflux_neg_last_ano = xr.Dataset({ 
+    "u": ua_neg_last_ano,
+    "v": va_neg_last_ano,
+})
 
 #%%
-qsumflux_pos_first = (qpflux_pos_first + qsflux_pos_first)
-qsumflux_neg_first = (qpflux_neg_first + qsflux_neg_first)
-qsumflux_pos_last = (qpflux_pos_last + qsflux_pos_last)
-qsumflux_neg_last = (qpflux_neg_last + qsflux_neg_last  )
-#%%
-# anomaly
-qsumflux_pos_first_ano = (qpflux_pos_first_ano + qsflux_pos_first_ano)
-qsumflux_neg_first_ano = (qpflux_neg_first_ano + qsflux_neg_first_ano)
-qsumflux_pos_last_ano = (qpflux_pos_last_ano + qsflux_pos_last_ano)
-qsumflux_neg_last_ano = (qpflux_neg_last_ano + qsflux_neg_last_ano)
-#%%
-qscale_sum = 20
-qscale = 10
-qscale_steady =20
+
+wnd_scale = 150
+
 
 #%%
-vpetp_levels_div = np.arange(-4, 4.1, 0.5)
-vpetp_levels_steady = np.arange(-8, 8.1, 2)
+vpetp_levels_div = np.arange(-1.5, 1.6, 0.5)
+vpetp_levels_steady = np.arange(-3, 3.1, 0.5)
 # %%
 fig, axes = plt.subplots(
     2,
@@ -305,17 +263,18 @@ sum_color = (vpetp_pos_first + vsets_pos_first).plot.contourf(
     transform=ccrs.PlateCarree(),
 )
 
-# quiver for vapor flux anomaly
+# quiver for wind anomaly
 sum_arrows = axes[0, 0].quiver(
-    qsumflux_pos_first_ano.lon.values[::5],
-    qsumflux_pos_first_ano.lat.values[::5],
-    qsumflux_pos_first_ano.u.values[::5, ::5],
-    qsumflux_pos_first_ano.v.values[::5, ::5],
-    scale=qscale_sum,
+    wndflux_pos_first.lon.values[::7],
+    wndflux_pos_first.lat.values[::6],
+    wndflux_pos_first.u.values[::6, ::7],
+    wndflux_pos_first.v.values[::6, ::7],
+    scale=wnd_scale,
     transform=ccrs.PlateCarree(),
-    color="green",
+    color="purple",
     width=0.005,
 )
+
 
 # Transient
 trans_color = vpetp_pos_first.plot.contourf(
@@ -336,17 +295,6 @@ vpetp_pos_last.plot.contour(
 )
 
 
-# quiver for vapor flux anomaly
-trans_arrows = axes[0, 1].quiver(
-    qpflux_pos_first_ano.lon.values[::5],
-    qpflux_pos_first_ano.lat.values[::5],
-    qpflux_pos_first_ano.u.values[::5, ::5],
-    qpflux_pos_first_ano.v.values[::5, ::5],
-    scale=qscale,
-    transform=ccrs.PlateCarree(),
-    color="green",
-    width=0.005,
-)
 
 # Steady
 steady_color = vsets_pos_first.plot.contourf(
@@ -364,17 +312,6 @@ vsets_pos_last.plot.contour(
     linewidths=0.5,
     transform=ccrs.PlateCarree(),
     extend="both",
-)
-# quiver for vapor flux anomaly
-steady_arrows = axes[0, 2].quiver(
-    qsflux_pos_first_ano.lon.values[::5],
-    qsflux_pos_first_ano.lat.values[::5],
-    qsflux_pos_first_ano.u.values[::5, ::5],
-    qsflux_pos_first_ano.v.values[::5, ::5],
-    scale=qscale_steady,
-    transform=ccrs.PlateCarree(),
-    color="green",
-    width=0.005,
 )
 
 # Second row: negative phase (first and last period)
@@ -396,18 +333,17 @@ sum_color_neg = (vpetp_neg_first + vsets_neg_first).plot.contourf(
 )
 
 
-# quiver for vapor flux anomaly
+# quiver for wind anomaly
 sum_arrows_neg = axes[1, 0].quiver(
-    qsumflux_neg_first_ano.lon.values[::5],
-    qsumflux_neg_first_ano.lat.values[::5],
-    qsumflux_neg_first_ano.u.values[::5, ::5],
-    qsumflux_neg_first_ano.v.values[::5, ::5],
-    scale=qscale_sum,
+    wndflux_neg_first.lon.values[::7],
+    wndflux_neg_first.lat.values[::6],
+    wndflux_neg_first.u.values[::6, ::7],
+    wndflux_neg_first.v.values[::6, ::7],
+    scale=wnd_scale,
     transform=ccrs.PlateCarree(),
-    color="green",
+    color="purple",
     width=0.005,
 )
-
 # Transient
 trans_color_neg = vpetp_neg_first.plot.contourf(
     ax=axes[1, 1],
@@ -424,18 +360,6 @@ vpetp_neg_last.plot.contour(
     linewidths=0.5,
     extend="both",
     transform=ccrs.PlateCarree(),
-)
-
-# quiver for vapor flux anomaly
-trans_arrows_neg = axes[1, 1].quiver(
-    qpflux_neg_first_ano.lon.values[::5],
-    qpflux_neg_first_ano.lat.values[::5],
-    qpflux_neg_first_ano.u.values[::5, ::5],
-    qpflux_neg_first_ano.v.values[::5, ::5],
-    scale=qscale,
-    transform=ccrs.PlateCarree(),
-    color="green",
-    width=0.005,
 )
 
 
@@ -456,16 +380,7 @@ vsets_neg_last.plot.contour(
     transform=ccrs.PlateCarree(),
     extend="both",
 )
-steady_arrows_neg = axes[1, 2].quiver(
-    qsflux_neg_first_ano.lon.values[::5],
-    qsflux_neg_first_ano.lat.values[::5],
-    qsflux_neg_first_ano.u.values[::5, ::5],
-    qsflux_neg_first_ano.v.values[::5, ::5],
-    scale=qscale_steady,
-    transform=ccrs.PlateCarree(),
-    color="green",
-    width=0.005,
-)
+
 
 # Add colorbar axes using fig.add_axes for better alignment with tight_layout
 fig.tight_layout()
@@ -534,37 +449,42 @@ qk = axes[1, 0].quiverkey(
     sum_arrows_neg,
     0.6,
     -0.05,
-    2,
-    r"2 $m s^{-1} g kg ^{-1}$",
-    labelpos="E",
-    coordinates="axes",
-    fontproperties={"size": 10},
-    labelsep=0.05,
-
-)
-
-qk = axes[1, 1].quiverkey(
-    trans_arrows_neg,
-    0.6,
-    -0.05,
-    2,
-    r"2 $m s^{-1} g kg ^{-1}$",
+    10,
+    r"10 $m s^{-1}$",
     labelpos="E",
     coordinates="axes",
     fontproperties={"size": 10},
     labelsep=0.05,
 )
 
-qk = axes[1, 2].quiverkey(
-    steady_arrows_neg,
-    0.6,
-    -0.05,
-    2,
-    r"2 $m s^{-1} g kg ^{-1}$",
-    labelpos="E",
-    coordinates="axes",
-    fontproperties={"size": 10},
-    labelsep=0.05,
+# draw box over the region lon[300, 360], lat[40, 80]
+# Draw a smooth box over lon[300, 360], lat[40, 80] on axes[1,2]
+lons = np.linspace(300, 360, 200)
+lats = np.linspace(40, 80, 200)
+
+# Bottom edge: lon 300->360, lat=40
+lon_b = lons
+lat_b = np.full_like(lons, 40)
+# Right edge: lon=360, lat 40->80
+lon_r = np.full_like(lats, 360)
+lat_r = lats
+# Top edge: lon 360->300, lat=80
+lon_t = lons[::-1]
+lat_t = np.full_like(lons, 80)
+# Left edge: lon=300, lat 80->40
+lon_l = np.full_like(lats, 300)
+lat_l = lats[::-1]
+
+lon_box = np.concatenate([lon_b, lon_r, lon_t, lon_l, [lon_b[0]]])
+lat_box = np.concatenate([lat_b, lat_r, lat_t, lat_l, [lat_b[0]]])
+
+axes[0, 1].plot(
+    lon_box, lat_box,
+    color="yellow",
+    linestyle="dotted",
+    linewidth=2,
+    transform=ccrs.PlateCarree(),
+    zorder=20,
 )
 
 
