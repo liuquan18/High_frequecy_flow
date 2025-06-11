@@ -21,7 +21,7 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 name = MPI.Get_processor_name()
 #%%
-def composite_single_ens(var, decade, ens, plev = None, **kwargs):
+def composite_single_ens(var, decade, ens, **kwargs):
     # read NAO extremes
     pos_extreme = read_NAO_extremes_single_ens('pos', decade, ens)
     neg_extreme = read_NAO_extremes_single_ens('neg', decade, ens)
@@ -43,10 +43,11 @@ decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
 var = sys.argv[2] if len(sys.argv) > 2 else 'ua'
 name = sys.argv[3] if len(sys.argv) > 3 else var
 model_dir = sys.argv[4] if len(sys.argv) > 4 else 'MPI_GE_CMIP6'
-suffix = sys.argv[5] if len(sys.argv) > 5 else ''
+plev = int(sys.argv[5]) if len(sys.argv) > 5 else None
+suffix = sys.argv[6] if len(sys.argv) > 6 else ''
 
 # report the input
-logging.info(f"Rank {rank} of {size} is processing {var} for decade {decade}, model_dir {model_dir}, name {name}, suffix {suffix}")
+logging.info(f"Rank {rank} of {size} is processing {var} for decade {decade}, model_dir {model_dir}, name {name}, plev {plev} suffix {suffix}")
 # %%
 members = np.arange(1, 51)  # all members
 members_single = np.array_split(members, size)[rank]  # members on this core
@@ -58,7 +59,7 @@ theta_2PVU_negs = []
 for i, member in enumerate(members_single):
     print(f"Rank {rank}, member {member}/{members_single[-1]}")
 
-    theta_2pvu_pos, theta_2pvu_neg = composite_single_ens(var, decade=decade, ens=member, name = name, suffix = suffix, model_dir=model_dir)
+    theta_2pvu_pos, theta_2pvu_neg = composite_single_ens(var, decade=decade, ens=member, name = name, suffix = suffix, model_dir=model_dir, plev=plev)
 
     theta_2PVU_poss.append(theta_2pvu_pos)
     theta_2PVU_negs.append(theta_2pvu_neg)
@@ -81,3 +82,5 @@ if rank == 0:
     # save the results
     theta_2PVU_poss.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/0composite_range/{var}{suffix}_NAO_pos_{decade}.nc')
     theta_2PVU_negs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/0composite_range/{var}{suffix}_NAO_neg_{decade}.nc')
+#%%
+    theta_2pvu_pos, theta_2pvu_neg = composite_single_ens(var, decade=decade, ens=member, name = name, suffix = suffix, model_dir=model_dir, plev=plev)

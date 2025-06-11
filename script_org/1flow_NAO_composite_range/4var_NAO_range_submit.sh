@@ -14,5 +14,6 @@ decade=$1
 var=$2
 name=$3
 model_dir=$4
-suffix=$5
-mpirun -n 5 python 4var_NAO_range.py $decade $var $name $model_dir $suffix
+plev=$5
+suffix=$6
+mpirun -n 5 python 4var_NAO_range.py $decade $var $name $model_dir $plev $suffix
