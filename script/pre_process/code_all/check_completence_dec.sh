@@ -16,7 +16,7 @@ for i in {1..50}; do
   # Check for files for each decade from 1850 to 2090
   missing_years=()
   for year in $(seq 1850 10 2090); do
-    if ! ls "${BASE_DIR}/${dir}"/*${year}.nc* 1>/dev/null 2>&1; then
+    if ! ls "${BASE_DIR}/${dir}"/*${year}*.nc 1>/dev/null 2>&1; then
       missing_years+=("$year")
     fi
   done
