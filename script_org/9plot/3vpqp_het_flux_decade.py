@@ -141,7 +141,7 @@ sns.lineplot(
     x="decade",
     y="steady_div2",
     ax=axes[1],
-    label="steady",
+    label="stationary",
     color='k',
     linestyle="--",
     linewidth=2,
