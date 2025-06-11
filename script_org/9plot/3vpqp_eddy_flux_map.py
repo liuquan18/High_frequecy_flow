@@ -840,7 +840,7 @@ sum_arrows_neg = axes[1, 0].quiver(
 )
 
 # transient
-trans_color = trans_div_neg_last.plot.contourf(
+trans_color = trans_div_neg_first.plot.contourf(
     ax=axes[1, 1],
     levels=levels_vt_prime,
     cmap="RdBu_r",
@@ -870,7 +870,7 @@ trans_arrows_neg = axes[1, 1].quiver(
 )
 
 # steady
-steady_color = steady_div_p_neg_last.plot.contourf(
+steady_color = steady_div_p_neg_first.plot.contourf(
     ax=axes[1, 2],
     levels=levels_vt,
     cmap="RdBu_r",
