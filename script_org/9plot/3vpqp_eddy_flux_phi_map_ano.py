@@ -44,11 +44,11 @@ scale_hus = 5e4
 # %%
 ###### read vpetp
 # climatology
-vpetp_clim_first = read_climatology("Fdiv_p_steady", "1850", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
-vpetp_clim_last = read_climatology("Fdiv_p_steady", "2090", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
+vpetp_clim_first = read_climatology("Fdiv_phi_steady", "1850", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
+vpetp_clim_last = read_climatology("Fdiv_phi_steady", "2090", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
 # pos ano
 vpetp_pos_first = read_comp_var(
-    "Fdiv_p_transient",
+    "Fdiv_phi_transient",
     "pos",
     1850,
     time_window=time_window,
@@ -58,7 +58,7 @@ vpetp_pos_first = read_comp_var(
     model_dir = 'MPI_GE_CMIP6_allplev'
 )
 vpetp_neg_first = read_comp_var(
-    "Fdiv_p_transient",
+    "Fdiv_phi_transient",
     "neg",
     1850,
     time_window=time_window,
@@ -70,7 +70,7 @@ vpetp_neg_first = read_comp_var(
 )
 
 vpetp_pos_last = read_comp_var(
-    "Fdiv_p_transient",
+    "Fdiv_phi_transient",
     "pos",
     2090,
     time_window=time_window,
@@ -80,7 +80,7 @@ vpetp_pos_last = read_comp_var(
     model_dir = 'MPI_GE_CMIP6_allplev'
 )
 vpetp_neg_last = read_comp_var(
-    "Fdiv_p_transient",
+    "Fdiv_phi_transient",
     "neg",
     2090,
     time_window=time_window,
@@ -91,12 +91,12 @@ vpetp_neg_last = read_comp_var(
 )
 
 # %%
-vsets_clim_first = read_climatology("Fdiv_p_steady", "1850", name='div2', model_dir = 'MPI_GE_CMIP6_allplev')
-vsets_clim_last = read_climatology("Fdiv_p_steady", "2090", name='div2', model_dir = 'MPI_GE_CMIP6_allplev')
+vsets_clim_first = read_climatology("Fdiv_phi_steady", "1850", name='div2', model_dir = 'MPI_GE_CMIP6_allplev')
+vsets_clim_last = read_climatology("Fdiv_phi_steady", "2090", name='div2', model_dir = 'MPI_GE_CMIP6_allplev')
 
 # pos ano
 vsets_pos_first = read_comp_var(
-    "Fdiv_p_steady",
+    "Fdiv_phi_steady",
     "pos",
     1850,
     time_window=time_window,
@@ -106,7 +106,7 @@ vsets_pos_first = read_comp_var(
     model_dir = 'MPI_GE_CMIP6_allplev'
 )
 vsets_neg_first = read_comp_var(
-    "Fdiv_p_steady",
+    "Fdiv_phi_steady",
     "neg",
     1850,
     time_window=time_window,
@@ -117,7 +117,7 @@ vsets_neg_first = read_comp_var(
 )
 
 vsets_pos_last = read_comp_var(
-    "Fdiv_p_steady",
+    "Fdiv_phi_steady",
     "pos",
     2090,
     time_window=time_window,
@@ -127,7 +127,7 @@ vsets_pos_last = read_comp_var(
     model_dir = 'MPI_GE_CMIP6_allplev'
 )
 vsets_neg_last = read_comp_var(
-    "Fdiv_p_steady",
+    "Fdiv_phi_steady",
     "neg",
     2090,
     time_window=time_window,
@@ -584,7 +584,7 @@ for i, ax in enumerate(axes.flat):
     )
 
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/pv_div_p_map_anomonth.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/pv_div_phi_map_anomonth.pdf",
     bbox_inches="tight",
     dpi=300,
     transparent=True,
