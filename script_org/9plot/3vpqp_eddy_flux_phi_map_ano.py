@@ -412,19 +412,19 @@ fig.colorbar(
     sum_color,
     cax=cax_sum,
     orientation="horizontal",
-    label=r"$\overline{v'\theta'}$ [K m s$^{-1}$] (sum)",
+    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m s$^{-1}$ day$^{-1}$]",
 )
 fig.colorbar(
     trans_color,
     cax=cax_prime,
     orientation="horizontal",
-    label=r"$\overline{v'\theta'}$ [K m s$^{-1}$] (transient)",
+    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m s$^{-1}$ day$^{-1}$]",
 )
 fig.colorbar(
     steady_color,
     cax=cax_steady,
     orientation="horizontal",
-    label=r"$\overline{v'\theta'}$ [K m s$^{-1}$] (steady)",
+    label= r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m s$^{-1}$ day$^{-1}$]",
 )
 
 for ax in axes.flat:
