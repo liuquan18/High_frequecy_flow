@@ -17,11 +17,11 @@ sbatch 4var_NAO_range_submit.sh $decade vsets vsets MPI_GE_CMIP6_allplev $suffix
 sbatch ./4var_NAO_range_submit.sh 1850 Fdiv_p_transient div2 MPI_GE_CMIP6_allplev 85000 _ano
 sbatch ./4var_NAO_range_submit.sh 2090 Fdiv_p_transient div2 MPI_GE_CMIP6_allplev 85000 _ano
 
-sbatch ./4var_NAO_range_submit.sh 1850 Fdiv_phi_transient div1 MPI_GE_CMIP6_allplev 25000 _ano
-sbatch ./4var_NAO_range_submit.sh 2090 Fdiv_phi_transient div1 MPI_GE_CMIP6_allplev 25000 _ano
+sbatch ./4var_NAO_range_submit.sh 1850 Fdiv_phi_transient div MPI_GE_CMIP6_allplev 25000 _ano
+sbatch ./4var_NAO_range_submit.sh 2090 Fdiv_phi_transient div MPI_GE_CMIP6_allplev 25000 _ano
 
 sbatch ./4var_NAO_range_submit.sh 1850 Fdiv_p_steady div2 MPI_GE_CMIP6_allplev 85000 _ano
 sbatch ./4var_NAO_range_submit.sh 2090 Fdiv_p_steady div2 MPI_GE_CMIP6_allplev 85000 _ano
 
-sbatch ./4var_NAO_range_submit.sh 1850 Fdiv_phi_steady div1 MPI_GE_CMIP6_allplev 25000 _ano
-sbatch ./4var_NAO_range_submit.sh 1850 Fdiv_p_transient div1 MPI_GE_CMIP6_allplev 25000 _ano
+sbatch ./4var_NAO_range_submit.sh 1850 Fdiv_phi_steady div MPI_GE_CMIP6_allplev 25000 _ano
+sbatch ./4var_NAO_range_submit.sh 1850 Fdiv_phi_transient div MPI_GE_CMIP6_allplev 25000 _ano
