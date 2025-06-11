@@ -44,8 +44,8 @@ scale_hus = 5e4
 # %%
 ###### read vpetp
 # climatology
-vpetp_clim_first = read_climatology("Fdiv_p_steady", "1850", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
-vpetp_clim_last = read_climatology("Fdiv_p_steady", "2090", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
+vpetp_clim_first = read_climatology("Fdiv_p_transient", "1850", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
+vpetp_clim_last = read_climatology("Fdiv_p_transient", "2090", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
 # pos ano
 vpetp_pos_first = read_comp_var(
     "Fdiv_p_transient",
