@@ -82,5 +82,3 @@ if rank == 0:
     # save the results
     theta_2PVU_poss.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/0composite_range/{var}{suffix}_NAO_pos_{decade}.nc')
     theta_2PVU_negs.to_netcdf(f'/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/0composite_range/{var}{suffix}_NAO_neg_{decade}.nc')
-#%%
-    theta_2pvu_pos, theta_2pvu_neg = composite_single_ens(var, decade=decade, ens=member, name = name, suffix = suffix, model_dir=model_dir, plev=plev)
