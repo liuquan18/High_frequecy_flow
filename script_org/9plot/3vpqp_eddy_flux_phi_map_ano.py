@@ -504,7 +504,7 @@ for i, ax in enumerate(axes.flat):
     )
 
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/pv_div_phi_map_anomonth.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/pvf_div_phi_map_anomonth.pdf",
     bbox_inches="tight",
     dpi=300,
     transparent=True,
