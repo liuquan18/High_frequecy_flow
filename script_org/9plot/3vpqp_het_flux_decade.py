@@ -111,7 +111,7 @@ sns.lineplot(
     x="decade",
     y="days_pos",
     ax=axes[0],
-    label="NAO pos",
+    label="pos NAO",
     color="k",
     linewidth=2,
 )
@@ -120,7 +120,7 @@ sns.lineplot(
     x="decade",
     y="days_neg",
     ax=axes[0],
-    label="NAO neg",
+    label="neg NAO",
     color="k",
     linestyle="--",
     linewidth=2,
