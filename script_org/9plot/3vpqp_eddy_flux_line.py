@@ -237,7 +237,7 @@ SEx_clima_last, SEy_clima_last = read_E_div(
 # fldmean over [300, 360, 40, 80]
 def to_dataframe(ds, var_name, phase, decade):
 
-    ds = ds.sel(lat=slice(40, 80), lon=slice(300, 360))
+    ds = ds.sel(lat=slice(40, 80), lon=slice(280, 360))
     # create weights
     weights = np.cos(np.deg2rad(ds.lat))
     weights.name = "weights"
