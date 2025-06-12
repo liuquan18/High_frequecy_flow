@@ -3,7 +3,7 @@
 #SBATCH --time=01:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=10
+#SBATCH --ntasks=5
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
@@ -50,4 +50,4 @@ sum(){
 
 export -f sum
 
-parallel --jobs 10 --bar sum ::: {1850..2090..10}
+parallel --jobs 5 --tmpdir /scratch/m/m300883/parallel sum ::: {1850..2090..10}
