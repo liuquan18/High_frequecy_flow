@@ -22,7 +22,7 @@ var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${va
 var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var2}_daily${suffix}/r${member}i1p1f1/
 
 var1_no_transient=${var1//transient/}
-output_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1_no_transient}sum_daily${suffix}/r${member}i1p1f1/
+output_dir=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_${var2}_sum_daily${suffix}/r${member}i1p1f1/
 
 echo "Ensemble member ${member}"
 
