@@ -115,6 +115,7 @@ for ax in axes:
     ax.set_xlim(-180, 180)
     ax.set_xlabel('Longitude')
     ax.set_ylabel('Pressure (Pa)')
+    ax.set_xticks(np.arange(-180, 181, 60))
 
 # Add a colorbar at the bottom
 cbar = fig.colorbar(cf1, ax=axes, orientation='horizontal', fraction=0.05, pad=0.15)
@@ -123,6 +124,7 @@ plt.tight_layout()
 fig.subplots_adjust(bottom=0.25)
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_flux_profile.pdf",
             bbox_inches='tight', dpi=300)
+
 
 # %%
 eke_levels = np.arange(80, 120, 5)
