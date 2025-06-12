@@ -4,6 +4,8 @@ import cartopy.crs as ccrs
 import matplotlib.path as mpath
 import matplotlib.ticker as mticker
 import numpy as np
+from matplotlib.patches import Polygon as MplPolygon
+
 
 # function to erase the white line
 def erase_white_line(data):
@@ -29,6 +31,7 @@ def erase_white_line(data):
     new_data = xr.DataArray(data_value, coords=new_coords, name=data.name)
 
     return new_data
+
 
 def map_smooth(ds, lon_win=25, lat_win=3):
     extended_ds = xr.concat([ds, ds], dim="lon")
@@ -56,6 +59,7 @@ def lon2x(longitude, ax):
 
     return x_coord
 
+
 def x2lon(x, ax):
     """
     Convert x-coordinates to corresponding longitude.
@@ -65,10 +69,10 @@ def x2lon(x, ax):
     return lon_coord
 
 
-def clip_map(ax, theta1 = 200, theta2 = 340, lat_min = 20, lat_max = 80):
+def clip_map(ax, theta1=200, theta2=340, lat_min=20, lat_max=80):
     # ---- Create a sector-shaped boundary with a hole at the north pole ----
     # Outer sector (main wedge)
-      # degrees
+    # degrees
     n_points = 100
 
     # Outer arc (radius=0.5, full sector)
@@ -79,14 +83,12 @@ def clip_map(ax, theta1 = 200, theta2 = 340, lat_min = 20, lat_max = 80):
     # For a polar stereographic, the pole is at (0.5, 0.5), radius=0.5 is 90N, so 85N is slightly less.
     # Approximate: r = 0.5 * (90 - lat) / (90 - 20) for 20N-90N
     r_80 = 0.5 * (90 - lat_max) / (90 - lat_min)  # scale to axes
-    inner_arc = np.column_stack([0.5 + r_80 * np.cos(theta[::-1]), 0.5 + r_80 * np.sin(theta[::-1])])
+    inner_arc = np.column_stack(
+        [0.5 + r_80 * np.cos(theta[::-1]), 0.5 + r_80 * np.sin(theta[::-1])]
+    )
 
     # Combine: outer arc, inner arc (reversed), close polygon
-    verts = np.vstack([
-        outer_arc,
-        inner_arc,
-        outer_arc[0]
-    ])
+    verts = np.vstack([outer_arc, inner_arc, outer_arc[0]])
 
     # Create path with a hole (using Path.CLOSEPOLY for the hole)
     codes = np.full(len(verts), mpath.Path.LINETO)
@@ -98,3 +100,34 @@ def clip_map(ax, theta1 = 200, theta2 = 340, lat_min = 20, lat_max = 80):
 
     # Apply the custom boundary to the axes
     ax.set_boundary(sector_path, transform=ax.transAxes)
+
+
+def NA_box(ax, lon_min=280, lon_max=340, lat_min=40, lat_max=80, n=100, **kwargs):
+    # Create points along the box edges
+    lons_bottom = np.linspace(lon_min, lon_max, n)
+    lats_bottom = np.full_like(lons_bottom, lat_min)
+    lons_top = np.linspace(lon_max, lon_min, n)
+    lats_top = np.full_like(lons_top, lat_max)
+    lats_left = np.linspace(lat_min, lat_max, n)
+    lons_left = np.full_like(lats_left, lon_min)
+    lats_right = np.linspace(lat_max, lat_min, n)
+    lons_right = np.full_like(lats_right, lon_max)
+    # Concatenate all points
+    lons = np.concatenate([lons_bottom, lons_right, lons_top, lons_left])
+    lats = np.concatenate([lats_bottom, lats_right, lats_top, lats_left])
+    # Convert lons to -180,180 if needed
+    lons = ((lons + 180) % 360) - 180
+    # Create and add the polygon
+    poly = np.column_stack([lons, lats])
+    patch = MplPolygon(
+        poly,
+        closed=True,
+        edgecolor="yellow",
+        facecolor="none",
+        linewidth=2,
+        linestyle="--",
+        zorder=10,
+        transform=ccrs.PlateCarree(),
+        **kwargs
+    )
+    ax.add_patch(patch)
