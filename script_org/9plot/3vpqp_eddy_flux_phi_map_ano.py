@@ -299,7 +299,7 @@ vpetp_pos_last.plot.contour(
 # Steady
 steady_color = vsets_pos_first.plot.contourf(
     ax=axes[0, 2],
-    levels=vpetp_levels_steady,
+    levels=vpetp_levels_div,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
@@ -307,7 +307,7 @@ steady_color = vsets_pos_first.plot.contourf(
 )
 vsets_pos_last.plot.contour(
     ax=axes[0, 2],
-    levels=[l for l in vpetp_levels_steady if l != 0],
+    levels=[l for l in vpetp_levels_div if l != 0],
     colors="k",
     linewidths=0.5,
     transform=ccrs.PlateCarree(),
@@ -366,7 +366,7 @@ vpetp_neg_last.plot.contour(
 # Steady
 steady_color_neg = vsets_neg_first.plot.contourf(
     ax=axes[1, 2],
-    levels=vpetp_levels_steady,
+    levels=vpetp_levels_div,
     cmap="RdBu_r",
     add_colorbar=False,
     extend="both",
@@ -374,7 +374,7 @@ steady_color_neg = vsets_neg_first.plot.contourf(
 )
 vsets_neg_last.plot.contour(
     ax=axes[1, 2],
-    levels=[l for l in vpetp_levels_steady if l != 0],
+    levels=[l for l in vpetp_levels_div if l != 0],
     colors="k",
     linewidths=0.5,
     transform=ccrs.PlateCarree(),
