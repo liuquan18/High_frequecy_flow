@@ -16,7 +16,9 @@ module load parallel
 member=$1
 var1=$2
 var2=$3
-suffix=$4
+plev=$4
+suffix=$5
+
 
 var1_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var1}_daily${suffix}/r${member}i1p1f1/
 var2_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var2}_daily${suffix}/r${member}i1p1f1/
@@ -43,7 +45,7 @@ sum(){
         return
     fi
     output_file=${output_dir}${var1}_${var2}_daily_${dec}.nc
-    cdo -P 2 -O -add -sellevel,85000 ${var1_file} -sellevel,85000 ${var2_file} ${output_file}
+    cdo -P 2 -O -add -sellevel,$plev ${var1_file} -sellevel,$plev ${var2_file} ${output_file}
 }
 
 export -f sum
