@@ -15,6 +15,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from src.data_helper.read_variable import read_climatology
 from metpy.units import units
 import numpy as np
+import os
 import metpy.calc as mpcalc
 import src.plotting.util as util
 
@@ -122,13 +123,19 @@ cbar = fig.colorbar(cf1, ax=axes, orientation='horizontal', fraction=0.05, pad=0
 cbar.set_label(r"$v'\theta'$ (K m s$^{-1}$)", fontsize=12)
 plt.tight_layout()
 fig.subplots_adjust(bottom=0.25)
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_flux_profile.pdf",
-            bbox_inches='tight', dpi=300)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_flux_profile.pdf",
+    bbox_inches='tight',
+    dpi=300,
+    metadata={
+        'Creator': os.path.abspath(__file__)
+    }
+)
 
 
 # %%
 eke_levels = np.arange(80, 120, 5)
-zg_levels = np.arange(-100, 101, 20)
+zg_levels = np.arange(-80, 81, 10)
 #%%
 fig, axes = plt.subplots(
     1,
