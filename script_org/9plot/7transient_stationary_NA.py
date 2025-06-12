@@ -176,7 +176,7 @@ for ax in axes:
     ax.set_global()
 
 # Plot vpetp
-eke_first.sel(plev=85000).plot.contourf(
+eke_first.sel(plev=25000).plot.contourf(
     ax=axes[0],
     levels=eke_levels,
     cmap="viridis",
@@ -186,7 +186,7 @@ eke_first.sel(plev=85000).plot.contourf(
     cbar_kwargs={"label": r"$eke$ (m$^2$ s$^{-2}$)", "shrink": 0.6},
 )
 
-erase_white_line(eke_last).sel(plev=85000).plot.contour(
+erase_white_line(eke_last).sel(plev=25000).plot.contour(
     ax=axes[0],
     levels=[l for l in eke_levels if l != 0],
     colors="k",
@@ -196,7 +196,7 @@ erase_white_line(eke_last).sel(plev=85000).plot.contour(
 )
 
 # plot zg
-erase_white_line(zg_first).sel(plev=85000).plot.contourf(
+erase_white_line(zg_first).sel(plev=25000).plot.contourf(
     ax=axes[1],
     levels=zg_levels,
     cmap="RdBu_r",
@@ -205,7 +205,7 @@ erase_white_line(zg_first).sel(plev=85000).plot.contourf(
     transform=ccrs.PlateCarree(),
     cbar_kwargs={"label": r"zg (m)", "shrink": 0.6},
 )
-erase_white_line(zg_last).sel(plev=85000).plot.contour(
+erase_white_line(zg_last).sel(plev=25000).plot.contour(
     ax=axes[1],
     levels=[l for l in zg_levels if l != 0],
     colors="k",
@@ -220,19 +220,18 @@ axes[1].set_title("")
 # add box on lon 280-340, lat 40-80
 # Draw a smooth box (polygon) on lon 280-340, lat 40-80
 
-for ax in axes:
-    NA_box(ax, lon_min=280, lon_max=340, lat_min=40, lat_max=80)
+NA_box(axes[1], lon_min=280, lon_max=360, lat_min=40, lat_max=80)
 
 
 # add a, b
 axes[0].text(0.1, 1.0, "a", transform=axes[0].transAxes, fontsize=16, fontweight="bold")
 axes[1].text(0.1, 1.0, "b", transform=axes[1].transAxes, fontsize=16, fontweight="bold")
 plt.tight_layout()
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eke_zg_250hPa.pdf",
-#             bbox_inches='tight', dpi=300, metadata={
-#                 'Creator': os.path.abspath(__file__)
-#             }
-#             )
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eke_zg_250hPa.pdf",
+            bbox_inches='tight', dpi=300, metadata={
+                'Creator': os.path.abspath(__file__)
+            }
+            )
 
 # %%
 div_Tp_first = read_climatology(
