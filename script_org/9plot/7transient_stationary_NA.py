@@ -9,13 +9,16 @@ import matplotlib.ticker as mticker
 
 from src.dynamics.EP_flux import PlotEPfluxArrows
 from src.data_helper import read_composite
-from src.plotting.util import erase_white_line, map_smooth
+from src.plotting.util import erase_white_line, map_smooth, smooth_box
 import importlib
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from src.data_helper.read_variable import read_climatology
+from src.data_helper.read_variable import read_climatology,read_climatology_decmean
 from metpy.units import units
 import numpy as np
 import os
+import cartopy
+from matplotlib.patches import Rectangle
+from shapely.geometry import Polygon
 import metpy.calc as mpcalc
 import src.plotting.util as util
 
@@ -135,7 +138,7 @@ plt.savefig(
 
 # %%
 eke_levels = np.arange(80, 120, 5)
-zg_levels = np.arange(-80, 81, 10)
+zg_levels = np.arange(-75, 80, 15)
 #%%
 fig, axes = plt.subplots(
     1,
@@ -150,7 +153,7 @@ for ax in axes:
     ax.set_global()
 
 # Plot vpetp
-eke_first.sel(plev = 25000).plot.contourf(
+eke_first.sel(plev = 85000).plot.contourf(
     ax=axes[0],
     levels=eke_levels,
     cmap='viridis',
@@ -160,7 +163,7 @@ eke_first.sel(plev = 25000).plot.contourf(
     cbar_kwargs={'label': r"$eke$ (m$^2$ s$^{-2}$)", "shrink": 0.6},
 )
 
-erase_white_line(eke_last).sel(plev = 25000).plot.contour(
+erase_white_line(eke_last).sel(plev = 85000).plot.contour(
     ax=axes[0],
     levels=[l for l in eke_levels if l != 0],
     colors='k',
@@ -170,7 +173,7 @@ erase_white_line(eke_last).sel(plev = 25000).plot.contour(
 )
 
 # plot zg
-erase_white_line(zg_first).sel(plev = 25000).plot.contourf(
+erase_white_line(zg_first).sel(plev = 85000).plot.contourf(
     ax=axes[1],
     levels=zg_levels,
     cmap='RdBu_r',
@@ -179,7 +182,7 @@ erase_white_line(zg_first).sel(plev = 25000).plot.contourf(
     transform=ccrs.PlateCarree(),
     cbar_kwargs={'label': r"zg (m)", "shrink": 0.6},
 )
-erase_white_line(zg_last).sel(plev = 25000).plot.contour(
+erase_white_line(zg_last).sel(plev = 85000).plot.contour(
     ax=axes[1],
     levels=[l for l in zg_levels if l != 0],
     colors='k',
@@ -190,10 +193,235 @@ erase_white_line(zg_last).sel(plev = 25000).plot.contour(
 axes[0].set_title("")
 axes[1].set_title("")
 
+
+# add box on lon 280-340, lat 40-80
+# Draw a smooth box (polygon) on lon 280-340, lat 40-80
+
+for ax in axes:
+    smooth_box(ax, lon_min=280, lon_max=340, lat_min=40, lat_max=80)
+
+
 # add a, b
 axes[0].text(0.1, 1., "a", transform=axes[0].transAxes, fontsize=16, fontweight='bold')
 axes[1].text(0.1, 1., "b", transform=axes[1].transAxes, fontsize=16, fontweight='bold')
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eke_zg_250hPa.pdf",
-            bbox_inches='tight', dpi=300)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eke_zg_250hPa.pdf",
+#             bbox_inches='tight', dpi=300, metadata={
+#                 'Creator': os.path.abspath(__file__)
+#             }
+#             )
+
+#%%
+div_Tp_first = read_climatology("Fdiv_p_transient", "1850", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
+div_Tp_last = read_climatology("Fdiv_p_transient", "2090", name="div2",model_dir = 'MPI_GE_CMIP6_allplev')
+
+
+div_Sp_first = read_climatology("Fdiv_p_steady", "1850", name='div2', model_dir = 'MPI_GE_CMIP6_allplev')
+div_Sp_last = read_climatology("Fdiv_p_steady", "2090", name='div2', model_dir = 'MPI_GE_CMIP6_allplev')
+
+#%%
+# difference of vpetp and vsets on 850hPa
+vpetp_diff = vpetp_last.sel(plev=85000) - vpetp_first.sel(plev=85000)
+vsets_diff = vsets_last.sel(plev=85000) - vsets_first.sel(plev=85000)
+# difference of div_Tp and div_Sp (last - first)
+div_Tp_diff = div_Tp_last.sel(plev=85000) - div_Tp_first.sel(plev=85000)
+div_Sp_diff = div_Sp_last.sel(plev=85000) - div_Sp_first.sel(plev=85000)
+
+
+
+#%%
+transient_p = read_climatology_decmean(var = 'Fdiv_p_transient', NAL=False, plev=85000)
+
+steady_p = read_climatology_decmean(var = 'Fdiv_p_steady', NAL=False, plev=85000)
+
+#%%
+
+div_Tp_diff = transient_p.isel(time = -1)
+
+
+
+
+#%%
+vpetp_diff_levels = np.arange(-5, 6, 1)
+vsets_diff_levels = np.arange(-5, 5, 1)
+
+div_Tp_diff_levels = np.arange(-10, 10.1, 2)
+div_Sp_diff_levels = np.arange(-20, 20.1, 2)
+
+
+# %%
+fig, axes = plt.subplots(
+    3,
+    2,
+    figsize=(12, 12),
+    subplot_kw={"projection": ccrs.Orthographic(-40, 80)},
+)
+
+for ax in axes.flat:
+    ax.coastlines(color='grey', linewidth=1)
+    ax.gridlines()
+    ax.set_global()
+
+# eke
+# Plot eke difference
+eke_diff = erase_white_line(eke_last).sel(plev=25000) - erase_white_line(eke_first).sel(plev=25000)
+eke_diff_levels = np.arange(-20, 21, 2)
+eke_diff.plot.contourf(
+    ax=axes[0, 0],
+    levels=eke_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"$\Delta$eke (m$^2$ s$^{-2}$)", "shrink": 0.6},
+)
+
+# Plot zg difference
+zg_diff = erase_white_line(zg_last).sel(plev=25000) - erase_white_line(zg_first).sel(plev=25000)
+zg_diff_levels = np.arange(-40, 41, 5)
+zg_diff.plot.contourf(
+    ax=axes[0, 1],
+    levels=zg_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"$\Delta$zg (m)", "shrink": 0.6},
+)
+
+
+
+vpetp_diff.plot.contourf(
+    ax=axes[1, 0],
+    levels=vpetp_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"$\Delta v' \theta'$ (K m s$^{-1}$)", "shrink": 0.6},
+)
+vsets_diff.plot.contourf(
+    ax=axes[1, 1],
+    levels=vsets_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"$\Delta v's'$ (m s$^{-1}$)", "shrink": 0.6},
+)
+
+
+
+div_Tp_diff.plot.contourf(
+    ax=axes[2, 0],
+    levels=div_Tp_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"$\Delta$div $F_p^{\prime}$ (units)", "shrink": 0.6},
+)
+div_Sp_diff.plot.contourf(
+    ax=axes[2, 1],
+    levels=div_Sp_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"$\Delta$div $F_p^{steady}$ (units)", "shrink": 0.6},
+)
+
+
+# %%
+fig, axes = plt.subplots(
+    3,
+    2,
+    figsize=(12, 12),
+    subplot_kw={"projection": ccrs.Orthographic(-40, 80)},
+)
+
+for ax in axes.flat:
+    ax.coastlines(color='grey', linewidth=1)
+    ax.gridlines()
+    ax.set_global()
+
+# first year
+transient_p.isel(year = 0).div2.plot.contourf(
+    ax=axes[0, 0],
+    levels=div_Tp_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"$\Delta$div $F_p^{\prime}$ (units)", "shrink": 0.6},
+)
+steady_p.isel(year = 0).div2.plot.contourf(
+    ax=axes[0, 1],
+    levels=div_Sp_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"$\Delta$div $F_p^{steady}$ (units)", "shrink": 0.6},
+)
+
+# last year
+transient_p.isel(year = -1).div2.plot.contourf(
+    ax=axes[1, 0],
+    levels=div_Tp_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"$\Delta$div $F_p^{\prime}$ (units)", "shrink": 0.6},
+)
+
+steady_p.isel(year = -1).div2.plot.contourf(
+    ax=axes[1, 1],
+    levels=div_Sp_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"$\Delta$div $F_p^{steady}$ (units)", "shrink": 0.6},
+)
+
+# difference (last - first)
+(transient_p.isel(year=-1).div2 - transient_p.isel(year=0).div2).plot.contourf(
+    ax=axes[2, 0],
+    levels=div_Tp_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"Diff div $F_p^{\prime}$ (units)", "shrink": 0.6},
+)
+(steady_p.isel(year=-1).div2 - steady_p.isel(year=0).div2).plot.contourf(
+    ax=axes[2, 1],
+    levels=div_Sp_diff_levels,
+    cmap='RdBu_r',
+    add_colorbar=True,
+    extend='both',
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={'label': r"Diff div $F_p^{steady}$ (units)", "shrink": 0.6},
+)
+
+# Add a yellow dashed box for sector lat 40-80, lon 300-360 (which is -60 to 0 in -180,180 convention)
+
+def add_sector_box(ax, lat_min=40, lat_max=80, lon_min=300, lon_max=360, **kwargs):
+    # Convert lon to -180,180 if needed
+    lon_min = ((lon_min + 180) % 360) - 180
+    lon_max = ((lon_max + 180) % 360) - 180
+    # Rectangle expects lower left corner and width/height
+    width = lon_max - lon_min
+    height = lat_max - lat_min
+    rect = Rectangle((lon_min, lat_min), width, height,
+                     linewidth=2, edgecolor='yellow', facecolor='none',
+                     linestyle='--', zorder=10, transform=ccrs.PlateCarree(), **kwargs)
+    ax.add_patch(rect)
+
+
+for ax in axes.flat:
+    clip_map(ax)
+
 # %%
