@@ -87,10 +87,13 @@ vsets_last_profile = (
     vsets_last.sel(lat=slice(20, 60)).weighted(vsets_weights).mean(dim="lat")
 )
 # %%
-vptp_levels = np.arange(-10, 11, 2)
-vsts_levels = np.arange(-10, 11, 2)
+vptp_profile_levels = np.arange(-10, 11, 2)
+vsets_profile_levels = np.arange(-10, 11, 2)
+#%%
+vpetp_levels = np.arange(-20, 21, 5)
+vsets_levels = np.arange(-40, 41, 5)
 
-
+#%%
 def shift_longitude(ds):
     """Shift longitude from 0-360 to -180,180."""
     if "lon" in ds.coords:
@@ -105,19 +108,79 @@ vpetp_last_profile_shifted = shift_longitude(vpetp_last_profile)
 vsets_first_profile_shifted = shift_longitude(vsets_first_profile)
 vsets_last_profile_shifted = shift_longitude(vsets_last_profile)
 
-# plot the profiles
-fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
+
+#%%%
+fig = plt.figure(figsize=(12, 12))
+map_ax_t = fig.add_subplot(2, 2, 1, projection=ccrs.Orthographic(-40, 80))
+map_ax_s = fig.add_subplot(2, 2, 2, projection=ccrs.Orthographic(-40, 80))
+erase_white_line(vpetp_first).sel(plev=85000).plot.contourf(
+    ax=map_ax_t,
+    levels=vpetp_levels,
+    cmap="RdBu_r",
+    add_colorbar=True,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={"label": r"$v'\theta'$ ( K m s$^{-1}$)", "shrink": 0.6, "orientation": "horizontal"},
+)
+
+erase_white_line(vpetp_last).sel(plev=85000).plot.contour(
+    ax=map_ax_t,
+    levels=[l for l in vpetp_levels if l != 0],
+    colors="k",
+    linewidths=1,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+
+map_ax_t.set_extent([-180, 180, 20, 90], crs=ccrs.PlateCarree())
+clip_map(map_ax_t)
+
+
+# vsets map at 850hPa
+cf = erase_white_line(vsets_first).sel(plev=85000).plot.contourf(
+    ax=map_ax_s,
+    levels=vsets_levels,
+    cmap="RdBu_r",
+    add_colorbar=True,
+    extend="both",
+    transform=ccrs.PlateCarree(),
+    cbar_kwargs={
+        "label": r"$v'\theta'$ (m s$^{-1}$)",
+        "shrink": 0.6,
+        "orientation": "horizontal",
+    },
+)
+erase_white_line(vsets_last).sel(plev=85000).plot.contour(
+    ax=map_ax_s,
+    levels=[l for l in vsets_levels if l != 0],
+    colors="k",
+    linewidths=1,
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+map_ax_s.set_extent([-180, 180, 20, 90], crs=ccrs.PlateCarree())
+clip_map(map_ax_s   )
+
+profile_ax_t = fig.add_subplot(2, 2, 3)
+profile_ax_s = fig.add_subplot(2, 2, 4)
+
+
 # vpetp
 cf1 = vpetp_first_profile_shifted.plot.contourf(
-    ax=axes[0],
-    levels=vptp_levels,
+    ax=profile_ax_t,
+    levels=vptp_profile_levels,
     cmap="RdBu_r",
-    add_colorbar=False,
+    add_colorbar=True,
+    cbar_kwargs={
+        "label": r"$v'\theta'$ (K m s$^{-1}$)",
+        "shrink": 0.6,
+        "orientation": "horizontal",
+    },
     extend="both",
 )
 vpetp_last_profile_shifted.plot.contour(
-    ax=axes[0],
-    levels=[l for l in vptp_levels if l != 0],
+    ax=profile_ax_t,
+    levels=[l for l in vptp_profile_levels if l != 0],
     colors="k",
     linewidths=1,
     add_colorbar=False,
@@ -125,32 +188,51 @@ vpetp_last_profile_shifted.plot.contour(
 
 # vsets
 cf2 = vsets_first_profile_shifted.plot.contourf(
-    ax=axes[1],
-    levels=vsts_levels,
+    ax=profile_ax_s,
+    levels=vsets_profile_levels,
     cmap="RdBu_r",
-    add_colorbar=False,
-    extend="both",
+    add_colorbar=True,
+    cbar_kwargs={
+        "label": r"$v'\theta'$ (m s$^{-1}$)",
+        "shrink": 0.6,
+        "orientation": "horizontal",
+    },    extend="both",
 )
 vsets_last_profile_shifted.plot.contour(
-    ax=axes[1],
-    levels=[l for l in vsts_levels if l != 0],
+    ax=profile_ax_s,
+    levels=[l for l in vsets_profile_levels if l != 0],
     colors="k",
     linewidths=1,
-    add_colorbar=False,
+    add_colorbar=False
+
 )
 
-for ax in axes:
+
+NA_box(map_ax_s, lon_min=280, lon_max=360)
+for ax in [map_ax_t, map_ax_s]:
+    ax.set_title("")
+    ax.coastlines(color="grey", linewidth=1)
+    gl = ax.gridlines(draw_labels=False, linewidth=0.8, color='gray', alpha=0.5, )
+    gl.xlocator = mticker.FixedLocator(np.arange(-180, 181, 30))
+    gl.ylocator = mticker.FixedLocator(np.arange(20, 91, 20))
+
+for ax in [profile_ax_t, profile_ax_s]:
     ax.set_ylim(100000, 10000)
     ax.set_xlim(-180, 180)
     ax.set_xlabel("Longitude")
     ax.set_ylabel("Pressure (Pa)")
     ax.set_xticks(np.arange(-180, 181, 60))
 
-# Add a colorbar at the bottom
-cbar = fig.colorbar(cf1, ax=axes, orientation="horizontal", fraction=0.05, pad=0.15)
-cbar.set_label(r"$v'\theta'$ (K m s$^{-1}$)", fontsize=12)
 plt.tight_layout()
-fig.subplots_adjust(bottom=0.25)
+
+# add a, b, c
+map_ax_t.text(0.1, 0.5, "a", transform=map_ax_t.transAxes, fontsize=16, fontweight="bold")
+map_ax_s.text(0.1, 0.5, "b", transform=map_ax_s.transAxes, fontsize=16, fontweight="bold")
+
+profile_ax_t.text(-0.2, 1.0, "c", transform=profile_ax_t.transAxes, fontsize=16, fontweight="bold")
+profile_ax_s.text(-0.2, 1.0, "d", transform=profile_ax_s.transAxes, fontsize=16, fontweight="bold")
+
+
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_flux_profile.pdf",
     bbox_inches="tight",
@@ -337,7 +419,7 @@ vsets_diff.plot.contourf(
     add_colorbar=True,
     extend="both",
     transform=ccrs.PlateCarree(),
-    cbar_kwargs={"label": r"$\Delta v's'$ (m s$^{-1}$)", "shrink": 0.6},
+    cbar_kwargs={"label": r"$\Delta v'\theta'$ (m s$^{-1}$)", "shrink": 0.6},
 )
 
 
