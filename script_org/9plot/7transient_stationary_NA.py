@@ -163,7 +163,7 @@ clip_map(map_ax_s   )
 
 erase_white_line(vsets_first).sel(plev=85000).plot.contour(
     ax=map_ax_s,
-    levels=[-5, 0],
+    levels=[-20, 0],
     colors='purple',
     linewidths=2,
     linestyles='dashed',
@@ -174,7 +174,7 @@ erase_white_line(vsets_first).sel(plev=85000).plot.contour(
 
 erase_white_line(vsets_last).sel(plev=85000).plot.contour(
     ax=map_ax_s,
-    levels=[-5, 0],
+    levels=[-20, 0],
     colors='red',
     linewidths=2,
     linestyles='dashed',
@@ -255,12 +255,12 @@ profile_ax_t.text(-0.2, 1.0, "c", transform=profile_ax_t.transAxes, fontsize=16,
 profile_ax_s.text(-0.2, 1.0, "d", transform=profile_ax_s.transAxes, fontsize=16, fontweight="bold")
 
 
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_flux_profile.pdf",
-#     bbox_inches="tight",
-#     dpi=300,
-#     metadata={"Creator": os.path.abspath(__file__)},
-# )
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_flux_profile.pdf",
+    bbox_inches="tight",
+    dpi=300,
+    metadata={"Creator": os.path.abspath(__file__)},
+)
 
 
 # %%
