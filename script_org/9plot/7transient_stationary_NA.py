@@ -161,6 +161,27 @@ erase_white_line(vsets_last).sel(plev=85000).plot.contour(
 map_ax_s.set_extent([-180, 180, 20, 90], crs=ccrs.PlateCarree())
 clip_map(map_ax_s   )
 
+erase_white_line(vsets_first).sel(plev=85000).plot.contour(
+    ax=map_ax_s,
+    levels=[-5, 0],
+    colors='purple',
+    linewidths=2,
+    linestyles='dashed',
+    transform=ccrs.PlateCarree(),
+    zorder=5,
+)
+
+
+erase_white_line(vsets_last).sel(plev=85000).plot.contour(
+    ax=map_ax_s,
+    levels=[-5, 0],
+    colors='red',
+    linewidths=2,
+    linestyles='dashed',
+    zorder=10,
+    transform=ccrs.PlateCarree(),
+)
+
 profile_ax_t = fig.add_subplot(2, 2, 3)
 profile_ax_s = fig.add_subplot(2, 2, 4)
 
@@ -208,6 +229,7 @@ vsets_last_profile_shifted.plot.contour(
 )
 
 
+
 NA_box(map_ax_s, lon_min=280, lon_max=360)
 for ax in [map_ax_t, map_ax_s]:
     ax.set_title("")
@@ -233,12 +255,12 @@ profile_ax_t.text(-0.2, 1.0, "c", transform=profile_ax_t.transAxes, fontsize=16,
 profile_ax_s.text(-0.2, 1.0, "d", transform=profile_ax_s.transAxes, fontsize=16, fontweight="bold")
 
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_flux_profile.pdf",
-    bbox_inches="tight",
-    dpi=300,
-    metadata={"Creator": os.path.abspath(__file__)},
-)
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_flux_profile.pdf",
+#     bbox_inches="tight",
+#     dpi=300,
+#     metadata={"Creator": os.path.abspath(__file__)},
+# )
 
 
 # %%
