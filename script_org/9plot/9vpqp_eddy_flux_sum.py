@@ -594,7 +594,7 @@ qk = axes[0, 1].quiverkey(
 
 
 # add box region
-NA_box(axes[1, 0], lon_min=280, lon_max=360, lat_min=40, lat_max=80)
+# NA_box(axes[1, 0], lon_min=280, lon_max=360, lat_min=40, lat_max=80)
 
 # save figure
 plt.savefig(
