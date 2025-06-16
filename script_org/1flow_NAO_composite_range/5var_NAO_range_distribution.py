@@ -34,10 +34,6 @@ def composite_single_ens(var, decade, ens, **kwargs):
 
         var_pos, var_neg = range_NAO_composite(var_field, pos_extreme, neg_extreme)
 
-        # select the pressure level if provided
-        var_pos = var_pos.sel(plev = plev) if plev is not None else var_pos
-        var_neg = var_neg.sel(plev = plev) if plev is not None else var_neg
-
         # average over domain [-60, -10][40, 60N]
         var_pos = var_pos.sel(lon = slice(280, 360), lat = slice(40, 80))
         var_neg = var_neg.sel(lon = slice(280, 360), lat = slice(40, 80))
