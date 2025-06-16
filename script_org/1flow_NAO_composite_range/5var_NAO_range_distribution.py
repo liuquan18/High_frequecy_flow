@@ -51,7 +51,8 @@ decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
 var = sys.argv[2] if len(sys.argv) > 2 else 'ua'
 name = sys.argv[3] if len(sys.argv) > 3 else var
 model_dir = sys.argv[4] if len(sys.argv) > 4 else 'MPI_GE_CMIP6'
-suffix = sys.argv[5] if len(sys.argv) > 5 else ''
+plev = int(sys.argv[5]) if len(sys.argv) > 5 else None
+suffix = sys.argv[6] if len(sys.argv) > 6 else ''
 
 # report the input
 logging.info(f"Rank {rank} of {size} is processing {var} for decade {decade}, model_dir {model_dir}, name {name}, suffix {suffix}")
@@ -66,7 +67,7 @@ theta_2PVU_negs = []
 for i, member in enumerate(members_single):
     print(f"Rank {rank}, member {member}/{members_single[-1]}")
 
-    theta_2pvu_pos, theta_2pvu_neg = composite_single_ens(var, decade=decade, ens=member, name = name, suffix = suffix, model_dir=model_dir, plev = None)
+    theta_2pvu_pos, theta_2pvu_neg = composite_single_ens(var, decade=decade, ens=member, name = name, suffix = suffix, model_dir=model_dir, plev = plev)
 
     theta_2PVU_poss.append(theta_2pvu_pos)
     theta_2PVU_negs.append(theta_2pvu_neg)
