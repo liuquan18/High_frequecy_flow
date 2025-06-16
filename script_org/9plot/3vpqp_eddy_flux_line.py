@@ -621,6 +621,14 @@ for ax in axes.flat:
     ax.axvline(0, color='k', linestyle='-',  lw = 0.5, zorder=0)
 plt.tight_layout()
 
+# add a, b, c
+for i, ax in enumerate(axes.flat):
+    ax.text(
+        -0.03, 0.96, chr(97 + i), transform=ax.transAxes,
+        fontsize=14, fontweight='bold', va='bottom', ha='right'
+    )
+
+
 # save figure
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vpqp_eddy_flux_line.pdf",
