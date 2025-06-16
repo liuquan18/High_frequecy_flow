@@ -22,7 +22,7 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 name = MPI.Get_processor_name()
 #%%
-def composite_single_ens(var, decade, ens, plev = 85000, dur_threshold = 5, **kwargs):
+def composite_single_ens(var, decade, ens, dur_threshold = 5, **kwargs):
     # read NAO extremes
     pos_extreme = read_NAO_extremes_single_ens('pos', decade, ens, dur_threshold = dur_threshold)
     neg_extreme = read_NAO_extremes_single_ens('neg', decade, ens, dur_threshold = dur_threshold)
@@ -55,7 +55,7 @@ plev = int(sys.argv[5]) if len(sys.argv) > 5 else None
 suffix = sys.argv[6] if len(sys.argv) > 6 else ''
 
 # report the input
-logging.info(f"Rank {rank} of {size} is processing {var} for decade {decade}, model_dir {model_dir}, name {name}, suffix {suffix}")
+logging.info(f"Rank {rank} of {size} is processing {var} for decade {decade}, model_dir {model_dir}, name {name}, suffix {suffix}, plev {plev}")
 # %%
 members = np.arange(1, 51)  # all members
 members_single = np.array_split(members, size)[rank]  # members on this core
