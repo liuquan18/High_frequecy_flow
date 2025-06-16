@@ -582,8 +582,8 @@ for i, ax in enumerate(axes.flat):
 # add quiver key for the second row
 qk = axes[0, 1].quiverkey(
     sum_arrows_neg,
-    0.8,
-    0.05,
+    0.85,
+    0.04,
     10,
     r"10 $m s^{-1}$",
     labelpos="E",
