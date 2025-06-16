@@ -17,57 +17,62 @@ importlib.reload(read_composite)
 read_EP_flux = read_composite.read_EP_flux
 read_E_div = read_composite.read_E_div
 read_comp_var = read_composite.read_comp_var
+
 from src.data_helper.read_variable import read_climatology
 # %%
 levels_vq = np.arange(-3, 3.1, 0.5)
 levels_uv = np.arange(-1.5, 1.6, 0.5)
 levels_vt = np.arange(-3, 3.1, 0.5)
+# %%
 
+################ transient eddies ################
+
+# upvp
+Tdivphi_pos_first = read_comp_var(
+    var = 'Fdiv_phi_transient',
+    phase = 'pos',
+    decade = 1850,
+    time_window='all',
+    name = 'div',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+
+Tdivphi_neg_first = read_comp_var(
+    var = 'Fdiv_phi_transient',
+    phase = 'neg',
+    decade = 1850,
+    time_window='all',
+    name = 'div',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+
+Tdivphi_pos_last = read_comp_var(
+    var = 'Fdiv_phi_transient',
+    phase = 'pos',
+    decade = 2090,
+    time_window='all',
+    name = 'div',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+
+Tdivphi_neg_last = read_comp_var(
+    var = 'Fdiv_phi_transient',
+    phase = 'neg',
+    decade = 2090,
+    time_window='all',
+    name = 'div',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
 
 #%%
-# read transient EP flux for positive and negative phase
-# read data for first decade with region = western
-Tphi_pos_first, Tp_pos_first, Tdivphi_pos_first, Tdiv_p_pos_first = read_EP_flux(
-    phase="pos",
-    decade=1850,
-    eddy="transient",
-    ano=False,
-    lon_mean=False,
-    region=None,
-    keep_time = True
-)
-Tphi_neg_first, Tp_neg_first, Tdivphi_neg_first, Tdiv_p_neg_first = read_EP_flux(
-    phase="neg",
-    decade=1850,
-    eddy="transient",
-    ano=False,
-    lon_mean=False,
-    region=None,
-    keep_time = True
-)
-
-
-# last decade region
-Tphi_pos_last, Tp_pos_last, Tdivphi_pos_last, Tdiv_p_pos_last = read_EP_flux(
-    phase="pos",
-    decade=2090,
-    eddy="transient",
-    ano=False,
-    lon_mean=False,
-    region=None,
-    keep_time = True
-)
-Tphi_neg_last, Tp_neg_last, Tdivphi_neg_last, Tdiv_p_neg_last = read_EP_flux(
-    phase="neg",
-    decade=2090,
-    eddy="transient",
-    ano=False,
-    lon_mean=False,
-    region=None,
-    keep_time = True
-)
-# %%
-# read climatological EP flux
 Tdivphi_clima_first = read_climatology(
     var = 'Fdiv_phi_transient',
     decade = 1850,
@@ -79,6 +84,52 @@ Tdivphi_clima_last = read_climatology(
     var = 'Fdiv_phi_transient',
     decade = 2090,
     name = 'div',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+
+#%%
+# vptp
+Tdiv_p_pos_first = read_comp_var(
+    var = 'Fdiv_p_transient',
+    phase = 'pos',
+    decade = 1850,
+    time_window='all',
+    name = 'div2',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+
+Tdiv_p_neg_first = read_comp_var(
+    var = 'Fdiv_p_transient',
+    phase = 'neg',
+    decade = 1850,
+    time_window='all',
+    name = 'div2',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+
+Tdiv_p_pos_last = read_comp_var(
+    var = 'Fdiv_p_transient',
+    phase = 'pos',
+    decade = 2090,
+    time_window='all',
+    name = 'div2',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+
+Tdiv_p_neg_last = read_comp_var(
+    var = 'Fdiv_p_transient',
+    phase = 'neg',
+    decade = 2090,
+    time_window='all',
+    name = 'div2',
+    method = 'no_stat',
+    suffix = '',
     model_dir = 'MPI_GE_CMIP6_allplev',
 )
 
@@ -96,160 +147,6 @@ Tdiv_p_clima_last = read_climatology(
     model_dir = 'MPI_GE_CMIP6_allplev',
 )
 
-
-# %%
-# read steady EP flux for positive and negative phase
-Sphi_pos_first, Sp_pos_first, Sdivphi_pos_first, Sdiv_p_pos_first = read_EP_flux(
-    phase="pos",
-    decade=1850,
-    eddy="steady",
-    ano=False,
-    lon_mean=False,
-    region=None,
-    keep_time = True
-)
-Sphi_neg_first, Sp_neg_first, Sdivphi_neg_first, Sdiv_p_neg_first = read_EP_flux(
-    phase="neg",
-    decade=1850,
-    eddy="steady",
-    ano=False,
-    lon_mean=False,
-    region=None,
-    keep_time = True
-)
-
-# last decade
-Sphi_pos_last, Sp_pos_last, Sdivphi_pos_last, Sdiv_p_pos_last = read_EP_flux(
-    phase="pos",
-    decade=2090,
-    eddy="steady",
-    ano=False,
-    lon_mean=False,
-    region=None,
-    keep_time = True
-)
-Sphi_neg_last, Sp_neg_last, Sdivphi_neg_last, Sdiv_p_neg_last = read_EP_flux(
-    phase="neg",
-    decade=2090,
-    eddy="steady",
-    ano=False,
-    lon_mean=False,
-    region=None,
-    keep_time = True
-)
-# %%
-# read climatological EP flux
-# read climatological Fdiv_phi
-Sdivphi_clima_first = read_climatology(
-    var = 'Fdiv_phi_steady',
-    decade = 1850,
-    name = 'div',
-    model_dir = 'MPI_GE_CMIP6_allplev',
-)
-
-Sdivphi_clima_last = read_climatology(
-    var = 'Fdiv_phi_steady',
-    decade = 2090,
-    name = 'div',
-    model_dir = 'MPI_GE_CMIP6_allplev',
-)
-
-Sdiv_p_clima_first = read_climatology(
-    var = 'Fdiv_p_steady',
-    decade = 1850,
-    name = 'div2',
-    model_dir = 'MPI_GE_CMIP6_allplev',
-)
-Sdiv_p_clima_last = read_climatology(
-    var = 'Fdiv_p_steady',
-    decade = 2090,
-    name = 'div2',
-    model_dir = 'MPI_GE_CMIP6_allplev',
-)
-
-
-#%%
-# read E_div_x
-
-TEx_pos_first, TEy_pos_first = read_E_div(
-    phase="pos",
-    decade=1850,
-    eddy="transient",
-    keep_time=True,
-)
-TEx_neg_first, TEy_neg_first = read_E_div(
-    phase="neg",
-    decade=1850,
-    eddy="transient",
-    keep_time=True,
-)
-TEx_pos_last, TEy_pos_last = read_E_div(
-    phase="pos",
-    decade=2090,
-    eddy="transient",
-    keep_time=True,
-)
-TEx_neg_last, TEy_neg_last = read_E_div(
-    phase="neg",
-    decade=2090,
-    eddy="transient",
-    keep_time=True,
-)
-
-# read climatological E_div_x
-TEx_clima_first, TEy_clima_first = read_E_div(
-    phase="clima",
-    decade=1850,
-    eddy="transient",
-    keep_time=False,
-)
-TEx_clima_last, TEy_clima_last = read_E_div(
-    phase="clima",
-    decade=2090,
-    eddy="transient",
-    keep_time=False,
-)
-
-#%%
-# read E_div_x for steady eddies
-SEx_pos_first, SEy_pos_first = read_E_div(
-    phase="pos",
-    decade=1850,
-    eddy="steady",
-    keep_time=True,
-)
-SEx_neg_first, SEy_neg_first = read_E_div(
-    phase="neg",
-    decade=1850,
-    eddy="steady",
-    keep_time=True,
-)
-
-SEx_pos_last, SEy_pos_last = read_E_div(
-    phase="pos",
-    decade=2090,
-    eddy="steady",
-    keep_time=True,
-)
-SEx_neg_last, SEy_neg_last = read_E_div(
-    phase="neg",
-    decade=2090,
-    eddy="steady",
-    keep_time=True,
-)
-# read climatological E_div_x for steady
-SEx_clima_first, SEy_clima_first = read_E_div(
-    phase="clima",
-    decade=1850,
-    eddy="steady",
-    keep_time=False, # climatology is in the old folder
-)
-SEx_clima_last, SEy_clima_last = read_E_div(
-    phase="clima",
-    decade=2090,
-    eddy="steady",
-    keep_time=False,
-)
 
 #%%
 # fldmean over [300, 360, 40, 80]
@@ -304,38 +201,136 @@ Tdiv_p_dfs = [
     Tdiv_p_clima_last,
 ]
 Tdiv_p_dfs = pd.concat(Tdiv_p_dfs, axis=0)
-#%%
-# Tex
-TEx_pos_first_df = to_dataframe(TEx_pos_first, "M2", "pos", 1850)
-TEx_neg_first_df = to_dataframe(TEx_neg_first, "M2", "neg", 1850)
-TEx_pos_last_df = to_dataframe(TEx_pos_last, "M2", "pos", 2090)
-TEx_neg_last_df = to_dataframe(TEx_neg_last, "M2", "neg", 2090)
-TEx_clima_first_df = to_dataframe(TEx_clima_first, "M2", "clima", 1850)
-TEx_clima_last_df = to_dataframe(TEx_clima_last, "M2", "clima", 2090)
-TEx_dfs = [
-    TEx_pos_first_df,
-    TEx_neg_first_df,
-    TEx_pos_last_df,
-    TEx_neg_last_df,
-    TEx_clima_first_df,
-    TEx_clima_last_df,
-]
-TEx_dfs = pd.concat(TEx_dfs, axis=0)
+
 #%%
 transient_dfs = [
     Tdivphi_dfs,
     Tdiv_p_dfs,
-    TEx_dfs,
 ]
 #merge
 transient_dfs = [df.reset_index(drop=True) if isinstance(df, pd.DataFrame) else df for df in transient_dfs]
 transient_dfs = pd.concat(transient_dfs, axis=1)
 # remove duplicated columns
 transient_dfs = transient_dfs.loc[:, ~transient_dfs.columns.duplicated()]
-transient_dfs = transient_dfs[['event', 'time','plev', 'phase', 'decade', 'M2', 'N', 'P']]
+transient_dfs = transient_dfs[['event', 'time','plev', 'phase', 'decade', 'N', 'P']]
 
+#%%
+################ steady eddies ################
+# upvp
+Sdivphi_pos_first = read_comp_var(
+    var = 'Fdiv_phi_steady',
+    phase = 'pos',
+    decade = 1850,
+    time_window='all',
+    name = 'div',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+Sdivphi_neg_first = read_comp_var(
+    var = 'Fdiv_phi_steady',
+    phase = 'neg',
+    decade = 1850,
+    time_window='all',
+    name = 'div',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
 
+Sdivphi_pos_last = read_comp_var(
+    var = 'Fdiv_phi_steady',
+    phase = 'pos',
+    decade = 2090,
+    time_window='all',
+    name = 'div',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
 
+Sdivphi_neg_last = read_comp_var(
+    var = 'Fdiv_phi_steady',
+    phase = 'neg',
+    decade = 2090,
+    time_window='all',
+    name = 'div',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+
+# read climatological Fdiv_phi
+Sdivphi_clima_first = read_climatology(
+    var = 'Fdiv_phi_steady',
+    decade = 1850,
+    name = 'div',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+
+Sdivphi_clima_last = read_climatology(
+    var = 'Fdiv_phi_steady',
+    decade = 2090,
+    name = 'div',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+#%%
+# vptp
+Sdiv_p_pos_first = read_comp_var(
+    var = 'Fdiv_p_steady',
+    phase = 'pos',
+    decade = 1850,
+    time_window='all',
+    name = 'div2',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+Sdiv_p_neg_first = read_comp_var(
+    var = 'Fdiv_p_steady',
+    phase = 'neg',
+    decade = 1850,
+    time_window='all',
+    name = 'div2',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+
+Sdiv_p_pos_last = read_comp_var(
+    var = 'Fdiv_p_steady',
+    phase = 'pos',
+    decade = 2090,
+    time_window='all',
+    name = 'div2',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+
+Sdiv_p_neg_last = read_comp_var(
+    var = 'Fdiv_p_steady',
+    phase = 'neg',
+    decade = 2090,
+    time_window='all',
+    name = 'div2',
+    method = 'no_stat',
+    suffix = '',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+# read climatological Fdiv_p
+Sdiv_p_clima_first = read_climatology(
+    var = 'Fdiv_p_steady',
+    decade = 1850,
+    name = 'div2',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
+Sdiv_p_clima_last = read_climatology(
+    var = 'Fdiv_p_steady',
+    decade = 2090,
+    name = 'div2',
+    model_dir = 'MPI_GE_CMIP6_allplev',
+)
 
 # %%
 # Steady eddies
@@ -376,31 +371,13 @@ Sdiv_p_dfs = [
 ]
 Sdiv_p_dfs = pd.concat(Sdiv_p_dfs, axis=0)
 
-# %%
-SEx_pos_first_df = to_dataframe(SEx_pos_first, "M2", "pos", 1850)
-SEx_neg_first_df = to_dataframe(SEx_neg_first, "M2", "neg", 1850)
-SEx_pos_last_df = to_dataframe(SEx_pos_last, "M2", "pos", 2090)
-SEx_neg_last_df = to_dataframe(SEx_neg_last, "M2", "neg", 2090)
-SEx_clima_first_df = to_dataframe(SEx_clima_first, "M2", "clima", 1850)
-SEx_clima_last_df = to_dataframe(SEx_clima_last, "M2", "clima", 2090)
 
-SEx_dfs = [
-    SEx_pos_first_df,
-    SEx_neg_first_df,
-    SEx_pos_last_df,
-    SEx_neg_last_df,
-    SEx_clima_first_df,
-    SEx_clima_last_df,
-
-]
-SEx_dfs = pd.concat(SEx_dfs, axis=0)
 # %%
 
 #%%
 steady_dfs = [
     Sdivphi_dfs,
     Sdiv_p_dfs,
-    SEx_dfs,
 ]
 
 # Merge steady eddy dataframes
@@ -408,14 +385,9 @@ steady_dfs = [df.reset_index(drop=True) if isinstance(df, pd.DataFrame) else df 
 steady_dfs = pd.concat(steady_dfs, axis=1)
 # Remove duplicated columns
 steady_dfs = steady_dfs.loc[:, ~steady_dfs.columns.duplicated()]
-steady_dfs = steady_dfs[['event','time','plev', 'phase', 'decade', 'M2', 'N', 'P']]
+steady_dfs = steady_dfs[['event','time','plev', 'phase', 'decade', 'N', 'P']]
 
-#%%
-transient_dfs['M2_N'] = transient_dfs['M2'] + transient_dfs['N']
-steady_dfs['M2_N'] = steady_dfs['M2'] + steady_dfs['N']
 
-transient_dfs['M2_N_P'] = transient_dfs['M2_N'] + transient_dfs['P']
-steady_dfs['M2_N_P'] = steady_dfs['M2_N'] + steady_dfs['P']
 #%%
 transient_dfs_clima = transient_dfs[transient_dfs['phase'] == 'clima']
 steady_dfs_clima = steady_dfs[steady_dfs['phase'] == 'clima']
@@ -428,11 +400,11 @@ transient_dfs = transient_dfs[(transient_dfs['time'].between(-20, 10)) & (transi
 steady_dfs = steady_dfs[(steady_dfs['time'].between(-20, 10)) & (steady_dfs['phase'] != 'clima')]
 #%%
 sum_dfs = transient_dfs.copy()
-for col in ['M2', 'N', 'P']:
+for col in ['N', 'P']:
     sum_dfs[col] = transient_dfs[col] + steady_dfs[col]
 #%%
 sum_dfs_clima = transient_dfs_clima.copy()
-for col in ['M2', 'N', 'P']:
+for col in ['N', 'P']:
     sum_dfs_clima[col] = transient_dfs_clima[col] + steady_dfs_clima[col]
 # %%
 fig, axes = plt.subplots(2, 3, figsize=(10, 10), sharex=False, sharey='row')
@@ -443,7 +415,7 @@ fig, axes = plt.subplots(2, 3, figsize=(10, 10), sharex=False, sharey='row')
 custom_palette = {1850: 'black', 2090: 'red'}
 
 sns.lineplot(
-    data = sum_dfs[sum_dfs['plev'] == 25000],
+    data = sum_dfs,
     x='time',
     y='N',
     style='phase',
@@ -470,9 +442,10 @@ axes[0, 0].axhline(
     label='last-clima'
 )
 
+
 # second col: transient
 sns.lineplot(
-    data = transient_dfs[transient_dfs['plev'] == 25000],
+    data = transient_dfs,
     x='time',
     y='N',
     style='phase',
@@ -498,7 +471,7 @@ axes[0, 1].axhline(
 
 # third col: steady
 sns.lineplot(
-    data = steady_dfs[steady_dfs['plev'] == 25000],
+    data = steady_dfs,
     x='time',
     y='N',
     style='phase',
@@ -523,7 +496,7 @@ axes[0, 2].axhline(
 
 # second row: 850 hPa, sum of M2, N and P
 sns.lineplot(
-    data = sum_dfs[sum_dfs['plev'] == 85000],
+    data = sum_dfs,
     x='time',
     y='P',
     style='phase',
@@ -549,7 +522,7 @@ axes[1, 0].axhline(
 
 # second col: transient
 sns.lineplot(
-    data = transient_dfs[transient_dfs['plev'] == 85000],
+    data = transient_dfs,
     x='time',
     y='P',
     style='phase',
@@ -573,7 +546,7 @@ axes[1, 1].axhline(
 )
 # third col: steady
 sns.lineplot(
-    data = steady_dfs[steady_dfs['plev'] == 85000],
+    data = steady_dfs,
     x='time',
     y='P',
     style='phase',
@@ -639,13 +612,21 @@ for ax in axes.flat:
     ax.axvline(0, color='k', linestyle='-',  lw = 0.5, zorder=0)
 plt.tight_layout()
 
-# # save figure
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vpqp_eddy_flux_line.pdf",
-#     bbox_inches='tight',
-#     dpi=300,
-#     transparent=True
-# )
+# add a, b, c
+for i, ax in enumerate(axes.flat):
+    ax.text(
+        -0.03, 1, chr(97 + i), transform=ax.transAxes,
+        fontsize=14, fontweight='bold', va='bottom', ha='right'
+    )
+
+
+# save figure
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vpqp_eddy_flux_line_fromalldec.pdf",
+    bbox_inches='tight',
+    dpi=300,
+    transparent=True
+)
 # %%
 
 # plot one row of y = "M2"
