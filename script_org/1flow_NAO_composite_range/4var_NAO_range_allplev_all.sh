@@ -25,3 +25,5 @@ sbatch ./4var_NAO_range_submit.sh 2090 Fdiv_p_steady div2 MPI_GE_CMIP6_allplev 8
 
 sbatch ./4var_NAO_range_submit.sh 1850 Fdiv_phi_steady div MPI_GE_CMIP6_allplev 25000 _ano
 sbatch ./4var_NAO_range_submit.sh 1850 Fdiv_phi_transient div MPI_GE_CMIP6_allplev 25000 _ano
+
+
