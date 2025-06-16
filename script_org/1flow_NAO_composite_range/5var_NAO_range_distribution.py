@@ -39,8 +39,8 @@ def composite_single_ens(var, decade, ens, plev = 85000, dur_threshold = 7, **kw
         var_neg = var_neg.sel(plev = plev) if plev is not None else var_neg
 
         # average over domain [-60, -10][40, 60N]
-        var_pos = var_pos.sel(lon = slice(300, 360), lat = slice(40, 80))
-        var_neg = var_neg.sel(lon = slice(300, 360), lat = slice(40, 80))
+        var_pos = var_pos.sel(lon = slice(280, 360), lat = slice(40, 80))
+        var_neg = var_neg.sel(lon = slice(280, 360), lat = slice(40, 80))
     else:
         var_pos = None
         var_neg = None
