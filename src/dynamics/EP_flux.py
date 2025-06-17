@@ -3,6 +3,7 @@ import xarray as xr
 import numpy as np
 import pandas as pd
 from src.data_helper.read_composite import read_comp_var
+from src.data_helper.read_variable import read_climatology
 import glob
 from metpy.units import units
 import metpy.calc as mpcalc
@@ -204,6 +205,7 @@ def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), edd
 	transient eddies: upvp
 	"""
 	method = kwargs.get('method', 'mean')  # default method is 'mean'
+	ta_mean = kwargs.get('ta_mean', False)  # default ta_mean is False
 	if eddy == 'transient':
 		upvp = read_comp_var(
 			var = "upvp",phase = phase, decade = decade, name = "upvp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
@@ -225,10 +227,15 @@ def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), edd
 		
 		# read temperature to compute static stability
 		# transient the original 
-		ta = read_comp_var(
-			var = "ta", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-			time_window = time_window, method = method, erase_zero_line = True,
-		)
+		if ta_mean:
+			ta = read_climatology(
+				var = "ta", decade = decade, name = "ta", model_dir = 'MPI_GE_CMIP6_allplev',)
+		else:
+			ta = read_comp_var(
+				var = "ta", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+				time_window = time_window, method = method, erase_zero_line = True,
+			)
+
 	
 	elif eddy == 'steady':
 		upvp = read_comp_var(
@@ -250,10 +257,14 @@ def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), edd
 
 		# read temperature to compute static stability
 		# ta_hat
-		ta = read_comp_var(
-			var = "ta_hat", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-			time_window = time_window, method = method, erase_zero_line = True,
-		)
+		if ta_mean:
+			ta = read_climatology(
+				var = "ta_hat", decade = decade, name = "ta", model_dir = 'MPI_GE_CMIP6_allplev',)
+		else:
+			ta = read_comp_var(
+				var = "ta_hat", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+				time_window = time_window, method = method, erase_zero_line = True,
+			)
 
 	else:
 		raise ValueError("eddy must be either 'transient' or 'steady'", f"but got {eddy}")
