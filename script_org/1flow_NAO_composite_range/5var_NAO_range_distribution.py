@@ -33,6 +33,10 @@ def composite_single_ens(var, decade, ens, **kwargs):
     if not pos_extreme.empty and not neg_extreme.empty:
 
         var_pos, var_neg = range_NAO_composite(var_field, pos_extreme, neg_extreme)
+
+        # select region
+        var_pos = var_pos.sel(lat = slice(40, 80), lon = slice(280, 360))  # North Atlantic region
+        var_neg = var_neg.sel(lat = slice(40, 80), lon = slice(280, 360))
     else:
         var_pos = None
         var_neg = None
