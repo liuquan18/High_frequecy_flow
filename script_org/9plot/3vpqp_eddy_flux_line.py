@@ -610,8 +610,8 @@ for ax in axes[0,:].flat:
 for ax in axes[1,:].flat:
     ax.set_xlabel("Days relative to extreme onset")
 
-axes[0, 0].set_ylabel(r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day ${-1}$]",)
-axes[1, 0].set_ylabel(r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day ${-1}$]",)
+axes[0, 0].set_ylabel(r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day $^{-1}$]",)
+axes[1, 0].set_ylabel(r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]",)
 
 # remove top and right spines
 for ax in axes.flat:
@@ -624,7 +624,7 @@ plt.tight_layout()
 # add a, b, c
 for i, ax in enumerate(axes.flat):
     ax.text(
-        -0.03, 0.96, chr(97 + i), transform=ax.transAxes,
+        -0.06, 0.96, chr(97 + i), transform=ax.transAxes,
         fontsize=14, fontweight='bold', va='bottom', ha='right'
     )
 
