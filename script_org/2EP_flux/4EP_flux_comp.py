@@ -29,7 +29,7 @@ def calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, eddy='transien
     """
     # Read data
     logging.info (f"Read data for {phase} phase in {decade}")
-    upvp, vptp, ta = read_data_all(decade, phase, equiv_theta=equiv_theta, eddy=eddy)
+    upvp, vptp, ta = read_data_all(decade, phase, equiv_theta=equiv_theta, eddy=eddy, ta_hat=False)
 
     logging.info (f"Calculate {eddy} EP flux for {phase} phase in {decade}")
     save_dir="/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
@@ -64,4 +64,9 @@ if __name__ == "__main__":
     # Calculate EP flux for NAO pos and neg phase
     calculate_EP_flux(decade, phase, ano=ano, equiv_theta=True, eddy=eddy)
 
+# %%
+# for phase in ['pos', 'neg']:
+#     for decade in ['1850', '2090']:
+#         for eddy in ['transient', 'steady']:
+#             calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, eddy=eddy)
 # %%
