@@ -33,10 +33,6 @@ def composite_single_ens(var, decade, ens, **kwargs):
     if not pos_extreme.empty and not neg_extreme.empty:
 
         var_pos, var_neg = range_NAO_composite(var_field, pos_extreme, neg_extreme)
-
-        # average over domain [-60, -10][40, 60N]
-        var_pos = var_pos.sel(lon = slice(280, 360), lat = slice(40, 80))
-        var_neg = var_neg.sel(lon = slice(280, 360), lat = slice(40, 80))
     else:
         var_pos = None
         var_neg = None
