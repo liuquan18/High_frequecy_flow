@@ -73,3 +73,9 @@ if __name__ == "__main__":
     calculate_EP_flux(decade, phase, ano=ano, equiv_theta=True, eddy=eddy)
 
 # %%
+# for phase in ['pos', 'neg']:
+#     for decade in ['1850', '2090']:
+#         for eddy in ['transient', 'steady']:
+#             calculate_EP_flux(decade, phase, ano=False, equiv_theta=True, eddy=eddy)
+#             calculate_EP_flux(decade, phase, ano=True, equiv_theta=True, eddy=eddy)
+# %%
