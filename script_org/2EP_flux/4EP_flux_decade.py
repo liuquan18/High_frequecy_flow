@@ -25,20 +25,24 @@ def read_data_all_dec(decade, ens, eddy = 'transient', equiv_theta = True, **kwa
     """
     Read data for all members in a given decade
     """
+    ta_hat = kwargs.get('ta_hat', True)
     if eddy == 'transient':
         N = 'upvp'
         if equiv_theta:
             P = 'vpetp'
         else:
             P = 'vptp'
-        T = 'ta'
     elif eddy == 'steady':
         N = 'usvs'
         if equiv_theta:
             P = 'vsets'
         else:
             P = 'vpts'
+
+    if ta_hat:
         T = 'ta_hat'
+    else:
+        T = 'ta'
 
     upvp = read_prime_single_ens(decade, ens, N, name = N,**kwargs) 
     vptp = read_prime_single_ens(decade, ens, P, name = P, **kwargs)
