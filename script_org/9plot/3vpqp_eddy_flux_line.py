@@ -587,8 +587,8 @@ for ax in axes.flat:
 
 # Decade legend (colors)
 decade_handles = [
-    Line2D([0], [0], color='black', lw=2, label='1850'),
-    Line2D([0], [0], color='red', lw=2, label='2090'),
+    Line2D([0], [0], color='black', lw=2, label='1850s'),
+    Line2D([0], [0], color='red', lw=2, label='2090s'),
 ]
 
 # Phase legend (styles)
@@ -631,7 +631,7 @@ for i, ax in enumerate(axes.flat):
 
 # save figure
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/vpqp_eddy_flux_line.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0main_text/vpqp_eddy_flux_line.pdf",
     bbox_inches='tight',
     dpi=300,
     transparent=True
