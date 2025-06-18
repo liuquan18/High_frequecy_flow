@@ -171,5 +171,6 @@ ax.axhline(clima_new_df[clima_new_df['plev'] == 85000]['div'].values[0], color='
 ax.axhline(clima_old_df[clima_old_df['plev'] == 85000]['div'].values[0], color='black', linestyle='dotted', label='clima 850hPa old')
 
 ax.set_xlim(-20, 20)
+# ax.set_ylim(-10, 10)
 # %%
 # %%
