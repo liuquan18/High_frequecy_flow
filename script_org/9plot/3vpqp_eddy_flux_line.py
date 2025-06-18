@@ -634,7 +634,8 @@ plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0main_text/vpqp_eddy_flux_line.pdf",
     bbox_inches='tight',
     dpi=300,
-    transparent=True
+    transparent=True,
+    metadata={'Creator': __file__}
 )
 # %%
 
