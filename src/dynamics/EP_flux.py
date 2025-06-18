@@ -115,8 +115,8 @@ def eff_stat_stab(p, temp, lambda_val=0.6):
 
     return dtheta_dp_eff
 
-def eff_stat_stab_xr(T):
-	if 'time' in T.dims:
+def eff_stat_stab_xr(T, time_mean = False):
+	if time_mean:
 		T = T.mean(dim = 'time')
 	T = T.mean(dim = ('lon'))
 	stat_stability =  xr.apply_ufunc(
