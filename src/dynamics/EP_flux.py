@@ -157,6 +157,11 @@ def EP_flux(vptp, upvp, dthdp):
 	# v't'/theta_p
 	vertEddy = vptp / dthdp
 
+	if vertEddy.time.size == 0:
+		logging.warning ("vptp and ta has different time dimensions. Using the time step of vptp.")
+		dthdp['time'] = vptp['time']
+		vertEddy = vptp / dthdp
+
 	# horizontal component
 	ep1_cart = -upvp
 
@@ -250,8 +255,12 @@ def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), edd
 	# read temperature to compute static stability
 	# ta_hat
 	if ta_hat:
-		ta = read_climatology(
-			var = "ta_hat", decade = decade, name = "ta", model_dir = 'MPI_GE_CMIP6_allplev',)
+		# ta = read_climatology(
+		# 	var = "ta_hat", decade = decade, name = "ta", model_dir = 'MPI_GE_CMIP6_allplev',)
+		ta = read_comp_var(
+			var = "ta_hat", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+			time_window = time_window, method = method, erase_zero_line = True,
+		)
 	else:
 		ta = read_comp_var(
 			var = "ta", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
