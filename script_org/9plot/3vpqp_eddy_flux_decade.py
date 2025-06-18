@@ -256,5 +256,5 @@ for i, ax in enumerate(axes.flat):
     )
 plt.tight_layout()
 #save
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_flux_dec_first2.pdf", dpi=300, bbox_inches="tight", transparent=True)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0main_text/eddy_flux_dec_first2.pdf", dpi=300, bbox_inches="tight", transparent=True)
 # %%
