@@ -183,5 +183,78 @@ for i, ax in enumerate(axes.flat):
         fontweight="bold",
     )
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_flux_dec.pdf", dpi=300, bbox_inches="tight", transparent=True)
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_flux_dec.pdf", dpi=300, bbox_inches="tight", transparent=True)
+# %%
+fig, axes = plt.subplots(1, 2, figsize=(8, 6))
+
+sns.lineplot(
+    data=final_merge,
+    x="decade",
+    y="days_pos",
+    ax=axes[0],
+    label="pos NAO",
+    color="k",
+    linewidth=2,
+)
+sns.lineplot(
+    data=final_merge,
+    x="decade",
+    y="days_neg",
+    ax=axes[0],
+    label="neg NAO",
+    color="k",
+    linestyle="--",
+    linewidth=2,
+)
+
+sns.lineplot(
+    data=final_merge,
+    x="decade",
+    y="transient_div2",
+    ax=axes[1],
+    label="transient",
+    color='k',
+    linewidth=2,
+)
+
+sns.lineplot(
+    data=final_merge,
+    x="decade",
+    y="steady_div2",
+    ax=axes[1],
+    label="stationary",
+    color='k',
+    linestyle="--",
+    linewidth=2,
+)
+
+axes[0].set_ylabel("extreme NAO days", fontsize=16)
+axes[1].set_ylabel(r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]", fontsize=16)
+
+for ax in axes:
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.tick_params(axis='both', labelsize=16)
+    ax.set_xlabel(ax.get_xlabel(), fontsize=16)
+    # Set legend font size if legend exists
+    leg = ax.get_legend()
+    if leg is not None:
+        for text in leg.get_texts():
+            text.set_fontsize(16)
+
+
+
+# add a, b
+for i, ax in enumerate(axes.flat):
+    ax.text(
+        -0.1,
+        1.05,
+        f"{chr(97+i)}",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+    )
+plt.tight_layout()
+#save
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_flux_dec_first2.pdf", dpi=300, bbox_inches="tight", transparent=True)
 # %%
