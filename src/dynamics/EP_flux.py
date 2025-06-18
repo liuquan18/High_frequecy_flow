@@ -205,7 +205,7 @@ def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), edd
 	transient eddies: upvp
 	"""
 	method = kwargs.get('method', 'mean')  # default method is 'mean'
-	ta_mean = kwargs.get('ta_mean', False)  # default ta_mean is False
+	ta_hat = kwargs.get('ta_mean', True)  # default ta_mean is False
 	if eddy == 'transient':
 		upvp = read_comp_var(
 			var = "upvp",phase = phase, decade = decade, name = "upvp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
@@ -225,16 +225,6 @@ def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), edd
 				time_window = time_window, method = method, erase_zero_line = True,
 			)
 		
-		# read temperature to compute static stability
-		# transient the original 
-		if ta_mean:
-			ta = read_climatology(
-				var = "ta", decade = decade, name = "ta", model_dir = 'MPI_GE_CMIP6_allplev',)
-		else:
-			ta = read_comp_var(
-				var = "ta", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-				time_window = time_window, method = method, erase_zero_line = True,
-			)
 
 	
 	elif eddy == 'steady':
@@ -254,20 +244,19 @@ def read_data_all(decade, phase, equiv_theta = True, time_window = (-10, 5), edd
 				var = "vsts", phase = phase, decade = decade, name = "vsts", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
 				time_window = time_window, method = method, erase_zero_line = True,
 			)
-
-		# read temperature to compute static stability
-		# ta_hat
-		if ta_mean:
-			ta = read_climatology(
-				var = "ta_hat", decade = decade, name = "ta", model_dir = 'MPI_GE_CMIP6_allplev',)
-		else:
-			ta = read_comp_var(
-				var = "ta_hat", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-				time_window = time_window, method = method, erase_zero_line = True,
-			)
-
 	else:
 		raise ValueError("eddy must be either 'transient' or 'steady'", f"but got {eddy}")
+
+	# read temperature to compute static stability
+	# ta_hat
+	if ta_hat:
+		ta = read_climatology(
+			var = "ta_hat", decade = decade, name = "ta", model_dir = 'MPI_GE_CMIP6_allplev',)
+	else:
+		ta = read_comp_var(
+			var = "ta", phase = phase, decade = decade, name = "ta", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+			time_window = time_window, method = method, erase_zero_line = True,
+		)
 
 
 	return upvp, vptp, ta
