@@ -157,7 +157,7 @@ def EP_flux(vptp, upvp, dthdp):
 	# v't'/theta_p
 	vertEddy = vptp / dthdp
 
-	if vertEddy.time.size == 0:
+	if 'time' in vptp.dims and dthdp.time.size == 0:
 		logging.warning ("vptp and ta has different time dimensions. Using the time step of vptp.")
 		dthdp['time'] = vptp['time']
 		vertEddy = vptp / dthdp
