@@ -651,7 +651,7 @@ qk = axes[0, 1].quiverkey(
 
 # # save figure
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/upvp_vpetp_sum_ano.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0main_text/upvp_vpetp_sum_ano.pdf",
     bbox_inches="tight",
     dpi=300,
     transparent=True,
