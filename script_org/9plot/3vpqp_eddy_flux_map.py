@@ -37,6 +37,7 @@ _, _, Tdivphi_pos_first, Tdiv_p_pos_first = read_EP_flux(
     ano=False,
     lon_mean=False,
     region=None,
+    time_window = (-10, 5)
 )
 _, _, Tdivphi_neg_first, Tdiv_p_neg_first = read_EP_flux(
     phase="neg",
@@ -45,6 +46,7 @@ _, _, Tdivphi_neg_first, Tdiv_p_neg_first = read_EP_flux(
     ano=False,
     lon_mean=False,
     region=None,
+    time_window = (-10, 5)
 )
 
 
@@ -56,6 +58,7 @@ _, _, Tdivphi_pos_last, Tdiv_p_pos_last = read_EP_flux(
     ano=False,
     lon_mean=False,
     region=None,
+    time_window = (-10, 5)
 )
 _, _, Tdivphi_neg_last, Tdiv_p_neg_last = read_EP_flux(
     phase="neg",
@@ -64,6 +67,7 @@ _, _, Tdivphi_neg_last, Tdiv_p_neg_last = read_EP_flux(
     ano=False,
     lon_mean=False,
     region=None,
+    time_window = (-10, 5)
 )
 # %%
 # read climatological EP flux
@@ -193,6 +197,7 @@ _, _, Sdivphi_pos_first, Sdiv_p_pos_first = read_EP_flux(
     ano=False,
     lon_mean=False,
     region=None,
+    time_window=(-10, 5)
 )
 _, _, Sdivphi_neg_first, Sdiv_p_neg_first = read_EP_flux(
     phase="neg",
@@ -201,6 +206,7 @@ _, _, Sdivphi_neg_first, Sdiv_p_neg_first = read_EP_flux(
     ano=False,
     lon_mean=False,
     region=None,
+    time_window=(-10, 5)
 )
 
 # last decade
@@ -211,6 +217,7 @@ _, _, Sdivphi_pos_last, Sdiv_p_pos_last = read_EP_flux(
     ano=False,
     lon_mean=False,
     region=None,
+    time_window=(-10, 5)
 )
 _, _, Sdivphi_neg_last, Sdiv_p_neg_last = read_EP_flux(
     phase="neg",
@@ -219,6 +226,7 @@ _, _, Sdivphi_neg_last, Sdiv_p_neg_last = read_EP_flux(
     ano=False,
     lon_mean=False,
     region=None,
+    time_window=(-10, 5)
 )
 # %%
 # read climatological EP flux
