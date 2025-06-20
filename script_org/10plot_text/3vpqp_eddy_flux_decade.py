@@ -228,7 +228,7 @@ sns.lineplot(
     linewidth=2,
 )
 
-axes[0].set_ylabel("extreme NAO days", fontsize=16)
+axes[0].set_ylabel("extreme NAO days per decade", fontsize=16)
 axes[1].set_ylabel(r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]", fontsize=16)
 
 for ax in axes:
