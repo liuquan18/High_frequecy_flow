@@ -51,25 +51,14 @@ def read_comp_var_dist(var, phase, decade, suffix = "_ano", **kwargs):
     return ds
 #%%
 def read_EP_flux(
-    phase, decade, eddy="transient", ano=False, region="western", lon_mean = False, keep_time = False,
+    phase, decade, eddy="transient", ano=False, region="western", lon_mean = False, time_window =None,
 ):
-    if keep_time:
-        EP_flux_dir = (
-        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux_distribution/"
-    )
-    elif not keep_time:
-        EP_flux_dir = (
-            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
-        )
-
-    # clima is always in old folder
-    if phase == 'clima':
-        EP_flux_dir = (
-            "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
-        )
 
 
     if phase in ["pos", "neg"]:
+        EP_flux_dir = (
+        "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux_distribution/"
+    )
         F_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_phi_{phase}_{decade}_ano{ano}.nc")
         F_p = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_p_{phase}_{decade}_ano{ano}.nc")
 
@@ -77,6 +66,9 @@ def read_EP_flux(
         div_p = xr.open_dataarray(f"{EP_flux_dir}{eddy}_div_p_{phase}_{decade}_ano{ano}.nc")
 
     elif phase == 'clima':
+        EP_flux_dir = (
+                    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0EP_flux/"
+                )
         F_phi = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_phi_clima_{decade}.nc")
         F_p = xr.open_dataarray(f"{EP_flux_dir}{eddy}_F_p_clima_{decade}.nc")
 
@@ -112,6 +104,13 @@ def read_EP_flux(
         F_p = F_p.mean(dim="lon", keep_attrs=True)
         div_phi = div_phi.mean(dim="lon", keep_attrs=True)
         div_p = div_p.mean(dim="lon", keep_attrs=True)
+
+    if time_window is not None:
+        logging.info("time window mean")
+        F_phi = F_phi.sel(time=slice(*time_window)).mean(dim = 'time')
+        F_p = F_p.sel(time=slice(*time_window)).mean(dim = 'time')
+        div_phi = div_phi.sel(time=slice(*time_window)).mean(dim = 'time')
+        div_p = div_p.sel(time=slice(*time_window)).mean(dim = 'time')
     else:
         pass
 
