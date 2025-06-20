@@ -38,7 +38,7 @@ def calculate_EP_flux(decade, equiv_theta=True, eddy='transient'):
         else:
             vptp = read_climatology(var = 'vptp', decade = decade, model_dir=model_dir)
 
-        ta = read_climatology(var = 'ta', decade = decade)
+        ta = read_climatology(var = 'ta_hat', decade = decade)
     elif eddy == 'steady':
         upvp = read_climatology(var = 'usvs', decade = decade, model_dir=model_dir)
         if equiv_theta:
