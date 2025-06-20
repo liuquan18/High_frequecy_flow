@@ -29,6 +29,10 @@ from src.data_helper.read_variable import read_climatology
 from src.data_helper.read_composite import read_comp_var
 from matplotlib.patches import Rectangle
 
+from src.data_helper import read_composite
+
+read_EP_flux = read_composite.read_EP_flux
+read_E_div = read_composite.read_E_div
 
 # %%%
 # config
@@ -37,219 +41,268 @@ suffix = "_ano"
 remove_zonmean = False
 
 ################### read div_p #####################
+
 # %%
-# transient part
-upvp_pos_first = read_comp_var(
-    "Fdiv_phi_transient",
-    "pos",
-    1850,
-    time_window=time_window,
-    name="div",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
+# read transient EP flux for positive and negative phase
+# read data for first decade with region = western
+_, _, Tdivphi_pos_first, Tdiv_p_pos_first = read_EP_flux(
+    phase="pos",
+    decade=1850,
+    eddy="transient",
+    ano=False,
+    lon_mean=False,
+    region=None,
+    time_window = (-10, 5)
 )
-upvp_neg_first = read_comp_var(
-    "Fdiv_phi_transient",
-    "neg",
-    1850,
-    time_window=time_window,
-    name="div",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
-)
-
-upvp_pos_last = read_comp_var(
-    "Fdiv_phi_transient",
-    "pos",
-    2090,
-    time_window=time_window,
-    name="div",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
-)
-upvp_neg_last = read_comp_var(
-    "Fdiv_phi_transient",
-    "neg",
-    2090,
-    time_window=time_window,
-    name="div",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
-)
-# quasi-stationary part
-usvs_pos_first = read_comp_var(
-    "Fdiv_phi_steady",
-    "pos",
-    1850,
-    time_window=time_window,
-    name="div",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
-)
-usvs_neg_first = read_comp_var(
-    "Fdiv_phi_steady",
-    "neg",
-    1850,
-    time_window=time_window,
-    name="div",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
+_, _, Tdivphi_neg_first, Tdiv_p_neg_first = read_EP_flux(
+    phase="neg",
+    decade=1850,
+    eddy="transient",
+    ano=False,
+    lon_mean=False,
+    region=None,
+    time_window = (-10, 5)
 )
 
-usvs_pos_last = read_comp_var(
-    "Fdiv_phi_steady",
-    "pos",
-    2090,
-    time_window=time_window,
-    name="div",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
+
+# last decade region
+_, _, Tdivphi_pos_last, Tdiv_p_pos_last = read_EP_flux(
+    phase="pos",
+    decade=2090,
+    eddy="transient",
+    ano=False,
+    lon_mean=False,
+    region=None,
+    time_window = (-10, 5)
 )
-usvs_neg_last = read_comp_var(
-    "Fdiv_phi_steady",
-    "neg",
-    2090,
-    time_window=time_window,
-    name="div",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
+_, _, Tdivphi_neg_last, Tdiv_p_neg_last = read_EP_flux(
+    phase="neg",
+    decade=2090,
+    eddy="transient",
+    ano=False,
+    lon_mean=False,
+    region=None,
+    time_window = (-10, 5)
 )
 
-# map smoothing
-upvp_pos_first = map_smooth(upvp_pos_first, 5, 5)
-upvp_neg_first = map_smooth(upvp_neg_first, 5, 5)
-upvp_pos_last = map_smooth(upvp_pos_last, 5, 5)
-upvp_neg_last = map_smooth(upvp_neg_last, 5, 5)
-
-usvs_pos_first = map_smooth(usvs_pos_first, 5, 5)
-usvs_neg_first = map_smooth(usvs_neg_first, 5, 5)
-usvs_pos_last = map_smooth(usvs_pos_last, 5, 5)
-usvs_neg_last = map_smooth(usvs_neg_last, 5, 5)
-
-# erase white line before plotting
-upvp_pos_first = erase_white_line(upvp_pos_first)
-upvp_neg_first = erase_white_line(upvp_neg_first)
-upvp_pos_last = erase_white_line(upvp_pos_last)
-upvp_neg_last = erase_white_line(upvp_neg_last)
-usvs_pos_first = erase_white_line(usvs_pos_first)
-usvs_neg_first = erase_white_line(usvs_neg_first)
-usvs_pos_last = erase_white_line(usvs_pos_last)
-usvs_neg_last = erase_white_line(usvs_neg_last)
-# %%
-###################### read vpetp, vsets ######################
-# pos ano
-vpetp_pos_first = read_comp_var(
-    "Fdiv_p_transient",
-    "pos",
-    1850,
-    time_window=time_window,
-    name="div2",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
+# read climatological EP flux
+_, _, Tdivphi_clima_first, Tdiv_p_clima_first = (
+    read_EP_flux(
+        phase="clima",
+        decade=1850,
+        eddy="transient",
+        ano=False,
+        lon_mean=False,
+        region=None,
+    )
 )
-vpetp_neg_first = read_comp_var(
-    "Fdiv_p_transient",
-    "neg",
-    1850,
-    time_window=time_window,
-    name="div2",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
+_, _, Tdivphi_clima_last, Tdiv_p_clima_last = read_EP_flux(
+    phase="clima",
+    decade=2090,
+    eddy="transient",
+    ano=False,
+    lon_mean=False,
+    region=None,
 )
 
-vpetp_pos_last = read_comp_var(
-    "Fdiv_p_transient",
-    "pos",
-    2090,
-    time_window=time_window,
-    name="div2",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
+# divphi select plev = 25000, div_p select plev = 85000
+Tdivphi_pos_first = Tdivphi_pos_first.sel(plev=25000)
+Tdiv_p_pos_first = Tdiv_p_pos_first.sel(plev=85000)
+Tdivphi_neg_first = Tdivphi_neg_first.sel(plev=25000)
+Tdiv_p_neg_first = Tdiv_p_neg_first.sel(plev=85000)
+
+Tdivphi_pos_last = Tdivphi_pos_last.sel(plev=25000)
+Tdiv_p_pos_last = Tdiv_p_pos_last.sel(plev=85000)
+Tdivphi_neg_last = Tdivphi_neg_last.sel(plev=25000)
+Tdiv_p_neg_last = Tdiv_p_neg_last.sel(plev=85000)
+
+# climatology
+Tdivphi_clima_first = Tdivphi_clima_first.sel(plev=25000)
+Tdiv_p_clima_first = Tdiv_p_clima_first.sel(plev=85000)
+Tdivphi_clima_last = Tdivphi_clima_last.sel(plev=25000)
+Tdiv_p_clima_last = Tdiv_p_clima_last.sel(plev=85000)
+
+
+# mean over events
+Tdivphi_pos_first = Tdivphi_pos_first.mean(dim="event", keep_attrs=True)
+Tdiv_p_pos_first = Tdiv_p_pos_first.mean(dim="event", keep_attrs=True)
+Tdivphi_neg_first = Tdivphi_neg_first.mean(dim="event", keep_attrs=True)
+Tdiv_p_neg_first = Tdiv_p_neg_first.mean(dim="event", keep_attrs=True)
+Tdivphi_pos_last = Tdivphi_pos_last.mean(dim="event", keep_attrs=True)
+Tdiv_p_pos_last = Tdiv_p_pos_last.mean(dim="event", keep_attrs=True)
+Tdivphi_neg_last = Tdivphi_neg_last.mean(dim="event", keep_attrs=True)
+Tdiv_p_neg_last = Tdiv_p_neg_last.mean(dim="event", keep_attrs=True)
+# anomaly
+
+Tdivphi_pos_first_ano = Tdivphi_pos_first - Tdivphi_clima_first
+Tdiv_p_pos_first_ano = Tdiv_p_pos_first - Tdiv_p_clima_first
+
+Tdivphi_neg_first_ano = Tdivphi_neg_first - Tdivphi_clima_first
+Tdiv_p_neg_first_ano = Tdiv_p_neg_first - Tdiv_p_clima_first
+
+Tdivphi_pos_last_ano = Tdivphi_pos_last - Tdivphi_clima_last
+Tdiv_p_pos_last_ano = Tdiv_p_pos_last - Tdiv_p_clima_last
+
+Tdivphi_neg_last_ano = Tdivphi_neg_last - Tdivphi_clima_last
+Tdiv_p_neg_last_ano = Tdiv_p_neg_last - Tdiv_p_clima_last
+
+# erase white line
+Tdivphi_pos_first_ano = erase_white_line(Tdivphi_pos_first_ano)
+Tdiv_p_pos_first_ano = erase_white_line(Tdiv_p_pos_first_ano)
+Tdivphi_neg_first_ano = erase_white_line(Tdivphi_neg_first_ano)
+Tdiv_p_neg_first_ano = erase_white_line(Tdiv_p_neg_first_ano)
+Tdivphi_pos_last_ano = erase_white_line(Tdivphi_pos_last_ano)
+Tdiv_p_pos_last_ano = erase_white_line(Tdiv_p_pos_last_ano)
+Tdivphi_neg_last_ano = erase_white_line(Tdivphi_neg_last_ano)
+Tdiv_p_neg_last_ano = erase_white_line(Tdiv_p_neg_last_ano)
+
+# erase white line for climatology
+Tdivphi_clima_first = erase_white_line(Tdivphi_clima_first)
+Tdiv_p_clima_first = erase_white_line(Tdiv_p_clima_first)
+Tdivphi_clima_last = erase_white_line(Tdivphi_clima_last)
+Tdiv_p_clima_last = erase_white_line(Tdiv_p_clima_last)
+
+# smooth the data
+Tdivphi_pos_first_ano = map_smooth(Tdivphi_pos_first_ano, 5, 5)
+Tdiv_p_pos_first_ano = map_smooth(Tdiv_p_pos_first_ano, 5, 5)
+Tdivphi_neg_first_ano = map_smooth(Tdivphi_neg_first_ano, 5, 5)
+Tdiv_p_neg_first_ano = map_smooth(Tdiv_p_neg_first_ano, 5, 5)
+Tdivphi_pos_last_ano = map_smooth(Tdivphi_pos_last_ano, 5, 5)
+Tdiv_p_pos_last_ano = map_smooth(Tdiv_p_pos_last_ano, 5, 5)
+Tdivphi_neg_last_ano = map_smooth(Tdivphi_neg_last_ano, 5, 5)
+Tdiv_p_neg_last_ano = map_smooth(Tdiv_p_neg_last_ano, 5, 5)
+
+
+
+#%%
+    # read steady EP flux for positive and negative phase
+_, _, Sdivphi_pos_first, Sdiv_p_pos_first = read_EP_flux(
+    phase="pos",
+    decade=1850,
+    eddy="steady",
+    ano=False,
+    lon_mean=False,
+    region=None,
+    time_window=(-10, 5)
 )
-vpetp_neg_last = read_comp_var(
-    "Fdiv_p_transient",
-    "neg",
-    2090,
-    time_window=time_window,
-    name="div2",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
-)
-# pos ano
-vsets_pos_first = read_comp_var(
-    "Fdiv_p_steady",
-    "pos",
-    1850,
-    time_window=time_window,
-    name="div2",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
-)
-vsets_neg_first = read_comp_var(
-    "Fdiv_p_steady",
-    "neg",
-    1850,
-    time_window=time_window,
-    name="div2",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
+_, _, Sdivphi_neg_first, Sdiv_p_neg_first = read_EP_flux(
+    phase="neg",
+    decade=1850,
+    eddy="steady",
+    ano=False,
+    lon_mean=False,
+    region=None,
+    time_window=(-10, 5)
 )
 
-vsets_pos_last = read_comp_var(
-    "Fdiv_p_steady",
-    "pos",
-    2090,
-    time_window=time_window,
-    name="div2",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
+# last decade
+_, _, Sdivphi_pos_last, Sdiv_p_pos_last = read_EP_flux(
+    phase="pos",
+    decade=2090,
+    eddy="steady",
+    ano=False,
+    lon_mean=False,
+    region=None,
+    time_window=(-10, 5)
 )
-vsets_neg_last = read_comp_var(
-    "Fdiv_p_steady",
-    "neg",
-    2090,
-    time_window=time_window,
-    name="div2",
-    suffix=suffix,
-    remove_zonmean=remove_zonmean,
-    model_dir="MPI_GE_CMIP6_allplev",
+_, _, Sdivphi_neg_last, Sdiv_p_neg_last = read_EP_flux(
+    phase="neg",
+    decade=2090,
+    eddy="steady",
+    ano=False,
+    lon_mean=False,
+    region=None,
+    time_window=(-10, 5)
 )
 
-# map smoothing
-vpetp_pos_first = map_smooth(vpetp_pos_first, 5, 5)
-vpetp_neg_first = map_smooth(vpetp_neg_first, 5, 5)
-vpetp_pos_last = map_smooth(vpetp_pos_last, 5, 5)
-vpetp_neg_last = map_smooth(vpetp_neg_last, 5, 5)
+# read climatological EP flux
+_, _, Sdivphi_clima_first, Sdiv_p_clima_first = (
+    read_EP_flux(
+        phase="clima",
+        decade=1850,
+        eddy="steady",
+        ano=False,
+        lon_mean=False,
+        region=None,
+    )
+)
+_, _, Sdivphi_clima_last, Sdiv_p_clima_last = read_EP_flux(
+    phase="clima",
+    decade=2090,
+    eddy="steady",
+    ano=False,
+    lon_mean=False,
+    region=None,
+)
 
-vsets_pos_first = map_smooth(vsets_pos_first, 5, 5)
-vsets_neg_first = map_smooth(vsets_neg_first, 5, 5)
-vsets_pos_last = map_smooth(vsets_pos_last, 5, 5)
-vsets_neg_last = map_smooth(vsets_neg_last, 5, 5)
+# divphi select plev = 25000, div_p select plev = 850
+Sdivphi_pos_first = Sdivphi_pos_first.sel(plev=25000)
+Sdiv_p_pos_first = Sdiv_p_pos_first.sel(plev=85000)
+Sdivphi_neg_first = Sdivphi_neg_first.sel(plev=25000)
+Sdiv_p_neg_first = Sdiv_p_neg_first.sel(plev=85000)
 
-# erase white line before plotting
-vpetp_pos_first = erase_white_line(vpetp_pos_first)
-vpetp_neg_first = erase_white_line(vpetp_neg_first)
-vpetp_pos_last = erase_white_line(vpetp_pos_last)
-vpetp_neg_last = erase_white_line(vpetp_neg_last)
-vsets_pos_first = erase_white_line(vsets_pos_first)
-vsets_neg_first = erase_white_line(vsets_neg_first)
-vsets_pos_last = erase_white_line(vsets_pos_last)
-vsets_neg_last = erase_white_line(vsets_neg_last)
+Sdivphi_pos_last = Sdivphi_pos_last.sel(plev=25000)
+Sdiv_p_pos_last = Sdiv_p_pos_last.sel(plev=85000)
+Sdivphi_neg_last = Sdivphi_neg_last.sel(plev=25000)
+Sdiv_p_neg_last = Sdiv_p_neg_last.sel(plev=85000)
+
+# climatology
+Sdivphi_clima_first = Sdivphi_clima_first.sel(plev=25000)
+Sdiv_p_clima_first = Sdiv_p_clima_first.sel(plev=85000)
+Sdivphi_clima_last = Sdivphi_clima_last.sel(plev=25000)
+Sdiv_p_clima_last = Sdiv_p_clima_last.sel(plev=85000)
+
+# mean over events
+Sdivphi_pos_first = Sdivphi_pos_first.mean(dim="event", keep_attrs=True)
+Sdiv_p_pos_first = Sdiv_p_pos_first.mean(dim="event", keep_attrs=True)
+Sdivphi_neg_first = Sdivphi_neg_first.mean(dim="event", keep_attrs=True)
+Sdiv_p_neg_first = Sdiv_p_neg_first.mean(dim="event", keep_attrs=True)
+Sdivphi_pos_last = Sdivphi_pos_last.mean(dim="event", keep_attrs=True)
+Sdiv_p_pos_last = Sdiv_p_pos_last.mean(dim="event", keep_attrs=True)
+Sdivphi_neg_last = Sdivphi_neg_last.mean(dim="event", keep_attrs=True)
+Sdiv_p_neg_last = Sdiv_p_neg_last.mean(dim="event", keep_attrs=True)
+
+# anomaly
+Sdivphi_pos_first_ano = Sdivphi_pos_first - Sdivphi_clima_first
+Sdiv_p_pos_first_ano = Sdiv_p_pos_first - Sdiv_p_clima_first
+
+Sdivphi_neg_first_ano = Sdivphi_neg_first - Sdivphi_clima_first
+Sdiv_p_neg_first_ano = Sdiv_p_neg_first - Sdiv_p_clima_first
+
+Sdivphi_pos_last_ano = Sdivphi_pos_last - Sdivphi_clima_last
+Sdiv_p_pos_last_ano = Sdiv_p_pos_last - Sdiv_p_clima_last
+
+Sdivphi_neg_last_ano = Sdivphi_neg_last - Sdivphi_clima_last
+Sdiv_p_neg_last_ano = Sdiv_p_neg_last - Sdiv_p_clima_last
+
+# erase white line
+Sdivphi_pos_first_ano = erase_white_line(Sdivphi_pos_first_ano)
+Sdiv_p_pos_first_ano = erase_white_line(Sdiv_p_pos_first_ano)
+Sdivphi_neg_first_ano = erase_white_line(Sdivphi_neg_first_ano)
+Sdiv_p_neg_first_ano = erase_white_line(Sdiv_p_neg_first_ano)
+Sdivphi_pos_last_ano = erase_white_line(Sdivphi_pos_last_ano)
+Sdiv_p_pos_last_ano = erase_white_line(Sdiv_p_pos_last_ano)
+Sdivphi_neg_last_ano = erase_white_line(Sdivphi_neg_last_ano)
+Sdiv_p_neg_last_ano = erase_white_line(Sdiv_p_neg_last_ano)
+#
+# erase white line of climatology
+Sdivphi_clima_first = erase_white_line(Sdivphi_clima_first)
+Sdiv_p_clima_first = erase_white_line(Sdiv_p_clima_first)
+Sdivphi_clima_last = erase_white_line(Sdivphi_clima_last)
+Sdiv_p_clima_last = erase_white_line(Sdiv_p_clima_last)
+#
+# smooth the data
+Sdivphi_pos_first_ano = map_smooth(Sdivphi_pos_first_ano, 5, 5)
+Sdiv_p_pos_first_ano = map_smooth(Sdiv_p_pos_first_ano, 5, 5)
+Sdivphi_neg_first_ano = map_smooth(Sdivphi_neg_first_ano, 5, 5)
+Sdiv_p_neg_first_ano = map_smooth(Sdiv_p_neg_first_ano, 5, 5)
+Sdivphi_pos_last_ano = map_smooth(Sdivphi_pos_last_ano, 5, 5)
+Sdiv_p_pos_last_ano = map_smooth(Sdiv_p_pos_last_ano, 5, 5)
+Sdivphi_neg_last_ano = map_smooth(Sdivphi_neg_last_ano, 5, 5)
+Sdiv_p_neg_last_ano = map_smooth(Sdiv_p_neg_last_ano, 5, 5)
+
+
+
 
 
 # %%
@@ -419,7 +472,7 @@ fig, axes = plt.subplots(
 
 # first row, upvp, sum
 # positive
-sum_color = (upvp_pos_first + usvs_pos_first).plot.contourf(
+sum_color = (Tdivphi_pos_first_ano + Sdivphi_pos_first_ano).plot.contourf(
     ax=axes[0, 0],
     levels=upvp_levels,
     cmap="RdBu_r",
@@ -428,7 +481,7 @@ sum_color = (upvp_pos_first + usvs_pos_first).plot.contourf(
     extend="both",
 )
 
-sum_lines = (upvp_pos_last + usvs_pos_last).plot.contour(
+sum_lines = (Tdivphi_pos_last_ano + Sdivphi_pos_last_ano).plot.contour(
     ax=axes[0, 0],
     levels=[l for l in upvp_levels if l != 0],
     colors="black",
@@ -450,7 +503,7 @@ sum_arrows = axes[0, 0].quiver(
 )
 
 # negative
-sum_color_neg = (upvp_neg_first + usvs_neg_first).plot.contourf(
+sum_color_neg = (Tdivphi_neg_first_ano + Sdivphi_neg_first_ano).plot.contourf(
     ax=axes[0, 1],
     levels=upvp_levels,
     cmap="RdBu_r",
@@ -458,7 +511,7 @@ sum_color_neg = (upvp_neg_first + usvs_neg_first).plot.contourf(
     transform=ccrs.PlateCarree(),
     extend="both",
 )
-sum_lines_neg = (upvp_neg_last + usvs_neg_last).plot.contour(
+sum_lines_neg = (Tdivphi_neg_last_ano + Sdivphi_neg_last_ano).plot.contour(
     ax=axes[0, 1],
     levels=[l for l in upvp_levels if l != 0],
     colors="black",
@@ -479,7 +532,7 @@ sum_arrows_neg = axes[0, 1].quiver(
 
 # second row, vpetp, sum
 # positive
-vpetp_color = (vpetp_pos_first + vsets_pos_first).plot.contourf(
+vpetp_color = (Tdiv_p_pos_first_ano + Sdiv_p_pos_first_ano).plot.contourf(
     ax=axes[1, 0],
     levels=vptp_levels,
     cmap="RdBu_r",
@@ -487,7 +540,7 @@ vpetp_color = (vpetp_pos_first + vsets_pos_first).plot.contourf(
     transform=ccrs.PlateCarree(),
     extend="both",
 )
-vpetp_lines = (vpetp_pos_last + vsets_pos_last).plot.contour(
+vpetp_lines = (Tdiv_p_pos_last_ano + Sdiv_p_pos_last_ano).plot.contour(
     ax=axes[1, 0],
     levels=[l for l in vptp_levels if l != 0],
     colors="black",
@@ -496,7 +549,7 @@ vpetp_lines = (vpetp_pos_last + vsets_pos_last).plot.contour(
 )
 
 # negative
-vpetp_color_neg = (vpetp_neg_first + vsets_neg_first).plot.contourf(
+vpetp_color_neg = (Tdiv_p_neg_first_ano + Sdiv_p_neg_first_ano).plot.contourf(
     ax=axes[1, 1],
     levels=vptp_levels,
     cmap="RdBu_r",
@@ -504,7 +557,7 @@ vpetp_color_neg = (vpetp_neg_first + vsets_neg_first).plot.contourf(
     transform=ccrs.PlateCarree(),
     extend="both",
 )
-vpetp_lines_neg = (vpetp_neg_last + vsets_neg_last).plot.contour(
+vpetp_lines_neg = (Tdiv_p_neg_last_ano + Sdiv_p_neg_last_ano).plot.contour(
     ax=axes[1, 1],
     levels=[l for l in vptp_levels if l != 0],
     colors="black",
@@ -561,7 +614,7 @@ for ax in axes.flat:
     )
     gl.ylocator = mticker.FixedLocator([10, 30, 50, 70, 90])
     ax.set_title("")
-    ax.set_extent([-180, 180, 20, 90], crs=ccrs.PlateCarree())
+    ax.set_extent([-180, 180, 30, 90], crs=ccrs.PlateCarree())
     clip_map(ax)
 
 # add a, b, c, d to each subplot
@@ -596,7 +649,7 @@ qk = axes[0, 1].quiverkey(
 # add box region
 # NA_box(axes[1, 0], lon_min=280, lon_max=360, lat_min=40, lat_max=80)
 
-# save figure
+# # save figure
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/upvp_vpetp_sum_ano.pdf",
     bbox_inches="tight",
