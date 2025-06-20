@@ -618,7 +618,7 @@ plt.savefig(
 
 
 # %%
-vptp_levels = np.arange(-2, 2.1, 0.5)
+vptp_levels = np.arange(-3, 3.1, 0.5)
 vptp_steady_levels = np.arange(-10, 10.1, 2)
 
 fig, axes = plt.subplots(
@@ -768,12 +768,12 @@ for i, ax in enumerate(axes.flat):
 # add box region
 # NA_box(axes[1, 0], lon_min=280, lon_max=360, lat_min=40, lat_max=80)
 
-# # save figure
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0main_text/vptp_map_ano.pdf",
-#     bbox_inches="tight",
-#     dpi=300,
-#     transparent=True,
-# )
+# save figure
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0main_text/vptp_map_ano.pdf",
+    bbox_inches="tight",
+    dpi=300,
+    transparent=True,
+)
 
 # %%
