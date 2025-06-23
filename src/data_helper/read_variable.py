@@ -89,6 +89,7 @@ def read_climatology(var, decade, **kwargs):
 
 def read_climatology_decmean(var, plev = 85000, NAL = True, **kwargs):
     model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6_allplev")
+    name = kwargs.get("name", var)  # default name is the same as var
 
     base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_monthly_ensmean/"
     files = glob.glob(base_dir + "*.nc")
@@ -102,7 +103,7 @@ def read_climatology_decmean(var, plev = 85000, NAL = True, **kwargs):
     data.load()
     data = data.groupby("time.year").mean(dim="time")
     if NAL:
-        data = data.sel(lon=slice(280, 360), lat=slice(40, 80))
+        data = data.sel(lon=slice(280, 360), lat=slice(40, 80))[name]
         weights = np.cos(np.deg2rad(data.lat))
         weights.name = "weights"
         data = data.weighted(weights).mean(dim=["lon", "lat"])
