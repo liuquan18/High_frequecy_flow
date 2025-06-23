@@ -102,7 +102,10 @@ def read_climatology_decmean(var, plev = 85000, NAL = True, **kwargs):
     data.load()
     data = data.groupby("time.year").mean(dim="time")
     if NAL:
-        data = data.sel(lon=slice(280, 360), lat=slice(40, 80)).mean(dim=["lon", "lat"])
+        data = data.sel(lon=slice(280, 360), lat=slice(40, 80))
+        weights = np.cos(np.deg2rad(data.lat))
+        weights.name = "weights"
+        data = data.weighted(weights).mean(dim=["lon", "lat"])
     if plev is not None:
         data = data.sel(plev=plev)
 
