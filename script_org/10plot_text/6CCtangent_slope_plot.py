@@ -5,6 +5,8 @@ import pandas as pd
 import sys
 import matplotlib.pyplot as plt
 import seaborn as sns
+from src.data_helper.read_variable import read_climatology_decmean
+
 #%%
 
 def calculate_saturation_specific_humidity(T):
@@ -86,23 +88,16 @@ q_tangent = [
 #%%
 # qpqp
 
-qq = xr.open_mfdataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/qpqp_monthly_ensmean/*.nc")
-qq =qq.hus*1e6 # kg/kg to g/kg
-
+qp = read_climatology_decmean('hus_prime', name = 'hus')
 #%%
-qq = qq.sel(lat=slice(40, 80), lon=slice(280, 360), plev = 85000)
-weights = np.cos(np.deg2rad(qq.lat))
-weights.name = "weights"
-qq = qq.weighted(weights)
-qq = qq.mean(dim=["lat", "lon"])
+# convert to g/kg
+qp = qp * 1000  # Convert from kg/kg to g/kg
 
-#%%
-qq_dec = qq.coarsen(time = 10, side = 'left').mean()  # Coarsen time to 10-year intervals
 #%%
 # to pandas dataframe
-qq_dec['time'] = qq_dec.time.dt.year - 5
+qp['year'] = qp.year- 9
 #%%
-qq_df = qq_dec.to_dataframe().reset_index()
+qp_df = qp.to_dataframe().reset_index()
 
 
 # %%
@@ -159,7 +154,6 @@ axes[0].text(
 # axes[0].grid(True)
 axes[0].set_xlabel("Temperature (K)")
 axes[0].set_ylabel("Saturation Specific Humidity (kg/kg)")
-axes[0].set_title("Clausius-Clapeyron Relation")
 axes[0].legend()
 axes[0].ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
 
@@ -181,6 +175,25 @@ axes[0].text(
     color="C1",
 )
 
+# Change y-tick labels from kg/kg to g/kg
+yticks = axes[0].get_yticks()
+axes[0].set_yticklabels([f"{y * 1000:.0f}" for y in yticks])
+axes[0].set_ylabel("Saturation varpor pressure (hPa)")
+
+
+
+sns.lineplot(
+    data=qp_df,
+    x="year",
+    y="hus",
+    ax=axes[1],
+    color='k',
+    linewidth=2,
+)
+axes[1].ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
+axes[1].set_ylabel(r"$q'$ (g/kg)")
+
+
 # Add 'a' at the left corner of the first subplot
 axes[0].text(
     -0.05,
@@ -192,24 +205,22 @@ axes[0].text(
     va="top",
     ha="right",
 )
-
-
-sns.lineplot(
-    data = qq_df,
-    x = "time",
-    y = "hus",
-    ax = axes[1],
-    color = 'k',
-    linewidth = 2,
-    label = "variance of q",
+axes[1].text(
+    -0.05,
+    1.05,
+    "b",
+    transform=axes[1].transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
 )
-
 
 
 plt.tight_layout()
 
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/eddy_flux/CC_moisture_tangent_slope.pdf",
-#     dpi=300,
-# )
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0main_text/CC_moisture_tangent_slope.pdf",
+    dpi=300,
+)
 # %%
