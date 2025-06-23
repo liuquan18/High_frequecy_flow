@@ -14,9 +14,9 @@ import glob
 import logging
 logging.basicConfig(level=logging.INFO)
 # %%
-transient_p = read_climatology_decmean(var = 'Fdiv_p_transient', NAL=True, plev=85000)
+transient_p = read_climatology_decmean(var = 'Fdiv_p_transient', NAL=True, plev=85000, name = 'div2')
 
-steady_p = read_climatology_decmean(var = 'Fdiv_p_steady', NAL=True, plev=85000)
+steady_p = read_climatology_decmean(var = 'Fdiv_p_steady', NAL=True, plev=85000, name = 'div2')
 
 #%%
 # to decade
@@ -34,7 +34,7 @@ steady_p = steady_p.to_dataframe().reset_index().rename(
 divp_merge = pd.merge(transient_p, steady_p, on="decade")
 
 #%%
-sum_p_var = read_climatology_decmean(var='Fdiv_p_sum_std', NAL=True, plev=None)
+sum_p_var = read_climatology_decmean(var='Fdiv_p_sum_std', NAL=True, plev=None, name = 'std')
 # change year to decade
 sum_p_var['year'] = sum_p_var['year'] - 9
 sum_p_var = sum_p_var.to_dataframe().reset_index().rename(
