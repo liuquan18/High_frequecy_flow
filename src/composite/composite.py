@@ -11,53 +11,62 @@ logging.basicConfig(level=logging.INFO)
 
 
 # %%
-def read_variable(
-    variable: str, period: str, ens: int, plev: int = None, freq_label: str = None
-):
-    """
-    Parameters
-    ----------
-    variable : str
-        variable name
-    period : str
-        period name, first10 or last10
-    ens : int
-        ensemble number
-    plev : int
-        pressure level
-    freq : str
-        frequency label, default is None, hat, prime, prime_veryhigh, prime_intermedia
-    """
-    base_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{variable}_daily_global/{variable}_MJJAS_{period}"
-
-    if freq_label is None:
-        freq_label = "/"
-    else:
-        freq_label = f"_{freq_label}/"
-
-    base_path = f"{base_path}{freq_label}"
-
-    file = glob.glob(f"{base_path}{variable}_day_*r{ens}i1p1f1_gn_*.nc")[0]
-
+################## NAO composite during the event ######################
+def during_NAO_composite(uhat, events):
     try:
-        ds = xr.open_dataset(file)[variable]
-    except KeyError:
-        ds = xr.open_dataset(file)["ua"]  # case for momentum fluxes
-    if plev is not None:
-        ds = ds.sel(plev=plev)
-
-    # convert datetime to pandas datetime
-    try:
-        ds["time"] = ds.indexes["time"].to_datetimeindex()
+        uhat["time"] = uhat.indexes["time"].to_datetimeindex()
     except AttributeError:
         pass
 
-    return ds
+    uhat_extreme = []
+    for i, event in events.iterrows():
+        uhat_extreme.append(
+            uhat.sel(time=slice(event["extreme_start_time"], event["extreme_end_time"]))
+        )
+
+    uhat_extreme = xr.concat(uhat_extreme, dim="time")
+
+    # average over time
+    uhat_extreme = uhat_extreme.mean(dim="time")
+
+    return uhat_extreme
 
 
 # %%
-def lead_lag_30days(events, base_plev=None, cross_plev=None):
+################# before the NAO composite ######################
+# %%
+def before_NAO_composite(NAO, data, lag=(-15, -5)):
 
+    data_before_NAO = []
+    for i, event in NAO.iterrows():
+        event_date = pd.to_datetime(event.extreme_start_time)
+        event_date_before_start = event_date + pd.Timedelta(days=lag[0])
+        event_date_before_end = event_date + pd.Timedelta(days=lag[1])
+
+        # -15 to -5 days before the event average
+
+        # if 'ens' in the column
+        if "ens" in data.dims:
+            event_ens = int(event.ens)
+            data_NAO_event = data.sel(
+                time=slice(event_date_before_start, event_date_before_end),
+                ens=event_ens,
+            ).mean(dim="time")
+        else:
+            data_NAO_event = data.sel(
+                time=slice(event_date_before_start, event_date_before_end)
+            ).mean(dim="time")
+
+        data_before_NAO.append(data_NAO_event)
+
+    data_before_NAO = xr.concat(data_before_NAO, dim="event")
+
+    return data_before_NAO
+
+
+################# NAO composite -30 - 30 days ######################
+# %%
+def find_lead_lag_30days(events, base_plev=None, cross_plev=None):
     """
     Parameters
     ----------
@@ -71,12 +80,15 @@ def lead_lag_30days(events, base_plev=None, cross_plev=None):
 
     start_times = []
     end_times = []
-
-    if base_plev is not None:
-        events = events[events["plev"] == base_plev]
+    try:
+        events["extreme_start_time"] = pd.to_datetime(events["extreme_start_time"])
+        events["extreme_end_time"] = pd.to_datetime(events["extreme_end_time"])
+    except Exception:
+        pass
 
     for base_event in events.itertuples():
         ref_time = base_event.extreme_start_time
+        ref_time = pd.to_datetime(ref_time).normalize()  # normalize to remove time part
 
         count_startime = ref_time - pd.Timedelta(days=30)
         count_endtime = ref_time + pd.Timedelta(days=30)
@@ -87,7 +99,9 @@ def lead_lag_30days(events, base_plev=None, cross_plev=None):
             & (events.extreme_end_time >= count_startime)
         ]
 
-        if (cross_plev is not None) and (len(overlapped_events_across_height.plev.unique()) < cross_plev):
+        if (cross_plev is not None) and (
+            len(overlapped_events_across_height.plev.unique()) < cross_plev
+        ):
             continue
 
         start_times.append(count_startime)
@@ -100,7 +114,6 @@ def lead_lag_30days(events, base_plev=None, cross_plev=None):
     return date_range
 
 
-# %%
 def date_range_composite(zg, date_range):
     """
     parameters:
@@ -113,8 +126,9 @@ def date_range_composite(zg, date_range):
     for start_time, end_time in date_range.itertuples(index=False):
 
         sel_zg = zg.sel(
-            time=slice(start_time, end_time)
-        )  # note that xarray slice is inclusive on both sides
+            time=slice(start_time, start_time + pd.Timedelta(days=61))
+        )  
+        sel_zg = sel_zg.isel(time = slice(None, 61)) # ensure we have 61 days
         if sel_zg.time.size < 61:
             if start_time < pd.Timestamp(f"{start_time.year}-05-01"):
                 logging.info(
@@ -151,7 +165,9 @@ def date_range_composite(zg, date_range):
                 sel_zg = xr.concat([sel_zg, add_data], dim="time")
 
         # now change the time coordinate as lag-days
+        
         sel_zg["time"] = np.arange(-30, 31, 1)
+
 
         # put them together
         composite.append(sel_zg)
@@ -162,80 +178,27 @@ def date_range_composite(zg, date_range):
     return composite
 
 
-# %%[]
-def event_composite(variable, pos_extremes, neg_extremes, base_plev=None, cross_plev=1):
+def range_NAO_composite_single_phase(
+    variable, extremes, base_plev=None, cross_plev=None
+):
+    date_range = find_lead_lag_30days(extremes, base_plev, cross_plev)
+    composite = None
+    if not date_range.empty:
+        composite = date_range_composite(variable, date_range)
+    return composite
 
-    pos_date_range = lead_lag_30days(pos_extremes, base_plev, cross_plev)
-    neg_date_range = lead_lag_30days(neg_extremes, base_plev, cross_plev)
 
-    pos_composite = None
-    neg_composite = None
+def range_NAO_composite(
+    variable, pos_extremes, neg_extremes, base_plev=None, cross_plev=None
+):
 
-    if not pos_date_range.empty:
-        pos_composite = date_range_composite(variable, pos_date_range)
+    # pos
+    pos_composite = range_NAO_composite_single_phase(
+        variable, pos_extremes, base_plev, cross_plev
+    )
 
-    if not neg_date_range.empty:
-        neg_composite = date_range_composite(variable, neg_date_range)
-
+    # neg
+    neg_composite = range_NAO_composite_single_phase(
+        variable, neg_extremes, base_plev, cross_plev
+    )
     return pos_composite, neg_composite
-
-
-# %%
-def composite_single_ens(variable, period, ens, plev, freq_label=None):
-    pos_extreme, neg_extreme = ext_read.read_extremes(period, 8, ens, plev=plev)
-    variable_ds = read_variable(variable, period, ens, plev, freq_label)
-
-    pos_comp, neg_comp = event_composite(variable_ds, pos_extreme, neg_extreme)
-    return pos_comp, neg_comp
-
-
-# %%
-def composite_variable(variable, plev, freq_label, period, stat="mean"):
-    pos_comps = []
-    neg_comps = []
-
-    for i in range(1, 51):
-        pos_comp, neg_comp = composite_single_ens(variable, period, i, plev, freq_label)
-
-        pos_comps.append(pos_comp)
-        neg_comps.append(neg_comp)
-
-    # exclude None from the list
-    pos_comps = [x for x in pos_comps if x is not None]
-    neg_comps = [x for x in neg_comps if x is not None]
-
-    pos_comps = xr.concat(pos_comps, dim="event")
-    neg_comps = xr.concat(neg_comps, dim="event")
-
-    if stat == "mean":
-        pos_comps = pos_comps.mean(dim="event")
-        neg_comps = neg_comps.mean(dim="event")
-    elif stat == "count":
-        pos_comps = pos_comps.count(dim="event")
-        neg_comps = neg_comps.count(dim="event")
-
-    return pos_comps, neg_comps
-
-#%%
-def before_NAO_mean(NAO, data, lag = (-15, -5)):
-
-    data_before_NAO = []
-    for i, event in NAO.iterrows():
-        event_date = pd.to_datetime(event.extreme_start_time)
-        event_date_before_start = event_date + pd.Timedelta(days=lag[0])
-        event_date_before_end = event_date + pd.Timedelta(days=lag[1])
-
-        # -15 to -5 days before the event average
-        
-        # if 'ens' in the column
-        if 'ens' in data.dims:
-            event_ens = int(event.ens)
-            data_NAO_event = data.sel(time=slice(event_date_before_start, event_date_before_end), ens = event_ens).mean(dim = 'time')
-        else:
-            data_NAO_event = data.sel(time=slice(event_date_before_start, event_date_before_end)).mean(dim = 'time')
-
-        data_before_NAO.append(data_NAO_event)
-
-    data_before_NAO = xr.concat(data_before_NAO, dim='event')
-
-    return data_before_NAO

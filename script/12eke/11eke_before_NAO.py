@@ -10,7 +10,7 @@ import logging
 import re
 import os
 
-from src.extremes.before_extreme import read_NAO_extremes, sel_before_NAO
+from src.data_helper.read_NAO_extremes import read_NAO_extremes, sel_before_NAO
 logging.basicConfig(level=logging.INFO)
 #%%
 # nodes for different decades

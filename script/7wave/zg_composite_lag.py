@@ -17,7 +17,7 @@ importlib.reload(zg_comp)
 
 # %%
 def composite_single_ens(zg, pos_extreme, neg_extreme, base_plev=25000, cross_plev=1):
-    pos_date_range = zg_comp.lead_lag_30days(
+    pos_date_range = zg_comp.find_lead_lag_30days(
         pos_extreme, base_plev=base_plev, cross_plev=cross_plev
     )
 
@@ -27,7 +27,7 @@ def composite_single_ens(zg, pos_extreme, neg_extreme, base_plev=25000, cross_pl
     if not pos_date_range.empty:
         pos_composite = zg_comp.date_range_composite(zg, pos_date_range)
 
-    neg_date_range = zg_comp.lead_lag_30days(
+    neg_date_range = zg_comp.find_lead_lag_30days(
         neg_extreme, base_plev=25000, cross_plev=cross_plev
     )
 

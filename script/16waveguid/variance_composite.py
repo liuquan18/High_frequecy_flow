@@ -44,12 +44,12 @@ def composite(period):
         clim_vvar.append(vvar)
 
         if not NAO_pos.empty:
-            pos_range = comp.lead_lag_30days(NAO_pos, base_plev=25000)
+            pos_range = comp.find_lead_lag_30days(NAO_pos, base_plev=25000)
             vvar_pos = comp.date_range_composite(vvar, pos_range)
             NAO_pos_vvar.append(vvar_pos)
 
         if not NAO_neg.empty:
-            neg_range = comp.lead_lag_30days(NAO_neg, base_plev=25000)
+            neg_range = comp.find_lead_lag_30days(NAO_neg, base_plev=25000)
             vvar_neg = comp.date_range_composite(vvar, neg_range)
             NAO_neg_vvar.append(vvar_neg)
 
@@ -74,7 +74,7 @@ fig, axes = plt.subplots(
     1, 2, subplot_kw={"projection": ccrs.PlateCarree(central_longitude=-120)}
 )
 
-first_clim_vvar.mean(dim=("ens",'time')).plot.contourf(
+first_clim_vvar.mean(dim=("ens", "time")).plot.contourf(
     x="lon",
     y="lat",
     ax=axes[0],
@@ -84,7 +84,7 @@ first_clim_vvar.mean(dim=("ens",'time')).plot.contourf(
 )
 axes[0].set_title("First 10 years")
 
-map= last_clim_vvar.mean(dim=("ens",'time')).plot.contourf(
+map = last_clim_vvar.mean(dim=("ens", "time")).plot.contourf(
     x="lon",
     y="lat",
     ax=axes[1],
@@ -95,28 +95,39 @@ map= last_clim_vvar.mean(dim=("ens",'time')).plot.contourf(
 axes[1].set_title("Last 10 years")
 
 for ax in axes.flat:
-    ax.coastlines(color = 'w')
+    ax.coastlines(color="w")
 
 
-axes[0].add_patch(plt.Rectangle(
-    xy=[180, 40], width=180, height=10,
-    edgecolor='red', facecolor='none',
-    transform=ccrs.PlateCarree()
-))
+axes[0].add_patch(
+    plt.Rectangle(
+        xy=[180, 40],
+        width=180,
+        height=10,
+        edgecolor="red",
+        facecolor="none",
+        transform=ccrs.PlateCarree(),
+    )
+)
 
 # add a red point at lat 35, lon 180
-axes[0].plot(180, 45, 'ro', transform=ccrs.PlateCarree())
+axes[0].plot(180, 45, "ro", transform=ccrs.PlateCarree())
 
 # add colorbar
 cbar_ax = fig.add_axes([0.15, 0.1, 0.7, 0.05])
 fig.colorbar(map, cax=cbar_ax, orientation="horizontal")
 
 plt.tight_layout()
-plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_climatology.png', dpi=300)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_climatology.png",
+    dpi=300,
+)
 # %%
 # maps
 fig, axes = plt.subplots(
-    2, 2, figsize = (8,5), subplot_kw={"projection": ccrs.PlateCarree(central_longitude=-120)}
+    2,
+    2,
+    figsize=(8, 5),
+    subplot_kw={"projection": ccrs.PlateCarree(central_longitude=-120)},
 )
 levels = np.arange(100, 146, 5)
 
@@ -163,17 +174,20 @@ last_NAO_neg_vvar.mean(dim="event").sel(time=slice(-10, 5)).mean(
     transform=ccrs.PlateCarree(),
     add_colorbar=False,
 )
-axes[0,0].set_title("First 10 years, positive NAO")
-axes[0,1].set_title("Last 10 years, positive NAO")
+axes[0, 0].set_title("First 10 years, positive NAO")
+axes[0, 1].set_title("Last 10 years, positive NAO")
 
-axes[1,0].set_title("First 10 years, negative NAO")
-axes[1,1].set_title("Last 10 years, negative NAO")
+axes[1, 0].set_title("First 10 years, negative NAO")
+axes[1, 1].set_title("Last 10 years, negative NAO")
 for ax in axes.flat:
-    ax.coastlines(color = 'w')
+    ax.coastlines(color="w")
 
 plt.tight_layout()
 
-plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_composite_maps.png', dpi=300)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_composite_maps.png",
+    dpi=300,
+)
 # %%
 fig, axes = plt.subplots(2, 2, figsize=(10, 10))
 levels = np.arange(100, 146, 5)
@@ -197,10 +211,11 @@ for ax in axes.flatten():
     ax.set_xlim(120, 360)
 
 plt.tight_layout()
-plt.savefig('/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_composite_profile.png', dpi=300)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/band_variance/band_variance_composite_profile.png",
+    dpi=300,
+)
 # %%
-
-
 
 
 # %%

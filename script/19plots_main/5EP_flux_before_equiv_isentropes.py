@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-from src.EP_flux.EP_flux import (
+from src.dynamics.EP_flux import (
     NPC_mean,
     PlotEPfluxArrows,
     NAL_mean,

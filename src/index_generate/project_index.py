@@ -10,12 +10,12 @@ def cos_lat_weight(lat):
 def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='lon', standard=False, plev = None):
     """Project field data onto pattern data to get the temporal index, weighted by cos(latitude)."""
     # Extract latitudes and calculate weights
-    latitudes = field_data.coords[lat_dim].values
+    latitudes = field_data.coords[lat_dim]
     weights = cos_lat_weight(latitudes)
     
     # Apply weights
-    weighted_field = field_data * weights[:, np.newaxis]
-    weighted_pattern = pattern_data * weights[:, np.newaxis]
+    weighted_field = field_data * weights
+    weighted_pattern = pattern_data * weights
     
 
     # flat field to [time,lon-lat] or [time,lon-lat,heith]
@@ -26,20 +26,24 @@ def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='l
     # dorpna
     field_flat = field_flat.dropna(dim='spatial')
     eof_flat = eof_flat.dropna(dim='spatial')
+    eof_flat = eof_flat.sortby('plev', ascending = False)
 
     # for all plevs:
     if plev is None:
         nplev = field_data.plev.size
 
         if nplev > 1:
-            Projected_pcs = []
-            for plev in field_flat.plev:
-                field_f = field_flat.sel(plev = plev)
-                eof_f = eof_flat.sel(plev = plev)
-                projected_pcs = field_f.dot(eof_f.T)
-                Projected_pcs.append(projected_pcs)
 
-            Projected_pcs = xr.concat(Projected_pcs, dim = 'plev')
+            Projected_pcs = xr.apply_ufunc(
+                lambda x, y: x.dot(y.T),
+                field_flat,
+                eof_flat,
+                input_core_dims=[['spatial'], ['spatial']],
+                exclude_dims={'spatial'},
+                vectorize=True,
+                dask='allowed',
+            )
+
         else:
             Projected_pcs = field_flat.dot(eof_flat.T)
     else:

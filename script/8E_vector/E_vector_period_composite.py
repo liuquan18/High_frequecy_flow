@@ -17,7 +17,90 @@ import src.extremes.extreme_read as ext_read
 import src.composite.composite_plot as composite_plot
 
 # %%
-from src.composite.composite import composite_variable
+from src.composite.composite import range_NAO_composite
+
+
+# %%
+def read_variable(
+    variable: str, period: str, ens: int, plev: int = None, freq_label: str = None
+):
+    """
+    Parameters
+    ----------
+    variable : str
+        variable name
+    period : str
+        period name, first10 or last10
+    ens : int
+        ensemble number
+    plev : int
+        pressure level
+    freq : str
+        frequency label, default is None, hat, prime, prime_veryhigh, prime_intermedia
+    """
+    base_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{variable}_daily_global/{variable}_MJJAS_{period}"
+
+    if freq_label is None:
+        freq_label = "/"
+    else:
+        freq_label = f"_{freq_label}/"
+
+    base_path = f"{base_path}{freq_label}"
+
+    file = glob.glob(f"{base_path}{variable}_day_*r{ens}i1p1f1_gn_*.nc")[0]
+
+    try:
+        ds = xr.open_dataset(file)[variable]
+    except KeyError:
+        ds = xr.open_dataset(file)["ua"]  # case for momentum fluxes
+    if plev is not None:
+        ds = ds.sel(plev=plev)
+
+    # convert datetime to pandas datetime
+    try:
+        ds["time"] = ds.indexes["time"].to_datetimeindex()
+    except AttributeError:
+        pass
+
+    return ds
+
+
+# %%
+def composite_single_ens(variable, period, ens, plev, freq_label=None):
+    pos_extreme, neg_extreme = ext_read.read_extremes(period, 8, ens, plev=plev)
+    variable_ds = read_variable(variable, period, ens, plev, freq_label)
+
+    pos_comp, neg_comp = range_NAO_composite(variable_ds, pos_extreme, neg_extreme)
+    return pos_comp, neg_comp
+
+
+# %%
+def composite_variable(variable, plev, freq_label, period, stat="mean"):
+    pos_comps = []
+    neg_comps = []
+
+    for i in range(1, 51):
+        pos_comp, neg_comp = composite_single_ens(variable, period, i, plev, freq_label)
+
+        pos_comps.append(pos_comp)
+        neg_comps.append(neg_comp)
+
+    # exclude None from the list
+    pos_comps = [x for x in pos_comps if x is not None]
+    neg_comps = [x for x in neg_comps if x is not None]
+
+    pos_comps = xr.concat(pos_comps, dim="event")
+    neg_comps = xr.concat(neg_comps, dim="event")
+
+    if stat == "mean":
+        pos_comps = pos_comps.mean(dim="event")
+        neg_comps = neg_comps.mean(dim="event")
+    elif stat == "count":
+        pos_comps = pos_comps.count(dim="event")
+        neg_comps = neg_comps.count(dim="event")
+
+    return pos_comps, neg_comps
+
 
 # %%
 plev = 25000

@@ -26,8 +26,6 @@ if [ "$frequency" == "prime" ]; then
     Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_prime_daily/r${member}i1p1f1/
 elif [ "$frequency" == "prime_high" ]; then
     Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_prime_high_daily/r${member}i1p1f1/
-elif [ "$frequency" == "hat" ]; then
-    Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/${var}_hat_daily/r${member}i1p1f1/
 else
     echo "Frequency not recognized, please use prime or high"
     exit 1

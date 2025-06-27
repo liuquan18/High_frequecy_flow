@@ -47,7 +47,7 @@ def jet_location(NAO, jet, ens):
         jet array
     """
 
-    NAO_range = comp.lead_lag_30days(NAO, base_plev=25000)
+    NAO_range = comp.find_lead_lag_30days(NAO, base_plev=25000)
     jet_composite = comp.date_range_composite(jet, NAO_range)
     jet_composite["event"] = ens * 1000 + jet_composite["event"].astype(int)
 
@@ -124,7 +124,12 @@ last_pos_jet, last_neg_jet, last_jet_mean, last_jet_std = composite_jet_loc(
 fig, axes = plt.subplots(2, 2, figsize=(10, 6))
 
 first_pos_jet.plot.line(
-    x="time", ax=axes[0, 0], label="pos-first10", add_legend=False, color="grey", linewidth=1
+    x="time",
+    ax=axes[0, 0],
+    label="pos-first10",
+    add_legend=False,
+    color="grey",
+    linewidth=1,
 )
 first_pos_jet.mean(dim="event").plot.line(
     x="time", ax=axes[0, 0], label="mean", color="k"
@@ -140,7 +145,12 @@ axes[0, 0].fill_between(
 )
 
 last_pos_jet.plot.line(
-    x="time", ax=axes[0, 1], label="pos-last10", add_legend=False, color="grey", linewidth=1
+    x="time",
+    ax=axes[0, 1],
+    label="pos-last10",
+    add_legend=False,
+    color="grey",
+    linewidth=1,
 )
 axes[0, 1].fill_between(
     last_pos_jet.time,
@@ -156,7 +166,12 @@ last_pos_jet.mean(dim="event").plot.line(
 )
 
 first_neg_jet.plot.line(
-    x="time", ax=axes[1, 0], label="neg-first10", add_legend=False, color="grey", linewidth=1
+    x="time",
+    ax=axes[1, 0],
+    label="neg-first10",
+    add_legend=False,
+    color="grey",
+    linewidth=1,
 )
 
 first_neg_jet.mean(dim="event").plot.line(
@@ -173,7 +188,12 @@ axes[1, 0].fill_between(
 )
 
 last_neg_jet.plot.line(
-    x="time", ax=axes[1, 1], label="neg-last10", add_legend=False, color="grey", linewidth=1
+    x="time",
+    ax=axes[1, 1],
+    label="neg-last10",
+    add_legend=False,
+    color="grey",
+    linewidth=1,
 )
 last_neg_jet.mean(dim="event").plot.line(
     x="time", ax=axes[1, 1], label="mean", color="k"
@@ -234,7 +254,12 @@ axes[1, 1].fill_between(
 fig, axes = plt.subplots(2, 2, figsize=(10, 6))
 
 first_pos_jet.plot.line(
-    x="time", ax=axes[0, 0], label="pos-first10", add_legend=False, color="grey", linewidth=1
+    x="time",
+    ax=axes[0, 0],
+    label="pos-first10",
+    add_legend=False,
+    color="grey",
+    linewidth=1,
 )
 first_pos_jet.mean(dim="event").plot.line(
     x="time", ax=axes[0, 0], label="mean", color="k"
@@ -250,7 +275,12 @@ axes[0, 0].fill_between(
 )
 
 last_pos_jet.plot.line(
-    x="time", ax=axes[0, 1], label="pos-last10", add_legend=False, color="grey", linewidth=1
+    x="time",
+    ax=axes[0, 1],
+    label="pos-last10",
+    add_legend=False,
+    color="grey",
+    linewidth=1,
 )
 axes[0, 1].fill_between(
     last_pos_jet.time,
@@ -266,7 +296,12 @@ last_pos_jet.mean(dim="event").plot.line(
 )
 
 first_neg_jet.plot.line(
-    x="time", ax=axes[1, 0], label="neg-first10", add_legend=False, color="grey", linewidth=1
+    x="time",
+    ax=axes[1, 0],
+    label="neg-first10",
+    add_legend=False,
+    color="grey",
+    linewidth=1,
 )
 
 first_neg_jet.mean(dim="event").plot.line(
@@ -283,7 +318,12 @@ axes[1, 0].fill_between(
 )
 
 last_neg_jet.plot.line(
-    x="time", ax=axes[1, 1], label="neg-last10", add_legend=False, color="grey", linewidth=1
+    x="time",
+    ax=axes[1, 1],
+    label="neg-last10",
+    add_legend=False,
+    color="grey",
+    linewidth=1,
 )
 last_neg_jet.mean(dim="event").plot.line(
     x="time", ax=axes[1, 1], label="mean", color="k"
@@ -339,6 +379,8 @@ axes[1, 1].fill_between(
     alpha=0.5,
 )
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/background_jet/tracks_jet_lines.png")
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/background_jet/tracks_jet_lines.png"
+)
 
 # %%

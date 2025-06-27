@@ -24,11 +24,55 @@ importlib.reload(ext_read)
 importlib.reload(composite_plot)
 
 
+def read_variable(
+    variable: str, period: str, ens: int, plev: int = None, freq_label: str = None
+):
+    """
+    Parameters
+    ----------
+    variable : str
+        variable name
+    period : str
+        period name, first10 or last10
+    ens : int
+        ensemble number
+    plev : int
+        pressure level
+    freq : str
+        frequency label, default is None, hat, prime, prime_veryhigh, prime_intermedia
+    """
+    base_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{variable}_daily_global/{variable}_MJJAS_{period}"
+
+    if freq_label is None:
+        freq_label = "/"
+    else:
+        freq_label = f"_{freq_label}/"
+
+    base_path = f"{base_path}{freq_label}"
+
+    file = glob.glob(f"{base_path}{variable}_day_*r{ens}i1p1f1_gn_*.nc")[0]
+
+    try:
+        ds = xr.open_dataset(file)[variable]
+    except KeyError:
+        ds = xr.open_dataset(file)["ua"]  # case for momentum fluxes
+    if plev is not None:
+        ds = ds.sel(plev=plev)
+
+    # convert datetime to pandas datetime
+    try:
+        ds["time"] = ds.indexes["time"].to_datetimeindex()
+    except AttributeError:
+        pass
+
+    return ds
+
+
 # %%
 def composite_single_ens(variable, period, ens, plev, freq_label=None):
     pos_extreme, neg_extreme = ext_read.read_extremes(period, 8, ens, plev=plev)
-    variable_ds = composite.read_variable(variable, period, ens, plev, freq_label)
-    pos_comp, neg_comp = composite.event_composite(
+    variable_ds = read_variable(variable, period, ens, plev, freq_label)
+    pos_comp, neg_comp = composite.range_NAO_composite(
         variable_ds, pos_extreme, neg_extreme
     )
     return pos_comp, neg_comp
@@ -92,12 +136,8 @@ zg_last10_pos, zg_last10_neg = composite_variable("zg", plev, None, "last10")
 uhat_first10_pos, uhat_first10_neg = composite_variable("ua", 70000, "hat", "first10")
 uhat_last10_pos, uhat_last10_neg = composite_variable("ua", 70000, "hat", "last10")
 # %%
-mf_first10_pos, mf_first10_neg = composite_variable(
-    "E_N", plev, "prime", "first10"
-)
-mf_last10_pos, mf_last10_neg = composite_variable(
-    "E_N", plev, "prime", "last10"
-)
+mf_first10_pos, mf_first10_neg = composite_variable("E_N", plev, "prime", "first10")
+mf_last10_pos, mf_last10_neg = composite_variable("E_N", plev, "prime", "last10")
 
 # %%
 # %%
@@ -404,32 +444,38 @@ plt.savefig(
     dpi=300,
 )
 # %%
-mf_mer_first10_pos = mf_first10_pos.sel(lat = slice(30,60) ).mean(dim="lat")
-mf_mer_first10_neg = mf_first10_neg.sel(lat = slice(30,60) ).mean(dim="lat")
+mf_mer_first10_pos = mf_first10_pos.sel(lat=slice(30, 60)).mean(dim="lat")
+mf_mer_first10_neg = mf_first10_neg.sel(lat=slice(30, 60)).mean(dim="lat")
 
-mf_mer_last10_pos = mf_last10_pos.sel(lat = slice(30,60) ).mean(dim="lat")
-mf_mer_last10_neg = mf_last10_neg.sel(lat = slice(30,60) ).mean(dim="lat")
+mf_mer_last10_pos = mf_last10_pos.sel(lat=slice(30, 60)).mean(dim="lat")
+mf_mer_last10_neg = mf_last10_neg.sel(lat=slice(30, 60)).mean(dim="lat")
 
 # %%
 #### lag_lontitude plot of mf #########
 fig, axes = plt.subplots(
     2, 1, figsize=(10, 8), subplot_kw={"projection": ccrs.PlateCarree(-120)}
 )
-levels=np.arange(-20, 21, 5)
+levels = np.arange(-20, 21, 5)
 levels = levels[(levels >= 10) | (levels <= -10)]
 
 mf_mer_first10_pos.plot.contourf(
-    ax=axes[0], levels = levels, add_colorbar=False, extend="both",
-    transform=ccrs.PlateCarree()
+    ax=axes[0],
+    levels=levels,
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
 )
-axes[0].set_title('First 10 years')
+axes[0].set_title("First 10 years")
 
 p = mf_mer_last10_pos.plot.contourf(
-    ax=axes[1], levels=levels, add_colorbar=False, extend="both",
-    transform=ccrs.PlateCarree()
+    ax=axes[1],
+    levels=levels,
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
 )
-axes[1].set_title('Last 10 years')
-# 
+axes[1].set_title("Last 10 years")
+#
 for ax in axes:
     ax.set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
     ax.set_xticklabels([f"{lon}°" for lon in range(-180, 180, 60)])
@@ -440,36 +486,47 @@ for ax in [axes[0], axes[1]]:
     ax.set_yticks(range(-30, 30, 10))
     ax.set_yticklabels(range(-30, 30, 10))
 
-    #reverse y-axis
+    # reverse y-axis
     ax.invert_yaxis()
-    ax.set_aspect('auto')
+    ax.set_aspect("auto")
 # add colorbar at the bottom
-plt.colorbar(p, ax=[axes[0], axes[1]], orientation="horizontal", label=r"$m^2/s^2$", aspect=50)
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/composite_mf_meridional_pos.png", dpi=300)
+plt.colorbar(
+    p, ax=[axes[0], axes[1]], orientation="horizontal", label=r"$m^2/s^2$", aspect=50
+)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/composite_mf_meridional_pos.png",
+    dpi=300,
+)
 # %%
 # negative
-mf_mer_first10_neg = mf_first10_neg.sel(lat = slice(30,60) ).mean(dim="lat")
-mf_mer_last10_neg = mf_last10_neg.sel(lat = slice(30,60) ).mean(dim="lat")
+mf_mer_first10_neg = mf_first10_neg.sel(lat=slice(30, 60)).mean(dim="lat")
+mf_mer_last10_neg = mf_last10_neg.sel(lat=slice(30, 60)).mean(dim="lat")
 
 
 fig, axes = plt.subplots(
     2, 1, figsize=(10, 8), subplot_kw={"projection": ccrs.PlateCarree(-120)}
 )
-levels=np.arange(-20, 21, 5)
+levels = np.arange(-20, 21, 5)
 levels = levels[(levels >= 10) | (levels <= -10)]
 
 mf_mer_first10_neg.plot.contourf(
-    ax=axes[0], levels = levels, add_colorbar=False, extend="both",
-    transform=ccrs.PlateCarree()
+    ax=axes[0],
+    levels=levels,
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
 )
-axes[0].set_title('First 10 years')
+axes[0].set_title("First 10 years")
 
 p = mf_mer_last10_neg.plot.contourf(
-    ax=axes[1], levels=levels, add_colorbar=False, extend="both",
-    transform=ccrs.PlateCarree()
+    ax=axes[1],
+    levels=levels,
+    add_colorbar=False,
+    extend="both",
+    transform=ccrs.PlateCarree(),
 )
 
-axes[1].set_title('Last 10 years')
+axes[1].set_title("Last 10 years")
 
 for ax in axes:
     ax.set_xticks(range(-180, 180, 60), crs=ccrs.PlateCarree())
@@ -482,11 +539,16 @@ for ax in [axes[0], axes[1]]:
     ax.set_yticks(range(-30, 30, 10))
     ax.set_yticklabels(range(-30, 30, 10))
 
-    #reverse y-axis
+    # reverse y-axis
     ax.invert_yaxis()
-    ax.set_aspect('auto')
+    ax.set_aspect("auto")
 
 # add colorbar at the bottom
-plt.colorbar(p, ax=[axes[0], axes[1]], orientation="horizontal", label=r"$m^2/s^2$", aspect=50)
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/composite_mf_meridional_neg.png", dpi=300)
+plt.colorbar(
+    p, ax=[axes[0], axes[1]], orientation="horizontal", label=r"$m^2/s^2$", aspect=50
+)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/wave/composite_mf_meridional_neg.png",
+    dpi=300,
+)
 # %%

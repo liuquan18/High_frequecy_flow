@@ -7,7 +7,7 @@ import cartopy.crs as ccrs
 from src.plotting.util import erase_white_line
 from src.plotting.util import lon2x
 from matplotlib.ticker import ScalarFormatter
-from src.prime.prime_data import vert_integrate
+from src.data_helper.read_variable import vert_integrate
 
 import matplotlib.colors as mcolors
 import cartopy
@@ -21,9 +21,9 @@ import importlib
 
 importlib.reload(util)
 # %%
-from src.prime.prime_data import read_composite_MPI  # noqa: E402
-from src.prime.prime_data import read_MPI_GE_uhat
-from src.EP_flux.EP_flux import (
+from src.data_helper.read_variable import read_composite_MPI  # noqa: E402
+from src.data_helper.read_variable import read_MPI_GE_uhat
+from src.dynamics.EP_flux import (
     NPC_mean,
     PlotEPfluxArrows,
     NAL_mean,

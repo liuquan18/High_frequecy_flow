@@ -47,7 +47,7 @@ def jet_location(NAO, jet):
         jet array
     """
 
-    NAO_range = comp.lead_lag_30days(NAO, base_plev=25000)
+    NAO_range = comp.find_lead_lag_30days(NAO, base_plev=25000)
     jet_composite = comp.date_range_composite(jet, NAO_range)
 
     # Assign 1 at the maximum value along 'lat', 0 elsewhere
@@ -58,7 +58,7 @@ def jet_location(NAO, jet):
 
 
 # %%
-def composite_jet_loc(period, plev=None, smooth = None):
+def composite_jet_loc(period, plev=None, smooth=None):
 
     jets_climat_locs = []
     NAO_pos_jet_locs = []
@@ -77,12 +77,11 @@ def composite_jet_loc(period, plev=None, smooth = None):
         if not NAO_neg.empty:
             jet_loc_neg = jet_location(NAO_neg, jet)
             NAO_neg_jet_locs.append(jet_loc_neg)
-        
 
     NAO_pos_jet_locs = xr.concat(NAO_pos_jet_locs, dim="ens").sum(dim="ens")
     NAO_neg_jet_locs = xr.concat(NAO_neg_jet_locs, dim="ens").sum(dim="ens")
     jets_climat_locs = xr.concat(jets_climat_locs, dim="ens")
-    jets_climat_locs = jets_climat_locs.lat[jets_climat_locs.argmax(dim = "lat")]
+    jets_climat_locs = jets_climat_locs.lat[jets_climat_locs.argmax(dim="lat")]
     jet_climat_mean = jets_climat_locs.mean(dim=("ens", "time"))
     jet_climat_std = jets_climat_locs.std(dim=("ens", "time"))
 
@@ -94,8 +93,12 @@ def composite_jet_loc(period, plev=None, smooth = None):
 
 
 # %%
-first_pos_jet, first_neg_jet, first_jet_mean, first_jet_std = composite_jet_loc("first10", 25000, smooth=3)
-last_pos_jet, last_neg_jet, last_jet_mean, last_jet_std = composite_jet_loc("last10", 25000, smooth=3)
+first_pos_jet, first_neg_jet, first_jet_mean, first_jet_std = composite_jet_loc(
+    "first10", 25000, smooth=3
+)
+last_pos_jet, last_neg_jet, last_jet_mean, last_jet_std = composite_jet_loc(
+    "last10", 25000, smooth=3
+)
 
 
 # %%
@@ -155,12 +158,14 @@ for ax in axes.flat:
     ax.set_xlabel("Days relative to NAO onset day")
     # ax.axvline(0, color="k", linestyle="--")
 
-axes[0,0].set_title("pos-first10")
-axes[0,1].set_title("pos-last10")
-axes[1,0].set_title("neg-first10")
-axes[1,1].set_title("neg-last10")
+axes[0, 0].set_title("pos-first10")
+axes[0, 1].set_title("pos-last10")
+axes[1, 0].set_title("neg-first10")
+axes[1, 1].set_title("neg-last10")
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/background_jet/NA_jet250_loc_lat_day.png")
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/background_jet/NA_jet250_loc_lat_day.png"
+)
 
 # %%

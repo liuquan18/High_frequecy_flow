@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 
 from src.extremes.extreme_read import read_extremes_allens
-from src.jet_stream.jet_speed_and_location import jet_stream_anomaly, jet_event
-from src.jet_stream.jet_stream_plotting import plot_uhat
+from src.dynamics.jet_speed_and_location import jet_stream_anomaly, jet_event
+from src.plotting.jet_stream_plotting import plot_uhat
 
 # %%
 # # jet speed

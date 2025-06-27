@@ -7,7 +7,7 @@ import cartopy.crs as ccrs
 from src.plotting.util import erase_white_line, map_smooth
 from src.plotting.util import lon2x
 from matplotlib.ticker import ScalarFormatter
-from src.prime.prime_data import vert_integrate
+from src.data_helper.read_variable import vert_integrate
 
 
 import matplotlib.colors as mcolors
@@ -25,8 +25,8 @@ import importlib
 
 importlib.reload(util)
 # %%
-from src.prime.prime_data import read_composite_MPI  # noqa: E402
-from src.prime.prime_data import read_MPI_GE_uhat
+from src.data_helper.read_variable import read_composite_MPI  # noqa: E402
+from src.data_helper.read_variable import read_MPI_GE_uhat
 #%%
 def to_plot_data(eke):
     # fake data to plot
