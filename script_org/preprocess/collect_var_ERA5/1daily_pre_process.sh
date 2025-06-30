@@ -2,9 +2,9 @@
 #SBATCH --job-name=pre_process
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
-#SBATCH --nodes=1
-#SBATCH --ntasks=25
-#SBATCH --mem=0
+#SBATCH --nodes=46
+#SBATCH --ntasks=46
+#SBATCH --cpus-per-task=8
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
 #SBATCH --output=pre_process.%j.out
@@ -32,20 +32,41 @@ pre_process(){
     infile=$1
     echo Processing $(basename $infile)
     tmpfile=${tmp_dir}$(basename $infile .grb).nc
-    cdo -f nc -O -P 10 -setgridtype,regular -sellevel,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000 $infile $tmpfile
+    cdo -f nc -O -P 8 -setgridtype,regular -sellevel,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000 $infile $tmpfile
 
 }
 
 merge_year(){
     year=$1
-    echo "Merging year ${year}"
     year_files=$(find ${tmp_dir} -name "*.nc" | grep ${year})
-    cdo -O mergetime ${year_files} ${to_dir}E5pl00_1D_${var}_daily_${year}-05-01_${year}-09-31.nc
+    cdo -O -P 8 mergetime ${year_files} ${to_dir}E5pl00_1D_${var}_daily_${year}-05-01_${year}-09-31.nc
 }
 
 export -f pre_process 
 export -f merge_year
 
-parallel --jobs 25 pre_process ::: ${daily_files[@]}
 
-parallel --jobs 10 merge_year ::: {1979..2024}
+for file in "${daily_files[@]}"; do
+    echo "selecting file: $file"
+    while [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
+        sleep 2
+    done
+    srun --ntasks=1 --nodes=1 --cpus-per-task=$SLURM_CPUS_PER_TASK bash -c "pre_process '$file'" &
+done
+
+wait  # Wait for all background pre_process jobs to finish
+
+for year in {1979..2024}; do
+    echo "Merging year: $year"
+    while [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
+        sleep 2
+    done
+    srun --ntasks=1 --nodes=1 --cpus-per-task=$SLURM_CPUS_PER_TASK bash -c "merge_year '$year'" &
+done
+
+
+
+
+# remove the temporary files
+wait
+rm -rf $tmp_dir
