@@ -10,8 +10,16 @@
 #SBATCH --output=pre_process.%j.out
 module load cdo
 module load parallel
-var=$1           # u       v   q (hus)  ta
-var_num=$2       # 131   132    133     130
+declare -A var_map=( ["ua"]=131 ["va"]=132 ["q"]=133 ["ta"]=130 )
+
+var=$1
+var_num=${var_map[$var]}
+
+if [ -z "$var_num" ]; then
+    echo "Invalid variable. Choose from: ua, va, q, ta."
+    exit 1
+fi
+
 
 daily_dir=/pool/data/ERA5/E5/pl/an/1D/${var_num}/
 tmp_dir=/scratch/m/m300883/ERA5_allplev/${var}_daily/
