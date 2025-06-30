@@ -1,10 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=steady
-#SBATCH --time=01:30:00
+#SBATCH --time=00:30:00
 #SBATCH --partition=compute
-#SBATCH --nodes=1
-#SBATCH --ntasks=5
-#SBATCH --mem=200G
+#SBATCH --nodes=46
+#SBATCH --ntasks=46
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
 #SBATCH --output=steady.%j.out
@@ -12,21 +13,20 @@
 module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
-node=$1
-member=$node
-var=$2
-echo "Ensemble member ${member} of variable ${var}"
+var=$1
+model=${2:-ERA5_allplev}
+
+echo "Processing variable: ${var} for model: ${model}"
 
 
-T_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_hat_daily/r${member}i1p1f1/
-
-T_mmean_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_hat_monthly_ensmean/
-
-
-Ts_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/${var}_steady_daily/r${member}i1p1f1/
+T_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/${var}_hat_daily/
+T_mmean_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/${var}_monthly_mean/
 
 
-tmp_dir=/scratch/m/m300883/${var}_steady/r${member}i1p1f1/
+Ts_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/${var}_steady_daily/
+
+
+tmp_dir=/scratch/m/m300883/ERA5/${var}_steady/
 
 if [ -d "${tmp_dir}" ]; then
     rm -rf "${tmp_dir}"
@@ -45,35 +45,28 @@ sub_zonmean(){
 
 
     # zonal anomaly
-    cdo -O ymonsub ${infile} -enlarge,${mmean_file} -zonmean ${mmean_file} ${outfile}
+    cdo -P 8 -O ymonsub ${infile} -enlarge,${mmean_file} -zonmean ${mmean_file} ${outfile}
 }
 
-steady_eddy(){
-    dec=$1
-    Tfile=$(find ${T_path} -name "*${dec}*.nc")
-    Tfile=$(echo $Tfile | tr -d '\n')
-
-    # monthly mean
-    Tmmean_file=$(find ${T_mmean_path} -name "*${dec}*.nc")
-    
-    Tfile_name=$(basename "${Tfile}")
-    Tsfile="${Ts_path}${Tfile_name//${var}/${var}_steady}"
-
-    echo "Input file: ${Tfile}"
-    echo "Output file: ${Tsfile}"
-    sub_zonmean ${Tfile} ${Tmmean_file} ${Tsfile}
-}
 
 export -f sub_zonmean
-export -f steady_eddy
 
-parallel -j 5 steady_eddy ::: {1850..2090..10}
 
-# check completion
-for dec in {1850..2090..10}; do
-    if [ ! -f ${Ts_path}/*${dec}*.nc ]; then
-        echo "Decade ${dec} is missing"
-        echo "Recalculate decade ${dec}"
-        steady_eddy ${dec}
-    fi
+daily_files=$(find ${T_path} -name "*.nc" -print | tr '\n' ' ')
+mean_file=$(find ${T_mmean_path} -name "*.nc" -print | head -n 1)
+
+
+
+for file in ${daily_files[@]}; do
+    echo "subtracting: $file"
+    while [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
+        sleep 2
+    done
+    srun --ntasks=1 --nodes=1 --cpus-per-task=$SLURM_CPUS_PER_TASK bash -c "sub_zonmean '$file' '$mean_file'" &
 done
+
+wait  # Wait for all background pre_process jobs to finish
+
+
+# remove the temporary files
+rm -rf ${tmp_dir}
