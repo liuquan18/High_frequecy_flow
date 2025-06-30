@@ -26,6 +26,6 @@ mkdir -p $to_dir
 export var_month_dir monthly_files to_dir var
 
 # monthly data pre-process
-cdo -r -f nc -O -P 10 -setgridtype,regular -yearmonmean -selmon,5/9 -selyear,1979/2024 -mergetime [ ${monthly_files[@]} ] ${to_dir}${var}_monthly_05_09.nc
+cdo -r -f nc -O -P 10 -setgridtype,regular -ymonmean -selmon,5/9 -selyear,1979/2024 -mergetime [ ${monthly_files[@]} ] ${to_dir}${var}_monthly_05_09.nc
 
 
