@@ -13,8 +13,15 @@
 # module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
+declare -A var_map=( ["ua"]=131 ["va"]=132 ["q"]=133 ["ta"]=130 )
+
 var=$1
-var_num=$2
+var_num=${var_map[$var]}
+
+if [ -z "$var_num" ]; then
+    echo "Invalid variable. Choose from: ua, va, q, ta."
+    exit 1
+fi
 
 var_month_dir=/pool/data/ERA5/E5/pl/an/1M/${var_num}/
 
