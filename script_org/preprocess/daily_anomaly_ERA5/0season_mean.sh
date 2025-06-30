@@ -10,8 +10,7 @@
 #SBATCH --account=mh0033
 #SBATCH --output=trend.%j.out
 
-# module load cdo/2.5.0-gcc-11.2.0
-module load parallel
+module load cdo/2.5.0-gcc-11.2.0
 
 declare -A var_map=( ["ua"]=131 ["va"]=132 ["q"]=133 ["ta"]=130 )
 
