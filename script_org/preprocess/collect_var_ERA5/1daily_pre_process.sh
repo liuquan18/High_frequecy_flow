@@ -8,17 +8,19 @@
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
 #SBATCH --output=pre_process.%j.out
-module load cdo
+module load cdo/2.5.0-gcc-11.2.0
 module load parallel
-declare -A var_map=( ["ua"]=131 ["va"]=132 ["q"]=133 ["ta"]=130 )
+declare -A var_map=( ["ua"]=131 ["va"]=132 ["hus"]=133 ["ta"]=130 )
 
 var=$1
 var_num=${var_map[$var]}
 
 if [ -z "$var_num" ]; then
-    echo "Invalid variable. Choose from: ua, va, q, ta."
+    echo "Invalid variable. Choose from: ua, va, hus, ta."
     exit 1
 fi
+
+levels=${2:-20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000}
 
 
 daily_dir=/pool/data/ERA5/E5/pl/an/1D/${var_num}/
@@ -40,7 +42,7 @@ pre_process(){
     infile=$1
     echo Processing $(basename $infile)
     tmpfile=${tmp_dir}$(basename $infile .grb).nc
-    cdo -f nc -O -P 8 -setgridtype,regular -sellevel,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000 $infile $tmpfile
+    cdo -f nc -O -P 8 -setgridtype,regular -sellevel,$levels $infile $tmpfile
 
 }
 
