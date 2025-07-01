@@ -25,7 +25,7 @@ fi
 var_month_dir=/pool/data/ERA5/E5/pl/an/1M/${var_num}/
 
 monthly_files=($(find $var_month_dir -name "*.grb" -print))
-to_dir=/work/mh0033/m300883/High_frehusuecy_flow/data/ERA5_allplev/${var}_monthly_mean/
+to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/${var}_monthly_mean/
 
 mkdir -p $to_dir
 
