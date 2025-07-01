@@ -43,13 +43,12 @@ export T_path Tp_path tmp_dir var frequency
 band_filter(){
     infile=$1
     outfile=$2  
-    # basename without .nc
-    fname=$(basename ${infile%.nc})
 
-    # split years
-    cdo -O -splityear ${infile} ${tmp_dir}${fname}_year
+    echo "Input: ${infile}"
+    echo "Output: ${outfile}"
+
     # band filter
-    year_files=$(ls ${tmp_dir}${fname}_year*)
+    year_files=$infile
     if [ "$frequency" == "prime" ]; then
         echo "Filtering 2-12 days"
         # cdo -O -mergetime -apply,bandpass,30.5,182.5 [ ${year_files} ] ${outfile}
@@ -63,8 +62,6 @@ band_filter(){
         echo "Filtering >30 days"  # 1/30 cycle per day, so 1/30*365 = 12.17 per year
         cdo -O -mergetime -apply,lowpass,12 [ ${year_files} ] ${outfile}   
     fi
-    # remove temporary files
-    rm ${tmp_dir}${fname}_year*
 }
 
 
