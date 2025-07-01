@@ -5,6 +5,7 @@ import os
 import sys
 import logging
 import glob
+import pandas as pd
 logging.basicConfig(level=logging.INFO)
 # %%
 import src.dynamics.EP_flux as EP_flux
@@ -24,17 +25,17 @@ except:
     size = 1
 #%%
 # from temperature to potential temperature
-ta_path = '/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/ta_daily/'
+ta_path = '/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/ta_hat_daily/'
 q_path = '/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/hus_hat_daily/'
 to_path = '/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/equiv_theta_hat_daily/'
 
 if rank == 0:
     if not os.path.exists(to_path):
         os.makedirs(to_path)
-    logging.info(f"This node is processing ensemble member {member}")
+    logging.info("This node is processing equivalent potential temperature hat")
 
 # %%
-all_decs = np.arange(1850, 2091, 10)
+all_decs = np.arange(1979, 2024)
 dec_core = np.array_split(all_decs, size)[rank]
 
 # %%
@@ -49,8 +50,15 @@ for i, dec in enumerate (dec_core):
     basename = basename.replace('ta', 'equiv_theta')
     to_file = os.path.join(to_path, basename)
 
-    t = xr.open_dataset(ta_file).ta
-    q = xr.open_dataset(q_file).hus
+    t = xr.open_dataset(ta_file).var130
+    q = xr.open_dataset(q_file).var133
+
+    # change the time to datetime64[ns]
+    # Convert time values like 19790501.979167 to datetime64[ns] with daily frequency
+    t_dates = pd.to_datetime(t['time'].astype(int).astype(str), format='%Y%m%d')
+    t['time'] = t_dates
+    q['time'] = t_dates  # Ensure q has the same time index
+
     # make sure the time dimension is the same
     if t.shape[0] != q.shape[0]:
         logging.warning(f"::: Warning: time dimension of {ta_file} and {q_file} do not match! :::")
