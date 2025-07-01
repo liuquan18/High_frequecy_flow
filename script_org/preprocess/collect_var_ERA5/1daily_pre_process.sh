@@ -42,14 +42,14 @@ pre_process(){
     infile=$1
     echo Processing $(basename $infile)
     tmpfile=${tmp_dir}$(basename $infile .grb).nc
-    cdo -f nc -O -P 8 -setgridtype,regular -sellevel,$levels $infile $tmpfile
+    cdo -r -f nc -O -P 8 -setgridtype,regular -sellevel,$levels $infile $tmpfile
 
 }
 
 merge_year(){
     year=$1
     year_files=$(find ${tmp_dir} -name "*.nc" | grep ${year})
-    cdo -O -P 8 mergetime ${year_files} ${to_dir}E5pl00_1D_${var}_daily_${year}-05-01_${year}-09-31.nc
+    cdo -r -O -P 8 mergetime ${year_files} ${to_dir}E5pl00_1D_${var}_daily_${year}-05-01_${year}-09-31.nc
 }
 
 export -f pre_process 

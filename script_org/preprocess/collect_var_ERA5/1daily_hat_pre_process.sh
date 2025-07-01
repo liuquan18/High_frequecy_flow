@@ -2,7 +2,7 @@
 #SBATCH --job-name=pre_hat
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
-#SBATCH --nodes=46
+#SBATCH --nodes=20
 #SBATCH --ntasks=46
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=0
@@ -47,14 +47,14 @@ daily_files=(${Aprfiles[@]} ${Mayfiles[@]} ${Junfiles[@]} ${Julfiles[@]} ${Augfi
 pre_process(){
     infile=$1
     tmpfile=${tmp_dir}$(basename $infile .grb).nc
-    cdo -f nc -O -P 8 -setgridtype,regular -sellevel,$levels $infile $tmpfile
+    cdo -r -f nc -O -P 8 -setgridtype,regular -sellevel,$levels $infile $tmpfile
 
 }
 
 merge_year(){
     year=$1
     year_files=$(find ${tmp_dir} -name "*.nc" | grep ${year})
-    cdo -O -P 8 -selmonth,5/9 -runmean,30 -mergetime ${year_files} ${to_dir}E5pl00_1D_${var}_daily_${year}-05-01_${year}-09-31.nc
+    cdo -r -O -P 8 -selmonth,5/9 -runmean,30 -mergetime ${year_files} ${to_dir}E5pl00_1D_${var}_daily_${year}-05-01_${year}-09-31.nc
 }
 
 export -f pre_process 
