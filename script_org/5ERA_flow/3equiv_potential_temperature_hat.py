@@ -36,7 +36,7 @@ if rank == 0:
     logging.info("This node is processing equivalent potential temperature hat")
 
 # %%
-all_decs = np.arange(1979, 2024)
+all_decs = np.arange(1979, 2025)
 dec_core = np.array_split(all_decs, size)[rank]
 
 # %%
