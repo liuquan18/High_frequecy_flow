@@ -21,7 +21,7 @@ if [ "$var1" == "vp" ]; then
     # transient eddies
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/vp_daily/
 elif [ "$var1" == "up" ]; then
-    var1_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/ua_prime_daily/
+    var1_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/up_daily/
 elif [ "$var1" == "tp" ]; then
     var1_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/theta_prime_daily/
 elif [ "$var1" == "etp" ]; then
@@ -46,7 +46,7 @@ if [ "$var2" == "vp" ]; then
     # transient eddies
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/va_prime_daily/
 elif [ "$var2" == "up" ]; then
-    var2_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/ua_prime_daily/
+    var2_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/up_daily/
 elif [ "$var2" == "tp" ]; then
     var2_path=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/theta_prime_daily/
 elif [ "$var2" == "etp" ]; then
