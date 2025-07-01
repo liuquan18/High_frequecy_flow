@@ -12,20 +12,20 @@
 
 module load cdo/2.5.0-gcc-11.2.0
 
-declare -A var_map=( ["ua"]=131 ["va"]=132 ["q"]=133 ["ta"]=130 )
+declare -A var_map=( ["ua"]=131 ["va"]=132 ["hus"]=133 ["ta"]=130 )
 
 var=$1
 var_num=${var_map[$var]}
 
 if [ -z "$var_num" ]; then
-    echo "Invalid variable. Choose from: ua, va, q, ta."
+    echo "Invalid variable. Choose from: ua, va, hus, ta."
     exit 1
 fi
 
 var_month_dir=/pool/data/ERA5/E5/pl/an/1M/${var_num}/
 
 monthly_files=($(find $var_month_dir -name "*.grb" -print))
-to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/${var}_monthly_mean/
+to_dir=/work/mh0033/m300883/High_frehusuecy_flow/data/ERA5_allplev/${var}_monthly_mean/
 
 mkdir -p $to_dir
 
