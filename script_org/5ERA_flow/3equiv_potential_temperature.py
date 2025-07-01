@@ -56,9 +56,14 @@ for i, dec in enumerate (dec_core):
 
     # change the time to datetime64[ns]
     # Convert time values like 19790501.979167 to datetime64[ns] with daily frequency
-    t_dates = pd.to_datetime(t['time'].astype(int).astype(str), format='%Y%m%d')
-    t['time'] = t_dates
-    q['time'] = t_dates  # Ensure q has the same time index
+    # Convert time to datetime64[ns] only if not already in datetime type
+    if not np.issubdtype(t['time'].dtype, np.datetime64):
+        t_dates = pd.to_datetime(t['time'].astype(int).astype(str), format='%Y%m%d')
+        t['time'] = t_dates
+        q['time'] = t_dates  # Ensure q has the same time index
+    else:
+        t_dates = t['time']
+        q['time'] = t_dates
 
     # make sure the time dimension is the same
     if t.shape[0] != q.shape[0]:

@@ -2,7 +2,7 @@
 #SBATCH --job-name=python
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
-#SBATCH --nodes=23
+#SBATCH --nodes=46
 #SBATCH --ntasks=46
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
