@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=prime
-#SBATCH --time=01:30:00
+#SBATCH --time=00:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=46
 #SBATCH --ntasks=46
@@ -8,7 +8,7 @@
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=steady.%j.out
+#SBATCH --output=prime.%j.out
 
 module load cdo/2.5.0-gcc-11.2.0
 module load parallel
@@ -21,7 +21,6 @@ echo "Processing variable: ${var} for model: ${model}"
 
 
 T_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/${var}_daily/
-T_mmean_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/${var}_monthly_mean/
 
 
 Tp_path=/work/mh0033/m300883/High_frequecy_flow/data/${model}/${var}_prime_daily/
@@ -34,8 +33,9 @@ if [ -d "${tmp_dir}" ]; then
 fi
 mkdir -p "${Tp_path}" "${tmp_dir}"
 
+frequency="prime"  # prime frequency is 2-12 days
 
-export T_path Tp_path member tmp_dir var
+export T_path Tp_path member tmp_dir var frequency
 
 
 
@@ -62,8 +62,6 @@ band_filter(){
     elif [ "$frequency" == "hat" ]; then
         echo "Filtering >30 days"  # 1/30 cycle per day, so 1/30*365 = 12.17 per year
         cdo -O -mergetime -apply,lowpass,12 [ ${year_files} ] ${outfile}   
-        # echo "30 days running mean"
-        # cdo -O -mergetime -apply,runmean,30 [ ${year_files} ] ${outfile}
     fi
     # remove temporary files
     rm ${tmp_dir}${fname}_year*
