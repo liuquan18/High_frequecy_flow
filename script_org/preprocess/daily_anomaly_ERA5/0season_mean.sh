@@ -3,7 +3,6 @@
 #SBATCH --time=00:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=10
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
@@ -32,6 +31,6 @@ mkdir -p $to_dir
 export var_month_dir monthly_files to_dir var
 
 # monthly data pre-process
-cdo -r -f nc -O -P 10 -setgridtype,regular -ymonmean -selmon,5/9 -selyear,1979/2024 -mergetime [ ${monthly_files[@]} ] ${to_dir}${var}_monthly_05_09.nc
+cdo -r -f nc -O -P 10 -setgridtype,regular -ymonmean -selmon,5/9 -selyear,1979/2024 -mergetime -apply,sellevel,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000 [ ${monthly_files[@]} ] ${to_dir}${var}_monthly_05_09.nc
 
 
