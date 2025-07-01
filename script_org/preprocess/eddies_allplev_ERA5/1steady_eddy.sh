@@ -34,7 +34,7 @@ fi
 mkdir -p "${Ts_path}" "${tmp_dir}"
 
 
-export T_path Ts_path member tmp_dir var
+export T_path Ts_path member tmp_dir var T_mmean_path
 
 
 # function to band filter
@@ -49,21 +49,37 @@ sub_zonmean(){
 }
 
 
+
+steady_eddy(){
+    dec=$1
+    Tfile=$(find ${T_path} -name "*${dec}*.nc")
+    Tfile=$(echo $Tfile | tr -d '\n')
+
+    # monthly mean
+    Tmmean_file=$(find ${T_mmean_path} -name "*.nc")
+    
+    Tfile_name=$(basename "${Tfile}")
+    Tsfile="${Ts_path}${Tfile_name//${var}/${var}_steady}"
+
+    echo "Input file: ${Tfile}"
+    echo "Output file: ${Tsfile}"
+    
+    sub_zonmean ${Tfile} ${Tmmean_file} ${Tsfile}
+}
+
 export -f sub_zonmean
+export -f steady_eddy
 
 
-daily_files=$(find ${T_path} -name "*.nc" -print | tr '\n' ' ')
-mean_file=$(find ${T_mmean_path} -name "*.nc" -print | head -n 1)
-
-
-
-for file in ${daily_files[@]}; do
-    echo "subtracting: $file"
+for dec in {1979..2024}; do
+    echo "Processing decade: ${dec}"
     while [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
         sleep 2
     done
-    srun --ntasks=1 --nodes=1 --cpus-per-task=$SLURM_CPUS_PER_TASK bash -c "sub_zonmean '$file' '$mean_file'" &
+    srun --ntasks=1 --nodes=1 --cpus-per-task=$SLURM_CPUS_PER_TASK bash -c "steady_eddy '${dec}'" &
 done
+
+
 
 wait  # Wait for all background pre_process jobs to finish
 
