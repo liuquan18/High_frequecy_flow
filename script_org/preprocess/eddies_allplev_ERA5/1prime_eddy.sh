@@ -88,3 +88,5 @@ for dec in {1979..2024}; do
     done
     srun --ntasks=1 --nodes=1 --cpus-per-task=$SLURM_CPUS_PER_TASK bash -c "T_prime '$dec'" &
 done
+wait
+rm -rf ${tmp_dir}
