@@ -10,8 +10,7 @@ logging.basicConfig(level=logging.INFO)
 import src.dynamics.EP_flux as EP_flux
 import importlib
 importlib.reload(EP_flux)
-# %%
-member= sys.argv[1]
+
 # %%
 try:
     from mpi4py import MPI
@@ -25,9 +24,9 @@ except:
     size = 1
 #%%
 # from temperature to potential temperature
-ta_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ta_hat_daily/r{member}i1p1f1/'
-q_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/hus_hat_daily/r{member}i1p1f1/'
-to_path = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/equiv_theta_hat_daily/r{member}i1p1f1/'
+ta_path = '/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/ta_daily/'
+q_path = '/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/hus_hat_daily/'
+to_path = '/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/equiv_theta_hat_daily/'
 
 if rank == 0:
     if not os.path.exists(to_path):
