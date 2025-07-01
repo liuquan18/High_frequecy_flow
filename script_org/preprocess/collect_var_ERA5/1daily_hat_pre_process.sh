@@ -2,7 +2,7 @@
 #SBATCH --job-name=pre_hat
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
-#SBATCH --nodes=20
+#SBATCH --nodes=46
 #SBATCH --ntasks=46
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=0
