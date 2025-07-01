@@ -35,7 +35,7 @@ mkdir -p "${Tp_path}" "${tmp_dir}"
 
 frequency="prime"  # prime frequency is 2-12 days
 
-export T_path Tp_path member tmp_dir var frequency
+export T_path Tp_path tmp_dir var frequency
 
 
 
