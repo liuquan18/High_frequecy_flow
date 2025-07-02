@@ -12,8 +12,6 @@
 file=$1 # python file to run
 var=${2:-upvp} # variable name, default is 'upvp'
 name=${3:-${var}}    # name, default is empty
-suffix=${4:-}  # suffix, default is empty
-plev=${5:-None}    # plev, default is empty
 
 
-python -u $file $var $name $suffix $plev
+python -u $file $var $name
