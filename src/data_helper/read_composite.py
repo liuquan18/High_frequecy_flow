@@ -58,7 +58,6 @@ def read_comp_var_ERA5(var, phase, time_window=(-5, 5), **kwargs):
     file_name = basedir + f"{var}{suffix}_{phase}_{name}.nc"
     ds = xr.open_dataset(file_name,
                          chunks = {"event":1, "time":1, "plev":-1, "lon":-1, "lat":-1, "ens":-1},
-                         parallel =True,
     )[name]
     ds = ds.sel(time=slice(*time_window))
     if erase_empty:
