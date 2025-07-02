@@ -64,7 +64,7 @@ pc = xr.open_mfdataset(f"{projected_pc_path}*.nc", combine = 'by_coords').pc
 pc = to_dataframe(pc)
 
 #%%
-extremes = ee.EventExtreme(pc, 'pc', independent_dim='plev')
+extremes = ee.EventExtreme(pc, 'pc', independent_dim='plev', threshold_std = 1.2)
 
 #%%
 # extract extremes
