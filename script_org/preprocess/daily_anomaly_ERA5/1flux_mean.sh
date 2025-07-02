@@ -23,5 +23,5 @@ to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/${var}_monthly_
 
 daily_files=$(ls ${dir}/*.nc)
 
-cdo -r -f nc -O -P 10 -setgridtype,regular -ymonmean -mergetime ${daily_files} ${to_dir}${var}_monthly_05_09.nc
+cdo -r -f nc -O -P 10 -ymonmean -mergetime ${daily_files} ${to_dir}${var}_monthly_05_09.nc
 
