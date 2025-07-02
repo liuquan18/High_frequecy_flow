@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=python
+#SBATCH --job-name=comp_NAO_range
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
@@ -7,7 +7,7 @@
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=python.%j.out
+#SBATCH --output=composite.%j.out
 
 var=${1:-upvp} # variable name, default is 'upvp'
 name=${2:-${var}}    # name, default is empty
