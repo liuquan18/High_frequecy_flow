@@ -73,11 +73,12 @@ def read_NAO_extremes_troposphere(decade, phase = 'pos', dur_threshold = 5):
 
 
 def read_NAO_extreme_ERA5(phase = 'pos', dur_threshold = 5):
-
     exteme_csv = f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5/{phase}_extreme_events/NAO_pc_{phase}_extremes.csv"
-
-    extreme = pd.read_csv(exteme_csv, index_col = 0)
+    extreme = pd.read_csv(exteme_csv, index_col=0)
     extreme = extreme[extreme['extreme_duration'] >= dur_threshold]
+    # Filter for events after 1979 based on 'extreme_start_time'
+    extreme['extreme_start_time'] = pd.to_datetime(extreme['extreme_start_time'])
+    extreme = extreme[extreme['extreme_start_time'].dt.year >= 1979]
     return extreme
 
 def sel_before_NAO(NAO, data, lag = (-20, 10), var = 'eke'):
