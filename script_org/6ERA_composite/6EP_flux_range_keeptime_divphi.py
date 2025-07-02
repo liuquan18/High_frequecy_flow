@@ -68,4 +68,4 @@ div1 = div1.transpose(*original_dims)
 
 logging.info (f"Calculate {eddy} EP flux for {phase} phase")
 save_dir="/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/0EP_flux_distribution/"
-div1.to_netcdf(os.path.join(save_dir, f"{eddy}_div_phi_{phase}_ano{ano}.nc"))
+div1.to_netcdf(os.path.join(save_dir, f"{eddy}_div_phi_{phase}_ano.nc"))

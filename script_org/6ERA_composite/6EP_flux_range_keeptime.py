@@ -54,9 +54,6 @@ def calculate_EP_flux(phase, ano=False, equiv_theta=True, eddy='transient'):
     logging.info (f"Read data for {phase} phase")
     upvp, vptp, stat_stab = read_data_all(phase, equiv_theta=equiv_theta, eddy=eddy, time_window = 'all', method = 'no_stat')
 
-    upvp.load()
-    vptp.load()
-    stat_stab.load()
 
     logging.info (f"Calculate {eddy} EP flux for {phase} phase")
     save_dir="/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/0EP_flux_distribution/"
