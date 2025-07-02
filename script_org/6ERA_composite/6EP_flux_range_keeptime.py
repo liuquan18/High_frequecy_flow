@@ -2,6 +2,7 @@
 import src.dynamics.EP_flux as EP_flux_module
 import importlib
 import sys
+import xarray as xr
 import os
 from src.data_helper.read_composite import read_comp_var_ERA5
 
@@ -39,9 +40,9 @@ def read_data_all(phase, equiv_theta = True, eddy='transient', time_window='all'
         else:
             vptp = read_comp_var_ERA5('vsts', phase, time_window=time_window, method=method, equiv_theta=equiv_theta)
 
-    ta = read_comp_var_ERA5('ta_hat', phase, time_window=time_window, name = 'var130', method=method, equiv_theta=equiv_theta)
-
-    return upvp, vptp, ta
+    stat_stab = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/0EP_flux_distribution/stat_stab_{phase}.nc",
+                                )['stat_stab']
+    return upvp, vptp, stat_stab
 
 
 #%%
@@ -51,13 +52,16 @@ def calculate_EP_flux(phase, ano=False, equiv_theta=True, eddy='transient'):
     """
     # Read data
     logging.info (f"Read data for {phase} phase")
-    upvp, vptp, ta = read_data_all(phase, equiv_theta=equiv_theta, eddy=eddy, time_window = 'all', method = 'no_stat')
+    upvp, vptp, stat_stab = read_data_all(phase, equiv_theta=equiv_theta, eddy=eddy, time_window = 'all', method = 'no_stat')
+
+    upvp.load()
+    vptp.load()
+    stat_stab.load()
 
     logging.info (f"Calculate {eddy} EP flux for {phase} phase")
     save_dir="/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/0EP_flux_distribution/"
 
     # Calculate EP flux
-    stat_stab = eff_stat_stab_xr(ta)
     F_phi, F_p, div_phi, div_p = EP_flux(vptp, upvp, stat_stab)
 
     # Save data
@@ -69,7 +73,10 @@ def calculate_EP_flux(phase, ano=False, equiv_theta=True, eddy='transient'):
     div_phi.to_netcdf(os.path.join(save_dir, f"{eddy}_div_phi_{phase}_ano{ano}.nc"))
     div_p.to_netcdf(os.path.join(save_dir, f"{eddy}_div_p_{phase}_ano{ano}.nc"))
 
-
+    # close
+    upvp.close()
+    vptp.close()
+    stat_stab.close()
 # %%
 # for phase in ['pos', 'neg']:
 #     for eddy in ['transient', 'steady']:
