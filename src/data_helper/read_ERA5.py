@@ -46,7 +46,7 @@ def read_prime_ERA5(var="eke", model="ERA5_allplev", **kwargs):
     data = xr.open_mfdataset(
         files,
         combine="by_coords",
-        chunks={"time": 10, "lat": -1, "lon": -1, "plev": 1},
+        chunks={"time": 30, "lat": -1, "lon": -1, "plev": 1},
         parallel=True,
     )
     data = data[name]
