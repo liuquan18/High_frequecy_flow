@@ -23,12 +23,14 @@ plev = int(sys.argv[4]) if len(sys.argv) > 4 else None
 # read NAO extremes
 
 #%%
+logging.info("reading NAO extremes")
 pos_extreme = read_NAO_extreme_ERA5("pos", 4)# 7 days, the same for the others
 neg_extreme = read_NAO_extreme_ERA5("neg", 4)
 # read variable
+logging.info(f"reading {var} for {name} at plev {plev}")
 var_field = read_ERA5.read_prime_ERA5( var = var, name = name, suffix = suffix, plev =plev)
 
-
+logging.info(f"composite {var}")
 #%%
 # select plev 
 if not pos_extreme.empty:
@@ -44,6 +46,7 @@ else:
 
 
 #%%
+logging.info("saving results")
 # save
 var_pos.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/0composite_distribution/{var}_pos_{name}{suffix}.nc")
 var_neg.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/0composite_distribution/{var}_neg_{name}{suffix}.nc")
