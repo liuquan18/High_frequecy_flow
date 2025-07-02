@@ -71,8 +71,12 @@ def calculate_EP_flux(phase, ano=False, equiv_theta=True, eddy='transient'):
 
 
 # %%
-for phase in ['pos', 'neg']:
-    for eddy in ['transient', 'steady']:
-        calculate_EP_flux(phase, ano=False, equiv_theta=True, eddy=eddy)
-        calculate_EP_flux(phase, ano=True, equiv_theta=True, eddy=eddy)
-# %%
+# for phase in ['pos', 'neg']:
+#     for eddy in ['transient', 'steady']:
+#         calculate_EP_flux(phase, ano=False, equiv_theta=True, eddy=eddy)
+#         calculate_EP_flux(phase, ano=True, equiv_theta=True, eddy=eddy)
+# # %%
+phase= sys.argv[1] if len(sys.argv) > 1 else 'pos'
+eddy = sys.argv[2] if len(sys.argv) > 2 else 'transient'
+logging.info(f"Calculating EP flux for {phase} phase and {eddy} eddy")
+calculate_EP_flux(phase, ano=False, equiv_theta=True, eddy=eddy)
