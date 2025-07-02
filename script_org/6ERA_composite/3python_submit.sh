@@ -9,9 +9,8 @@
 #SBATCH --account=mh0033
 #SBATCH --output=python.%j.out
 
-file=$1 # python file to run
-var=${2:-upvp} # variable name, default is 'upvp'
-name=${3:-${var}}    # name, default is empty
+var=${1:-upvp} # variable name, default is 'upvp'
+name=${2:-${var}}    # name, default is empty
 
 
-python -u $file $var $name
+python -u 4var_NAO_range.py $var $name
