@@ -22,6 +22,7 @@ def process_data(phase, equiv_theta=True):
     ta = ta.load()
     
     stat_stab = eff_stat_stab_xr(ta)
+    stat_stab.name = 'stat_stab'
 
     #save
     stat_stab.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/0EP_flux_distribution/stat_stab_{phase}.nc")
