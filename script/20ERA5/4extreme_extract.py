@@ -79,7 +79,7 @@ positive_extremes.to_csv(
 )
 
 negative_extremes.to_csv(
-    f"{neg_extreme_save_path}/NAO_pc__neg_extremes.csv"
+    f"{neg_extreme_save_path}/NAO_pc_neg_extremes.csv"
 )
 
 
