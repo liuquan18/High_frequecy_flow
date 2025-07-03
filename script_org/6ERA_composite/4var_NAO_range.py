@@ -24,8 +24,8 @@ plev = int(sys.argv[4]) if len(sys.argv) > 4 else None
 
 #%%
 logging.info("reading NAO extremes")
-pos_extreme = read_NAO_extreme_ERA5("pos", 4)# 7 days, the same for the others
-neg_extreme = read_NAO_extreme_ERA5("neg", 4)
+pos_extreme = read_NAO_extreme_ERA5("pos", 5)# 7 days, the same for the others
+neg_extreme = read_NAO_extreme_ERA5("neg", 5)
 # read variable
 logging.info(f"reading {var} for {name} at plev {plev}")
 var_field = read_ERA5.read_prime_ERA5( var = var, name = name, suffix = suffix, plev =plev)
