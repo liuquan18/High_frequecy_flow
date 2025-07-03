@@ -4,7 +4,7 @@
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --mem=450G
+#SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
 #SBATCH --output=EP_df.%j.out
