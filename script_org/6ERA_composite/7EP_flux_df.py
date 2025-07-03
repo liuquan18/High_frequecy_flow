@@ -4,11 +4,15 @@ import numpy as np
 import xarray as xr
 import glob
 import sys
+import logging
+logging.basicConfig(level=logging.INFO)
 # %%
 eddy = sys.argv[1] if len(sys.argv) > 1 else "transient"
 div = sys.argv[2] if len(sys.argv) > 2 else "div_phi"
 phase = sys.argv[3] if len(sys.argv) > 3 else "pos"
 plev = int(sys.argv[4]) if len(sys.argv) > 4 else 25000
+
+logging.info(f"Reading EP flux for eddy: {eddy}, div: {div}, phase: {phase}, plev: {plev}")
 # %%
 # eddy = 'transient'
 # div = 'div_phi'
