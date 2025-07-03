@@ -34,7 +34,6 @@ if eddy == 'transient':
 elif eddy == 'steady':
     upvp = read_comp_var_ERA5('usvs', phase, time_window='all', method='no_stat',)
 
-upvp.load()
 #%%
 
 # constants

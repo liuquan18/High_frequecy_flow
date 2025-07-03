@@ -63,11 +63,11 @@ def read_comp_var_ERA5(var, phase, time_window=(-5, 5), **kwargs):
     if erase_empty:
         ds = erase_white_line(ds)
     if method == "mean":
-        ds = ds.mean(dim=("time", "ens"))
+        ds = ds.mean(dim="time")
         if remove_zonmean:
             ds = ds - ds.mean(dim="lon", keep_attrs=True)
     elif method == "sum":
-        ds = ds.sum(dim=("time", "ens"))
+        ds = ds.sum(dim="time")
     elif method == "no_stat":
         pass
     return ds

@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=EP_time
-#SBATCH --time=01:00:00
+#SBATCH --time=06:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks=1

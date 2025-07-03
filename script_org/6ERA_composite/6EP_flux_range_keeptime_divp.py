@@ -35,8 +35,7 @@ elif eddy == 'steady':
 dthdp = xr.open_dataset(f"/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/0EP_flux_distribution/stat_stab_{phase}.nc",
                             )['stat_stab']
 
-vptp.load()
-dthdp.load()
+
 #%%
 logging.info (f"Calculate {eddy} EP flux for {phase} phase")
 save_dir="/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/0EP_flux_distribution/"

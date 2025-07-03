@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=fluxmean
-#SBATCH --time=00:30:00
+#SBATCH --time=03:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -19,6 +19,8 @@ var=$1
 dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/${var}_daily/
 
 to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5_allplev/${var}_monthly_mean/
+
+mkdir -p ${to_dir}
 
 
 daily_files=$(ls ${dir}/*.nc)
