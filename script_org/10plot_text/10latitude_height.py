@@ -246,7 +246,7 @@ sum_steady_levels = np.arange(-3, 3.1, 0.5)
 
 phi_sum_levels = np.arange(-.5,.6, 0.1)
 phi_trans_levels = np.arange(-.5,.6, 0.1)
-phi_steady_levels = np.arange(-0.5,0.5, 0.1)
+phi_steady_levels = np.arange(-0.2,0.2, 0.05)
 
 p_sum_levels = np.arange(-3, 3.1, 0.5)
 p_trans_levels = np.arange(-1.5, 1.6, 0.3)
@@ -434,5 +434,195 @@ contour_levels = [l for l in p_steady_levels if l != 0]
     xlim=(0, 90),
     ylim=(100000, 10000)
 )
+
+
+for ax in axes[:, 1:].flat:
+    ax.set_yticklabels([])
+    ax.set_ylabel("")
+
+
+# %%
+fig, axes = plt.subplots(
+    3, 3, figsize=(12, 12), sharex=True, sharey=True,
+)
+
+# first row sum of momentum fluxes and heat fluxes (negative phase)
+cf = (div_phi_neg_first_anomaly + div_p_neg_first_anomaly).plot.contourf(
+    ax=axes[0, 0],
+    levels=sum_sum_levels,
+    cmap="RdBu_r",
+    add_colorbar=True,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+# overlay last as contour, skip 0
+contour_levels = [l for l in sum_sum_levels if l != 0]
+(div_phi_neg_last_anomaly + div_p_neg_last_anomaly).plot.contour(
+    ax=axes[0, 0],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,    
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+(Tdiv_phi_neg_first_anomaly + Tdiv_p_neg_first_anomaly).plot.contourf(
+    ax=axes[0, 1],
+    levels=sum_trans_levels,
+    cmap="RdBu_r",
+    add_colorbar=True,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+contour_levels = [l for l in sum_trans_levels if l != 0]
+(Tdiv_phi_neg_last_anomaly + Tdiv_p_neg_last_anomaly).plot.contour(
+    ax=axes[0, 1],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,    
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+(Sdivphi_neg_first_anomaly + Sdiv_p_neg_first_anomaly).plot.contourf(
+    ax=axes[0, 2],
+    levels=sum_steady_levels,
+    cmap="RdBu_r",
+    add_colorbar=True,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+contour_levels = [l for l in sum_steady_levels if l != 0]
+(Sdivphi_neg_last_anomaly + Sdiv_p_neg_last_anomaly).plot.contour(
+    ax=axes[0, 2],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,    
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+# second row momentum fluxes Phi (negative phase)
+(div_phi_neg_first_anomaly).plot.contourf(
+    ax=axes[1, 0],
+    levels=phi_sum_levels,
+    cmap="RdBu_r",
+    add_colorbar=True,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+contour_levels = [l for l in phi_sum_levels if l != 0]
+(div_phi_neg_last_anomaly).plot.contour(
+    ax=axes[1, 0],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,    
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+(Tdiv_phi_neg_first_anomaly).plot.contourf(
+    ax=axes[1, 1],
+    levels=phi_trans_levels,
+    cmap="RdBu_r",
+    add_colorbar=True,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+contour_levels = [l for l in phi_trans_levels if l != 0]
+(Tdiv_phi_neg_last_anomaly).plot.contour(
+    ax=axes[1, 1],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,    
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+(Sdivphi_neg_first_anomaly).plot.contourf(
+    ax=axes[1, 2],
+    levels=phi_steady_levels,
+    cmap="RdBu_r",
+    add_colorbar=True,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+contour_levels = [l for l in phi_steady_levels if l != 0]
+(Sdivphi_neg_last_anomaly).plot.contour(
+    ax=axes[1, 2],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,    
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+# third row heat fluxes P (negative phase)
+(div_p_neg_first_anomaly).plot.contourf(
+    ax=axes[2, 0],
+    levels=p_sum_levels,
+    cmap="RdBu_r",
+    add_colorbar=True,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+contour_levels = [l for l in p_sum_levels if l != 0]
+(div_p_neg_last_anomaly).plot.contour(
+    ax=axes[2, 0],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,    
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+(Tdiv_p_neg_first_anomaly).plot.contourf(
+    ax=axes[2, 1],
+    levels=p_trans_levels,
+    cmap="RdBu_r",
+    add_colorbar=True,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+contour_levels = [l for l in p_trans_levels if l != 0]
+(Tdiv_p_neg_last_anomaly).plot.contour(
+    ax=axes[2, 1],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,    
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+(Sdiv_p_neg_first_anomaly).plot.contourf(
+    ax=axes[2, 2],
+    levels=p_steady_levels,
+    cmap="RdBu_r",
+    add_colorbar=True,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+contour_levels = [l for l in p_steady_levels if l != 0]
+(Sdiv_p_neg_last_anomaly).plot.contour(
+    ax=axes[2, 2],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,    
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+for ax in axes[:, 1:].flat:
+    ax.set_yticklabels([])
+    ax.set_ylabel("")
 
 # %%
