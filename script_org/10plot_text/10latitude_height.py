@@ -256,11 +256,10 @@ p_steady_levels = np.arange(-3, 3.1, 0.5)
 # for positive, plot "last" data as contour lines (no 0 line), using the same levels
 
 fig, axes = plt.subplots(
-    3, 3, figsize=(12, 12), sharex=True, sharey=True,
+    3, 3, figsize=(12, 12), sharex=False, sharey=False,
 )
 
 # first row sum of momentum fluxes and heat fluxes
-# sum of transient and steady EP fluxes
 cf = (div_phi_pos_first_anomaly + div_p_pos_first_anomaly).plot.contourf(
     ax=axes[0, 0],
     levels=sum_sum_levels,
@@ -269,7 +268,6 @@ cf = (div_phi_pos_first_anomaly + div_p_pos_first_anomaly).plot.contourf(
     xlim=(0, 90),
     ylim=(100000, 10000)
 )
-# overlay last as contour, skip 0
 contour_levels = [l for l in sum_sum_levels if l != 0]
 (div_phi_pos_last_anomaly + div_p_pos_last_anomaly).plot.contour(
     ax=axes[0, 0],
@@ -320,7 +318,7 @@ contour_levels = [l for l in sum_steady_levels if l != 0]
 )
 
 # second row momentum fluxes Phi
-(div_phi_pos_first_anomaly).plot.contourf(
+cf_phi_sum = (div_phi_pos_first_anomaly).plot.contourf(
     ax=axes[1, 0],
     levels=phi_sum_levels,
     cmap="RdBu_r",
@@ -339,7 +337,7 @@ contour_levels = [l for l in phi_sum_levels if l != 0]
     ylim=(100000, 10000)
 )
 
-(Tdiv_phi_pos_first_anomaly).plot.contourf(
+cf_phi_trans = (Tdiv_phi_pos_first_anomaly).plot.contourf(
     ax=axes[1, 1],
     levels=phi_trans_levels,
     cmap="RdBu_r",
@@ -358,7 +356,7 @@ contour_levels = [l for l in phi_trans_levels if l != 0]
     ylim=(100000, 10000)
 )
 
-(Sdivphi_pos_first_anomaly).plot.contourf(
+cf_phi_steady = (Sdivphi_pos_first_anomaly).plot.contourf(
     ax=axes[1, 2],
     levels=phi_steady_levels,
     cmap="RdBu_r",
@@ -378,7 +376,7 @@ contour_levels = [l for l in phi_steady_levels if l != 0]
 )
 
 # third row heat fluxes P
-(div_p_pos_first_anomaly).plot.contourf(
+cf_p_sum = (div_p_pos_first_anomaly).plot.contourf(
     ax=axes[2, 0],
     levels=p_sum_levels,
     cmap="RdBu_r",
@@ -397,7 +395,7 @@ contour_levels = [l for l in p_sum_levels if l != 0]
     ylim=(100000, 10000)
 )
 
-(Tdiv_p_pos_first_anomaly).plot.contourf(
+cf_p_trans = (Tdiv_p_pos_first_anomaly).plot.contourf(
     ax=axes[2, 1],
     levels=p_trans_levels,
     cmap="RdBu_r",
@@ -416,7 +414,7 @@ contour_levels = [l for l in p_trans_levels if l != 0]
     ylim=(100000, 10000)
 )
 
-(Sdiv_p_pos_first_anomaly).plot.contourf(
+cf_p_steady = (Sdiv_p_pos_first_anomaly).plot.contourf(
     ax=axes[2, 2],
     levels=p_steady_levels,
     cmap="RdBu_r",
@@ -435,15 +433,33 @@ contour_levels = [l for l in p_steady_levels if l != 0]
     ylim=(100000, 10000)
 )
 
+# Set colorbar titles for first, second and third rows
+cf.colorbar.set_label('sum')
+cf_phi_trans.colorbar.set_label('sum')
+cf_phi_steady.colorbar.set_label('sum')
+
+for cf in [cf_phi_sum, cf_phi_trans, cf_phi_steady]:
+    cf.colorbar.set_label(r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day $^{-1}$]")
+
+for cf in [cf_p_sum, cf_p_trans, cf_p_steady]:
+    cf.colorbar.set_label(r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]")
 
 for ax in axes[:, 1:].flat:
     ax.set_yticklabels([])
     ax.set_ylabel("")
 
+# for the first column, set y-label from Pa to hPa
+for ax in axes[:, 0]:
+    ax.set_ylabel("Pressure [hPa]")
+    ax.set_yticks([100000, 90000, 80000, 70000, 60000, 50000, 40000, 30000, 20000, 10000])
+    ax.set_yticklabels([str(int(tick / 100)) for tick in ax.get_yticks()])  # Convert Pa to hPa
+
+
+plt.tight_layout()
 
 # %%
 fig, axes = plt.subplots(
-    3, 3, figsize=(12, 12), sharex=True, sharey=True,
+    3, 3, figsize=(12, 12), sharex=False, sharey=False,
 )
 
 # first row sum of momentum fluxes and heat fluxes (negative phase)
@@ -467,7 +483,7 @@ contour_levels = [l for l in sum_sum_levels if l != 0]
     ylim=(100000, 10000)
 )
 
-(Tdiv_phi_neg_first_anomaly + Tdiv_p_neg_first_anomaly).plot.contourf(
+cf_sum_trans = (Tdiv_phi_neg_first_anomaly + Tdiv_p_neg_first_anomaly).plot.contourf(
     ax=axes[0, 1],
     levels=sum_trans_levels,
     cmap="RdBu_r",
@@ -486,7 +502,7 @@ contour_levels = [l for l in sum_trans_levels if l != 0]
     ylim=(100000, 10000)
 )
 
-(Sdivphi_neg_first_anomaly + Sdiv_p_neg_first_anomaly).plot.contourf(
+cf_sum_steady = (Sdivphi_neg_first_anomaly + Sdiv_p_neg_first_anomaly).plot.contourf(
     ax=axes[0, 2],
     levels=sum_steady_levels,
     cmap="RdBu_r",
@@ -506,7 +522,7 @@ contour_levels = [l for l in sum_steady_levels if l != 0]
 )
 
 # second row momentum fluxes Phi (negative phase)
-(div_phi_neg_first_anomaly).plot.contourf(
+cf_phi_sum = (div_phi_neg_first_anomaly).plot.contourf(
     ax=axes[1, 0],
     levels=phi_sum_levels,
     cmap="RdBu_r",
@@ -525,7 +541,7 @@ contour_levels = [l for l in phi_sum_levels if l != 0]
     ylim=(100000, 10000)
 )
 
-(Tdiv_phi_neg_first_anomaly).plot.contourf(
+cf_phi_trans = (Tdiv_phi_neg_first_anomaly).plot.contourf(
     ax=axes[1, 1],
     levels=phi_trans_levels,
     cmap="RdBu_r",
@@ -544,7 +560,7 @@ contour_levels = [l for l in phi_trans_levels if l != 0]
     ylim=(100000, 10000)
 )
 
-(Sdivphi_neg_first_anomaly).plot.contourf(
+cf_phi_steady = (Sdivphi_neg_first_anomaly).plot.contourf(
     ax=axes[1, 2],
     levels=phi_steady_levels,
     cmap="RdBu_r",
@@ -564,7 +580,7 @@ contour_levels = [l for l in phi_steady_levels if l != 0]
 )
 
 # third row heat fluxes P (negative phase)
-(div_p_neg_first_anomaly).plot.contourf(
+cf_p_sum = (div_p_neg_first_anomaly).plot.contourf(
     ax=axes[2, 0],
     levels=p_sum_levels,
     cmap="RdBu_r",
@@ -583,7 +599,7 @@ contour_levels = [l for l in p_sum_levels if l != 0]
     ylim=(100000, 10000)
 )
 
-(Tdiv_p_neg_first_anomaly).plot.contourf(
+cf_p_trans = (Tdiv_p_neg_first_anomaly).plot.contourf(
     ax=axes[2, 1],
     levels=p_trans_levels,
     cmap="RdBu_r",
@@ -602,7 +618,7 @@ contour_levels = [l for l in p_trans_levels if l != 0]
     ylim=(100000, 10000)
 )
 
-(Sdiv_p_neg_first_anomaly).plot.contourf(
+cf_p_steady = (Sdiv_p_neg_first_anomaly).plot.contourf(
     ax=axes[2, 2],
     levels=p_steady_levels,
     cmap="RdBu_r",
@@ -621,8 +637,28 @@ contour_levels = [l for l in p_steady_levels if l != 0]
     ylim=(100000, 10000)
 )
 
+# Set colorbar titles for first, second and third rows
+cf.colorbar.set_label('sum')
+cf_sum_trans.colorbar.set_label('sum')
+cf_sum_steady.colorbar.set_label('sum')
+
+for cf in [cf_phi_sum, cf_phi_trans, cf_phi_steady]:
+    cf.colorbar.set_label(r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day $^{-1}$]")
+
+for cf in [cf_p_sum, cf_p_trans, cf_p_steady]:
+    cf.colorbar.set_label(r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]")
+
+
 for ax in axes[:, 1:].flat:
     ax.set_yticklabels([])
     ax.set_ylabel("")
+
+# for the first column, set y-label for eddy momentum flux (Pa to hPa)
+for ax in axes[:, 0]:
+    ax.set_ylabel("Pressure [hPa]")
+    ax.set_yticks([100000, 90000, 80000, 70000, 60000, 50000, 40000, 30000, 20000, 10000])
+    ax.set_yticklabels([str(int(tick / 100)) for tick in ax.get_yticks()])  # Convert Pa to hPa
+
+plt.tight_layout()
 
 # %%
