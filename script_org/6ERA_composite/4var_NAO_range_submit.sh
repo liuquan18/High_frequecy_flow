@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=comp_NAO_range
-#SBATCH --time=01:00:00
+#SBATCH --time=06:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --mem=200G
+#SBATCH --mem=400G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
 #SBATCH --output=composite.%j.out
