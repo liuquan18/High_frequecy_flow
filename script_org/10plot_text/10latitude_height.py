@@ -240,13 +240,13 @@ div_p_neg_first_anomaly = Tdiv_p_neg_first_anomaly + Sdiv_p_neg_first_anomaly
 div_p_pos_last_anomaly = Tdiv_p_pos_last_anomaly + Sdiv_p_pos_last_anomaly
 div_p_neg_last_anomaly = Tdiv_p_neg_last_anomaly + Sdiv_p_neg_last_anomaly
 # %%
-sum_sum_levels = np.arange(-3, 3.1, 0.5)
+sum_sum_levels = np.arange(-5, 5.1, 0.5)
 sum_trans_levels = np.arange(-1.5, 1.6, 0.3)
 sum_steady_levels = np.arange(-3, 3.1, 0.5)
 
-phi_sum_levels = np.arange(-.5,.6, 0.1)
-phi_trans_levels = np.arange(-.5,.6, 0.1)
-phi_steady_levels = np.arange(-0.2,0.2, 0.05)
+phi_sum_levels = np.arange(-0.3, 0.31, 0.1)
+phi_trans_levels = np.arange(-0.3, 0.31, 0.1)
+phi_steady_levels = np.arange(-0.15, 0.15, 0.03)
 
 p_sum_levels = np.arange(-3, 3.1, 0.5)
 p_trans_levels = np.arange(-1.5, 1.6, 0.3)
@@ -265,8 +265,10 @@ cf = (div_phi_pos_first_anomaly + div_p_pos_first_anomaly).plot.contourf(
     levels=sum_sum_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': 'sum'}
 )
 contour_levels = [l for l in sum_sum_levels if l != 0]
 (div_phi_pos_last_anomaly + div_p_pos_last_anomaly).plot.contour(
@@ -276,7 +278,7 @@ contour_levels = [l for l in sum_sum_levels if l != 0]
     linewidths=1,
     add_colorbar=False,    
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
 )
 
 (Tdiv_phi_pos_first_anomaly + Tdiv_p_pos_first_anomaly).plot.contourf(
@@ -284,8 +286,10 @@ contour_levels = [l for l in sum_sum_levels if l != 0]
     levels=sum_trans_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$\frac{\partial}{\partial y} (\overline{u'v'}) + \frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in sum_trans_levels if l != 0]
 (Tdiv_phi_pos_last_anomaly + Tdiv_p_pos_last_anomaly).plot.contour(
@@ -295,7 +299,8 @@ contour_levels = [l for l in sum_trans_levels if l != 0]
     linewidths=1,
     add_colorbar=False,    
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+
 )
 
 (Sdivphi_pos_first_anomaly + Sdiv_p_pos_first_anomaly).plot.contourf(
@@ -303,8 +308,10 @@ contour_levels = [l for l in sum_trans_levels if l != 0]
     levels=sum_steady_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$\frac{\partial}{\partial y} (\overline{u^{*}v^{*}}) + \frac{\partial}{\partial p} \left( f_0 \frac{\overline{v^{*}\theta^{*}}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in sum_steady_levels if l != 0]
 (Sdivphi_pos_last_anomaly + Sdiv_p_pos_last_anomaly).plot.contour(
@@ -323,8 +330,10 @@ cf_phi_sum = (div_phi_pos_first_anomaly).plot.contourf(
     levels=phi_sum_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$-\frac{\partial}{\partial y} (\overline{u'v'})-\frac{\partial}{\partial y} (\overline{u^{*}v^{*}})$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in phi_sum_levels if l != 0]
 (div_phi_pos_last_anomaly).plot.contour(
@@ -342,8 +351,10 @@ cf_phi_trans = (Tdiv_phi_pos_first_anomaly).plot.contourf(
     levels=phi_trans_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in phi_trans_levels if l != 0]
 (Tdiv_phi_pos_last_anomaly).plot.contour(
@@ -361,8 +372,10 @@ cf_phi_steady = (Sdivphi_pos_first_anomaly).plot.contourf(
     levels=phi_steady_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$-\frac{\partial}{\partial y} (\overline{u^{*}v^{*}})$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in phi_steady_levels if l != 0]
 (Sdivphi_pos_last_anomaly).plot.contour(
@@ -381,8 +394,10 @@ cf_p_sum = (div_p_pos_first_anomaly).plot.contourf(
     levels=p_sum_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right) + \frac{\partial}{\partial p} \left( f_0 \frac{\overline{v^{*}\theta^{*}}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in p_sum_levels if l != 0]
 (div_p_pos_last_anomaly).plot.contour(
@@ -400,8 +415,10 @@ cf_p_trans = (Tdiv_p_pos_first_anomaly).plot.contourf(
     levels=p_trans_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in p_trans_levels if l != 0]
 (Tdiv_p_pos_last_anomaly).plot.contour(
@@ -419,8 +436,10 @@ cf_p_steady = (Sdiv_p_pos_first_anomaly).plot.contourf(
     levels=p_steady_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v^{*}\theta^{*}}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in p_steady_levels if l != 0]
 (Sdiv_p_pos_last_anomaly).plot.contour(
@@ -432,17 +451,6 @@ contour_levels = [l for l in p_steady_levels if l != 0]
     xlim=(0, 90),
     ylim=(100000, 10000)
 )
-
-# Set colorbar titles for first, second and third rows
-cf.colorbar.set_label('sum')
-cf_phi_trans.colorbar.set_label('sum')
-cf_phi_steady.colorbar.set_label('sum')
-
-for cf in [cf_phi_sum, cf_phi_trans, cf_phi_steady]:
-    cf.colorbar.set_label(r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day $^{-1}$]")
-
-for cf in [cf_p_sum, cf_p_trans, cf_p_steady]:
-    cf.colorbar.set_label(r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]")
 
 for ax in axes[:, 1:].flat:
     ax.set_yticklabels([])
@@ -457,6 +465,14 @@ for ax in axes[:, 0]:
 
 plt.tight_layout()
 
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0EP_flux/div_EP_flux_pos_phase.pdf",
+    bbox_inches='tight',
+    dpi=300,
+    transparent=True,
+)
+
+
 # %%
 fig, axes = plt.subplots(
     3, 3, figsize=(12, 12), sharex=False, sharey=False,
@@ -468,8 +484,10 @@ cf = (div_phi_neg_first_anomaly + div_p_neg_first_anomaly).plot.contourf(
     levels=sum_sum_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': 'sum'}
 )
 # overlay last as contour, skip 0
 contour_levels = [l for l in sum_sum_levels if l != 0]
@@ -488,8 +506,10 @@ cf_sum_trans = (Tdiv_phi_neg_first_anomaly + Tdiv_p_neg_first_anomaly).plot.cont
     levels=sum_trans_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$\frac{\partial}{\partial y} (\overline{u'v'}) + \frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in sum_trans_levels if l != 0]
 (Tdiv_phi_neg_last_anomaly + Tdiv_p_neg_last_anomaly).plot.contour(
@@ -507,8 +527,10 @@ cf_sum_steady = (Sdivphi_neg_first_anomaly + Sdiv_p_neg_first_anomaly).plot.cont
     levels=sum_steady_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$\frac{\partial}{\partial y} (\overline{u^{*}v^{*}}) + \frac{\partial}{\partial p} \left( f_0 \frac{\overline{v^{*}\theta^{*}}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in sum_steady_levels if l != 0]
 (Sdivphi_neg_last_anomaly + Sdiv_p_neg_last_anomaly).plot.contour(
@@ -527,8 +549,10 @@ cf_phi_sum = (div_phi_neg_first_anomaly).plot.contourf(
     levels=phi_sum_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$-\frac{\partial}{\partial y} (\overline{u'v'})-\frac{\partial}{\partial y} (\overline{u^{*}v^{*}})$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in phi_sum_levels if l != 0]
 (div_phi_neg_last_anomaly).plot.contour(
@@ -546,8 +570,10 @@ cf_phi_trans = (Tdiv_phi_neg_first_anomaly).plot.contourf(
     levels=phi_trans_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in phi_trans_levels if l != 0]
 (Tdiv_phi_neg_last_anomaly).plot.contour(
@@ -565,8 +591,10 @@ cf_phi_steady = (Sdivphi_neg_first_anomaly).plot.contourf(
     levels=phi_steady_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$-\frac{\partial}{\partial y} (\overline{u^{*}v^{*}})$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in phi_steady_levels if l != 0]
 (Sdivphi_neg_last_anomaly).plot.contour(
@@ -585,8 +613,10 @@ cf_p_sum = (div_p_neg_first_anomaly).plot.contourf(
     levels=p_sum_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right) + \frac{\partial}{\partial p} \left( f_0 \frac{\overline{v^{*}\theta^{*}}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in p_sum_levels if l != 0]
 (div_p_neg_last_anomaly).plot.contour(
@@ -604,8 +634,10 @@ cf_p_trans = (Tdiv_p_neg_first_anomaly).plot.contourf(
     levels=p_trans_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in p_trans_levels if l != 0]
 (Tdiv_p_neg_last_anomaly).plot.contour(
@@ -623,8 +655,10 @@ cf_p_steady = (Sdiv_p_neg_first_anomaly).plot.contourf(
     levels=p_steady_levels,
     cmap="RdBu_r",
     add_colorbar=True,
+    extend='both',
     xlim=(0, 90),
-    ylim=(100000, 10000)
+    ylim=(100000, 10000),
+    cbar_kwargs = {'label': r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v^{*}\theta^{*}}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]"}
 )
 contour_levels = [l for l in p_steady_levels if l != 0]
 (Sdiv_p_neg_last_anomaly).plot.contour(
@@ -636,18 +670,6 @@ contour_levels = [l for l in p_steady_levels if l != 0]
     xlim=(0, 90),
     ylim=(100000, 10000)
 )
-
-# Set colorbar titles for first, second and third rows
-cf.colorbar.set_label('sum')
-cf_sum_trans.colorbar.set_label('sum')
-cf_sum_steady.colorbar.set_label('sum')
-
-for cf in [cf_phi_sum, cf_phi_trans, cf_phi_steady]:
-    cf.colorbar.set_label(r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day $^{-1}$]")
-
-for cf in [cf_p_sum, cf_p_trans, cf_p_steady]:
-    cf.colorbar.set_label(r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]")
-
 
 for ax in axes[:, 1:].flat:
     ax.set_yticklabels([])
@@ -661,4 +683,11 @@ for ax in axes[:, 0]:
 
 plt.tight_layout()
 
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0EP_flux/div_EP_flux_neg_phase.pdf",
+    bbox_inches='tight',
+    dpi=300,
+    transparent=True,
+)
 # %%
