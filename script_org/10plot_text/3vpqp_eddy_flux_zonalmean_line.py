@@ -1081,6 +1081,7 @@ for ax in axes[2, :].flat:
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_momentum_together.pdf",
     dpi=300,
+    bbox_inches="tight",
     transparent=True,
     metadata={"Creator": __file__},
 )
