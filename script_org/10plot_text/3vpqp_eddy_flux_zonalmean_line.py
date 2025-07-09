@@ -271,7 +271,7 @@ div_p_neg_last_anomaly = Tdiv_p_neg_last_anomaly + Sdiv_p_neg_last_anomaly
 # fldmean over [300, 360, 40, 80]
 def to_dataframe(ds, var_name, phase, decade):
 
-    ds = ds.sel(lat=slice(40, 70))
+    ds = ds.sel(lat=slice(50, 70))
     # create weights
     weights = np.cos(np.deg2rad(ds.lat))
     weights.name = "weights"
@@ -562,7 +562,7 @@ axes[0, 2].axhline(
 
 # second row: 850 hPa, sum of M2, N and P
 sns.lineplot(
-    data=sum_dfs[sum_dfs["plev"] == 85000],
+    data=sum_dfs[sum_dfs["plev"]==70000],
     x="time",
     y="P",
     style="phase",
@@ -575,7 +575,7 @@ sns.lineplot(
 # climatological data for 850 hPa
 axes[1, 0].axhline(
     y=sum_dfs_clima[
-        (sum_dfs_clima["plev"] == 85000) & (sum_dfs_clima["decade"] == 1850)
+        (sum_dfs_clima["plev"]==70000) & (sum_dfs_clima["decade"] == 1850)
     ]["P"].values[0],
     color=first_color,
     linestyle="dotted",
@@ -583,7 +583,7 @@ axes[1, 0].axhline(
 )
 axes[1, 0].axhline(
     y=sum_dfs_clima[
-        (sum_dfs_clima["plev"] == 85000) & (sum_dfs_clima["decade"] == 2090)
+        (sum_dfs_clima["plev"]==70000) & (sum_dfs_clima["decade"] == 2090)
     ]["P"].values[0],
     color=second_color,
     linestyle="dotted",
@@ -592,7 +592,7 @@ axes[1, 0].axhline(
 
 # second col: transient
 sns.lineplot(
-    data=transient_dfs[transient_dfs["plev"] == 85000],
+    data=transient_dfs[transient_dfs["plev"]==70000],
     x="time",
     y="P",
     style="phase",
@@ -604,7 +604,7 @@ sns.lineplot(
 # add climatological data for transient
 axes[1, 1].axhline(
     y=transient_dfs_clima[
-        (transient_dfs_clima["plev"] == 85000) & (transient_dfs_clima["decade"] == 1850)
+        (transient_dfs_clima["plev"]==70000) & (transient_dfs_clima["decade"] == 1850)
     ]["P"].values[0],
     color=first_color,
     linestyle="dotted",
@@ -612,7 +612,7 @@ axes[1, 1].axhline(
 )
 axes[1, 1].axhline(
     y=transient_dfs_clima[
-        (transient_dfs_clima["plev"] == 85000) & (transient_dfs_clima["decade"] == 2090)
+        (transient_dfs_clima["plev"]==70000) & (transient_dfs_clima["decade"] == 2090)
     ]["P"].values[0],
     color=second_color,
     linestyle="dotted",
@@ -620,7 +620,7 @@ axes[1, 1].axhline(
 )
 # third col: steady
 sns.lineplot(
-    data=steady_dfs[steady_dfs["plev"] == 85000],
+    data=steady_dfs[steady_dfs["plev"]==70000],
     x="time",
     y="P",
     style="phase",
@@ -632,7 +632,7 @@ sns.lineplot(
 # add climatological data for steady
 axes[1, 2].axhline(
     y=steady_dfs_clima[
-        (steady_dfs_clima["plev"] == 85000) & (steady_dfs_clima["decade"] == 1850)
+        (steady_dfs_clima["plev"]==70000) & (steady_dfs_clima["decade"] == 1850)
     ]["P"].values[0],
     color=first_color,
     linestyle="dotted",
@@ -640,7 +640,7 @@ axes[1, 2].axhline(
 )
 axes[1, 2].axhline(
     y=steady_dfs_clima[
-        (steady_dfs_clima["plev"] == 85000) & (steady_dfs_clima["decade"] == 2090)
+        (steady_dfs_clima["plev"]==70000) & (steady_dfs_clima["decade"] == 2090)
     ]["P"].values[0],
     color=second_color,
     linestyle="dotted",
@@ -695,7 +695,7 @@ axes[0, 0].set_ylabel(
     "",
 )
 axes[1, 0].set_ylabel(
-    r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta_e'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]",
+    r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]",
 )
 
 # remove top and right spines
@@ -1100,3 +1100,347 @@ plt.savefig(
 
 
 #%%
+#%%
+# Plot for the p component (thermodynamic eddy flux)
+
+p_sum_levels = np.arange(-4, 4.1, 1)
+p_trans_levels = np.arange(-2, 2.1, 0.5)
+p_steady_levels = np.arange(-2, 2.1, 0.5)
+
+fig, axes = plt.subplots(3, 3, figsize=(12, 12), sharex=False, sharey="row")
+
+# first row: positive phase
+cf_p_sum = (div_p_pos_first_anomaly).plot.contourf(
+    ax=axes[0, 0],
+    levels=p_sum_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend='both',
+    xlim=(0, 90),
+    ylim=(100000, 10000),
+)
+contour_levels = [l for l in p_sum_levels if l != 0]
+(div_p_pos_last_anomaly).plot.contour(
+    ax=axes[0, 0],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+cf_p_trans = (Tdiv_p_pos_first_anomaly).plot.contourf(
+    ax=axes[0, 1],
+    levels=p_trans_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend='both',
+    xlim=(0, 90),
+    ylim=(100000, 10000),
+)
+contour_levels = [l for l in p_trans_levels if l != 0]
+(Tdiv_p_pos_last_anomaly).plot.contour(
+    ax=axes[0, 1],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+cf_p_steady = (Sdiv_p_pos_first_anomaly).plot.contourf(
+    ax=axes[0, 2],
+    levels=p_steady_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend='both',
+    xlim=(0, 90),
+    ylim=(100000, 10000),
+)
+contour_levels = [l for l in p_steady_levels if l != 0]
+(Sdiv_p_pos_last_anomaly).plot.contour(
+    ax=axes[0, 2],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+# second row: negative phase
+cf_p_sum = (div_p_neg_first_anomaly).plot.contourf(
+    ax=axes[1, 0],
+    levels=p_sum_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend='both',
+    xlim=(0, 90),
+    ylim=(100000, 10000),
+)
+contour_levels = [l for l in p_sum_levels if l != 0]
+(div_p_neg_last_anomaly).plot.contour(
+    ax=axes[1, 0],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+cf_p_trans = (Tdiv_p_neg_first_anomaly).plot.contourf(
+    ax=axes[1, 1],
+    levels=p_trans_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend='both',
+    xlim=(0, 90),
+    ylim=(100000, 10000),
+)
+contour_levels = [l for l in p_trans_levels if l != 0]
+(Tdiv_p_neg_last_anomaly).plot.contour(
+    ax=axes[1, 1],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+cf_p_steady = (Sdiv_p_neg_first_anomaly).plot.contourf(
+    ax=axes[1, 2],
+    levels=p_steady_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    extend='both',
+    xlim=(0, 90),
+    ylim=(100000, 10000),
+)
+contour_levels = [l for l in p_steady_levels if l != 0]
+(Sdiv_p_neg_last_anomaly).plot.contour(
+    ax=axes[1, 2],
+    levels=contour_levels,
+    colors='k',
+    linewidths=1,
+    add_colorbar=False,
+    xlim=(0, 90),
+    ylim=(100000, 10000)
+)
+
+# third row: line plots
+
+# Use black for 1850, red for 2090
+custom_palette = {1850: "black", 2090: "red"}
+
+# first ten years
+sum_first_ano = sum_dfs[(sum_dfs["plev"]==70000) & (sum_dfs['decade'] == 1850)]
+sum_first_ano = sum_first_ano.copy()
+sum_first_ano.loc[:, 'P'] = sum_first_ano['P'] - sum_dfs_clima[
+    (sum_dfs_clima["plev"]==70000) & (sum_dfs_clima["decade"] == 1850)
+]["P"].values
+
+# last ten years
+sum_last_ano = sum_dfs[(sum_dfs["plev"]==70000) & (sum_dfs['decade'] == 2090)]
+sum_last_ano = sum_last_ano.copy()
+sum_last_ano.loc[:, 'P'] = sum_last_ano['P'] - sum_dfs_clima[
+    (sum_dfs_clima["plev"]==70000) & (sum_dfs_clima["decade"] == 2090)
+]["P"].values
+
+sns.lineplot(
+    data=sum_first_ano,
+    x="time",
+    y="P",
+    style="phase",
+    color='black',
+    ax=axes[2, 0],
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=sum_last_ano,
+    x="time",
+    y="P",
+    style="phase",
+    color='red',
+    ax=axes[2, 0],
+    errorbar=("ci", 95),
+)
+
+# second col: transient
+transient_first_ano = transient_dfs[(transient_dfs["plev"]==70000) & (transient_dfs['decade'] == 1850)]
+transient_first_ano = transient_first_ano.copy()
+transient_first_ano.loc[:, 'P'] = transient_first_ano['P'] - transient_dfs_clima[
+    (transient_dfs_clima["plev"]==70000) & (transient_dfs_clima["decade"] == 1850)
+]["P"].values
+
+transient_last_ano = transient_dfs[(transient_dfs["plev"]==70000) & (transient_dfs['decade'] == 2090)]
+transient_last_ano = transient_last_ano.copy()
+transient_last_ano.loc[:, 'P'] = transient_last_ano['P'] - transient_dfs_clima[
+    (transient_dfs_clima["plev"]==70000) & (transient_dfs_clima["decade"] == 2090)
+]["P"].values
+
+sns.lineplot(
+    data=transient_first_ano,
+    x="time",
+    y="P",
+    style="phase",
+    color='black',
+    ax=axes[2, 1],
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=transient_last_ano,
+    x="time",
+    y="P",
+    style="phase",
+    color='red',
+    ax=axes[2, 1],
+    errorbar=("ci", 95),
+)
+
+# third col: steady
+steady_first_ano = steady_dfs[(steady_dfs["plev"]==70000) & (steady_dfs['decade'] == 1850)]
+steady_first_ano = steady_first_ano.copy()
+steady_first_ano.loc[:, 'P'] = steady_first_ano['P'] - steady_dfs_clima[
+    (steady_dfs_clima["plev"]==70000) & (steady_dfs_clima["decade"] == 1850)
+]["P"].values
+
+steady_last_ano = steady_dfs[(steady_dfs["plev"]==70000) & (steady_dfs['decade'] == 2090)]
+steady_last_ano = steady_last_ano.copy()
+steady_last_ano.loc[:, 'P'] = steady_last_ano['P'] - steady_dfs_clima[
+    (steady_dfs_clima["plev"]==70000) & (steady_dfs_clima["decade"] == 2090)
+]["P"].values
+
+sns.lineplot(
+    data=steady_first_ano,
+    x="time",
+    y="P",
+    style="phase",
+    color='black',
+    ax=axes[2, 2],
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=steady_last_ano,
+    x="time",
+    y="P",
+    style="phase",
+    color='red',
+    ax=axes[2, 2],
+    errorbar=("ci", 95),
+)
+
+# Add colorbars
+cbar_sum = fig.colorbar(
+    cf_p_sum,
+    ax=axes[:2, 0],
+    orientation="horizontal",
+    fraction=0.02,
+    pad=0.1,
+    aspect=30,
+    shrink=0.8,
+    label=r"$-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]",
+)
+cbar_transient = fig.colorbar(
+    cf_p_trans,
+    ax=axes[:2, 1],
+    orientation="horizontal",
+    fraction=0.02,
+    pad=0.1,
+    aspect=30,
+    shrink=0.8,
+    label=r"$-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]",
+)
+# cbar_transient.set_ticks([-1, 0.0, 1])
+cbar_steady = fig.colorbar(
+    cf_p_steady,
+    ax=axes[:2, 2],
+    orientation="horizontal",
+    fraction=0.02,
+    pad=0.1,
+    aspect=30,
+    shrink=0.8,
+    label=r"$-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]",
+)
+# cbar_steady.set_ticks([-1, 0.0, 1])
+
+# Only show legend on last col, remove from others
+for ax in axes[2, :-1]:
+    ax.get_legend().remove()
+
+# Custom legend handles
+decade_handles = [
+    Line2D([0], [0], color="black", lw=2, label="1850"),
+    Line2D([0], [0], color="red", lw=2, label="2090"),
+]
+phase_handles = [
+    Line2D([0], [0], color="black", lw=2, linestyle="-", label="pos NAO"),
+    Line2D([0], [0], color="black", lw=2, linestyle="--", label="neg NAO"),
+]
+decade_legend = axes[2, 2].legend(
+    handles=decade_handles,
+    title="decade",
+    loc="upper left",
+    bbox_to_anchor=(0., 0.3),
+    frameon=False,
+)
+phase_legend = axes[2, 2].legend(
+    handles=phase_handles,
+    title="phase",
+    loc="upper left",
+    bbox_to_anchor=(0.4, 0.3),
+    frameon=False,
+)
+axes[2, 2].add_artist(decade_legend)
+axes[2, 2].add_artist(phase_legend)
+
+axes[2, 2].set_ylabel("")
+
+for ax in axes[:, 1:].flat:
+    ax.set_ylabel("")
+axes[2, 0].set_ylabel(
+    r"$-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]"
+)
+
+# for the first column, set y-label for eddy thermodynamic flux (Pa to hPa)
+for ax in axes[:2, 0].flat:
+    ax.set_ylabel("Pressure [hPa]")
+    ax.set_yticks([100000, 90000, 80000, 70000, 60000, 50000, 40000, 30000, 20000, 10000])
+    ax.set_yticklabels([str(int(tick / 100)) for tick in ax.get_yticks()])
+for ax in axes[1, :].flat:
+    ax.set_xlabel("lat [°N]")
+for ax in axes[0, :].flat:
+    ax.set_xlabel("")
+for ax in axes[2, :].flat:
+    ax.set_xlabel("Days relative to extreme onset")
+
+# remove top and right spines
+for ax in axes[2, :].flat:
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.axvline(0, color="k", linestyle="-", lw=0.5, zorder=0)
+
+# add a,b,c
+for i, ax in enumerate(axes.flat):
+    ax.text(
+        -0.06,
+        1.02,
+        chr(97 + i),
+        transform=ax.transAxes,
+        fontsize=14,
+        fontweight="bold",
+        va="bottom",
+        ha="right",
+    )
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_together.pdf",
+    dpi=300,
+    bbox_inches="tight",
+    transparent=True,
+    metadata={"Creator": __file__},
+)
+# %%
