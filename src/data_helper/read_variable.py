@@ -118,7 +118,7 @@ def read_prime_decmean(var="eke", NAL=True, plev=85000, **kwargs):
     read high frequency data for all decades
     """
 
-    base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{var}_ano_decmean/"
+    base_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{var}_decmean/"
     files = glob.glob(base_dir + "*.nc")
     if len(files) == 0:
         raise ValueError(f"no file found for {var} in decmean")
@@ -126,7 +126,7 @@ def read_prime_decmean(var="eke", NAL=True, plev=85000, **kwargs):
         files,
         combine="by_coords",
     )
-    data.load()
+    # data.load()
     # yearly mean
     data = data.groupby("time.year").mean(dim="time")
     if NAL:
