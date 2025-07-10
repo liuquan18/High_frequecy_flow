@@ -6,9 +6,12 @@ import matplotlib as mpl
 import seaborn as sns
 import pandas as pd
 from src.data_helper.read_variable import read_prime, read_prime_decmean
+import glob
+import logging
+# Set logging level
+logging.basicConfig(level=logging.INFO)
 # %%
 transient_first = read_prime(1850, var = 'Fdiv_phi_transient_index', name = 'phi_index', suffix = '', model_dir = 'MPI_GE_CMIP6_allplev', plev = None)
-# %%
 transient_last = read_prime(2090, var = 'Fdiv_phi_transient_index', name = 'phi_index', suffix = '', model_dir = 'MPI_GE_CMIP6_allplev', plev = None)
 # %%
 steady_first = read_prime(1850, var = 'Fdiv_phi_steady_index', name = 'phi_index', suffix = '', model_dir = 'MPI_GE_CMIP6_allplev', plev = None)
@@ -26,9 +29,11 @@ std_steady = []
 covariances = []
 
 for decade in range(1850, 2091, 10):
+    logging.info(f"Processing decade: {decade}")
     transient = read_prime(decade, var = 'Fdiv_phi_transient_index', name = 'phi_index', suffix = '', model_dir = 'MPI_GE_CMIP6_allplev', plev = None)
 
     steady = read_prime(decade, var = 'Fdiv_phi_steady_index', name = 'phi_index', suffix = '', model_dir = 'MPI_GE_CMIP6_allplev', plev = None)
+    steady['time'] = transient['time']  # align time coordinates
 
     transient_std = transient.std().compute()
     transient_std['decade'] = decade
@@ -48,14 +53,6 @@ for decade in range(1850, 2091, 10):
 std_transient = xr.concat(std_transient, dim='decade')
 std_steady = xr.concat(std_steady, dim='decade')
 covariances = xr.concat(covariances, dim='decade')
-#%%
-std_steady = []
-for decade in range(1850, 2091, 10):
-    data = read_prime(decade, var = 'Fdiv_phi_steady_index', name = 'phi_index', suffix = '', model_dir = 'MPI_GE_CMIP6_allplev', plev = None)
-    std = data.std().compute()
-    std['decade'] = decade
-    std_steady.append(std)
-std_steady = xr.concat(std_steady, dim='decade')
 
 
 # %%
