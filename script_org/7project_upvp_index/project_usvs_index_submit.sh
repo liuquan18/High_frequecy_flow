@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=upvp_index
+#SBATCH --job-name=usvs_index
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
@@ -7,7 +7,7 @@
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=upvp_index.%j.out
+#SBATCH --output=usvs_index.%j.out
 
 ens=$1
 
