@@ -80,9 +80,50 @@ Tdivphi_neg_first_ano = Tdivphi_neg_first - Tdivphi_clima_first
 
 # %%
 
-pattern = (Tdivphi_pos_first_ano.mean(dim = 'event') - Tdivphi_neg_first_ano.mean(dim = 'event'))/2
+Tpattern = (Tdivphi_pos_first_ano.mean(dim = 'event') - Tdivphi_neg_first_ano.mean(dim = 'event'))/2
 # %%
-pattern = pattern.sel(plev = 25000)
+Tpattern = Tpattern.sel(plev = 25000)
 # %%
-pattern.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fdiv_phi_pattern/Fdiv_phi_pattern_1850.nc")
+Tpattern.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fdiv_phi_pattern/Fdiv_phi_transient_pattern_1850.nc")
+# %%
+    # read steady EP flux for positive and negative phase
+_, _, Sdivphi_pos_first, Sdiv_p_pos_first = read_EP_flux(
+    phase="pos",
+    decade=1850,
+    eddy="steady",
+    ano=False,
+    lon_mean=False,
+    region=None,
+    time_window=(-10, 5)
+)
+_, _, Sdivphi_neg_first, Sdiv_p_neg_first = read_EP_flux(
+    phase="neg",
+    decade=1850,
+    eddy="steady",
+    ano=False,
+    lon_mean=False,
+    region=None,
+    time_window=(-10, 5)
+)
+# %%
+# read climatological EP flux
+_, _, Sdivphi_clima_first, Sdiv_p_clima_first = (
+    read_EP_flux(
+        phase="clima",
+        decade=1850,
+        eddy="steady",
+        ano=False,
+        lon_mean=False,
+        region=None,
+    )
+)
+# %%
+Sdivphi_pos_first_ano = Sdivphi_pos_first - Sdivphi_clima_first
+Sdivphi_neg_first_ano = Sdivphi_neg_first - Sdivphi_clima_first
+# %%
+Spattern = (Sdivphi_pos_first_ano.mean(dim = 'event') - Sdivphi_neg_first_ano.mean(dim = 'event'))/2
+# %%
+Spattern = Spattern.sel(plev = 25000)
+# %%
+Spattern.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fdiv_phi_pattern/Fdiv_phi_steady_pattern_1850.nc")
 # %%
