@@ -29,6 +29,11 @@ def project(pattern, field):
     # Compute the projection index (dot product over lat/lon)
     projection_index = (field * pattern * weights).sum(dim=['lat', 'lon'])
 
+    # Normalize the projection index by the pattern norm
+    pattern_norm = np.sqrt((pattern**2 * weights).sum(dim=['lat', 'lon']))
+    projection_index /= pattern_norm
+
+
     # Save to a new netCDF if needed
     projection_index.name = "phi_index"
 

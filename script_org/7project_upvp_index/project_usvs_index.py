@@ -29,6 +29,10 @@ def project(pattern, field):
     # Compute the projection index (dot product over lat/lon)
     projection_index = (field * pattern * weights).sum(dim=['lat', 'lon'])
 
+    # Normalize the projection index by the pattern norm
+    pattern_norm = np.sqrt((pattern**2 * weights).sum(dim=['lat', 'lon']))
+    projection_index /= pattern_norm
+
     # Save to a new netCDF if needed
     projection_index.name = "phi_index"
 
@@ -36,7 +40,7 @@ def project(pattern, field):
 # %%
 ens = sys.argv[1]
 
-to_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fdiv_phi_transient_index_daily/r{ens}i1p1f1/"
+to_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fdiv_phi_steady_index_daily/r{ens}i1p1f1/"
 if rank == 0:
     if not os.path.exists(to_path):
         os.makedirs(to_path)
@@ -50,12 +54,12 @@ for i, decade in enumerate(single_decades):
     logging.info(f"rank {rank} Processing {i+1}/{len(single_decades)} for decade {decade}")
 
     # read the field
-    field = read_prime_single_ens(decade, ens, 'Fdiv_phi_transient', name='div', suffix='_ano', model_dir='MPI_GE_CMIP6_allplev', plev=25000)
+    field = read_prime_single_ens(decade, ens, 'Fdiv_phi_steady', name='div', suffix='_ano', model_dir='MPI_GE_CMIP6_allplev', plev=25000)
     # read the pattern
-    pattern = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fdiv_phi_pattern/Fdiv_phi_transient_pattern_1850.nc").div # use the same pattern for all decades
+    pattern = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fdiv_phi_pattern/Fdiv_phi_steady_pattern_1850.nc").div # use the same pattern for all decades
 
     # project the pattern onto the field
     index = project(pattern, field)
     # save the index
-    index.to_netcdf(f"{to_path}/Fdiv_phi_transient_index_{decade}.nc")
+    index.to_netcdf(f"{to_path}/Fdiv_phi_steady_index_{decade}.nc")
     logging.info(f"rank {rank} Finished processing decade {decade}")
