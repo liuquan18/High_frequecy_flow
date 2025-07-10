@@ -13,4 +13,4 @@ ens=$1
 
 echo "Ensemble member: $ens"
 
-mpirun -n 5 python -u project_upvp_index.py $ens    
+mpirun -n 5 python -u project_upcp_index.py $ens    
