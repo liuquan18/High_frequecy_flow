@@ -32,7 +32,7 @@ def read_prime(decade, var="eke", **kwargs):
         parallel=True,
     )
     data = data[name]
-    data.load()
+    # data.load()
     if plev is not None:
         data = data.sel(plev=plev)
 
