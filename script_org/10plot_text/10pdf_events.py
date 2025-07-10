@@ -217,10 +217,11 @@ def ano_df(ds, ds_clima, name = 'div', plev = None, lat_slice = slice(40, 70)):
     # select latitude slice if specified
     if lat_slice is not None:
             # create weights
+        anomaly = anomaly.sel(lat=lat_slice)
         weights = np.cos(np.deg2rad(anomaly.lat))
         weights.name = "weights"
         anomaly = anomaly.weighted(weights)
-        anomaly = anomaly.sel(lat=lat_slice).mean(dim='lat')
+        anomaly = anomaly.mean(dim='lat')
     df = anomaly.to_dataframe(name).reset_index()
 
     return df
@@ -262,13 +263,14 @@ div_phi_neg_last_anomaly['div_phi'] += Sdiv_phi_neg_last_anomaly['div_phi']
 
 
 # %%
-# transient
-# sum (transient + steady)
+# Plot PDF for div_phi (sum, transient, steady)
+# Now: 2 rows (first, last decade), 3 columns (sum, transient, steady)
 fig, axes = plt.subplots(
-    3, 2, figsize=(10, 10), sharex=True, sharey=True,
+    2, 3, figsize=(15, 7), sharex=True, sharey=True,
 )
 
-# Top row: sum of transient and steady anomalies
+# First row: first decade
+# Sum (transient + steady)
 sns.histplot(
     data=div_phi_pos_first_anomaly,
     x="div_phi",
@@ -285,10 +287,51 @@ sns.histplot(
     color='C0',
     label='neg NAO'
 )
+axes[0, 0].axvline(div_phi_pos_first_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
+axes[0, 0].axvline(div_phi_neg_first_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
+
+# Transient
+sns.histplot(
+    data=Tdiv_phi_pos_first_anomaly,
+    x="div_phi",
+    ax=axes[0, 1],
+    bins=np.arange(-2, 2.1, 0.1),
+    color='C1'
+)
+sns.histplot(
+    data=Tdiv_phi_neg_first_anomaly,
+    x="div_phi",
+    ax=axes[0, 1],
+    bins=np.arange(-2, 2.1, 0.1),
+    color='C0'
+)
+axes[0, 1].axvline(Tdiv_phi_pos_first_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
+axes[0, 1].axvline(Tdiv_phi_neg_first_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
+
+# Steady
+sns.histplot(
+    data=Sdiv_phi_pos_first_anomaly,
+    x="div_phi",
+    ax=axes[0, 2],
+    bins=np.arange(-2, 2.1, 0.1),
+    color='C1'
+)
+sns.histplot(
+    data=Sdiv_phi_neg_first_anomaly,
+    x="div_phi",
+    ax=axes[0, 2],
+    bins=np.arange(-2, 2.1, 0.1),
+    color='C0'
+)
+axes[0, 2].axvline(Sdiv_phi_pos_first_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
+axes[0, 2].axvline(Sdiv_phi_neg_first_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
+
+# Second row: last decade
+# Sum (transient + steady)
 sns.histplot(
     data=div_phi_pos_last_anomaly,
     x="div_phi",
-    ax=axes[0, 1],
+    ax=axes[1, 0],
     bins=np.arange(-2, 2.1, 0.1),
     color='C1',
     label='pos'
@@ -296,27 +339,15 @@ sns.histplot(
 sns.histplot(
     data=div_phi_neg_last_anomaly,
     x="div_phi",
-    ax=axes[0, 1],
+    ax=axes[1, 0],
     bins=np.arange(-2, 2.1, 0.1),
     color='C0',
     label='neg'
 )
+axes[1, 0].axvline(div_phi_pos_last_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
+axes[1, 0].axvline(div_phi_neg_last_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
 
-# transient (middle row, swapped)
-sns.histplot(
-    data=Tdiv_phi_pos_first_anomaly,
-    x="div_phi",
-    ax=axes[1, 0],
-    bins=np.arange(-2, 2.1, 0.1),
-    color='C1'
-)
-sns.histplot(
-    data=Tdiv_phi_neg_first_anomaly,
-    x="div_phi",
-    ax=axes[1, 0],
-    bins=np.arange(-2, 2.1, 0.1),
-    color='C0'
-)
+# Transient
 sns.histplot(
     data=Tdiv_phi_pos_last_anomaly,
     x="div_phi",
@@ -331,65 +362,37 @@ sns.histplot(
     bins=np.arange(-2, 2.1, 0.1),
     color='C0'
 )
+axes[1, 1].axvline(Tdiv_phi_pos_last_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
+axes[1, 1].axvline(Tdiv_phi_neg_last_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
 
-# steady (bottom row, swapped)
-sns.histplot(
-    data=Sdiv_phi_pos_first_anomaly,
-    x="div_phi",
-    ax=axes[2, 0],
-    bins=np.arange(-2, 2.1, 0.1),
-    color='C1'
-)
-sns.histplot(
-    data=Sdiv_phi_neg_first_anomaly,
-    x="div_phi",
-    ax=axes[2, 0],
-    bins=np.arange(-2, 2.1, 0.1),
-    color='C0'
-)
+# Steady
 sns.histplot(
     data=Sdiv_phi_pos_last_anomaly,
     x="div_phi",
-    ax=axes[2, 1],
+    ax=axes[1, 2],
     bins=np.arange(-2, 2.1, 0.1),
     color='C1'
 )
 sns.histplot(
     data=Sdiv_phi_neg_last_anomaly,
     x="div_phi",
-    ax=axes[2, 1],
+    ax=axes[1, 2],
     bins=np.arange(-2, 2.1, 0.1),
     color='C0'
 )
+axes[1, 2].axvline(Sdiv_phi_pos_last_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
+axes[1, 2].axvline(Sdiv_phi_neg_last_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
 
-# plot the vline at mean
-axes[0, 0].axvline(div_phi_pos_first_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
-axes[0, 0].axvline(div_phi_neg_first_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
-axes[0, 1].axvline(div_phi_pos_last_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
-axes[0, 1].axvline(div_phi_neg_last_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
-
-axes[1, 0].axvline(Tdiv_phi_pos_first_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
-axes[1, 0].axvline(Tdiv_phi_neg_first_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
-axes[1, 1].axvline(Tdiv_phi_pos_last_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
-axes[1, 1].axvline(Tdiv_phi_neg_last_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
-
-axes[2, 0].axvline(Sdiv_phi_pos_first_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
-axes[2, 0].axvline(Sdiv_phi_neg_first_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
-axes[2, 1].axvline(Sdiv_phi_pos_last_anomaly['div_phi'].mean(), color='C1', linestyle='--', linewidth=2)
-axes[2, 1].axvline(Sdiv_phi_neg_last_anomaly['div_phi'].mean(), color='C0', linestyle='--', linewidth=2)
-
-
-
-
-# Optionally, add titles or labels for clarity
+# Titles
 axes[0, 0].set_title('Sum: First Decade')
-axes[0, 1].set_title('Sum: Last Decade')
-axes[1, 0].set_title('Transient: First Decade')
+axes[0, 1].set_title('Transient: First Decade')
+axes[0, 2].set_title('Steady: First Decade')
+axes[1, 0].set_title('Sum: Last Decade')
 axes[1, 1].set_title('Transient: Last Decade')
-axes[2, 0].set_title('Steady: First Decade')
-axes[2, 1].set_title('Steady: Last Decade')
+axes[1, 2].set_title('Steady: Last Decade')
 
 axes[0, 0].legend()
+axes[1, 0].legend()
 
 plt.tight_layout()
 
