@@ -109,8 +109,8 @@ if __name__ == "__main__":
     cal_E_div(decade, phase, eddy=eddy)
 
 # %%
-for phase in ['pos', 'neg']:
-    for decade in ['1850', '2090']:
-        for eddy in ['transient', 'steady']:
-            cal_E_div(decade, phase, eddy=eddy)
+# for phase in ['pos', 'neg']:
+#     for decade in ['1850', '2090']:
+#         for eddy in ['transient', 'steady']:
+#             cal_E_div(decade, phase, eddy=eddy)
 # %%
