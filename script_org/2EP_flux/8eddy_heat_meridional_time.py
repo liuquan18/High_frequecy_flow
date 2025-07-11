@@ -14,52 +14,75 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 #%%
-# %%
-def cal_E_div(decade, phase, eddy='transient', **kwargs):
+def read_data(decade, phase, eddy = 'transient', **kwargs):
     """
-    Calculate the E-vector divergence for a given decade and phase
+    Read data for a given decade and phase
     """
-    # Read data
     logging.info(f"Read data for {phase} phase in {decade}")
     equiv_theta = kwargs.get('equiv_theta', True)
     time_window = kwargs.get('time_window', 'all')
     method = kwargs.get('method', 'no_stat')
 
     if eddy == 'transient':
-        M2 = read_comp_var('M2_prime', phase, decade, time_window='all', method = 'no_stat', name = 'M2', model_dir = 'MPI_GE_CMIP6_allplev')
-		
+        upvp = read_comp_var(
+            var = "upvp",phase = phase, decade = decade, name = "upvp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+            time_window = time_window, method = method, erase_zero_line = True,
+        )
+        
         if equiv_theta:
             vptp = read_comp_var(
-				var = "vpetp", phase = phase, decade = decade, name = "vpetp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-				time_window = time_window, method = method, erase_zero_line = True,
-			)
-			
+                var = "vpetp", phase = phase, decade = decade, name = "vpetp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+                time_window = time_window, method = method, erase_zero_line = True,
+            )
+            
 
         else:
             vptp = read_comp_var(
-				var = "vptp", phase = phase, decade = decade, name = "vptp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
-				time_window = time_window, method = method, erase_zero_line = True,
-			)
-		
+                var = "vptp", phase = phase, decade = decade, name = "vptp", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+                time_window = time_window, method = method, erase_zero_line = True,
+            )
+        
 
-    else:
-        M2 = read_comp_var('M2_steady', phase, decade, time_window='all', method = 'no_stat', name = 'M2', model_dir = 'MPI_GE_CMIP6_allplev')
+
+    elif eddy == 'steady':
+        upvp = read_comp_var(
+            var = "usvs", phase = phase, decade = decade, name = "usvs", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
+            time_window = time_window, method = method, erase_zero_line = True,
+        )
         if equiv_theta:
             vptp = read_comp_var(
                 var = "vsets", phase = phase, decade = decade, name = "vsets", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
                 time_window = time_window, method = method, erase_zero_line = True,
             )
-
+            
+        
         else:
             vptp = read_comp_var(
                 var = "vsts", phase = phase, decade = decade, name = "vsts", suffix = "", model_dir = 'MPI_GE_CMIP6_allplev',
                 time_window = time_window, method = method, erase_zero_line = True,
-			)
+            )
+    else:
+        raise ValueError("eddy must be either 'transient' or 'steady'", f"but got {eddy}")
+
+    return upvp, vptp
+
+
+
+# %%
+def cal_E_div(decade, phase, eddy='transient', **kwargs):
+    """
+    Calculate the E-vector divergence for a given decade and phase
+    """
+    # Read data
+
+    # Read data, just vptp is useful, M2 (or upvp here) is just for position
+    M2, vptp = read_data(decade, phase, eddy=eddy, **kwargs)
+
 
     # Calculate the divergence of the E-vector
     logging.info(f"Calculate E-vector divergence for {phase} phase in {decade}")
 
-    dM2dx, dvptpdy = E_div(M2, vptp, **kwargs)
+    _, dvptpdy = E_div(M2, vptp, **kwargs)
 
     # save
     logging.info(f"Save data for {phase} phase in {decade}")
