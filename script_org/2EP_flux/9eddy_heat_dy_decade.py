@@ -70,7 +70,7 @@ def cal_E_div(decade, ens, equiv_theta = True, eddy='transient',  suffix = ''):
 
     # save
     logging.info(f"Save data for in {decade}")
-    save_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/eddy_heat_dy/r{ens}i1p1f1/"
+    save_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/eddy_heat_dy_daily/r{ens}i1p1f1/"
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     # dM2dx.to_netcdf(os.path.join(save_dir, f"{eddy}_E_div_x_{phase}_{decade}.nc"))
