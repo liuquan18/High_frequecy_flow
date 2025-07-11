@@ -64,9 +64,9 @@ def cal_E_div(decade, ens, equiv_theta = True, eddy='transient',  suffix = ''):
 
 
     # Calculate the divergence of the E-vector
-    logging.info(f"Calculate E-vector divergence fo in {decade}")
+    logging.info(f"Calculate E-vector divergence for {decade}")
 
-    _, dvptpdy = E_div(M2, vptp)
+    _, dvptpdy = E_div(M2, -1*vptp) # upvp just for holding position, vptp needs to multiply by -1 to match the -d / dy
 
     # save
     logging.info(f"Save data for in {decade}")
