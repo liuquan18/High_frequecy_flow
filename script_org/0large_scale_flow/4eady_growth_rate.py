@@ -32,7 +32,7 @@ ta_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ta
 
 # save path
 
-eddy_growth_rate_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/eady_growth_rate/r{ens}i1p1f1/"
+eddy_growth_rate_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/eady_growth_rate_daily/r{ens}i1p1f1/"
 
 if rank == 0:
     if not os.path.exists(eddy_growth_rate_path):
