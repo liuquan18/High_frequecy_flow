@@ -28,11 +28,11 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
     if erase_empty:
         ds = erase_white_line(ds)
     if method == "mean":
-        ds = ds.mean(dim=("time", "ens"))
+        ds = ds.mean(dim=("time", "event"))
         if remove_zonmean:
             ds = ds - ds.mean(dim="lon", keep_attrs=True)
     elif method == "sum":
-        ds = ds.sum(dim=("time", "ens"))
+        ds = ds.sum(dim=("time", "event"))
     elif method == "no_stat":
         pass
     return ds
