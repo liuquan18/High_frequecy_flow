@@ -268,7 +268,7 @@ div_p_pos_last_anomaly = Tdiv_p_pos_last_anomaly + Sdiv_p_pos_last_anomaly
 div_p_neg_last_anomaly = Tdiv_p_neg_last_anomaly + Sdiv_p_neg_last_anomaly
 
 # %%
-# fldmean over [300, 360, 40, 80]
+# 
 def to_dataframe(ds, var_name, phase, decade):
 
     ds = ds.sel(lat=slice(50, 70))
