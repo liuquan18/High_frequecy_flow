@@ -69,6 +69,11 @@ def cal_E_div(decade, ens, equiv_theta = True, eddy='transient',  suffix = ''):
     _, dvptpdy = E_div(M2, vptp)
     dvptpdy = dvptpdy.rename('eddy_heat_dy')
 
+    # use the attribute of the vptp to set the attributes of the dvptpdy
+    dvptpdy.attrs = vptp.attrs.copy()
+    dvptpdy.attrs['long_name'] = 'eddy heat divergence'
+    dvptpdy.attrs['units'] = 'K s-1'
+
     # save
     logging.info(f"Save data for in {decade} eddy {eddy} ens {ens}")
     save_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{eddy}_eddy_heat_dy_daily/r{ens}i1p1f1/"
