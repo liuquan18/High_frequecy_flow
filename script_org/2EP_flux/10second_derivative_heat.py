@@ -46,6 +46,7 @@ def second_derivative_heat(decade, ens, eddy='transient', **kwargs):
     d2vptpdy2.name = 'eddy_heat_d2y2'
 
     d2vptpdy2 = d2vptpdy2.metpy.dequantify()
+    d2vptpdy2 = d2vptpdy2.drop_vars('metpy_crs')
 
     # save
     save_dir = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{eddy}_eddy_heat_d2y2_daily/r{ens}i1p1f1/"
@@ -80,9 +81,8 @@ for i,dec in enumerate(single_decades):
     
     # transient
     logging.info(f"Processing transient eddy for decade {dec} and ensemble {ens}")
-    second_derivative_heat(dec, ens, eddy='transient', equiv_theta=True)
+    second_derivative_heat(dec, ens, eddy='transient', equiv_theta=True, model_dir='MPI_GE_CMIP6_allplev', suffix = '')
 
     # steady
     logging.info(f"Processing steady eddy for decade {dec} and ensemble {ens}")
-    second_derivative_heat(dec, ens, eddy='steady', equiv_theta=True)
-    
+    second_derivative_heat(dec, ens, eddy='steady', equiv_theta=True, model_dir='MPI_GE_CMIP6_allplev', suffix = '')
