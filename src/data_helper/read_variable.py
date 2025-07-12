@@ -44,8 +44,8 @@ def read_prime(decade, var="eke", **kwargs):
 def read_prime_single_ens(dec, ens, var, **kwargs):
     name = kwargs.get("name", var)  # default name is the same as var
     plev = kwargs.get("plev", None)
-    suffix = kwargs.get("suffix", "_ano")
-    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6")
+    suffix = kwargs.get("suffix", "")
+    model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6_allplev")
     data_path = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_daily{suffix}/"
     )
