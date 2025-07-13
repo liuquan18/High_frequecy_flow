@@ -96,5 +96,6 @@ ax[1, 2].gridlines(draw_labels=True, linewidth=0.5, color='gray', alpha=0.5)
 
 plt.tight_layout()
 
+
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/std_change_map.pdf", bbox_inches='tight', dpi=300)
 # %%
