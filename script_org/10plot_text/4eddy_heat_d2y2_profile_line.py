@@ -65,7 +65,7 @@ sum_neg_last_anomaly = transient_neg_last_anom + steady_neg_last_anom
 
 #%%
 # fldmean over
-def to_dataframe(ds, ds_clima, var_name, phase, decade, plev = 85000, lat_slice = slice(40, 60)):
+def to_dataframe(ds, ds_clima, var_name, phase, decade, plev = 85000, lat_slice = slice(50, 70)):
     ds = ds.sel(lat=lat_slice, plev = plev)
     ds_clima = ds_clima.sel(lat=lat_slice, plev = plev)
 
@@ -108,9 +108,9 @@ sum_neg_last_df["eddy_heat_d2y2"] = transient_neg_last_df["eddy_heat_d2y2"] + st
 
 
 #%%
-sum_levels = np.arange(-0.4, 0.41, 0.04)
-transient_levels = np.arange(-0.2, 0.21, 0.02)
-steady_levels = np.arange(-0.2, 0.21, 0.02)
+sum_levels = np.arange(-1, 1.1, 0.2)*1e-11
+transient_levels = np.arange(-0.5, 0.51, 0.1)*1e-11
+steady_levels = np.arange(-0.5, 0.51, 0.1)*1e-11
 # %%
 fig, axes = plt.subplots(3, 3, figsize=(12, 12), sharex=False, sharey="row")
 # first row pos
@@ -382,7 +382,7 @@ cbar_sum = fig.colorbar(
     pad=0.12,
     aspect=30,
     shrink=0.8,
-    label = r"-∂/∂y (v'θ') [K s⁻¹]"
+    label = r"$-\frac{\partial^2}{\partial y^2} (\overline{v'\theta'})\  \mathrm{[K\ / (ms^{-1})]}$"
 )
 cbar_transient = fig.colorbar(
     cf_transient_pos_first,
@@ -392,7 +392,7 @@ cbar_transient = fig.colorbar(
     pad=0.12,
     aspect=30,
     shrink=0.8,
-    label = r"-∂/∂y (v'θ') [K s⁻¹]"
+    label = r"$-\frac{\partial^2}{\partial y^2} (\overline{v'\theta'})\ \mathrm{[K\  / (ms^{-1})]}$"
 )
 cbar_steady = fig.colorbar(
     cf_steady_pos_first,  
@@ -402,7 +402,7 @@ cbar_steady = fig.colorbar(
     pad=0.12,
     aspect=30,
     shrink=0.8,
-    label = r"-∂/∂y (v'θ') [K s⁻¹]"
+    label = r"$-\frac{\partial^2}{\partial y^2} (\overline{v'\theta'})\ \mathrm{[K\ / (ms^{-1})]}$"
 )
 
 # Set ticks for colorbars to avoid overlapping
@@ -441,7 +441,7 @@ axes[2, 2].set_ylabel("")
 for ax in axes[:, 1:].flat:
     ax.set_ylabel("")
 axes[2, 0].set_ylabel(
-    r"-∂/∂y (v'θ') [K s⁻¹]"
+    r"$-\frac{\partial^2}{\partial y^2} (\overline{v'\theta'})\ \mathrm{[K\ / (ms^{-1})]}$"
 )
 
 # for the first column, set y-label for pressure (Pa to hPa)
@@ -479,12 +479,12 @@ for i, ax in enumerate(axes.flat):
 
 
 # # save
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_d2y2_together.pdf",
-#     dpi=300,
-#     bbox_inches="tight",
-#     transparent=True,
-#     metadata={"Creator": __file__},
-# )
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_d2y2_together.pdf",
+    dpi=300,
+    bbox_inches="tight",
+    transparent=True,
+    metadata={"Creator": __file__},
+)
 
 # %%
