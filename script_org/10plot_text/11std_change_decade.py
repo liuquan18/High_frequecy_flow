@@ -234,8 +234,8 @@ for i, ax in enumerate(axes.flat):
 
 axes[0, 0].set_ylabel("extreme NAO days", fontsize=16)
 axes[0, 1].set_ylabel("jet stream / baroclinic std", fontsize=16)
-axes[1, 0].set_ylabel(r"$-\partial u'v'/\partial y$ std", fontsize=16)
-axes[1, 1].set_ylabel(r"$-\partial v'\theta'/\partial y$ std", fontsize=16)
+axes[1, 0].set_ylabel(r"$-\partial \overline{u'v'}/\partial y$ std", fontsize=16)
+axes[1, 1].set_ylabel(r"$-\partial \overline{v'\theta'}/\partial y$ std", fontsize=16)
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/std_change_dec.pdf", dpi=300, bbox_inches="tight", transparent=True)
 # %%
