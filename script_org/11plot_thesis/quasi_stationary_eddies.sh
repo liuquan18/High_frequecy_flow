@@ -16,7 +16,11 @@ module load parallel
 
 infile=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/zg_monthly_stat/zg_50000_monthly_05_09.nc
 
+tmpfile=/scratch/m/m300883/zg_50000_monthly_05_09_detrend.nc
 outfile=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/zg_monthly_stat/zg_50000_monthly_05_09_zonalano.nc
 
 
-cdo -P 8 -r -sub ${infile} -enlarge,${infile} -zonmean ${infile} ${outfile}
+# detrend data
+cdo -r -O -P 8 -detrend $infile $tmpfile
+
+cdo -P 8 -r -sub ${tmpfile} -enlarge,${tmpfile} -zonmean ${tmpfile} ${outfile}
