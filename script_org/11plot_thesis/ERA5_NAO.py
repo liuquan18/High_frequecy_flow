@@ -11,7 +11,7 @@ pattern = eofs.eof.isel(decade = 0).sel(mode = 'NAO')
 index = eofs.pc.sel(mode = 'NAO')
 # %%
 # left for the NAO pattern with projection, right for the NAO index without projection
-fig = plt.figure(figsize=(12, 4.5))
+fig = plt.figure(figsize=(12, 4))
 ax1 = fig.add_subplot(121, projection=ccrs.Orthographic(-30, 60))
 ax2 = fig.add_subplot(122)
 
