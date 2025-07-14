@@ -33,6 +33,9 @@ year_mean_500(){
     echo $tmpfile
 }
 
+export tmp_dir
+export out_file
+export -f year_mean_500
 
 for file in "${eke_files[@]}"; do
     echo "Processing $file"
@@ -42,6 +45,8 @@ for file in "${eke_files[@]}"; do
     srun --ntasks=1 --nodes=1 --cpus-per-task=$SLURM_CPUS_PER_TASK bash -c "year_mean_500 '$file'" &
 done
 wait
+
+
 # Merge all processed files
 eke_files=($(find $tmp_dir -name "*_tmp.nc" -print))
 echo "Merging files: ${eke_files[@]}"
