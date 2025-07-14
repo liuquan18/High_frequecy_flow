@@ -16,17 +16,21 @@ module load parallel
 
 from_dir=/pool/data/ERA5/E5/pl/an/1M/129/
 tmp_dir=/scratch/m/m300883/ERA5/zg_hat/
+tmp_dir_level=/scratch/m/m300883/ERA5/zg_hat_level
 to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/zg_monthly_state/
 
-mkdir -p ${tmp_dir} ${to_dir}
+mkdir -p ${tmp_dir} ${to_dir} ${tmp_dir_level}
 
-export from_dir tmp_dir to_dir
+export from_dir tmp_dir to_dir tmp_dir_level
 
 steady_eddy(){
     dec=$1
     Tfile=$(find ${from_dir} -name "*${dec}*.grb")
 
-    cdo -P 8 -O -timmean -selmon-selmonth,5,6,7,8,9 -sub ${Tfile} -enlarge,${Tfile} -zonmean ${Tfile} ${tmp_dir}/zg_hat_${dec}.nc
+    # pre-process
+    cdo -P 8 -O -f nc -selmonth,5,6,7,8,9 -sellevel,50000 -divc,9.8066 -setgridtype,regular ${Tfile} ${tmp_dir_level}/zg_hat_${dec}.nc
+
+    cdo -P 8 -timmean -sub ${tmp_dir_level}/zg_hat_${dec}.nc -enlarge,${tmp_dir_level}/zg_hat_${dec}.nc -zonmean ${tmp_dir_level}/zg_hat_${dec}.nc ${tmp_dir}/zg_hat_${dec}.nc
 
 }
 
