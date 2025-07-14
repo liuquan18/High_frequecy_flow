@@ -46,7 +46,7 @@ ax1.set_title("")
 ax2.set_title("")
 
 # add a, b
-ax1.text(-0.1, 1., "a", transform=ax1.transAxes, fontsize=14, fontweight='bold')
+ax1.text(0., 1., "a", transform=ax1.transAxes, fontsize=14, fontweight='bold')
 ax2.text(-0.1, 1., "b", transform=ax2.transAxes, fontsize=14, fontweight='bold')
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0thesis/NAO_pattern_index.pdf", dpi=300, bbox_inches='tight')
