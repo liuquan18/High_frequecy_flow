@@ -26,7 +26,7 @@ steady_eddy(){
     dec=$1
     Tfile=$(find ${from_dir} -name "*${dec}*.grb")
 
-    cdo -P 8 -O -timmean -sub ${Tfile} -enlarge,${Tfile} -zonmean ${Tfile} ${tmp_dir}zg_hat_${dec}.nc
+    cdo -P 8 -O -timmean -selmon-selmonth,5,6,7,8,9 -sub ${Tfile} -enlarge,${Tfile} -zonmean ${Tfile} ${tmp_dir}/zg_hat_${dec}.nc
 
 }
 
