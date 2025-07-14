@@ -28,7 +28,7 @@ steady_eddy(){
     Tfile=$(find ${from_dir} -name "*${dec}*.grb")
 
     # pre-process
-    cdo -P 8 -O -f nc -selmonth,5,6,7,8,9 -sellevel,50000 -divc,9.8066 -setgridtype,regular ${Tfile} ${tmp_dir_level}/zg_hat_${dec}.nc
+    cdo -P 8 -O -f nc -selmonth,5,6,7,8,9 -sellevel,25000 -divc,9.8066 -setgridtype,regular ${Tfile} ${tmp_dir_level}/zg_hat_${dec}.nc
 
     cdo -P 8 -timmean -sub ${tmp_dir_level}/zg_hat_${dec}.nc -enlarge,${tmp_dir_level}/zg_hat_${dec}.nc -zonmean ${tmp_dir_level}/zg_hat_${dec}.nc ${tmp_dir}/zg_hat_${dec}.nc
 

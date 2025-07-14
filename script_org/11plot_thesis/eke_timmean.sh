@@ -29,7 +29,7 @@ year_mean_500(){
     tmpfile=${tmp_dir}$(basename $infile .nc)_tmp.nc
 
     # select 50000 hPa level and apply grid type
-    cdo -r -f nc -O -P 8 -timmean -sellevel,50000 -setgridtype,regular $infile $tmpfile
+    cdo -r -f nc -O -P 8 -timmean -sellevel,25000 -setgridtype,regular $infile $tmpfile
     echo $tmpfile
 }
 
