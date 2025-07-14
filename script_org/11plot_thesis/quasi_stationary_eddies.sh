@@ -20,15 +20,13 @@ to_dir=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/zg_monthly_state/
 
 mkdir -p ${tmp_dir} ${to_dir}
 
-cdo -P 8 -r -timmean -sub ${infile} -enlarge,${infile} -zonmean ${infile} ${outfile}
-
 export from_dir tmp_dir to_dir
 
 steady_eddy(){
     dec=$1
-    Tfile=$(find ${T_path} -name "*${dec}*.nc")
+    Tfile=$(find ${from_dir} -name "*${dec}*.grb")
 
-    cdo -P 8 -O -timmean -sub ${Tfile} -enlarge,${Tfile} -zonmean ${Tfile} ${tmp_dir}/zg_hat_${dec}.nc
+    cdo -P 8 -O -timmean -sub ${Tfile} -enlarge,${Tfile} -zonmean ${Tfile} ${tmp_dir}zg_hat_${dec}.nc
 
 }
 
