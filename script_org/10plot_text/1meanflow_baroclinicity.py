@@ -98,7 +98,7 @@ cf_hat_pos_first = ua_pos_first.plot.contourf(
     extend='both',
     levels=uhat_levels,
     cbar_kwargs={
-        'label': r'$\overline{u}$ (m/s)',
+        'label': r'$\overline{u}$ (ms$^{-1}$)',
         'orientation': 'horizontal',
         'shrink': 0.7,
         'pad': 0.05,
@@ -127,7 +127,7 @@ cf_hat_neg_first = ua_neg_first.plot.contourf(
     extend='both',
     levels=uhat_levels,
     cbar_kwargs={
-        'label': r'$\overline{u}$ (m/s)',
+        'label': r'$\overline{u}$ (ms$^{-1}$)',
         'orientation': 'horizontal',
         'shrink': 0.7,
         'pad': 0.05,
@@ -155,7 +155,7 @@ cf_hat_diff_first = ua_diff_first.plot.contourf(
     extend='both',
     levels=uhat_levels_div,
     cbar_kwargs={
-        'label': r'$\Delta\overline{u}$ (m/s)',
+        'label': r'$\Delta\overline{u}$ (ms$^{-1}$)',
         'orientation': 'horizontal',
         'shrink': 0.7,
         'pad': 0.05,
