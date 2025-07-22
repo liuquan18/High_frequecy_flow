@@ -43,6 +43,15 @@ baroc_pos_first = read_comp_var('eady_growth_rate', 'pos', 1850, time_window=(-1
 baroc_neg_first = read_comp_var('eady_growth_rate', 'neg', 1850, time_window=(-10, 5), method='mean', name = 'eady_growth_rate', model_dir = 'MPI_GE_CMIP6_allplev')
 baroc_pos_last = read_comp_var('eady_growth_rate', 'pos', 2090, time_window=(-10, 5), method='mean', name = 'eady_growth_rate', model_dir = 'MPI_GE_CMIP6_allplev')
 baroc_neg_last = read_comp_var('eady_growth_rate', 'neg', 2090, time_window=(-10, 5), method='mean', name = 'eady_growth_rate', model_dir = 'MPI_GE_CMIP6_allplev')
+#%%
+# baroclinicity from s-1 to day-1
+baroc_pos_first = baroc_pos_first * 86400
+baroc_neg_first = baroc_neg_first * 86400
+baroc_pos_last = baroc_pos_last * 86400
+baroc_neg_last = baroc_neg_last * 86400
+
+
+
 # %%
 # ua select 25000
 ua_pos_first = ua_pos_first.sel(plev=25000)
@@ -70,12 +79,12 @@ baroc_diff_last = baroc_pos_last - baroc_neg_last
 # %%
 uhat_levels = np.arange(-30, 31, 5)
 uhat_levels_div = np.arange(-15, 16, 3)  # for difference
-baroc_levels = np.arange(-9, 9.1, 1)*1e-5  
-baroc_levels_div = np.arange(-3, 3, 0.5)*1e-5  # for difference
+baroc_levels = np.arange(-8, 8.1, 1) 
+baroc_levels_div = np.arange(-3, 3, 0.5)  # for difference
 
 #%%
 fig, axes = plt.subplots(
-    nrows=2, ncols=3, figsize=(12, 9),
+    nrows=2, ncols=3, figsize=(10, 8),
     subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
     constrained_layout=True,
 )
@@ -166,18 +175,6 @@ cf_hat_diff_last = ua_diff_last.plot.contour(
 )
 # --- Second row: baroclinicity (eddy growth rate) ---
 
-class SciNotationFormatter(ticker.ScalarFormatter):
-    def __init__(self, exponent=0, fformat="%1.1f", offset=False, mathText=True):
-        self.exponent = exponent
-        self.fformat = fformat
-        ticker.ScalarFormatter.__init__(self,useOffset=offset,useMathText=mathText)
-    def _set_order_of_magnitude(self):
-        self.orderOfMagnitude = self.exponent
-    def _set_format(self, vmin=None, vmax=None):
-        self.format = self.fformat
-        if self._useMathText:
-            self.format = r"$\mathdefault{%s}$" % self.format
-
 # positive phase, first decade in contourf
 cf_baroc_pos_first = baroc_pos_first.plot.contourf(
     ax=axes[1, 0],
@@ -187,12 +184,12 @@ cf_baroc_pos_first = baroc_pos_first.plot.contourf(
     extend='both',
     levels=baroc_levels,
     cbar_kwargs={
-        'label': r'Eady growth rate (s$^{-1}$)',
+        'label': r'Eady growth rate (day$^{-1}$)',
         'orientation': 'horizontal',
         'shrink': 0.7,
         'pad': 0.05,
         'aspect':30,
-        'format': SciNotationFormatter(-5, "%.0f")  # Use custom formatter for scientific notation
+        'format': '%.0f'
     }
 )
 
@@ -216,12 +213,12 @@ cf_baroc_neg_first = baroc_neg_first.plot.contourf(
     extend='both',
     levels=baroc_levels,
     cbar_kwargs={
-        'label': r'Eady growth rate (s$^{-1}$)',
+        'label': r'Eady growth rate (day$^{-1}$)',
         'orientation': 'horizontal',
         'shrink': 0.7,
         'pad': 0.05,
         'aspect':30,
-        'format': SciNotationFormatter(-5, "%.0f")  # Use custom formatter for scientific notation
+        'format': '%.0f'
     }
 )
 
@@ -244,12 +241,12 @@ cf_baroc_diff_first = baroc_diff_first.plot.contourf(
     extend='both',
     levels=baroc_levels_div,
     cbar_kwargs={
-        'label': r'$\Delta$ Eady growth rate (s$^{-1}$)',
+        'label': r'$\Delta$ Eady growth rate (day$^{-1}$)',
         'orientation': 'horizontal',
         'shrink': 0.7,
         'pad': 0.05,
         'aspect':30,
-        'format': SciNotationFormatter(-5, "%.0f")  # Use custom formatter for scientific notation
+        'format': '%.0f'
     }
 )
 
