@@ -359,7 +359,7 @@ cbar_sum = fig.colorbar(
     pad=0.12,
     aspect=30,
     shrink=0.8,
-    label = r"$-\frac{\partial}{\partial y} (v'\theta')$ [K s$^{-1}$]"
+    label = r"$\frac{\partial}{\partial y} (v'\theta')$ [K s$^{-1}$]"
 )
 cbar_transient = fig.colorbar(
     cf_transient_pos_first,
@@ -369,7 +369,7 @@ cbar_transient = fig.colorbar(
     pad=0.12,
     aspect=30,
     shrink=0.8,
-    label = r"$-\frac{\partial}{\partial y} (v'\theta')$ [K s$^{-1}$]"
+    label = r"$\frac{\partial}{\partial y} (v'\theta')$ [K s$^{-1}$]"
 )
 cbar_steady = fig.colorbar(
     cf_steady_pos_first,  
@@ -379,7 +379,7 @@ cbar_steady = fig.colorbar(
     pad=0.12,
     aspect=30,
     shrink=0.8,
-    label = r"$-\frac{\partial}{\partial y} (v'\theta')$ [K s$^{-1}$]"
+    label = r"$\frac{\partial}{\partial y} (v'\theta')$ [K s$^{-1}$]"
 )
 
 # Set ticks for colorbars to avoid overlapping
