@@ -62,8 +62,11 @@ sns.histplot(
     palette=["#1f77b4", "#ff7f0e"],
     multiple="dodge",
     shrink=0.6,
-    bins=np.arange(-4, -3, 0.5),
+    bins=np.arange(-4, 4.1, 0.5),
     ax=ax,
-    stat = 'density',
+    stat = 'count',
 )
+
+# ax.set_xlim(-4, -3)
+# ax.set_ylim(0, 150)
 # %%
