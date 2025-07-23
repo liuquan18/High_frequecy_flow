@@ -64,48 +64,23 @@ sum_neg_first_anomaly = transient_neg_first_anom + steady_neg_first_anom
 sum_pos_last_anomaly = transient_pos_last_anom + steady_pos_last_anom
 sum_neg_last_anomaly = transient_neg_last_anom + steady_neg_last_anom
 
-
 #%%
-# fldmean over
-def to_dataframe(ds, ds_clima, var_name, phase, decade, plev = 85000, lat_slice = slice(40, 60)):
-    ds = ds.sel(lat=lat_slice, plev = plev)
-    ds_clima = ds_clima.sel(lat=lat_slice, plev = plev)
+# Read dataframes from the saved CSV files
+transient_pos_first_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_pos_first_vptp_d2y2.csv")
+transient_neg_first_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_neg_first_vptp_d2y2.csv")
+transient_pos_last_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_pos_last_vptp_d2y2.csv")
+transient_neg_last_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_neg_last_vptp_d2y2.csv")
 
-    anomaly = ds - ds_clima
+steady_pos_first_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_pos_first_vsts_d2y2.csv")
+steady_neg_first_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_neg_first_vsts_d2y2.csv")
+steady_pos_last_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_pos_last_vsts_d2y2.csv")
+steady_neg_last_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_neg_last_vsts_d2y2.csv")
 
-    # create weights
-    weights = np.cos(np.deg2rad(ds.lat))
-    weights.name = "weights"
+sum_pos_first_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_pos_first_vptp_d2y2.csv")
+sum_neg_first_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_neg_first_vptp_d2y2.csv")
+sum_pos_last_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_pos_last_vptp_d2y2.csv")
+sum_neg_last_df = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_neg_last_vptp_d2y2.csv")
 
-    anomaly = anomaly.weighted(weights).mean(dim = ('lat', 'lon'))
-
-    df = anomaly.to_dataframe(var_name).reset_index()
-    df["phase"] = phase
-    df["decade"] = decade
-    return df
-#%%
-transient_pos_first_df = to_dataframe(transient_pos_first, transient_clima_first, "eddy_heat_dy", "pos", "1850")
-transient_neg_first_df = to_dataframe(transient_neg_first, transient_clima_first, "eddy_heat_dy", "neg", "1850")
-transient_pos_last_df = to_dataframe(transient_pos_last, transient_clima_last, "eddy_heat_dy", "pos", "2090")
-transient_neg_last_df = to_dataframe(transient_neg_last, transient_clima_last, "eddy_heat_dy", "neg", "2090")
-
-#%%
-steady_pos_first_df = to_dataframe(steady_pos_first, steady_clima_first, "eddy_heat_dy", "pos", "1850")
-steady_neg_first_df = to_dataframe(steady_neg_first, steady_clima_first, "eddy_heat_dy", "neg", "1850")
-steady_pos_last_df = to_dataframe(steady_pos_last, steady_clima_last, "eddy_heat_dy", "pos", "2090")
-steady_neg_last_df = to_dataframe(steady_neg_last, steady_clima_last, "eddy_heat_dy", "neg", "2090")
-
-#%%
-sum_pos_first_df = transient_pos_first_df.copy()
-sum_pos_first_df["eddy_heat_dy"] = transient_pos_first_df["eddy_heat_dy"] + steady_pos_first_df["eddy_heat_dy"]
-
-sum_neg_first_df = transient_neg_first_df.copy()
-sum_neg_first_df["eddy_heat_dy"] = transient_neg_first_df["eddy_heat_dy"] + steady_neg_first_df["eddy_heat_dy"]
-
-sum_pos_last_df = transient_pos_last_df.copy()
-sum_pos_last_df["eddy_heat_dy"] = transient_pos_last_df["eddy_heat_dy"] + steady_pos_last_df["eddy_heat_dy"]
-sum_neg_last_df = transient_neg_last_df.copy()
-sum_neg_last_df["eddy_heat_dy"] = transient_neg_last_df["eddy_heat_dy"] + steady_neg_last_df["eddy_heat_dy"]
 
 
 
@@ -266,7 +241,7 @@ custom_palette = {'1850': 'black', '2090': 'red'}
 sns.lineplot(
     data=sum_pos_first_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='black',
     ax=axes[2, 0],
     linestyle='solid',
@@ -275,7 +250,7 @@ sns.lineplot(
 sns.lineplot(
     data=sum_neg_first_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='black',
     ax=axes[2, 0],
     linestyle='dashed',
@@ -284,7 +259,7 @@ sns.lineplot(
 sns.lineplot(
     data=sum_pos_last_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='red',
     ax=axes[2, 0],
     linestyle='solid',
@@ -293,7 +268,7 @@ sns.lineplot(
 sns.lineplot(
     data=sum_neg_last_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='red',
     ax=axes[2, 0],
     linestyle='dashed',
@@ -303,7 +278,7 @@ sns.lineplot(
 sns.lineplot(
     data=transient_pos_first_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='black',
     ax=axes[2, 1],
     linestyle='solid',
@@ -312,7 +287,7 @@ sns.lineplot(
 sns.lineplot(
     data=transient_neg_first_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='black',
     ax=axes[2, 1],
     linestyle='dashed',
@@ -321,7 +296,7 @@ sns.lineplot(
 sns.lineplot(
     data=transient_pos_last_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='red',
     ax=axes[2, 1],
     linestyle='solid',
@@ -330,7 +305,7 @@ sns.lineplot(
 sns.lineplot(
     data=transient_neg_last_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='red',
     ax=axes[2, 1],
     linestyle='dashed',
@@ -341,7 +316,7 @@ sns.lineplot(
 sns.lineplot(
     data=steady_pos_first_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='black',
     ax=axes[2, 2],
     linestyle='solid',
@@ -350,7 +325,7 @@ sns.lineplot(
 sns.lineplot(
     data=steady_neg_first_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='black',
     ax=axes[2, 2],
     linestyle='dashed',
@@ -359,7 +334,7 @@ sns.lineplot(
 sns.lineplot(
     data=steady_pos_last_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='red',
     ax=axes[2, 2],
     linestyle='solid',
@@ -368,7 +343,7 @@ sns.lineplot(
 sns.lineplot(
     data=steady_neg_last_df,
     x='time',
-    y='eddy_heat_dy',
+    y='eddy_heat_d2y2',
     color='red',
     ax=axes[2, 2],
     linestyle='dashed',
@@ -384,7 +359,7 @@ cbar_sum = fig.colorbar(
     pad=0.12,
     aspect=30,
     shrink=0.8,
-    label = r"-∂/∂y (v'θ') [K s⁻¹]"
+    label = r"$-\frac{\partial}{\partial y} (v'\theta')$ [K s$^{-1}$]"
 )
 cbar_transient = fig.colorbar(
     cf_transient_pos_first,
@@ -394,7 +369,7 @@ cbar_transient = fig.colorbar(
     pad=0.12,
     aspect=30,
     shrink=0.8,
-    label = r"-∂/∂y (v'θ') [K s⁻¹]"
+    label = r"$-\frac{\partial}{\partial y} (v'\theta')$ [K s$^{-1}$]"
 )
 cbar_steady = fig.colorbar(
     cf_steady_pos_first,  
@@ -404,7 +379,7 @@ cbar_steady = fig.colorbar(
     pad=0.12,
     aspect=30,
     shrink=0.8,
-    label = r"-∂/∂y (v'θ') [K s⁻¹]"
+    label = r"$-\frac{\partial}{\partial y} (v'\theta')$ [K s$^{-1}$]"
 )
 
 # Set ticks for colorbars to avoid overlapping
@@ -443,7 +418,7 @@ axes[2, 2].set_ylabel("")
 for ax in axes[:, 1:].flat:
     ax.set_ylabel("")
 axes[2, 0].set_ylabel(
-    r"-∂/∂y (v'θ') [K s⁻¹]"
+    r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ [K $m^{-1} s^{-1}$]"
 )
 
 # for the first column, set y-label for pressure (Pa to hPa)
@@ -482,11 +457,13 @@ for i, ax in enumerate(axes.flat):
 
 # save
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_dy_together.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_dy_d2y2_together.pdf",
     dpi=300,
     bbox_inches="tight",
     transparent=True,
     metadata={"Creator": __file__},
 )
+
+# %%
 
 # %%
