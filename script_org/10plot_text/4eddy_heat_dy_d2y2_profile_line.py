@@ -454,6 +454,8 @@ for i, ax in enumerate(axes.flat):
         ha="right",
     )
 
+for ax in axes[:2, :].flat:
+    ax.set_ylim(100000, 50000)
 
 # save
 plt.savefig(
