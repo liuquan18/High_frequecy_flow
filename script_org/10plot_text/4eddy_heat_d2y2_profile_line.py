@@ -65,7 +65,7 @@ sum_neg_last_anomaly = transient_neg_last_anom + steady_neg_last_anom
 
 #%%
 # fldmean over
-def to_dataframe(ds, ds_clima, var_name, phase, decade, plev = 85000, lat_slice = slice(50, 70)):
+def to_dataframe(ds, ds_clima, var_name, phase, decade, plev = 85000, lat_slice = slice(30, 50)):
     ds = ds.sel(lat=lat_slice, plev = plev)
     ds_clima = ds_clima.sel(lat=lat_slice, plev = plev)
 
@@ -107,21 +107,20 @@ sum_neg_last_df["eddy_heat_d2y2"] = transient_neg_last_df["eddy_heat_d2y2"] + st
 
 #%%
 # save
-transient_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_pos_first_vptp_d2y2.csv", index=False)
-transient_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_neg_first_vptp_d2y2.csv", index=False)
-transient_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_pos_last_vptp_d2y2.csv", index=False)
-transient_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_neg_last_vptp_d2y2.csv", index=False)
+transient_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_pos_first_vptp_d2y2_3050.csv", index=False)
+transient_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_neg_first_vptp_d2y2_3050.csv", index=False)
+transient_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_pos_last_vptp_d2y2_3050.csv", index=False)
+transient_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_neg_last_vptp_d2y2_3050.csv", index=False)
 
-steady_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_pos_first_vsts_d2y2.csv", index=False)
-steady_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_neg_first_vsts_d2y2.csv", index=False)
-steady_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_pos_last_vsts_d2y2.csv", index=False)
-steady_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_neg_last_vsts_d2y2.csv", index=False)    
+steady_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_pos_first_vsts_d2y2_3050.csv", index=False)
+steady_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_neg_first_vsts_d2y2_3050.csv", index=False)
+steady_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_pos_last_vsts_d2y2_3050.csv", index=False)
+steady_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_neg_last_vsts_d2y2_3050.csv", index=False)    
 
-sum_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_pos_first_vptp_d2y2.csv", index=False)
-sum_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_neg_first_vptp_d2y2.csv", index=False)    
-sum_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_pos_last_vptp_d2y2.csv", index=False)
-sum_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_neg_last_vptp_d2y2.csv", index=False)
-
+sum_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_pos_first_vptp_d2y2_3050.csv", index=False)
+sum_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_neg_first_vptp_d2y2_3050.csv", index=False)    
+sum_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_pos_last_vptp_d2y2_3050.csv", index=False)
+sum_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_neg_last_vptp_d2y2_3050.csv", index=False)
 
 
 #%%
@@ -479,7 +478,7 @@ for ax in axes[2, :].flat:
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.axvline(0, color="k", linestyle="-", lw=0.5, zorder=0)
-    ax.set_xlim(-20, 20)
+    ax.set_xlim(-30, 20)
 
 # add a,b,c
 for i, ax in enumerate(axes.flat):
@@ -495,13 +494,192 @@ for i, ax in enumerate(axes.flat):
     )
 
 
-# # save
+# # # save
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_d2y2_together.pdf",
+#     dpi=300,
+#     bbox_inches="tight",
+#     transparent=True,
+#     metadata={"Creator": __file__},
+# )
+
+# %%
+# %%
+fig, axes = plt.subplots(1, 3, figsize=(12, 4), sharex=False, sharey=False)
+
+custom_palette = {'1850': 'black', '2090': 'red'}
+
+# sum
+sns.lineplot(
+    data=sum_pos_first_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='black',
+    ax=axes[0],
+    linestyle='solid',
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=sum_neg_first_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='black',
+    ax=axes[0],
+    linestyle='dashed',
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=sum_pos_last_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='red',
+    ax=axes[0],
+    linestyle='solid',
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=sum_neg_last_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='red',
+    ax=axes[0],
+    linestyle='dashed',
+    errorbar=("ci", 95),
+)
+# transient
+sns.lineplot(
+    data=transient_pos_first_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='black',
+    ax=axes[1],
+    linestyle='solid',
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=transient_neg_first_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='black',
+    ax=axes[1],
+    linestyle='dashed',
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=transient_pos_last_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='red',
+    ax=axes[1],
+    linestyle='solid',
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=transient_neg_last_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='red',
+    ax=axes[1],
+    linestyle='dashed',
+    errorbar=("ci", 95),
+)
+
+# steady
+sns.lineplot(
+    data=steady_pos_first_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='black',
+    ax=axes[2],
+    linestyle='solid',
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=steady_neg_first_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='black',
+    ax=axes[2],
+    linestyle='dashed',
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=steady_pos_last_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='red',
+    ax=axes[2],
+    linestyle='solid',
+    errorbar=("ci", 95),
+)
+sns.lineplot(
+    data=steady_neg_last_df,
+    x='time',
+    y='eddy_heat_d2y2',
+    color='red',
+    ax=axes[2],
+    linestyle='dashed',
+    errorbar=("ci", 95),
+)
+
+# Custom legend handles
+decade_handles = [
+    Line2D([0], [0], color="black", lw=2, label="1850"),
+    Line2D([0], [0], color="red", lw=2, label="2090"),
+]
+phase_handles = [
+    Line2D([0], [0], color="black", lw=2, linestyle="-", label="pos NAO"),
+    Line2D([0], [0], color="black", lw=2, linestyle="--", label="neg NAO"),
+]
+decade_legend = axes[2].legend(
+    handles=decade_handles,
+    title="Decade",
+    loc="upper left",
+    bbox_to_anchor=(0., 0.3),
+    frameon=False,
+)
+phase_legend = axes[2].legend(
+    handles=phase_handles,
+    title="Phase",
+    loc="upper left",
+    bbox_to_anchor=(0.4, 0.3),
+    frameon=False,
+)
+axes[2].add_artist(decade_legend)
+axes[2].add_artist(phase_legend)
+
+axes[0].set_ylabel(
+    r"$-\frac{\partial^2}{\partial y^2} (\overline{v'\theta'})\ \mathrm{[K\ / (ms^{-1})]}$"
+)
+for ax in axes[1:]:
+    ax.set_ylabel("")
+
+for ax in axes:
+    ax.set_xlabel("Days relative to extreme onset")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.axvline(0, color="k", linestyle="-", lw=0.5, zorder=0)
+    ax.set_xlim(-30, 20)
+
+# add a, b, c
+for i, ax in enumerate(axes):
+    ax.text(
+        -0.06,
+        1.02,
+        chr(97 + i),
+        transform=ax.transAxes,
+        fontsize=14,
+        fontweight="bold",
+        va="bottom",
+        ha="right",
+    )
+
+# save
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_d2y2_together.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/eddy_heat_d2y2_together_lowlat_line.pdf",
     dpi=300,
     bbox_inches="tight",
     transparent=True,
     metadata={"Creator": __file__},
 )
-
 # %%
