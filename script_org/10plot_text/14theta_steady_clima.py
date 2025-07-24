@@ -106,11 +106,11 @@ zg_last_mm.plot.line(
 
 
 axes[0].set_title("")
-axes[0].set_ylabel(r"$\overline{\theta}$ at 850 hPa (K)")
+axes[0].set_ylabel(r"$\overline{\theta}^*$ at 850 hPa (K)")
 axes[1].set_title("")
-axes[1].set_ylabel(r"$\overline{\theta}_e$ at 850 hPa (K)")
+axes[1].set_ylabel(r"$\overline{\theta}_e^*$ at 850 hPa (K)")
 axes[2].set_title("")
-axes[2].set_ylabel(r"$\overline{zg}$ at 250 hPa (m)")
+axes[2].set_ylabel(r"$\overline{zg}^*$ at 250 hPa (m)")
 
 
 
