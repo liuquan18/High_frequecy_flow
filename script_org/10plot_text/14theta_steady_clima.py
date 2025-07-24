@@ -125,11 +125,17 @@ for i, ax in enumerate(axes):
     # leggend at bottom right
     ax.legend(loc='lower right', fontsize=10)
 
+# vertical text "North Atlantic" at x = -50
+axes[0].text(0.43, 0.7, "North Atlantic", transform=axes[0].transAxes, fontsize=10, va='center', ha='right', rotation=90)
+axes[0].text(0.73, 0.4, "Eurasia", transform=axes[0].transAxes, fontsize=10, va='center', ha='right', rotation=90)
+
+
 
 plt.tight_layout()
 
+
 # save fig
-plt.savefig("" \
+plt.savefig(
 "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/theta_zg_steady_clima.pdf",
             bbox_inches='tight',
             dpi=300)
