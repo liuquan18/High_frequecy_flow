@@ -125,6 +125,9 @@ for i, ax in enumerate(axes):
     # leggend at bottom right
     ax.legend(loc='lower right', fontsize=10)
 
+    # label x-tick every 60 degrees
+    ax.set_xticks(np.arange(-180, 181, 90))
+
 # vertical text "North Atlantic" at x = -50
 axes[0].text(0.43, 0.7, "North Atlantic", transform=axes[0].transAxes, fontsize=10, va='center', ha='right', rotation=90)
 axes[0].text(0.73, 0.4, "Eurasia", transform=axes[0].transAxes, fontsize=10, va='center', ha='right', rotation=90)
