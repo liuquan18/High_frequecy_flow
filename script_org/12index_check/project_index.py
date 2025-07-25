@@ -53,7 +53,7 @@ for i, start_year in enumerate(start_years_single):
     solver = Eof(field, weights=weights)
 
     solver.eofs = eof
-    #
+    # EOFs are divided by the square-root of their eigenvalue
     pc1_proj = solver.projectField(field, neofs=1, eofscaling = 1).isel(mode = 0)
 
     pc1_proj.to_netcdf(f"{pc_path}NAO_{str(start_year)}-{str(start_year+9)}_r{member}i1p1f1_scaled.nc")
