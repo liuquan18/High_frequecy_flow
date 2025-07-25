@@ -37,15 +37,16 @@ daily_files_single = np.array_split(daily_files, size)[rank]  # years on this co
 for i, daily_file in enumerate(daily_files_single):
     logging.info(f"Rank {rank}, file {daily_file} {i}/{len(daily_files_single)}")
     daily_field = xr.open_dataset(daily_file).var129.squeeze()
-    eof = xr.open_dataset(eof_file).eof.sel(mode = 'NAO').squeeze()
+
+    eof = xr.open_dataset(eof_file).eof.sel(mode = 'NAO').isel(decade = 0).squeeze()
     eof['plev'] = 50000
 
-    try:
-        daily_field['time'] = pd.to_datetime(daily_field.time.values)
+    # try:
+    #     daily_field['time'] = pd.to_datetime(daily_field.time.values)
 
-    except:
-        logging.info("Time already in datetime format")
-        pass
+    # except:
+    #     logging.info("Time already in datetime format")
+    #     pass
 
     projected_pcs = project_field_to_pattern(daily_field, eof, standard=False, plev = None)
     projected_pcs.name = "pc"

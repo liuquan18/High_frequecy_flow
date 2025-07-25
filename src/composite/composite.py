@@ -128,7 +128,6 @@ def date_range_composite(zg, date_range):
         sel_zg = zg.sel(
             time=slice(start_time, start_time + pd.Timedelta(days=61))
         )  
-        sel_zg = sel_zg.isel(time = slice(None, 61)) # ensure we have 61 days
         if sel_zg.time.size < 61:
             if start_time < pd.Timestamp(f"{start_time.year}-05-01"):
                 logging.info(
@@ -164,8 +163,15 @@ def date_range_composite(zg, date_range):
                 add_data = add_data.where(add_data != 0)
                 sel_zg = xr.concat([sel_zg, add_data], dim="time")
 
-        # now change the time coordinate as lag-days
+        # if time dimension is zero, skip this event
+        if sel_zg.time.size == 0:
+            logging.warning(
+                f"Skipping event from {start_time} to {end_time} due to zero time dimension."
+            )
+            continue
         
+        # now change the time coordinate as lag-days
+        sel_zg = sel_zg.isel(time = slice(None, 61)) # ensure we have 61 days
         sel_zg["time"] = np.arange(-30, 31, 1)
 
 

@@ -26,7 +26,7 @@ def project_field_to_pattern(field_data, pattern_data, lat_dim='lat', lon_dim='l
     # dorpna
     field_flat = field_flat.dropna(dim='spatial')
     eof_flat = eof_flat.dropna(dim='spatial')
-    eof_flat = eof_flat.sortby('plev', ascending = False)
+
 
     # for all plevs:
     if plev is None:

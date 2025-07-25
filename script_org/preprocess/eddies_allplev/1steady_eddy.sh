@@ -44,8 +44,11 @@ sub_zonmean(){
     outfile=$3
 
 
-    # zonal anomaly
-    cdo -O ymonsub ${infile} -enlarge,${mmean_file} -zonmean ${mmean_file} ${outfile}
+    ## zonal anomaly
+    # cdo -O ymonsub ${infile} -enlarge,${mmean_file} -zonmean ${mmean_file} ${outfile}
+
+    # use the original file to get the zonal mean
+    cdo -O sub ${infile} -enlarge,${infile} -zonmean ${infile} ${outfile}
 }
 
 steady_eddy(){

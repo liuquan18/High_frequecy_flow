@@ -64,7 +64,7 @@ pc = xr.open_mfdataset(f"{projected_pc_path}*.nc", combine = 'by_coords').pc
 pc = to_dataframe(pc)
 
 #%%
-extremes = ee.EventExtreme(pc, 'pc', independent_dim='plev')
+extremes = ee.EventExtreme(pc, 'pc', independent_dim='plev', threshold_std = 1.2)
 
 #%%
 # extract extremes
@@ -79,7 +79,7 @@ positive_extremes.to_csv(
 )
 
 negative_extremes.to_csv(
-    f"{neg_extreme_save_path}/NAO_pc__neg_extremes.csv"
+    f"{neg_extreme_save_path}/NAO_pc_neg_extremes.csv"
 )
 
 

@@ -1,9 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=detrend
-#SBATCH --time=00:30:00
+#SBATCH --time=01:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks=25
+#SBATCH --cpus-per-task=8
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
@@ -37,13 +38,25 @@ Remove_trend(){
     bfile=/work/mh0033/m300883/High_frequecy_flow/data/ERA5/zg_monthly_stat/zg_50000_trend_${month}_b.nc
 
     # daily data pre-process
-    cdo -f nc -O -P 8 -divc,9.80665 -sellevel,50000 -sellonlatbox,-90,40,20,80 -setgridtype,regular $infile $tmpfile
+    cdo -r -f nc -O -P 8 -divc,9.80665 -sellevel,50000 -sellonlatbox,-90,40,20,80 -setgridtype,regular $infile $tmpfile
 
     # subtract trend from daily data
-    cdo -O -P 8 -subtrend $tmpfile $afile $bfile ${to_dir}$(basename $infile .grb)_rm_trend.nc
+    cdo -r -O -P 8 -subtrend $tmpfile $afile $bfile ${to_dir}$(basename $infile .grb)_rm_trend.nc
 
 }
 
 export -f Remove_trend
 
 parallel --jobs 25 Remove_trend ::: ${daily_files[@]}
+
+# for file in "${daily_files[@]}"; do
+#     echo "Processing $file"
+#     [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
+#         sleep 2
+#     done
+#     srun --ntasks=1 --nodes=1 --cpus-per-task=$SLURM_CPUS_PER_TASK bash -c "Remove_trend '$file'" &
+# done
+# wait  # Wait for all background Remove_trend jobs to finish
+
+# # remove temporary files
+# rm -rf ${daily_tmp_dir}*.nc
