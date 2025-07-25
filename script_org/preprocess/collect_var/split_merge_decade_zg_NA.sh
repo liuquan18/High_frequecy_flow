@@ -51,7 +51,7 @@ split() {
 
     name_prefix=${filename:0:-20}
 
-    cdo -splityear $infile $tmp_path$name_prefix
+    cdo -del29feb -splityear $infile $tmp_path$name_prefix
 
 }
 
