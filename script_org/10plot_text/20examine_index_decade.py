@@ -23,17 +23,23 @@ last_std = last.pseudo_pcs
 fig, ax = plt.subplots(figsize=(10, 6))
 
 first_std.plot.hist(
-    bins = np.arange(-4, 4.1, 0.5),
-    ax = ax,
-    color = 'black',
-    label = "1850s",
-    alpha = 0.5,
+    bins=np.arange(-4, 4.1, 0.5),
+    ax=ax,
+    color='black',
+    label="1850s",
+    alpha=0.5,
 )
+
+# For a step outline, use histtype='step' and remove fill
 last_std.plot.hist(
-    bins = np.arange(-4, 4.1, 0.5),
-    ax = ax,
-    color = 'red',
-    label = "2090s",
-    alpha = 0.5,
+    bins=np.arange(-4, 4.1, 0.5),
+    ax=ax,
+    color='red',
+    label="2090s",
+    alpha=1.0,
+    histtype='step',
+    linewidth=3,
 )
+
+ax.legend()
 # %%
