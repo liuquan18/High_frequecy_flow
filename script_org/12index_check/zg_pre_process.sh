@@ -9,8 +9,8 @@ outfile=${infile/zg_daily/zg_NA_daily_ano}
 
 tmpfile=${tmp_dir}$(basename ${outfile})
 
-# select region and plev
-cdo -P 10 -sellevel,50000 -sellonlatbox,-90,40,20,80 ${infile} ${tmpfile}
+# select region and plev, filterout day-to-day variability
+cdo -P 10 -lowpass,183 -sellevel,50000 -sellonlatbox,-90,40,20,80 ${infile} ${tmpfile}
 
 # daily anomaly
 cdo -P 10 -ydaysub ${tmpfile} -ydaymean ${tmpfile} ${outfile}

@@ -2,7 +2,7 @@
 #SBATCH --job-name=selNA
 #SBATCH --time=00:30:00
 #SBATCH --partition=compute
-#SBATCH --nodes=5
+#SBATCH --nodes=25
 #SBATCH --ntasks=1250
 #SBATCH --mem=0
 #SBATCH --mail-type=FAIL
