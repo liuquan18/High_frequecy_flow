@@ -25,7 +25,7 @@ def remap(ifile, var="ua", plev=None):
     return ofile
 
 # %%
-def wavebreaking(pv, mflux, mf_var="usvs"):
+def wavebreaking(pv, mflux, mf_var="upvp"):
     pv = pv * 1e6
     pv = remap(pv, var = 'pv')
     mflux = remap(mflux, var = mf_var, plev = 25000)
@@ -108,7 +108,8 @@ except:
 
 # %%
 pv_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/pv_daily/r{ens}i1p1f1/"
-mf_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{mf_var}_daily/r{ens}i1p1f1/"  # change to transient flux
+upvp_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/upvp_daily/r{ens}i1p1f1/"  # change to transient flux
+usvs_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/usvs_daily/r{ens}i1p1f1/"
 
 awb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_anticyclonic_daily/r{ens}i1p1f1/"
 cwb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_cyclonic_daily/r{ens}i1p1f1/"
@@ -142,10 +143,10 @@ for i, dec in enumerate(single_decades):
     pv = xr.open_dataset(pv_file[0])
     pv = pv.pv
 
-    mf_file = glob.glob(mf_path + f"*{dec}*.nc")
-    mf = xr.open_dataset(mf_file[0])[mf_var]
+    upvp_file = glob.glob(upvp_path + f"*{dec}*.nc")
+    upvp = xr.open_dataset(upvp_file[0])['upvp']
 
-    stratospheric_array, tropospheric_array, anticyclonic_array, cyclonic_array = wavebreaking(pv, mf, mf_var=mf_var)
+    stratospheric_array, tropospheric_array, anticyclonic_array, cyclonic_array = wavebreaking(pv, upvp, mf_var='upvp')
 
 
     # save the data
