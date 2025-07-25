@@ -6,64 +6,32 @@ import seaborn as sns
 import pandas as pd
 # %%
 first = xr.open_mfdataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_pc_decade_nonstd/r*i1p1f1/*1850*.nc",
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0NAO_index_eofs/r*i1p1f1/*1850*.nc",
     combine = 'nested',
     concat_dim = 'ens',
 )
 # %%
 last = xr.open_mfdataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_pc_decade_nonstd/r*i1p1f1/*2090*.nc",
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0NAO_index_eofs/r*i1p1f1/*2090*.nc",
     combine = 'nested',
     concat_dim = 'ens',
 )
 # %%
-first = first.pc
-last = last.pc
+first_std = first.pseudo_pcs
+last_std = last.pseudo_pcs
 # %%
-
-# %%
-first_std = xr.open_mfdataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_pc_decade_std/r*i1p1f1/*1850*.nc",
-    combine = 'nested',
-    concat_dim = 'ens',
-)
-last_std = xr.open_mfdataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/NAO_pc_decade_std/r*i1p1f1/*2090*.nc",
-    combine = 'nested',
-    concat_dim = 'ens',
-)
-# %%
-first_std = first_std.pc
-last_std = last_std.pc
-# %%
-fig, ax = plt.subplots(1, 2, figsize=(10, 6))
-
-first.plot.hist(
-    bins = np.arange(-60000, 60001, 10000),
-    ax = ax[0],
-    color = 'black',
-    label = "1850s",
-    alpha = 0.5,
-)
-last.plot.hist(
-    bins = np.arange(-60000, 60001, 10000),
-    ax = ax[0],
-    color = 'red',
-    label = "2090s",
-    alpha = 0.5,
-)
-
+fig, ax = plt.subplots(figsize=(10, 6))
 
 first_std.plot.hist(
     bins = np.arange(-4, 4.1, 0.5),
-    ax = ax[1],
+    ax = ax,
     color = 'black',
     label = "1850s",
     alpha = 0.5,
 )
 last_std.plot.hist(
     bins = np.arange(-4, 4.1, 0.5),
-    ax = ax[1],
+    ax = ax,
     color = 'red',
     label = "2090s",
     alpha = 0.5,
