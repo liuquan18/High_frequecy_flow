@@ -11,6 +11,9 @@ import os
 import sys
 import glob
 import logging
+import itertools
+import itertools
+from scipy.spatial import distance as dist
 
 logging.basicConfig(level=logging.INFO)
 
@@ -23,6 +26,85 @@ def remap(ifile, var="ua", plev=None):
         ofile = ofile.sel(plev=plev)
 
     return ofile
+
+
+#%%
+def filter_events_by_tracking(
+    events, time_range=120, method="by_overlap", buffer=0, overlap=0.1, distance=1000
+):
+    """
+    Filter events to only keep those that satisfy the temporal tracking conditions.
+
+    Parameters
+    ----------
+        events : geopandas.GeoDataFrame
+        time_range : int or float, optional
+        method : {"by_overlap", "by_distance"}, optional
+        buffer : float, optional
+        overlap : float, optional
+        distance : int or float, optional
+
+    Returns
+    -------
+        filtered_events : geopandas.GeoDataFrame
+            Only events that are part of a tracked pair.
+    """
+
+    # reset index of events
+    events = events.reset_index(drop=True)
+
+    # detect time range
+    if time_range is None:
+        date_dif = events.date.diff()
+        time_range = date_dif[date_dif > pd.Timedelta(0)].min().total_seconds() / 3600
+
+    # select events that are in range of time_range
+    def get_range_combinations(events, index):
+        if events.date.dtype == np.dtype("datetime64[ns]"):
+            diffs = (events.date - events.date.iloc[index]).dt.total_seconds() / 3600
+        else:
+            diffs = abs(events.date - events.date.iloc[index])
+        check = (diffs > 0) & (diffs <= time_range)
+        return [(index, close) for close in events[check].index]
+
+    range_comb = np.asarray(
+        list(
+            set(
+                itertools.chain.from_iterable(
+                    [get_range_combinations(events, index) for index in events.index]
+                )
+            )
+        )
+    )
+
+    if len(range_comb) == 0:
+        return events.iloc[[]]  # return empty DataFrame
+
+    if method == "by_distance":
+        com1 = np.asarray(list(events.iloc[range_comb[:, 0]].com))
+        com2 = np.asarray(list(events.iloc[range_comb[:, 1]].com))
+        dist_com = np.asarray(
+            [dist.pairwise(np.radians([p1, p2]))[0, 1] for p1, p2 in zip(com1, com2)]
+        )
+        check_com = dist_com * 6371 < distance
+        combine = range_comb[check_com]
+    elif method == "by_overlap":
+        geom1 = events.iloc[range_comb[:, 0]].geometry.buffer(buffer).make_valid()
+        geom2 = events.iloc[range_comb[:, 1]].geometry.buffer(buffer).make_valid()
+        inter = geom1.intersection(geom2, align=False)
+        check_overlap = (
+            inter.area.values
+            / (geom2.area.values + geom1.area.values - inter.area.values)
+            > overlap
+        )
+        combine = range_comb[check_overlap]
+    else:
+        raise ValueError(f"Method {method} not supported.")
+
+    # Only keep events that are in at least one valid pair
+    indices = np.unique(combine.flatten())
+    filtered_events = events.iloc[indices].copy()
+    return filtered_events
 
 # %%
 def wavebreaking(pv, mflux, mf_var="upvp"):
@@ -64,33 +146,43 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
     # classify
     events = streamers
     # stratospheric and tropospheric (only for streamers and cutoffs)
-    stratospheric = events[events.mean_var >= contour_levels[1]]
-    tropospheric = events[events.mean_var < contour_levels[1]]
+    # stratospheric = events[events.mean_var >= contour_levels[1]]
+    # tropospheric = events[events.mean_var < contour_levels[1]]
 
 
     # anticyclonic and cyclonic by intensity for the Northern Hemisphere
-    anticyclonic = events[events.intensity >= 0]
+    anticyclonic = events[events.intensity > 0]
     cyclonic = events[events.intensity < 0]
+    
+    # Filter anticyclonic events based on tracking conditions
+    filtered_anticyclonic = filter_events_by_tracking(
+        anticyclonic,
+        time_range=72,
+        method="by_overlap",
+        buffer=0,
+        overlap=0.2,
+    )
 
+    filtered_cyclonic = filter_events_by_tracking(
+        cyclonic,
+        time_range=72,
+        method="by_overlap",
+        buffer=0,
+        overlap=0.2,
+    )
 
+    filtered_anticyclonic_array = wb.to_xarray(data=smoothed,
+                            events=filtered_anticyclonic)
+    filtered_cyclonic_array = wb.to_xarray(data=smoothed,
+                            events=filtered_cyclonic)
 
-    # transform to xarray.DataArray
-    stratospheric_array = wb.to_xarray(data=smoothed,
-                            events=stratospheric)
-    tropospheric_array = wb.to_xarray(data=smoothed,
-                            events=tropospheric)
-    anticyclonic_array = wb.to_xarray(data=smoothed,
-                            events=anticyclonic)
-    cyclonic_array = wb.to_xarray(data=smoothed,
-                            events=cyclonic)
-
-    return stratospheric_array, tropospheric_array, anticyclonic_array, cyclonic_array
+    return filtered_anticyclonic_array, filtered_cyclonic_array
 
 # %%
 node = sys.argv[1]
 ens = int(node)
 logging.info(f"Processing ensemble {ens}")
-mf_var = "usvs"  # can change to transient flux
+mf_var = "upvp"  # can change to transient flux
 
 # %%
 #%%
@@ -146,12 +238,10 @@ for i, dec in enumerate(single_decades):
     upvp_file = glob.glob(upvp_path + f"*{dec}*.nc")
     upvp = xr.open_dataset(upvp_file[0])['upvp']
 
-    stratospheric_array, tropospheric_array, anticyclonic_array, cyclonic_array = wavebreaking(pv, upvp, mf_var='upvp')
+    anticyclonic_array, cyclonic_array = wavebreaking(pv, upvp, mf_var='upvp')
 
 
     # save the data
-    stratospheric_array.to_netcdf(stratospheric_path + f"wb_stratospheric_{ens}_{dec}.nc")
-    tropospheric_array.to_netcdf(tropospheric_path + f"wb_tropospheric_{ens}_{dec}.nc")
     anticyclonic_array.to_netcdf(awb_path + f"wb_anticyclonic_{ens}_{dec}.nc")
     cyclonic_array.to_netcdf(cwb_path + f"wb_cyclonic_{ens}_{dec}.nc")
 # %%
