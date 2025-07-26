@@ -44,17 +44,17 @@ cwb_neg_first = read_comp_var('wb_cyclonic', 'neg', 1850, time_window=(-10, 5), 
 cwb_pos_last = read_comp_var('wb_cyclonic', 'pos', 2090, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev')
 cwb_neg_last = read_comp_var('wb_cyclonic', 'neg', 2090, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev')
 
-#%%
-# divided by 50 ensemble members
-awb_pos_first = awb_pos_first / 50
-awb_neg_first = awb_neg_first / 50
-awb_pos_last = awb_pos_last / 50
-awb_neg_last = awb_neg_last / 50
+# #%%
+# # divided by 50 ensemble members
+# awb_pos_first = awb_pos_first / 50
+# awb_neg_first = awb_neg_first / 50
+# awb_pos_last = awb_pos_last / 50
+# awb_neg_last = awb_neg_last / 50
 
-cwb_pos_first = cwb_pos_first / 50
-cwb_neg_first = cwb_neg_first / 50
-cwb_pos_last = cwb_pos_last / 50
-cwb_neg_last = cwb_neg_last / 50
+# cwb_pos_first = cwb_pos_first / 50
+# cwb_neg_first = cwb_neg_first / 50
+# cwb_pos_last = cwb_pos_last / 50
+# cwb_neg_last = cwb_neg_last / 50
 #%%
 # smooth the data
 awb_pos_first = map_smooth(awb_pos_first, lon_win = 3, lat_win = 3)
@@ -89,15 +89,15 @@ def add_sector_polygon(ax, lat_min=30, lat_max=80, lon_min=-60, lon_max=30, colo
                             linestyle='--', label='Sector')
 
 #%%
-awb_levels = np.arange(-1.6, 1.7, 0.4)
-awb_levels_div = np.arange(-1.6, 1.7, 0.4)  # for difference
-cwb_levels = np.arange(-0.6, 0.7, 0.1) 
-cwb_levels_div = np.arange(-0.6, 0.7, 0.1)  # for difference
+awb_levels = np.arange(-50., 50.1, 5) # for contourf
+awb_levels_div = np.arange(-50., 50.1, 5)  # for difference
+cwb_levels = np.arange(-40., 40.1, 5) 
+cwb_levels_div = np.arange(-40., 40.1, 5)  # for difference
 
 #%%
 fig, axes = plt.subplots(
     nrows=2, ncols=3, figsize=(10, 8),
-    subplot_kw={"projection": ccrs.Orthographic(central_longitude=-30, central_latitude=70)},
+    subplot_kw={"projection": ccrs.Orthographic(central_longitude=-60, central_latitude=70)},
     constrained_layout=True,
 )
 
@@ -285,18 +285,19 @@ for i, ax in enumerate(axes.flatten()):
     ax.coastlines(color="grey", linewidth=1)
     ax.gridlines(draw_labels=False, linewidth=1, color="grey", alpha=0.5, linestyle="--")
     # Set extent: [west_lon, east_lon, south_lat, north_lat]
-    ax.set_extent([-120, 60, 0, 90], crs=ccrs.PlateCarree())
+    ax.set_global()
+    ax.set_extent([-150, 30, 10, 90], crs=ccrs.PlateCarree())
+    ax.set_global()
     ax.set_title("")
     # add a, b, c labels
     ax.text(0.1, 0.98, chr(97 + i),
             transform=ax.transAxes, fontsize=14, fontweight='bold',
             va='top', ha='right',
             bbox=dict(facecolor='white', edgecolor='none', alpha=0.7))
-    
-    # clip_map(ax, 180, 360, 20, 85)
+    # clip_map(ax, 180, 360, 0, 180)  # clip the map to the sector
 
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wave_breaking_comp.pdf",
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wave_breaking_comp_ano.pdf",
 #             bbox_inches='tight', dpi=300, transparent=True)
 
 # %%
