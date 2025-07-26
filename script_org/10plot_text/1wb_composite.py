@@ -61,21 +61,17 @@ awb_pos_first = map_smooth(awb_pos_first, lon_win = 3, lat_win = 3)
 awb_neg_first = map_smooth(awb_neg_first, lon_win = 3, lat_win = 3)
 awb_pos_last = map_smooth(awb_pos_last, lon_win = 3, lat_win = 3)
 awb_neg_last = map_smooth(awb_neg_last, lon_win = 3, lat_win = 3)
-cwb_pos_first = map_smooth(cwb_pos_first, lon_win = 3, lat_win = 3)
-cwb_neg_first = map_smooth(cwb_neg_first, lon_win = 3, lat_win = 3)
-cwb_pos_last = map_smooth(cwb_pos_last, lon_win = 3, lat_win = 3)
-cwb_neg_last = map_smooth(cwb_neg_last, lon_win = 3, lat_win = 3)
+
+cwb_pos_first = map_smooth(cwb_pos_first, lon_win = 5, lat_win = 5)
+cwb_neg_first = map_smooth(cwb_neg_first, lon_win = 5, lat_win = 5)
+cwb_pos_last = map_smooth(cwb_pos_last, lon_win = 5, lat_win = 5)
+cwb_neg_last = map_smooth(cwb_neg_last, lon_win = 5, lat_win = 5)
 # %%
 awb_diff_first = awb_pos_first - awb_neg_first
 awb_diff_last = awb_pos_last - awb_neg_last
 cwb_diff_first = cwb_pos_first - cwb_neg_first
 cwb_diff_last = cwb_pos_last - cwb_neg_last
 # %%
-awb_levels = np.arange(-8, 8.1, 2)
-awb_levels_div = np.arange(-5, 5.1, 1)  # for difference
-cwb_levels = np.arange(-4, 4.1, 0.5) 
-cwb_levels_div = np.arange(-3, 3.1, 0.5)  # for difference
-
 def add_sector_polygon(ax, lat_min=30, lat_max=80, lon_min=-60, lon_max=30, color='yellow'):
     
     # add sector polygon with smooth latitude circle (lat 30-80, lon -60 to 30)
@@ -92,13 +88,19 @@ def add_sector_polygon(ax, lat_min=30, lat_max=80, lon_min=-60, lon_max=30, colo
                             facecolor='none', edgecolor=color, linewidth=2,
                             linestyle='--', label='Sector')
 
+#%%
+awb_levels = np.arange(-1.6, 1.7, 0.4)
+awb_levels_div = np.arange(-1.6, 1.7, 0.4)  # for difference
+cwb_levels = np.arange(-0.6, 0.7, 0.1) 
+cwb_levels_div = np.arange(-0.6, 0.7, 0.1)  # for difference
 
 #%%
 fig, axes = plt.subplots(
     nrows=2, ncols=3, figsize=(10, 8),
-    subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
+    subplot_kw={"projection": ccrs.Orthographic(central_longitude=-30, central_latitude=70)},
     constrained_layout=True,
 )
+
 # --- First row: uhat (jet stream) ---
 # positive phase, first decade in contourf
 cf_hat_pos_first = awb_pos_first.plot.contourf(
@@ -261,6 +263,8 @@ cf_cwb_diff_first = cwb_diff_first.plot.contourf(
     }
 )
 
+
+
 # last decade in contour
 cf_cwb_diff_last = cwb_diff_last.plot.contour(
     ax=axes[1, 2],
@@ -276,20 +280,23 @@ add_sector_polygon(axes[0, 2], lat_min=30, lat_max=70, lon_min=-60, lon_max=30, 
 add_sector_polygon(axes[1, 2], lat_min=45, lat_max=75, lon_min=-100, lon_max=-30, color='purple')
 
 
-
 # --- Formatting ---
 for i, ax in enumerate(axes.flatten()):
     ax.coastlines(color="grey", linewidth=1)
     ax.gridlines(draw_labels=False, linewidth=1, color="grey", alpha=0.5, linestyle="--")
-    ax.set_global()
+    # Set extent: [west_lon, east_lon, south_lat, north_lat]
+    ax.set_extent([-120, 60, 0, 90], crs=ccrs.PlateCarree())
     ax.set_title("")
     # add a, b, c labels
     ax.text(0.1, 0.98, chr(97 + i),
             transform=ax.transAxes, fontsize=14, fontweight='bold',
             va='top', ha='right',
             bbox=dict(facecolor='white', edgecolor='none', alpha=0.7))
+    
+    # clip_map(ax, 180, 360, 20, 85)
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wave_breaking_comp.pdf",
-            bbox_inches='tight', dpi=300, transparent=True)
+
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wave_breaking_comp.pdf",
+#             bbox_inches='tight', dpi=300, transparent=True)
 
 # %%
