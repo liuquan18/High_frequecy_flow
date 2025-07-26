@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=awb
+#SBATCH --job-name=cwb
 #SBATCH --time=01:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
@@ -7,7 +7,7 @@
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=awb.%j.out
+#SBATCH --output=cwb.%j.out
 
 module load cdo/2.5.0-gcc-11.2.0
 module load parallel
@@ -15,6 +15,8 @@ module load parallel
 fldmean(){
     member=$1
     dec=$2
+
+    echo "Processing member: $member, date: $dec"
 
     from_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_cyclonic_daily/r${member}i1p1f1/
     to_path=/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_cyclonic_fldmean/r${member}i1p1f1/
@@ -33,4 +35,4 @@ fldmean(){
 
 export -f fldmean
 
-parallel --jobs 10 --bar fldmean ::: {1..50} ::: {1850..2090..10}
+parallel --jobs 10 fldmean ::: {1..50} ::: {1850..2090..10}
