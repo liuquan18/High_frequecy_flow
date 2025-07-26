@@ -273,7 +273,7 @@ cf_cwb_diff_last = cwb_diff_last.plot.contour(
 )
 
 add_sector_polygon(axes[0, 2], lat_min=30, lat_max=70, lon_min=-60, lon_max=30, color='purple')
-add_sector_polygon(axes[1, 2], lat_min=40, lat_max=70, lon_min=-100, lon_max=-30, color='purple')
+add_sector_polygon(axes[1, 2], lat_min=45, lat_max=75, lon_min=-100, lon_max=-30, color='purple')
 
 
 
