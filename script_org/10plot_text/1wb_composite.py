@@ -76,6 +76,23 @@ awb_levels_div = np.arange(-5, 5.1, 1)  # for difference
 cwb_levels = np.arange(-4, 4.1, 0.5) 
 cwb_levels_div = np.arange(-3, 3.1, 0.5)  # for difference
 
+def add_sector_polygon(ax, lat_min=30, lat_max=80, lon_min=-60, lon_max=30, color='yellow'):
+    
+    # add sector polygon with smooth latitude circle (lat 30-80, lon -60 to 30)
+    lons = np.linspace(lon_min, lon_max, 100)
+    lats_north = np.full_like(lons, lat_max)
+    lats_south = np.full_like(lons, lat_min)
+
+    # upper edge (lat=80, lon -60 to 30), lower edge (lat=30, lon 30 to -60)
+    poly_lons = np.concatenate([lons, lons[::-1]])
+    poly_lats = np.concatenate([lats_north, lats_south[::-1]])
+
+    sector_polygon = Polygon(np.column_stack([poly_lons, poly_lats]))
+    ax.add_geometries([sector_polygon], crs=ccrs.PlateCarree(),
+                            facecolor='none', edgecolor=color, linewidth=2,
+                            linestyle='--', label='Sector')
+
+
 #%%
 fig, axes = plt.subplots(
     nrows=2, ncols=3, figsize=(10, 8),
@@ -254,6 +271,11 @@ cf_cwb_diff_last = cwb_diff_last.plot.contour(
     colors='black',
     levels=[l for l in cwb_levels_div if l != 0],  # exclude zero
 )
+
+add_sector_polygon(axes[0, 2], lat_min=30, lat_max=70, lon_min=-60, lon_max=30, color='purple')
+add_sector_polygon(axes[1, 2], lat_min=40, lat_max=70, lon_min=-100, lon_max=-30, color='purple')
+
+
 
 # --- Formatting ---
 for i, ax in enumerate(axes.flatten()):
