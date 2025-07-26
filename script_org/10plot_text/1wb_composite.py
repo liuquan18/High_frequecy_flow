@@ -89,15 +89,15 @@ def add_sector_polygon(ax, lat_min=30, lat_max=80, lon_min=-60, lon_max=30, colo
                             linestyle='--', label='Sector')
 
 #%%
-awb_levels = np.arange(-50., 50.1, 5) # for contourf
-awb_levels_div = np.arange(-50., 50.1, 5)  # for difference
+awb_levels = np.arange(-80., 80.1, 10) # for contourf
+awb_levels_div = np.arange(-80., 80.1, 10)  # for difference
 cwb_levels = np.arange(-40., 40.1, 5) 
 cwb_levels_div = np.arange(-40., 40.1, 5)  # for difference
 
 #%%
 fig, axes = plt.subplots(
     nrows=2, ncols=3, figsize=(10, 8),
-    subplot_kw={"projection": ccrs.Orthographic(central_longitude=-60, central_latitude=70)},
+    subplot_kw={"projection": ccrs.Orthographic(central_longitude=-30, central_latitude=70)},
     constrained_layout=True,
 )
 
@@ -297,7 +297,7 @@ for i, ax in enumerate(axes.flatten()):
     # clip_map(ax, 180, 360, 0, 180)  # clip the map to the sector
 
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wave_breaking_comp_ano.pdf",
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wave_breaking_comp.pdf",
             bbox_inches='tight', dpi=300, transparent=True)
 
 # %%
