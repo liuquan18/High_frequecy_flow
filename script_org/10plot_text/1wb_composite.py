@@ -297,7 +297,7 @@ for i, ax in enumerate(axes.flatten()):
     # clip_map(ax, 180, 360, 0, 180)  # clip the map to the sector
 
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wave_breaking_comp_ano.pdf",
-#             bbox_inches='tight', dpi=300, transparent=True)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wave_breaking_comp_ano.pdf",
+            bbox_inches='tight', dpi=300, transparent=True)
 
 # %%
