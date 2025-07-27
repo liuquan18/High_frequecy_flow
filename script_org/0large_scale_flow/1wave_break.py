@@ -108,6 +108,7 @@ def filter_events_by_tracking(
     return filtered_events
 
 # %%
+# %%
 def filter_events_by_latitude_fraction(events, lat_threshold=40, fraction=0.5):
     """
     Filter events to only keep those where the area above a latitude threshold
@@ -132,6 +133,10 @@ def filter_events_by_latitude_fraction(events, lat_threshold=40, fraction=0.5):
         north_box = box(-180, lat_threshold, 180, 90)
         inter = geom.intersection(north_box)
         return inter.area if not inter.is_empty else 0.0
+
+    # Ensure all geometries are valid before processing
+    events = events.copy()
+    events['geometry'] = events['geometry'].apply(lambda geom: geom if geom.is_valid else geom.buffer(0))
 
     total_areas = events.geometry.area
     above_areas = events.geometry.apply(area_above_lat)
