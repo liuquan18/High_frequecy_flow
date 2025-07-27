@@ -19,7 +19,9 @@ def fldmean(decade, wb_type='anticyclonic'):
     )
     
     if wb_type == 'anticyclonic':
-        wb = wb.sel(lat = slice(30, 70), lon = slice(300, 360))
+        wb1 = wb.sel(lat = slice(40, 60), lon = slice(0, 30))
+        wb2 = wb.sel(lat = slice(40, 60), lon = slice(330, 360))
+        wb = xr.concat([wb1, wb2], dim='lon')
     else:
         wb = wb.sel(lat = slice(45, 75), lon = slice(260, 330))
 
@@ -42,4 +44,4 @@ cwb_mean = cwb_mean.expand_dims(decade=[decade]).set_index(decade='decade')
 
 # %%
 awb_mean.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_anticyclonic_fldmean/awb_fldmean_{decade}.nc")
-cwb_mean.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_cyclonic_fldmean/cwb_fldmean_{decade}.nc")
+# cwb_mean.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_cyclonic_fldmean/cwb_fldmean_{decade}.nc")
