@@ -218,6 +218,11 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
     ) 
 
 
+    # make sure the geometry is valid
+    filtered_anticyclonic.geometry = filtered_anticyclonic.geometry.apply(lambda geom: geom if geom.is_valid else geom.buffer(0))
+    filtered_cyclonic.geometry = filtered_cyclonic.geometry.apply(lambda geom: geom if geom.is_valid else geom.buffer(0))
+
+
     filtered_anticyclonic_array = wb.to_xarray(data=smoothed,
                             events=filtered_anticyclonic)
     filtered_cyclonic_array = wb.to_xarray(data=smoothed,
