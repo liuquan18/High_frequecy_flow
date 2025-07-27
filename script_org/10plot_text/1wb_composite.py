@@ -33,16 +33,16 @@ read_E_div = read_composite.read_E_div
 read_comp_var = read_composite.read_comp_var
 clip_map = util.clip_map
 # %%
-awb_pos_first = read_comp_var('wb_anticyclonic', 'pos', 1850, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev')
-awb_neg_first = read_comp_var('wb_anticyclonic', 'neg', 1850, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev')
+awb_pos_first = read_comp_var('wb_anticyclonic', 'pos', 1850, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev', erase_empty = False)
+awb_neg_first = read_comp_var('wb_anticyclonic', 'neg', 1850, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev', erase_empty = False)
 # %%
-awb_pos_last = read_comp_var('wb_anticyclonic', 'pos', 2090, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev')
-awb_neg_last = read_comp_var('wb_anticyclonic', 'neg', 2090, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev')
+awb_pos_last = read_comp_var('wb_anticyclonic', 'pos', 2090, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev', erase_empty = False)
+awb_neg_last = read_comp_var('wb_anticyclonic', 'neg', 2090, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev', erase_empty = False)
 # %%
-cwb_pos_first = read_comp_var('wb_cyclonic', 'pos', 1850, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev')
-cwb_neg_first = read_comp_var('wb_cyclonic', 'neg', 1850, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev')
-cwb_pos_last = read_comp_var('wb_cyclonic', 'pos', 2090, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev')
-cwb_neg_last = read_comp_var('wb_cyclonic', 'neg', 2090, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev')
+cwb_pos_first = read_comp_var('wb_cyclonic', 'pos', 1850, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev', erase_empty = False)
+cwb_neg_first = read_comp_var('wb_cyclonic', 'neg', 1850, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev', erase_empty = False)
+cwb_pos_last = read_comp_var('wb_cyclonic', 'pos', 2090, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev', erase_empty = False)
+cwb_neg_last = read_comp_var('wb_cyclonic', 'neg', 2090, time_window=(-10, 5), method='sum', name = 'flag', model_dir = 'MPI_GE_CMIP6_allplev', erase_empty = False)
 
 # #%%
 # # divided by 50 ensemble members
@@ -89,8 +89,9 @@ def add_sector_polygon(ax, lat_min=30, lat_max=80, lon_min=-60, lon_max=30, colo
                             linestyle='--', label='Sector')
 
 #%%
-awb_levels = np.arange(-80., 80.1, 10) # for contourf
-awb_levels_div = np.arange(-80., 80.1, 10)  # for difference
+
+awb_levels = np.arange(-60., 60.1, 10) # for contourf
+awb_levels_div = np.arange(-60., 60.1, 10)  # for difference
 cwb_levels = np.arange(-40., 40.1, 5) 
 cwb_levels_div = np.arange(-40., 40.1, 5)  # for difference
 
@@ -276,9 +277,6 @@ cf_cwb_diff_last = cwb_diff_last.plot.contour(
     levels=[l for l in cwb_levels_div if l != 0],  # exclude zero
 )
 
-add_sector_polygon(axes[0, 2], lat_min=30, lat_max=70, lon_min=-60, lon_max=30, color='purple')
-add_sector_polygon(axes[1, 2], lat_min=45, lat_max=75, lon_min=-100, lon_max=-30, color='purple')
-
 
 # --- Formatting ---
 for i, ax in enumerate(axes.flatten()):
@@ -297,7 +295,7 @@ for i, ax in enumerate(axes.flatten()):
     # clip_map(ax, 180, 360, 0, 180)  # clip the map to the sector
 
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/wave_breaking_comp.pdf",
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0wavebreaking/wave_breaking_comp.pdf",
             bbox_inches='tight', dpi=300, transparent=True)
 
 # %%

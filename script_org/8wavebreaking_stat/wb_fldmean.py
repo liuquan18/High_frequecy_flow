@@ -18,13 +18,9 @@ def fldmean(decade, wb_type='anticyclonic'):
         concat_dim='ens',
     )
     
-    if wb_type == 'anticyclonic':
-        wb1 = wb.sel(lat = slice(40, 60), lon = slice(0, 30))
-        wb2 = wb.sel(lat = slice(40, 60), lon = slice(330, 360))
-        wb = xr.concat([wb1, wb2], dim='lon')
-    else:
-        wb = wb.sel(lat = slice(45, 75), lon = slice(260, 330))
-
+    wb1 = wb.sel(lat = slice(50, 70), lon = slice(0, 40))
+    wb2 = wb.sel(lat = slice(50, 70), lon = slice(270, 360))
+    wb = xr.concat([wb1, wb2], dim='lon')
     
     wb_mean = wb.mean(dim=('lon','lat')).sum(dim=('time','ens'))
 
