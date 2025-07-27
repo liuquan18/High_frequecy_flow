@@ -5,6 +5,8 @@ import os
 import sys
 import glob
 import matplotlib.pyplot as plt
+import logging
+logging.basicConfig(level=logging.INFO)
 # %%
 def fldmean(decade, wb_type='anticyclonic'):
     
@@ -17,9 +19,7 @@ def fldmean(decade, wb_type='anticyclonic'):
     )
     
     if wb_type == 'anticyclonic':
-        wb1 = wb.sel(lat = slice(30, 70), lon = slice(300, 360))
-        wb2 = wb.sel(lat = slice(30, 70), lon = slice(0, 30))
-        wb = xr.concat([wb1, wb2], dim='lon')
+        wb = wb.sel(lat = slice(30, 70), lon = slice(300, 360))
     else:
         wb = wb.sel(lat = slice(45, 75), lon = slice(260, 330))
 
@@ -27,44 +27,19 @@ def fldmean(decade, wb_type='anticyclonic'):
     wb_mean = wb.mean(dim=('lon','lat')).sum(dim=('time','ens'))
 
     return wb_mean
-# %%
 
-awbs = []
-cwbs = []
 
-for decade in np.arange(1850, 2100, 10):
-    
-    awb_mean = fldmean(decade, 'anticyclonic')
-    cwb_mean = fldmean(decade, 'cyclonic')
-
-    awb_mean = awb_mean.expand_dims(decade=[decade]).set_index(decade='decade')
-    cwb_mean = cwb_mean.expand_dims(decade=[decade]).set_index(decade='decade')
-
-    awbs.append(awb_mean)
-    cwbs.append(cwb_mean)
-
-awbs = xr.concat(awbs, dim='decade')
-cwbs = xr.concat(cwbs, dim='decade')
 #%%
-awbs.compute()
-cwbs.compute()
-#%%
-# save
-awbs.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0wb_stat/awb_stat.nc")
-cwbs.to_netcdf("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0wb_stat/cwb_stat.nc")
+decade = sys.argv[1]
+decade = int(decade)
+logging.info(f"Processing decade {decade}")
+
+awb_mean = fldmean(decade, 'anticyclonic')
+cwb_mean = fldmean(decade, 'cyclonic')
+
+awb_mean = awb_mean.expand_dims(decade=[decade]).set_index(decade='decade')
+cwb_mean = cwb_mean.expand_dims(decade=[decade]).set_index(decade='decade')
 
 # %%
-fig, ax = plt.subplots()
-awbs.flag.plot.line(
-    ax=ax,
-    x = 'decade',
-    color = 'k',
-    linestyle='-',
-    label='AWB')
-cwbs.flag.plot.line(
-    ax=ax,
-    x = 'decade',
-    color = 'k',
-    linestyle='--',
-    label='CWB')
-# %%
+awb_mean.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_anticyclonic_fldmean/awb_fldmean_{decade}.nc")
+cwb_mean.to_netcdf(f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_cyclonic_fldmean/cwb_fldmean_{decade}.nc")

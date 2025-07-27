@@ -28,7 +28,7 @@ fldmean(){
     fi
     output_file=${to_path}wb_anticyclonic_fldmean_${dec}.nc
     echo "Calculating field mean for member: $member, date: $dec"
-    cdo -r -O -fldmean -sellonlatbox,-60,30,30,70 ${file} ${output_file}
+    cdo -r -O -fldsum -sellonlatbox,-60,30,30,70 ${file} ${output_file}
 }
 
 export -f fldmean
