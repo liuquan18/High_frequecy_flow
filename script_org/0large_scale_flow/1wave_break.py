@@ -141,7 +141,7 @@ def filter_events_by_latitude_fraction(events, lat_threshold=40, fraction=0.5):
     total_areas = events.geometry.area
     above_areas = events.geometry.apply(area_above_lat)
     frac_above = above_areas / total_areas
-    filtered_events = events[frac_above >= fraction].copy()
+    filtered_events = events[frac_above > fraction].copy()
     return filtered_events
 
 # %%
