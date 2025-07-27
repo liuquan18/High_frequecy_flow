@@ -14,6 +14,7 @@ import logging
 import itertools
 import itertools
 from scipy.spatial import distance as dist
+from shapely.geometry import box
 
 logging.basicConfig(level=logging.INFO)
 
@@ -107,6 +108,38 @@ def filter_events_by_tracking(
     return filtered_events
 
 # %%
+def filter_events_by_latitude_fraction(events, lat_threshold=40, fraction=0.5):
+    """
+    Filter events to only keep those where the area above a latitude threshold
+    is at least a given fraction of the total event area.
+
+    Parameters
+    ----------
+        events : geopandas.GeoDataFrame
+        lat_threshold : float, optional
+            Latitude threshold (default: 40)
+        fraction : float, optional
+            Minimum fraction of area above threshold (default: 0.5)
+
+    Returns
+    -------
+        filtered_events : geopandas.GeoDataFrame
+            Only events meeting the area fraction criterion.
+    """
+    # Assume geometry is in PlateCarree (lon/lat)
+    def area_above_lat(geom):
+        # Intersect with everything north of lat_threshold
+        north_box = box(-180, lat_threshold, 180, 90)
+        inter = geom.intersection(north_box)
+        return inter.area if not inter.is_empty else 0.0
+
+    total_areas = events.geometry.area
+    above_areas = events.geometry.apply(area_above_lat)
+    frac_above = above_areas / total_areas
+    filtered_events = events[frac_above > fraction].copy()
+    return filtered_events
+
+# %%
 def wavebreaking(pv, mflux, mf_var="upvp"):
     pv = pv * 1e6
     pv = remap(pv, var = 'pv')
@@ -170,6 +203,16 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
         buffer=0,
         overlap=0.2,
     )
+
+    # filter by latitude fraction above 40 degrees
+    filtered_anticyclonic = filter_events_by_latitude_fraction(
+        filtered_anticyclonic, lat_threshold=40, fraction=0.5
+    )
+    filtered_cyclonic = filter_events_by_latitude_fraction(
+        filtered_cyclonic, lat_threshold=40, fraction=0.5
+    )
+
+
 
     filtered_anticyclonic_array = wb.to_xarray(data=smoothed,
                             events=filtered_anticyclonic)
