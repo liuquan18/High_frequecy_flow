@@ -130,7 +130,7 @@ def filter_events_by_latitude_fraction(events, lat_threshold=40, fraction=0.5):
     # Assume geometry is in PlateCarree (lon/lat)
     def area_above_lat(geom):
         # Intersect with everything north of lat_threshold
-        north_box = box(-180, lat_threshold, 180, 90)
+        north_box = box(0, lat_threshold, 360, 90)
         inter = geom.intersection(north_box)
         return inter.area if not inter.is_empty else 0.0
 
@@ -141,7 +141,7 @@ def filter_events_by_latitude_fraction(events, lat_threshold=40, fraction=0.5):
     total_areas = events.geometry.area
     above_areas = events.geometry.apply(area_above_lat)
     frac_above = above_areas / total_areas
-    filtered_events = events[frac_above > fraction].copy()
+    filtered_events = events[frac_above >= fraction].copy()
     return filtered_events
 
 # %%
@@ -213,10 +213,9 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
     filtered_anticyclonic = filter_events_by_latitude_fraction(
         filtered_anticyclonic, lat_threshold=40, fraction=0.5
     )
-    # filtered_cyclonic = filter_events_by_latitude_fraction(
-    #     filtered_cyclonic, lat_threshold=40, fraction=0.1
-    # ) # loose filter for cyclonic events because of the smaller occurrence
-
+    filtered_cyclonic = filter_events_by_latitude_fraction(
+        filtered_cyclonic, lat_threshold=40, fraction=0.5
+    ) 
 
 
     filtered_anticyclonic_array = wb.to_xarray(data=smoothed,
