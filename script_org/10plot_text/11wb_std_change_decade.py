@@ -145,6 +145,7 @@ sns.lineplot(
     linewidth=2,
 )
 
+
 # wave breaking
 sns.lineplot(
     data=awbs_df,
@@ -167,59 +168,37 @@ sns.lineplot(
 )
 
 
-
-# jet and baroclinic
+# momentum flux
 sns.lineplot(
-    data=jet,
+    data=transient_momentum,
     x="decade",
-    y="jet_stream",
+    y="momentum_flux",
     ax=axes[1, 0],
-    label="jet stream",
-    color="k",
+    label="transient",
+    color='k',
     linewidth=2,
 )
 sns.lineplot(
-    data=baroclinic,
+    data=steady_momentum,
     x="decade",
-    y="baroclinic",
+    y="momentum_flux",
     ax=axes[1, 0],
-    label="baroclinic",
-    color="k",
+    label="stationary",
+    color='k',
     linestyle="--",
     linewidth=2,
 )
-
-# # momentum flux
-# sns.lineplot(
-#     data=transient_momentum,
-#     x="decade",
-#     y="momentum_flux",
-#     ax=axes[1, 0],
-#     label="transient",
-#     color='k',
-#     linewidth=2,
-# )
-# sns.lineplot(
-#     data=steady_momentum,
-#     x="decade",
-#     y="momentum_flux",
-#     ax=axes[1, 0],
-#     label="stationary",
-#     color='k',
-#     linestyle="--",
-#     linewidth=2,
-# )
-# # sum
-# sns.lineplot(
-#     data=sum_momentum,
-#     x="decade",
-#     y="momentum_flux_sum",
-#     ax=axes[1, 0],
-#     label="sum",
-#     color='k',
-#     linestyle=":",
-#     linewidth=2,
-# )
+# sum
+sns.lineplot(
+    data=sum_momentum,
+    x="decade",
+    y="momentum_flux_sum",
+    ax=axes[1, 0],
+    label="total",
+    color='k',
+    linestyle=":",
+    linewidth=2,
+)
 
 
 # heat flux
@@ -267,8 +246,9 @@ for i, ax in enumerate(axes.flat):
 
 axes[0, 0].set_ylabel("extreme NAO days", fontsize=16)
 axes[0, 1].set_ylabel("wave breaking days", fontsize=16)
-axes[1, 0].set_ylabel("jet stream / baroclinic std", fontsize=16)
+axes[1, 0].set_ylabel(r"$-\partial \overline{u'v'}/\partial y$ std", fontsize=16)
 axes[1, 1].set_ylabel(r"$-\partial \overline{v'\theta'}/\partial y$ std", fontsize=16)
 plt.tight_layout()
+
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/wb_std_change_dec.pdf", dpi=300, bbox_inches="tight", transparent=True)
 # %%
