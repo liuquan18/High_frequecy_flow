@@ -68,8 +68,8 @@ steady_momentum = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/
 
 sum_momentum = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0std_change/Fdiv_phi_transient_Fdiv_phi_steady_sum_decmean_ensmean_25000hPa.nc")
 
-transient_heat = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0std_change/transient_eddy_heat_dy_decmean_ensmean_85000hPa.nc")
-steady_heat = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0std_change/steady_eddy_heat_dy_decmean_ensmean_85000hPa.nc")
+transient_heat = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0std_change/transient_eddy_heat_d2y2_decmean_ensmean_85000hPa.nc")
+steady_heat = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0std_change/steady_eddy_heat_d2y2_decmean_ensmean_85000hPa.nc")
 
 #%%
 def to_dataframe(ds, var_name, base=None):
@@ -169,6 +169,18 @@ sns.lineplot(
 
 
 # momentum flux
+# sum
+sns.lineplot(
+    data=sum_momentum,
+    x="decade",
+    y="momentum_flux_sum",
+    ax=axes[1, 0],
+    label="transient + stationary",
+    color='k',
+    linestyle=":",
+    linewidth=2,
+)
+
 sns.lineplot(
     data=transient_momentum,
     x="decade",
@@ -178,27 +190,17 @@ sns.lineplot(
     color='k',
     linewidth=2,
 )
-sns.lineplot(
-    data=steady_momentum,
-    x="decade",
-    y="momentum_flux",
-    ax=axes[1, 0],
-    label="stationary",
-    color='k',
-    linestyle="--",
-    linewidth=2,
-)
-# sum
-sns.lineplot(
-    data=sum_momentum,
-    x="decade",
-    y="momentum_flux_sum",
-    ax=axes[1, 0],
-    label="total",
-    color='k',
-    linestyle=":",
-    linewidth=2,
-)
+# sns.lineplot(
+#     data=steady_momentum,
+#     x="decade",
+#     y="momentum_flux",
+#     ax=axes[1, 0],
+#     label="stationary",
+#     color='k',
+#     linestyle="--",
+#     linewidth=2,
+# )
+
 
 
 # heat flux
@@ -247,7 +249,7 @@ for i, ax in enumerate(axes.flat):
 axes[0, 0].set_ylabel("extreme NAO days", fontsize=16)
 axes[0, 1].set_ylabel("wave breaking days", fontsize=16)
 axes[1, 0].set_ylabel(r"$-\partial \overline{u'v'}/\partial y$ std", fontsize=16)
-axes[1, 1].set_ylabel(r"$-\partial \overline{v'\theta'}/\partial y$ std", fontsize=16)
+axes[1, 1].set_ylabel(r"$\partial^2 \overline{v'\theta'}/\partial y^2$ std", fontsize=16)
 plt.tight_layout()
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0eddy_flux/wb_std_change_dec.pdf", dpi=300, bbox_inches="tight", transparent=True)
