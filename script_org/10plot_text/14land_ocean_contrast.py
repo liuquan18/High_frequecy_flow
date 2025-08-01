@@ -186,9 +186,9 @@ axes[1, 1].set_xlabel(r"land-ocean contrast [K]")
 plt.tight_layout()
 
 
-# # save fig
-# plt.savefig(
-# "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/theta_zg_steady_clima.pdf",
-#             bbox_inches='tight',
-#             dpi=300)
+# save fig
+plt.savefig(
+"/work/mh0033/m300883/High_frequecy_flow/docs/plots/0mean_flow/theta_zg_steady_clima.pdf",
+            bbox_inches='tight',
+            dpi=300)
 # %%
