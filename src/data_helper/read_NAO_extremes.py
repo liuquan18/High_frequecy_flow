@@ -12,7 +12,9 @@ from shapely import wkt
 
 
 def read_NAO_extremes(decade, phase = 'positive', dur_threshold = 5):
+    # base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0extreme_events_decades/{phase}_extreme_events_decades/'
     base_dir = f'/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/extreme_events_decades/{phase}_extreme_events_decades/'
+
     file_list = glob.glob(base_dir + f'r*i1p1f1/*{decade}*.csv')
 
     # sort
