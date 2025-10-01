@@ -10,7 +10,7 @@
 #SBATCH --account=mh0033
 #SBATCH --output=detrend.%j.out
 
-module load cdo
+module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
 daily_dir=/pool/data/ERA5/E5/pl/an/1D/129/
