@@ -70,7 +70,10 @@ lines = ax.contour(
 ax.invert_yaxis()
 ax.set_ylim(1000, 250)
 
-ax.clabel(lines, fmt="%1.0f", colors="k", fontsize=8)
+# ax.clabel(lines, fmt="%1.0f", colors="k", fontsize=8)
+manual_locations = [(20, 900),(20, 800), (20, 700), (30, 600), (50, 500), (60, 800), (75, 900), (55, 400)]
+
+plt.clabel(lines, fmt="%1.0f", colors="k", fontsize=8, manual=manual_locations)
 
 ax.set_xlabel("Latitude (°N)")
 ax.set_ylabel("Pressure Level (hPa)")
@@ -79,7 +82,7 @@ ax.set_title("tilt of the quasi-stationary eddies profile")
 # invert y axis
 
 fig.colorbar(cs, ax=ax, label="zg (m)")
-
+#
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/profile_tilt_zg_first.png", dpi=500, bbox_inches="tight", transparent=True)
 
 # %%
