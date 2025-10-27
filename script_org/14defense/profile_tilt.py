@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import matplotlib.path as mpath
 import matplotlib.ticker as mticker
+from matplotlib.colors import ListedColormap, BoundaryNorm
 
 
 from src.dynamics.EP_flux import PlotEPfluxArrows
@@ -48,15 +49,27 @@ fig, ax = plt.subplots()
 levels_color = np.arange(-60, 65, 10)
 levels_lines = np.concatenate((np.arange(-60, 0, 10), np.arange(10, 61, 10)))
 
+# build a ListedColormap with one color per interval and make -10..10 intervals transparent
+base_cmap = plt.get_cmap("RdBu_r", len(levels_color) - 1)
+colors = [base_cmap(i) for i in range(base_cmap.N)]
+
+# find intervals whose bounds lie within -10 and 10 and set them transparent
+for i, (low, high) in enumerate(zip(levels_color[:-1], levels_color[1:])):
+    if low >= -10 and high <= 10:
+        colors[i] = (0, 0, 0, 0)  # transparent
+
+listed_cmap = ListedColormap(colors)
+norm = BoundaryNorm(levels_color, listed_cmap.N)
+
 cs = ax.contourf(
     zg_first_lon["lat"],
     zg_first_lon["plev"] / 100,
     zg_first_lon,
     levels=levels_color,
-    cmap="RdBu_r",
+    cmap=listed_cmap,
+    norm=norm,
     extend="both",
 )
-
 
 
 lines = ax.contour(
@@ -71,7 +84,16 @@ ax.invert_yaxis()
 ax.set_ylim(1000, 250)
 
 # ax.clabel(lines, fmt="%1.0f", colors="k", fontsize=8)
-manual_locations = [(20, 900),(20, 800), (20, 700), (30, 600), (50, 500), (60, 800), (75, 900), (55, 400)]
+manual_locations = [
+    (20, 900),
+    (20, 800),
+    (20, 700),
+    (30, 600),
+    (50, 500),
+    (60, 800),
+    (75, 900),
+    (55, 400),
+]
 
 plt.clabel(lines, fmt="%1.0f", colors="k", fontsize=8, manual=manual_locations)
 
