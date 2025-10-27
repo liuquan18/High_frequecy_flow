@@ -289,10 +289,10 @@ for ax in axes:
 axes[1].set_ylabel("")
 axes[2].set_ylabel("")
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/eddy_momentum_transient_only.png",
-    dpi=500,
-)
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/eddy_momentum_transient_only.png",
+#     dpi=500,
+# )
 
 
 # %%
