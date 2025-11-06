@@ -16,8 +16,8 @@ module load parallel
 
 # get the ensemble member from the command line
 member=$1
+var=$2 #'geopoth'
 simulations='vco2_1pctco2_land'
-var='geopoth'
 echo "Ensemble member ${member}"
 
 
