@@ -45,7 +45,7 @@ anomaly() {
     infile=$1
     # Get the filename
     filename=$(basename $infile)
-    echo "Processing $filename"
+    echo "anomaly $filename"
 
     # Set name_ensmean to the same filename but with the first occurrence of _${member} removed
     name_ensmean="${filename/_${member}/}"
@@ -91,6 +91,6 @@ merge() {
 export -f merge
 
 # Loop through decades from 1850 to 2100
-for year in $(seq 1850 10 2090); do
+for year in $(seq 1850 10 1889); do
     merge $year
 done
