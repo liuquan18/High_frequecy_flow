@@ -89,7 +89,7 @@ merge() {
 export -f merge
 
 # Loop through decades from 1850 to 2100
-for year in $(seq 1850 10 1889); do
+for year in $(seq 1850 10 1859); do
     merge $year
 done
 
