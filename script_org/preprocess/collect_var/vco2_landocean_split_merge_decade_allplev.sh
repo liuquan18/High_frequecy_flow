@@ -48,7 +48,8 @@ anomaly() {
     # Set name_ensmean to the same filename but with the first occurrence of _${member} removed
     name_ensmean="${filename/_${member}/}"
 
-    cdo -sub $infile ${ensmean_path}${name_ensmean} $tmp_path$filename
+    cdo -f nc -sub $infile ${ensmean_path}${name_ensmean} $tmp_path$filename
+    # cdo -f nc -sub -chname,$var,geopoth -selname,$var $infile -selname,geopoth ${ensmean_path}${name_ensmean} $tmp_path$filename
 
 }
 
@@ -79,7 +80,10 @@ merge() {
 
     if [ -n "$files" ]; then
         outfile="${to_path}ens_${simulations}_${member}_echam6_ATM_monmean_${start_year}0501-${end_year}0930.nc"
-        cdo -O -selname,$var -mergetime -apply,-selmonth,5/9 [ $files ] $outfile
+
+        cdo -f nc -O -selname,$var -mergetime -apply,-selmonth,5/9 [ $files ] $outfile
+        # cdo -f nc -O -mergetime -apply,-selmonth,5/9 [ $files ] $outfile
+
         echo "Created $outfile"
     else
         echo "No files found for the decade ${start_year}-${end_year}"
