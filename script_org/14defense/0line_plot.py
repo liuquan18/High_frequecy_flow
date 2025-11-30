@@ -240,7 +240,7 @@ sns.lineplot(
     data=moment_transient_pos_last_df,
     x="time",
     y="N",
-    color="none",
+    color="red",
     style="phase",
     ax=axes[0, 0],
     errorbar=("ci", 95),
@@ -251,7 +251,7 @@ sns.lineplot(
     data=moment_transient_neg_last_df,
     x="time",
     y="N",
-    color="none",
+    color="red",
     linestyle="dashed",
     ax=axes[0, 0],
     errorbar=("ci", 95),
@@ -262,7 +262,7 @@ sns.lineplot(
     data=moment_steady_pos_last_df,
     x="time",
     y="N",
-    color="none",
+    color="red",
     ax=axes[0, 1],
     errorbar=("ci", 95),
     linestyle="solid",
@@ -272,7 +272,7 @@ sns.lineplot(
     data=moment_steady_neg_last_df,
     x="time",
     y="N",
-    color="none",
+    color="red",
     linestyle="dashed",
     ax=axes[0, 1],
     errorbar=("ci", 95),
@@ -283,7 +283,7 @@ sns.lineplot(
     data=heat_transient_pos_last_df,
     x="time",
     y="eddy_heat_d2y2",
-    color="none",
+    color="red",
     ax=axes[1, 0],
     errorbar=("ci", 95),
     linestyle="solid",
@@ -293,7 +293,7 @@ sns.lineplot(
     data=heat_transient_neg_last_df,
     x="time",
     y="eddy_heat_d2y2",
-    color="none",
+    color="red",
     linestyle="dashed",
     ax=axes[1, 0],
     errorbar=("ci", 95),
@@ -304,7 +304,7 @@ sns.lineplot(
     data=heat_steady_pos_last_df,
     x="time",
     y="eddy_heat_d2y2",
-    color="none",
+    color="red",
     ax=axes[1, 1],
     errorbar=("ci", 95),
     linestyle="solid",
@@ -314,7 +314,7 @@ sns.lineplot(
     data=heat_steady_neg_last_df,
     x="time",
     y="eddy_heat_d2y2",
-    color="none",
+    color="red",
     linestyle="dashed",
     ax=axes[1, 1],
     errorbar=("ci", 95),
@@ -323,7 +323,7 @@ sns.lineplot(
 
 
 # remove top and right spines
-for ax in axes.flatten():
+for i, ax in enumerate(axes.flatten()):
     sns.despine(ax=ax)
     # vline at x = 0
     ax.axvline(0, color="gray", linestyle="dotted", lw=2)
@@ -331,10 +331,17 @@ for ax in axes.flatten():
     ax.tick_params(axis="both", labelsize=20)
     ax.set_ylabel("")
     ax.set_xlabel("Days relative to extreme onset", fontsize=20)
+    # add a, b, c, d
+    ax.text(-0.1, 1.1, chr(97 + i), transform=ax.transAxes, fontsize=20, fontweight='bold', va='top', ha='right')
+
+axes[0, 0].set_ylabel(r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day $^{-1}$]")
+axes[1, 0].set_ylabel(r"$-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ [m $s^{-1}$ day $^{-1}$]")
 
 # remove legend
 axes[0, 0].legend_.remove()
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/eddy_line_plot_first.png", dpi=500, bbox_inches="tight", transparent=True)
+
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/eddy_line_plot_first.png", dpi=500, bbox_inches="tight", transparent=True)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/eddy_line_plot_all_thesis.pdf", dpi=500, bbox_inches="tight", transparent=True)
 
 # %%

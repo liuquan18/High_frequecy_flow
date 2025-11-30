@@ -23,7 +23,7 @@ simulation_path=/work/mh1421/m300849/simulations/${simulations}/mlo_${simulation
 ensmean_path=/work/mh1421/m300849/simulations/ens_mean/mlo_${simulations}/echam6/
 
 # Find files for both scenarios and combine the lists
-file_list=$(find $simulation_path -name "*_ATM_monmean_*.nc" -print)
+file_list=$(find $simulation_path -name "ATM_mlo_*_monmean.nc" -print)
 
 
 to_path=/scratch/m/m300883/${simulations}_mlo/${var}_monmean/mlo_${member}/
@@ -59,7 +59,7 @@ echo "$file_list" | parallel --jobs 10 anomaly
 # define function merge, merge each decade from 1850 to 2100
 merge() {
     start_year=$1
-    end_year=$((start_year+9))
+    end_year=$((start_year+10))
 
     echo "merging files from ${start_year} to ${end_year}"
 
@@ -75,7 +75,7 @@ merge() {
     regex="${regex}\.nc"
 
     # Find files with name ending within start_year and end_year
-    files=$(find $tmp_path -type f -name "mlo${simulations}_${member}_echam6_ATM_monmean*.nc" | grep -E "$regex")
+    files=$(find $tmp_path -type f -name "ATM_mlo_${simulations}_${member}*.nc" | grep -E "$regex")
 
     if [ -n "$files" ]; then
         outfile="${to_path}mlo${simulations}_${member}_echam6_ATM_monmean_${start_year}0501-${end_year}0930.nc"
@@ -91,7 +91,7 @@ merge() {
 export -f merge
 
 # Loop through decades from 1850 to 2100
-for year in $(seq 1850 10 1859); do
+for year in $(seq 1900 10 1909); do
     merge $year
 done
 
