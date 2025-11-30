@@ -119,12 +119,13 @@ vp = xr.open_dataset(
 # %%
 up = up.sel(plev=500, lat=60, method="nearest").sel(time="1850").ua
 vp = vp.sel(plev=500, lat=60, method="nearest").sel(time="1850").va
-
+#%%
+upvp = up*vp
 
 # %%
 # Run the function
 K_p, K_n, lon_freq, om = calc_spacetime_cross_spec(
-    up, vp, dx=1, ts=1, NFFT=256, smooth=1
+    upvp.values, upvp.values, dx=1, ts=1, NFFT=256, smooth=1
 )
 # %%
 
