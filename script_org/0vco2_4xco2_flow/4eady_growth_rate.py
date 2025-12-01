@@ -24,7 +24,7 @@ except:
     rank = 0
     size = 1
 # %%
-all_ens = [f"{i:02d}" for i in range(1, 24)]
+all_ens = [f"{i:02d}" for i in range(1, 25)]
 ens_core = np.array_split(all_ens, size)[rank]
 
 
