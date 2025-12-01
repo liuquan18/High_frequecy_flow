@@ -64,7 +64,7 @@ for i, member in enumerate(ens_core):
     thetae_mean = thetae.mean(dim='lon')
     thetae_hat = thetae - thetae_mean
 
-    ds = thetae_hat.to_dataset(name="etheta_hat")
+    ds = thetae_hat.to_dataset(name=f"{variable_name}_hat")
 
     # save to netcdf
     ds.to_netcdf(to_file)
