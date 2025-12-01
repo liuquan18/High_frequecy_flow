@@ -36,11 +36,16 @@ for i, member in enumerate(ens_core):
     zg_path = f"/scratch/m/m300883/{simulations}/geopoth_monmean/ens_{member}/"
     ta_path = f"/scratch/m/m300883/{simulations}/t_monmean/ens_{member}/"
 
-    # save path
 
     eddy_growth_rate_path = f"/scratch/m/m300883/{simulations}/eady_growth_rate_monmean/ens_{member}/"
 
+    if 'mlo' in simulations:
+        ua_path = f"/scratch/m/m300883/{simulations}/u_monmean/mlo_{member}/"
+        zg_path = f"/scratch/m/m300883/{simulations}/geopoth_monmean/mlo_{member}/"
+        ta_path = f"/scratch/m/m300883/{simulations}/t_monmean/mlo_{member}/"
+        eddy_growth_rate_path = f"/scratch/m/m300883/{simulations}/eady_growth_rate_monmean/mlo_{member}/"
 
+        
     if not os.path.exists(eddy_growth_rate_path):
         os.makedirs(eddy_growth_rate_path)
 
