@@ -9,6 +9,9 @@
 #SBATCH --account=mh0033
 #SBATCH --output=coll.%j.out
 
+
+# mlo rather than ens
+
 module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
