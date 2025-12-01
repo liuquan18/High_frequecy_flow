@@ -3,7 +3,7 @@
 
 file=$1 # python file to run
 
-for simulations in 'vco2_4xco2_land' 'vco2_4xco2_ocean' 'vco2_4xco2_all' 'vco2_4xco2_land_mlo' 'vco2_4xco2_ocean_mlo' 'vco2_4xco2_all_mlo'
+for simulations in 'vco2_4xco2_land' 'vco2_4xco2_ocean' 'vco2_4xco2_all' 'vco2_4xco2_land_mlo' 
 do
     echo "Simulation ${simulations}"
     # run the python script
