@@ -38,10 +38,9 @@ for i, member in enumerate(ens_core):
     q_path = f"/scratch/m/m300883/{simulations}/q_monmean/ens_{member}/"
     to_path = f"/scratch/m/m300883/{simulations}/equiv_theta_monmean/ens_{member}/"
 
-    if rank == 0:
-        if not os.path.exists(to_path):
-            os.makedirs(to_path)
-        logging.info(f"This node is processing ensemble member {member}")
+    if not os.path.exists(to_path):
+        os.makedirs(to_path)
+    logging.info(f"This node is processing ensemble member {member}")
 
     ta_file = glob.glob(ta_path + "*.nc")
     q_file = glob.glob(q_path + "*.nc")

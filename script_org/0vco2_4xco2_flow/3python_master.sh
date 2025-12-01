@@ -3,9 +3,9 @@
 
 file=$1 # python file to run
 
-for ens in {1..50}
+for simulations in 'vco2_4xco2_land' 'vco2_4xco2_ocean' 'vco2_4xco2_all' 'vco2_4xco2_land_mlo' 'vco2_4xco2_ocean_mlo' 'vco2_4xco2_all_mlo'
 do
-    echo "Ensemble member ${ens}"
+    echo "Simulation ${simulations}"
     # run the python script
-    sbatch 3python_submit.sh $file ${ens}
+    sbatch 3python_submit.sh $file ${simulations}
 done
