@@ -38,22 +38,22 @@ mkdir -p "$tmp_path"
 export to_path tmp_path member simulations ensmean_path simulation_path
 
 
-# define function anomaly (remove ensemble mean)
-anomaly() {
-    infile=$1
-    # Get the filename
-    filename=$(basename $infile)
-    echo "anomaly $filename"
+# # define function anomaly (remove ensemble mean)
+# anomaly() {
+#     infile=$1
+#     # Get the filename
+#     filename=$(basename $infile)
+#     echo "anomaly $filename"
 
-    # Set name_ensmean to the same filename but with the first occurrence of _${member} removed
-    name_ensmean="${filename/_${member}/}"
+#     # Set name_ensmean to the same filename but with the first occurrence of _${member} removed
+#     name_ensmean="${filename/_${member}/}"
 
-    cdo -f nc -sub $infile ${ensmean_path}${name_ensmean} $tmp_path$filename
+#     cdo -f nc -sub $infile ${ensmean_path}${name_ensmean} $tmp_path$filename
 
-}
+# }
 
-export -f anomaly
-echo "$file_list" | parallel --jobs 10 anomaly
+# export -f anomaly
+# echo "$file_list" | parallel --jobs 10 anomaly
 
 
 # define function merge, merge each decade from 1850 to 2100
@@ -75,7 +75,7 @@ merge() {
     regex="${regex}\.nc"
 
     # Find files with name ending within start_year and end_year
-    files=$(find $tmp_path -type f -name "ATM_mlo_${simulations}_${member}*monmean.nc" | grep -E "$regex")
+    files=$(find $simulation_path -type f -name "ATM_mlo_${simulations}_${member}*monmean.nc" | grep -E "$regex")
 
     if [ -n "$files" ]; then
         outfile="${to_path}mlo${simulations}_${member}_echam6_ATM_monmean_${start_year}0501-${end_year}0930.nc"
