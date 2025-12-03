@@ -47,7 +47,7 @@ process_member() {
             regex="${regex}|_${year}"
         fi
     done
-    regex="${regex}\.nc"
+    regex="${regex}"
     
     # Find files with name ending within start_year and end_year
     files=$(find $simulation_path -type f -name "ens_${simulations}_${member}_echam6_ATM_monmean*.nc" | grep -E "$regex")
