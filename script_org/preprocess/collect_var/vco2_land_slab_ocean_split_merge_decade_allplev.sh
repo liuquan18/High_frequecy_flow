@@ -34,7 +34,7 @@ process_member() {
     
     # Process single decade starting at 1900
     start_year=1900
-    end_year=$((start_year+9))
+    end_year=$((start_year+10))
     
     echo "Member ${member}: merging files from ${start_year} to ${end_year}"
     
@@ -50,7 +50,7 @@ process_member() {
     regex="${regex}\.nc"
     
     # Find files with name ending within start_year and end_year
-    files=$(find $simulation_path -type f -name "ATM_mlo_${simulations}_${member}*monmean.nc" | grep -E "$regex")
+    files=$(find $simulation_path -type f -name "ATM_mlo_${simulations}_${member}_*_monmean.nc" | grep -E "$regex")
     
     if [ -n "$files" ]; then
         outfile="${to_path}mlo${simulations}_${member}_echam6_ATM_monmean_${start_year}0501-${end_year}0930.nc"
