@@ -3,7 +3,7 @@
 #SBATCH --time=01:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=10
+#SBATCH --ntasks=4
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
@@ -12,57 +12,32 @@
 module load cdo/2.5.0-gcc-11.2.0
 module load parallel
 
-# get the ensemble member from the command line
-member=$1
-var=$2 #'geopoth'
-simulations=$3 #'vco2_4xco2_land', 'vco2_4xco2_ocean'
-echo "Ensemble member ${member}"
+# Get parameters from command line
+var=$1 #'geopoth'
+simulations=$2 #'vco2_4xco2_land', 'vco2_4xco2_ocean'
 
+echo "Processing variable: ${var}"
+echo "Simulation: ${simulations}"
 
-simulation_path=/work/mh1421/m300849/simulations/${simulations}/mlo_${simulations}_${member}/echam6/
-ensmean_path=/work/mh1421/m300849/simulations/ens_mean/mlo_${simulations}/echam6/
-
-# Find files for both scenarios and combine the lists
-file_list=$(find $simulation_path -name "ATM_mlo_*_monmean.nc" -print)
-
-
-to_path=/scratch/m/m300883/${simulations}_mlo/${var}_monmean/mlo_${member}/
-tmp_path=/scratch/m/m300883/vco2_${var}/mlo_${member}/
-
-mkdir -p $to_path 
-if [ -d "$tmp_path" ]; then
-    rm -rf "$tmp_path"
-fi
-mkdir -p "$tmp_path"
-
-export to_path tmp_path member simulations ensmean_path simulation_path
-
-
-# # define function anomaly (remove ensemble mean)
-# anomaly() {
-#     infile=$1
-#     # Get the filename
-#     filename=$(basename $infile)
-#     echo "anomaly $filename"
-
-#     # Set name_ensmean to the same filename but with the first occurrence of _${member} removed
-#     name_ensmean="${filename/_${member}/}"
-
-#     cdo -f nc -sub $infile ${ensmean_path}${name_ensmean} $tmp_path$filename
-
-# }
-
-# export -f anomaly
-# echo "$file_list" | parallel --jobs 10 anomaly
-
-
-# define function merge, merge each decade from 1850 to 2100
-merge() {
-    start_year=$1
-    end_year=$((start_year+10))
-
-    echo "merging files from ${start_year} to ${end_year}"
-
+# Define function to process each member
+process_member() {
+    member=$1
+    var=$2
+    simulations=$3
+    
+    echo "Processing Member ${member}"
+    
+    simulation_path=/work/mh1421/m300849/simulations/${simulations}/mlo_${simulations}_${member}/echam6/
+    to_path=/scratch/m/m300883/${simulations}_mlo/${var}_monmean/mlo_${member}/
+    
+    mkdir -p $to_path
+    
+    # Process single decade starting at 1900
+    start_year=1900
+    end_year=$((start_year+9))
+    
+    echo "Member ${member}: merging files from ${start_year} to ${end_year}"
+    
     # Construct a regex pattern to match all years from start_year to end_year
     regex=""
     for year in $(seq $start_year $end_year); do
@@ -73,29 +48,26 @@ merge() {
         fi
     done
     regex="${regex}\.nc"
-
+    
     # Find files with name ending within start_year and end_year
     files=$(find $simulation_path -type f -name "ATM_mlo_${simulations}_${member}*monmean.nc" | grep -E "$regex")
-
+    
     if [ -n "$files" ]; then
         outfile="${to_path}mlo${simulations}_${member}_echam6_ATM_monmean_${start_year}0501-${end_year}0930.nc"
-
+        
         cdo -f nc -O -selname,$var -mergetime -apply,-selmonth,5/9 [ $files ] $outfile
-
-        echo "Created $outfile"
+        
+        echo "Member ${member}: Created $outfile"
     else
-        echo "No files found for the decade ${start_year}-${end_year}"
+        echo "Member ${member}: No files found for the decade ${start_year}-${end_year}"
     fi
+
 }
 
-export -f merge
+export -f process_member
+export var simulations
 
-# Loop through decades from 1850 to 2100
-for year in $(seq 1900 10 1909); do
-    merge $year
-done
+# Run for all members (01 to 24) with 4 parallel jobs
+seq -f "%02g" 1 24 | parallel --jobs 4 process_member {} $var $simulations
 
-# remove tmp files
-if [ -d "$tmp_path" ]; then
-    rm -rf "$tmp_path"
-fi
+echo "All members processed!"
