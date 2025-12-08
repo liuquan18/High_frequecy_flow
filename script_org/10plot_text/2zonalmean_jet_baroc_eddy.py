@@ -489,7 +489,7 @@ steady_diff_last = steady_pos_last_zm - steady_neg_last_zm
 (line2,) = axes[1, 1].plot(steady_diff_last, lat, "k--", label="2090s", linewidth=2)
 axes[1, 1].axvline(0, color="black", linestyle=":", alpha=0.5)
 axes[1, 1].set_xlabel(
-    r"$-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ / m $s^{-1}$ day $^{-1}$",
+    r"$-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ / m $s^{-1}$$",
     fontsize=12,
 )
 axes[1, 1].set_title(
@@ -528,7 +528,7 @@ ax_bar.set_xlim(xlim1)
 
 ax_bar.axvline(0, color="red", linestyle=":", alpha=0.5)
 ax_bar.set_xlabel(
-    r"$\Delta$ $-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ / m $s^{-1}$ day $^{-1}$",
+    r"$\Delta$ $-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ / m $s^{-1}$",
     fontsize=12,
     color="red",
 )
