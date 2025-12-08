@@ -489,7 +489,7 @@ steady_diff_last = steady_pos_last_zm - steady_neg_last_zm
 (line2,) = axes[1, 1].plot(steady_diff_last, lat, "k--", label="2090s", linewidth=2)
 axes[1, 1].axvline(0, color="black", linestyle=":", alpha=0.5)
 axes[1, 1].set_xlabel(
-    r"$-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ / $K m^{-1} s^{-1}$",
+    r"$\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ / $K m^{-1} s^{-1}$",
     fontsize=12,
 )
 axes[1, 1].set_title(
@@ -528,7 +528,7 @@ ax_bar.set_xlim(xlim1)
 
 ax_bar.axvline(0, color="red", linestyle=":", alpha=0.5)
 ax_bar.set_xlabel(
-    r"$\Delta$ $-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ / $K m^{-1} s^{-1}$",
+    r"$\Delta$ $\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ / $K m^{-1} s^{-1}$",
     fontsize=12,
     color="red",
 )
@@ -539,5 +539,27 @@ axes[1, 1].legend(
     [line1, line2, bar1], ["1850s", "2090s", "2090s - 1850s"], loc="upper right"
 )
 
+# add a, b , c, d to the subplots
+for i, ax in enumerate(axes.flat):
+    ax.text(
+        -0.05,
+        1.1,
+        chr(97 + i),
+        transform=ax.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+
+
+
 plt.tight_layout()
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/2zonalmean_jet_baroc_eddy.pdf",
+    dpi=300,
+    bbox_inches="tight",
+    transparent=True,
+)
 # %%
