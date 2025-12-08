@@ -155,19 +155,20 @@ baroc_diff_first = util.lon360to180(baroc_diff_first)
 baroc_diff_last = util.lon360to180(baroc_diff_last)
 # %%
 # zonal mean
-ua_pos_first_zm = ua_pos_first.sel(lon=slice(-120, 60)).mean(dim="lon")
-ua_neg_first_zm = ua_neg_first.sel(lon=slice(-120, 60)).mean(dim="lon")
-ua_pos_last_zm = ua_pos_last.sel(lon=slice(-120, 60)).mean(dim="lon")
-ua_neg_last_zm = ua_neg_last.sel(lon=slice(-120, 60)).mean(dim="lon")
-ua_diff_first_zm = ua_diff_first.sel(lon=slice(-120, 60)).mean(dim="lon")
-ua_diff_last_zm = ua_diff_last.sel(lon=slice(-120, 60)).mean(dim="lon")
+lon_range = (None, None)
+ua_pos_first_zm = ua_pos_first.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
+ua_neg_first_zm = ua_neg_first.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
+ua_pos_last_zm = ua_pos_last.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
+ua_neg_last_zm = ua_neg_last.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
+ua_diff_first_zm = ua_diff_first.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
+ua_diff_last_zm = ua_diff_last.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
 # %%
-baroc_pos_first_zm = baroc_pos_first.sel(lon=slice(-120, 0)).mean(dim="lon")
-baroc_neg_first_zm = baroc_neg_first.sel(lon=slice(-120, 0)).mean(dim="lon")
-baroc_pos_last_zm = baroc_pos_last.sel(lon=slice(-120, 0)).mean(dim="lon")
-baroc_neg_last_zm = baroc_neg_last.sel(lon=slice(-120, 0)).mean(dim="lon")
-baroc_diff_first_zm = baroc_diff_first.sel(lon=slice(-120, 0)).mean(dim="lon")
-baroc_diff_last_zm = baroc_diff_last.sel(lon=slice(-120, 0)).mean(dim="lon")
+baroc_pos_first_zm = baroc_pos_first.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
+baroc_neg_first_zm = baroc_neg_first.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
+baroc_pos_last_zm = baroc_pos_last.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
+baroc_neg_last_zm = baroc_neg_last.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
+baroc_diff_first_zm = baroc_diff_first.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
+baroc_diff_last_zm = baroc_diff_last.sel(lon=slice(lon_range[0], lon_range[1])).mean(dim="lon")
 
 # %%
 # calculate the data and load the data for plotting
@@ -206,8 +207,8 @@ baroc_diff_last_zm = baroc_diff_last_zm.sel(lat=slice(0, 90))
 
 
 # Anomaly calculation
-def zonalmean(ds):
-    ds = ds.sel(time=slice(-10, 5)).mean(dim=("time", "event", "lon"))
+def zonalmean(ds, lon_range=(None, None)):
+    ds = ds.sel(time=slice(-10, 5)).sel(lon = slice(lon_range[0], lon_range[1])).mean(dim=("time", "event", "lon"))
     return ds.compute()
 
 
