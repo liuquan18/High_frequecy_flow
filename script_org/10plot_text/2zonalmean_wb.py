@@ -242,7 +242,7 @@ bar1 = ax_bar.barh(
 )
 
 # Now align the axes - they should have the same limits
-axes[0].set_xlim(-25, 25)
+axes[0].set_xlim(-10, 20)
 xlim1 = axes[0].get_xlim()
 ax_bar.set_xlim(xlim1)
 
