@@ -206,11 +206,9 @@ baroc_diff_last_zm = baroc_diff_last_zm.sel(lat=slice(0, 90))
 
 
 # Anomaly calculation
-def anomaly(ds, ds_clima):
+def zonalmean(ds):
     ds = ds.sel(time=slice(-10, 5)).mean(dim=("time", "event", "lon"))
-    ds_clima = ds_clima.mean(dim=("lon"))
-    anomaly = ds - ds_clima
-    return anomaly.load()
+    return ds.compute()
 
 
 #####
@@ -237,41 +235,21 @@ Tdivphi_clima_last = read_EP_flux(
 
 
 # %%
-Tdiv_phi_pos_first_anomaly = anomaly(Tdivphi_pos_first, Tdivphi_clima_first)
-Tdiv_phi_neg_first_anomaly = anomaly(Tdivphi_neg_first, Tdivphi_clima_first)
-Tdiv_phi_pos_last_anomaly = anomaly(Tdivphi_pos_last, Tdivphi_clima_last)
-Tdiv_phi_neg_last_anomaly = anomaly(Tdivphi_neg_last, Tdivphi_clima_last)
+Tdiv_phi_pos_first_zm = zonalmean(Tdivphi_pos_first)
+Tdiv_phi_neg_first_zm = zonalmean(Tdivphi_neg_first)
+Tdiv_phi_pos_last_zm = zonalmean(Tdivphi_pos_last)
+Tdiv_phi_neg_last_zm = zonalmean(Tdivphi_neg_last)
 # %%
-Tdiv_phi_pos_first_anomaly = Tdiv_phi_pos_first_anomaly.sel(
+Tdiv_phi_pos_first_zm = Tdiv_phi_pos_first_zm.sel(
     plev=25000, lat=slice(0, 90)
 )
-Tdiv_phi_neg_first_anomaly = Tdiv_phi_neg_first_anomaly.sel(
+Tdiv_phi_neg_first_zm = Tdiv_phi_neg_first_zm.sel(
     plev=25000, lat=slice(0, 90)
 )
-Tdiv_phi_pos_last_anomaly = Tdiv_phi_pos_last_anomaly.sel(plev=25000, lat=slice(0, 90))
-Tdiv_phi_neg_last_anomaly = Tdiv_phi_neg_last_anomaly.sel(plev=25000, lat=slice(0, 90))
+Tdiv_phi_pos_last_zm = Tdiv_phi_pos_last_zm.sel(plev=25000, lat=slice(0, 90))
+Tdiv_phi_neg_last_zm = Tdiv_phi_neg_last_zm.sel(plev=25000, lat=slice(0, 90))
 
-# %%
-# climatology of Tdiv_phi std for the first and last decade
-Tdiv_phi_std_first = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fdiv_phi_transient_std_decmean/Fdiv_phi_transient_std_monmean_ensmean_185005_185909.nc"
-)["std"]
-Tdiv_phi_std_last = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fdiv_phi_transient_std_decmean/Fdiv_phi_transient_std_monmean_ensmean_209005_209909.nc"
-)["std"]
 
-Tdiv_phi_std_first = (
-    Tdiv_phi_std_first.sel(plev=25000, lat=slice(0, 90))
-    .mean(dim=("lon", "time"))
-    .compute()
-)
-Tdiv_phi_std_last = (
-    Tdiv_phi_std_last.sel(plev=25000, lat=slice(0, 90))
-    .mean(dim=("lon", "time"))
-    .compute()
-)
-# %%
-Tdiv_phi_std_last_ratio = Tdiv_phi_std_last / Tdiv_phi_std_first
 # %%
 ############
 # thermal feedback from quasi-stationary eddies
@@ -311,69 +289,36 @@ steady_neg_last = read_comp_var(
     name="eddy_heat_d2y2",
     model_dir="MPI_GE_CMIP6_allplev",
 )
+
 # %%
-steady_clima_first = read_climatology(
-    "steady_eddy_heat_d2y2",
-    1850,
-    name="eddy_heat_d2y2",
-    model_dir="MPI_GE_CMIP6_allplev",
-)
-steady_clima_last = read_climatology(
-    "steady_eddy_heat_d2y2",
-    2090,
-    name="eddy_heat_d2y2",
-    model_dir="MPI_GE_CMIP6_allplev",
-)
-# %%
-steady_pos_first_anomaly = anomaly(steady_pos_first, steady_clima_first)
-steady_neg_first_anomaly = anomaly(steady_neg_first, steady_clima_first)
-steady_pos_last_anomaly = anomaly(steady_pos_last, steady_clima_last)
-steady_neg_last_anomaly = anomaly(steady_neg_last, steady_clima_last)
+steady_pos_first_zm = zonalmean(steady_pos_first)
+steady_neg_first_zm = zonalmean(steady_neg_first)
+steady_pos_last_zm = zonalmean(steady_pos_last)
+steady_neg_last_zm = zonalmean(steady_neg_last)
 # %%
 
-steady_pos_first_anomaly = steady_pos_first_anomaly.sel(plev=85000, lat=slice(0, 90))
-steady_neg_first_anomaly = steady_neg_first_anomaly.sel(plev=85000, lat=slice(0, 90))
-steady_pos_last_anomaly = steady_pos_last_anomaly.sel(plev=85000, lat=slice(0, 90))
-steady_neg_last_anomaly = steady_neg_last_anomaly.sel(plev=85000, lat=slice(0, 90))
+steady_pos_first_zm = steady_pos_first_zm.sel(plev=85000, lat=slice(0, 90))
+steady_neg_first_zm = steady_neg_first_zm.sel(plev=85000, lat=slice(0, 90))
+steady_pos_last_zm = steady_pos_last_zm.sel(plev=85000, lat=slice(0, 90))
+steady_neg_last_zm = steady_neg_last_zm.sel(plev=85000, lat=slice(0, 90))
 
 # %%
 # running media
 window = 5
-steady_pos_first_anomaly = (
-    steady_pos_first_anomaly.rolling(lat=window, center=True).median().dropna("lat")
+steady_pos_first_zm = (
+    steady_pos_first_zm.rolling(lat=window, center=True).median().dropna("lat")
 )
-steady_neg_first_anomaly = (
-    steady_neg_first_anomaly.rolling(lat=window, center=True).median().dropna("lat")
+steady_neg_first_zm = (
+    steady_neg_first_zm.rolling(lat=window, center=True).median().dropna("lat")
 )
-steady_pos_last_anomaly = (
-    steady_pos_last_anomaly.rolling(lat=window, center=True).median().dropna("lat")
+steady_pos_last_zm = (
+    steady_pos_last_zm.rolling(lat=window, center=True).median().dropna("lat")
 )
-steady_neg_last_anomaly = (
-    steady_neg_last_anomaly.rolling(lat=window, center=True).median().dropna("lat")
-)
-
-
-# %%
-# climatology of steady eddy heat d2y2 std for the first and last decade
-steady_clima_std_first = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/steady_eddy_heat_d2y2_std_decmean/steady_eddy_heat_d2y2_std_monmean_ensmean_185005_185909.nc"
-)["std"]
-steady_clima_std_last = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/steady_eddy_heat_d2y2_std_decmean/steady_eddy_heat_d2y2_std_monmean_ensmean_209005_209909.nc"
-)["std"]
-
-steady_clima_std_first = (
-    steady_clima_std_first.sel(plev=85000, lat=slice(0, 90))
-    .mean(dim=("lon", "time"))
-    .compute()
-)
-steady_clima_std_last = (
-    steady_clima_std_last.sel(plev=85000, lat=slice(0, 90))
-    .mean(dim=("lon", "time"))
-    .compute()
+steady_neg_last_zm = (
+    steady_neg_last_zm.rolling(lat=window, center=True).median().dropna("lat")
 )
 
-steady_clima_std_last_ratio = steady_clima_std_last / steady_clima_std_first
+
 # %%
 # New plot: 2x2 layout for jet stream (UA) analysis
 fig, axes = plt.subplots(2, 2, figsize=(16, 12), sharey=True)
@@ -424,13 +369,13 @@ axes[0, 0].legend(
     [line1, line2, bar1], ["1850s", "2090s", "2090s - 1850s"], loc="lower right"
 )
 
-#  axes[0, 1]: line plot showing Tdiv_phi_pos_first_anomaly - Tdiv_phi_neg_first_anomaly and Tdiv_phi_pos_last_anomaly - Tdiv_phi_neg_last_anomaly
+#  axes[0, 1]: line plot showing Tdiv_phi_pos_first_zm - Tdiv_phi_neg_first_zm and Tdiv_phi_pos_last_zm - Tdiv_phi_neg_last_zm
 # bar plot showing Tdiv_phi_std_last_ratio, vline at x = 1
-lat = Tdiv_phi_pos_first_anomaly.lat.values
+lat = Tdiv_phi_pos_first_zm.lat.values
 
 # Calculate differences
-Tdiv_phi_diff_first = Tdiv_phi_pos_first_anomaly - Tdiv_phi_neg_first_anomaly
-Tdiv_phi_diff_last = Tdiv_phi_pos_last_anomaly - Tdiv_phi_neg_last_anomaly
+Tdiv_phi_diff_first = Tdiv_phi_pos_first_zm - Tdiv_phi_neg_first_zm
+Tdiv_phi_diff_last = Tdiv_phi_pos_last_zm - Tdiv_phi_neg_last_zm
 
 # Plot difference lines
 (line1,) = axes[0, 1].plot(Tdiv_phi_diff_first, lat, "k-", label="1850s", linewidth=2)
@@ -532,12 +477,12 @@ axes[1, 0].legend(
     [line1, line2, bar1], ["1850s", "2090s", "2090s - 1850s"], loc="lower right"
 )
 
-#  axes[1, 1]: line plot showing steady_pos_first_anomaly - steady_neg_first_anomaly and steady_pos_last_anomaly - steady_neg_last_anomaly
+#  axes[1, 1]: line plot showing steady_pos_first_zm - steady_neg_first_zm and steady_pos_last_zm - steady_neg_last_zm
 # bar plot showing steady_clima_std_last_ratio, vline at x = 1
-lat = steady_pos_first_anomaly.lat.values
+lat = steady_pos_first_zm.lat.values
 # Calculate differences
-steady_diff_first = steady_pos_first_anomaly - steady_neg_first_anomaly
-steady_diff_last = steady_pos_last_anomaly - steady_neg_last_anomaly
+steady_diff_first = steady_pos_first_zm - steady_neg_first_zm
+steady_diff_last = steady_pos_last_zm - steady_neg_last_zm
 # Plot difference lines
 (line1,) = axes[1, 1].plot(steady_diff_first, lat, "k-", label="1850s", linewidth=2)
 (line2,) = axes[1, 1].plot(steady_diff_last, lat, "k--", label="2090s", linewidth=2)
@@ -554,7 +499,7 @@ axes[1, 1].set_title(
 
 # Secondary x-axis: plot change as bars
 ax_bar = axes[1, 1].twiny()
-lat = steady_pos_first_anomaly.lat.values
+lat = steady_pos_first_zm.lat.values
 steady_change = steady_diff_last - steady_diff_first
 
 # Scale the data by 2 so that when displayed, it appears at half value
@@ -568,7 +513,7 @@ bar1 = ax_bar.barh(
 )
 
 # Now align the axes - they should have the same limits
-axes[1, 1].set_xlim(-7*1e-12, 5*1e-12)
+axes[1, 1].set_xlim(-7*1e-12, 7*1e-12)
 xlim1 = axes[1, 1].get_xlim()
 ax_bar.set_xlim(xlim1)
 
