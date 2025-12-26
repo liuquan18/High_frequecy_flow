@@ -12,7 +12,6 @@ import sys
 import glob
 import logging
 import itertools
-import itertools
 from scipy.spatial import distance as dist
 from shapely.geometry import box
 
