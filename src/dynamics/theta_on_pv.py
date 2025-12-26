@@ -106,7 +106,7 @@ def cal_pv_isent(ta, ua, va):
   
     pv.name = 'pv'
     # Define isentropic levels as a numpy array with units
-    isentlevs = np.arange(320, 361, 5)
+    isentlevs = np.arange(300, 361, 5)
 
 
 
