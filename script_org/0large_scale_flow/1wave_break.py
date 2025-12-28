@@ -106,7 +106,7 @@ def filter_events_by_tracking(
     filtered_events = events.iloc[indices].copy()
     return filtered_events
 
-# %%
+
 # %%
 def filter_events_by_latitude_fraction(events, lat_threshold=40, fraction=0.5):
     """
