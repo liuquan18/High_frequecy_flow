@@ -245,7 +245,6 @@ def wavebreaking(pv, mflux, isen_level, mf_var="upvp"):
 # %%
 node = sys.argv[1]
 ens = int(node)
-logging.info(f"Processing ensemble {ens}")
 mf_var = "upvp"  # can change to transient flux
 
 # %%
@@ -288,7 +287,10 @@ single_levels = np.array_split(all_levels, size)[rank]
 # %%
 # for dec=1850
 def process_decade(dec):
-    logging.info(f"Processing decade {dec}")
+    if rank == 0:
+        logging.info(f"Processing decade {dec}")
+        logging.info(f"Processing ensemble {ens}")
+
     pv_file = glob.glob(pv_path + f"*{dec}*.nc")
     pv = xr.open_dataset(pv_file[0])
     pv = pv.pv
@@ -299,8 +301,8 @@ def process_decade(dec):
     awbs_dec = []
     cwbs_dec = []
 
-    for isen_level in single_levels:
-        logging.info(f"rank {rank} Processing isentropic level {isen_level}K")
+    for i, isen_level in enumerate(single_levels):
+        logging.info(f"rank {rank} Processing isentropic level {isen_level}K {i+1}/{len(single_levels)}")
 
         anticyclonic_array, cyclonic_array = wavebreaking(
             pv, upvp, isen_level=isen_level, mf_var="upvp"
