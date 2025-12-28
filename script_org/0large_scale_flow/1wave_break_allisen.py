@@ -357,4 +357,6 @@ def process_decade(dec):
 
         logging.info("Processing complete!")
 
-# # %%
+# %%
+process_decade(1850)
+process_decade(2090)
