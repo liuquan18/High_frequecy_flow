@@ -158,31 +158,15 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
 
     smoothed = wb.calculate_smoothed_field(
         data=pv,
-        passes=5,
-        weights=np.array(
-            [
-                [1, 2, 3, 2, 1],
-                [2, 4, 6, 4, 2],
-                [3, 6, 9, 6, 3],
-                [2, 4, 6, 4, 2],
-                [1, 2, 3, 2, 1],
-            ]
-        ),
+        passes=7,
+        weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]),  # optional
         mode="wrap",
     )
     # smooth the mflux
     mflux = wb.calculate_smoothed_field(
         data=mflux,
-        passes=5,
-        weights=np.array(
-            [
-                [1, 2, 3, 2, 1],
-                [2, 4, 6, 4, 2],
-                [3, 6, 9, 6, 3],
-                [2, 4, 6, 4, 2],
-                [1, 2, 3, 2, 1],
-            ]
-        ),
+        passes=7,
+        weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]),  # optional
         mode="wrap",
     )
 
