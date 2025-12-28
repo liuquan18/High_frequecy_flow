@@ -219,10 +219,10 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
 
     # filter by latitude fraction above 40 degrees
     filtered_anticyclonic = filter_events_by_latitude_fraction(
-        filtered_anticyclonic, lat_threshold=40, fraction=0.5
+        filtered_anticyclonic, lat_threshold=30, fraction=0.5
     )
     filtered_cyclonic = filter_events_by_latitude_fraction(
-        filtered_cyclonic, lat_threshold=40, fraction=0.5
+        filtered_cyclonic, lat_threshold=30, fraction=0.5
     ) 
 
 
