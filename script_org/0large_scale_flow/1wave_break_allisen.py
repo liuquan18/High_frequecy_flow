@@ -175,6 +175,11 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
                                     periodic_add=120, # optional
                                     original_coordinates=False) # optional
 
+    # Check if contours is empty
+    if contours.empty:
+        logging.warning("No contours found; returning empty arrays.")
+        return xr.zeros_like(smoothed), xr.zeros_like(smoothed)
+
     # calculate streamers
     streamers = wb.calculate_streamers(data=smoothed,
                                     contour_levels=contour_levels,
@@ -183,7 +188,6 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
                                     cont_dis=1200, # optional
                                     intensity=mflux, # optional
                                     periodic_add=120) # optional
-
 
     # classify
     events = streamers
