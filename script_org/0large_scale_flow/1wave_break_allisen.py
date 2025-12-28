@@ -225,10 +225,12 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
 
     # filter by latitude fraction above 40 degrees
     filtered_anticyclonic = filter_events_by_latitude_fraction(
-        filtered_anticyclonic, lat_threshold=30, fraction=0.5
+        filtered_anticyclonic, lat_threshold=40, fraction=0.5
     )
+
+    # more in the northern side of the jet
     filtered_cyclonic = filter_events_by_latitude_fraction(
-        filtered_cyclonic, lat_threshold=30, fraction=0.5
+        filtered_cyclonic, lat_threshold=50, fraction=0.5
     )
 
     # make sure the geometry is valid
