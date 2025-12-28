@@ -10,5 +10,7 @@
 #SBATCH --output=wb.%j.out
 
 
+# Disable tqdm progress bars
+export TQDM_DISABLE=1
 
 mpirun -n 10 python 1wave_break.py $1
