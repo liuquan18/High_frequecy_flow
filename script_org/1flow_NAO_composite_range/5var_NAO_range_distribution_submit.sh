@@ -7,7 +7,7 @@
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
-#SBATCH --output=NAO_range.%j.out
+#SBATCH --output=NAO_dis.%j.out
 
 
 decade=$1
