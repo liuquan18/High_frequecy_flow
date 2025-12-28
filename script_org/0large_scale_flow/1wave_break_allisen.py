@@ -151,29 +151,50 @@ def filter_events_by_latitude_fraction(events, lat_threshold=40, fraction=0.5):
 # %%
 def wavebreaking(pv, mflux, mf_var="upvp"):
     pv = pv * 1e6
-    pv = remap(pv, var = 'pv')
-    mflux = remap(mflux, var = mf_var, plev = 25000)
+    pv = remap(pv, var="pv")
+    mflux = remap(mflux, var=mf_var, plev=25000)
     # contour_levels = [-2*1e-6, 2*1e-6]
     contour_levels = [-2, 2]
-    
-    smoothed = wb.calculate_smoothed_field(data=pv,
-                                        passes=5,
-                                        weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]), # optional
-                                        mode="wrap") # optional
+
+    smoothed = wb.calculate_smoothed_field(
+        data=pv,
+        passes=5,
+        weights=np.array(
+            [
+                [1, 2, 3, 2, 1],
+                [2, 4, 6, 4, 2],
+                [3, 6, 9, 6, 3],
+                [2, 4, 6, 4, 2],
+                [1, 2, 3, 2, 1],
+            ]
+        ),
+        mode="wrap",
+    )
     # smooth the mflux
-    mflux = wb.calculate_smoothed_field(data=mflux,
-                                        passes=5,
-                                        weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]), # optional
-                                        mode="wrap") # optional
+    mflux = wb.calculate_smoothed_field(
+        data=mflux,
+        passes=5,
+        weights=np.array(
+            [
+                [1, 2, 3, 2, 1],
+                [2, 4, 6, 4, 2],
+                [3, 6, 9, 6, 3],
+                [2, 4, 6, 4, 2],
+                [1, 2, 3, 2, 1],
+            ]
+        ),
+        mode="wrap",
+    )
 
     # make sure that the time of the smoothed data is the same as the mflux
-    mflux['time'] = smoothed['time']
+    mflux["time"] = smoothed["time"]
 
-
-    contours = wb.calculate_contours(data=smoothed,
-                                    contour_levels=contour_levels,
-                                    periodic_add=120, # optional
-                                    original_coordinates=False) # optional
+    contours = wb.calculate_contours(
+        data=smoothed,
+        contour_levels=contour_levels,
+        periodic_add=120,  # optional
+        original_coordinates=False,
+    )  # optional
 
     # Check if contours is empty
     if contours.empty:
@@ -181,13 +202,15 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
         return xr.zeros_like(smoothed), xr.zeros_like(smoothed)
 
     # calculate streamers
-    streamers = wb.calculate_streamers(data=smoothed,
-                                    contour_levels=contour_levels,
-                                    contours=contours, #optional
-                                    geo_dis=800, # optional
-                                    cont_dis=1200, # optional
-                                    intensity=mflux, # optional
-                                    periodic_add=120) # optional
+    streamers = wb.calculate_streamers(
+        data=smoothed,
+        contour_levels=contour_levels,
+        contours=contours,  # optional
+        geo_dis=800,  # optional
+        cont_dis=1200,  # optional
+        intensity=mflux,  # optional
+        periodic_add=120,
+    )  # optional
 
     # classify
     events = streamers
@@ -195,11 +218,10 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
     # stratospheric = events[events.mean_var >= contour_levels[1]]
     # tropospheric = events[events.mean_var < contour_levels[1]]
 
-
     # anticyclonic and cyclonic by intensity for the Northern Hemisphere
     anticyclonic = events[events.intensity > 0]
     cyclonic = events[events.intensity < 0]
-    
+
     # Filter anticyclonic events based on tracking conditions
     filtered_anticyclonic = filter_events_by_tracking(
         anticyclonic,
@@ -223,26 +245,32 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
     )
     filtered_cyclonic = filter_events_by_latitude_fraction(
         filtered_cyclonic, lat_threshold=30, fraction=0.5
-    ) 
-
+    )
 
     # make sure the geometry is valid
-    filtered_anticyclonic.geometry = filtered_anticyclonic.geometry.apply(lambda geom: geom if geom.is_valid else geom.buffer(0))
-    filtered_cyclonic.geometry = filtered_cyclonic.geometry.apply(lambda geom: geom if geom.is_valid else geom.buffer(0))
-
+    filtered_anticyclonic.geometry = filtered_anticyclonic.geometry.apply(
+        lambda geom: geom if geom.is_valid else geom.buffer(0)
+    )
+    filtered_cyclonic.geometry = filtered_cyclonic.geometry.apply(
+        lambda geom: geom if geom.is_valid else geom.buffer(0)
+    )
 
     if not filtered_anticyclonic.empty:
         filtered_anticyclonic_array = wb.to_xarray(
             data=smoothed, events=filtered_anticyclonic
         )
     else:
-        logging.warning("No anticyclonic wave breaking events found; returning empty array.")
+        logging.warning(
+            "No anticyclonic wave breaking events found; returning empty array."
+        )
         filtered_anticyclonic_array = xr.zeros_like(smoothed)
 
     if not filtered_cyclonic.empty:
         filtered_cyclonic_array = wb.to_xarray(data=smoothed, events=filtered_cyclonic)
     else:
-        logging.warning("No cyclonic wave breaking events found; returning empty array.")
+        logging.warning(
+            "No cyclonic wave breaking events found; returning empty array."
+        )
         filtered_cyclonic_array = xr.zeros_like(smoothed)
 
     return filtered_anticyclonic_array, filtered_cyclonic_array
@@ -253,17 +281,26 @@ node = sys.argv[1]
 ens = int(node)
 mf_var = "upvp"  # can change to transient flux
 
-# %%
-# %%
-try:
-    from mpi4py import MPI
+# Manual switch to disable MPI (set to False to force serial processing)
+USE_MPI = False
 
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
-    size = comm.Get_size()  # 10
-    use_mpi = True
-except Exception as e:
-    logging.warning(f"::: Warning: Proceeding without mpi4py! {e} :::")
+# %%
+# %%
+if USE_MPI:
+    try:
+        from mpi4py import MPI
+
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
+        size = comm.Get_size()  # 10
+        use_mpi = True
+    except Exception as e:
+        logging.warning(f"::: Warning: Proceeding without mpi4py! {e} :::")
+        rank = 0
+        size = 1
+        use_mpi = False
+else:
+    logging.info("MPI disabled by user setting (USE_MPI=False)")
     rank = 0
     size = 1
     use_mpi = False
@@ -290,6 +327,8 @@ if rank == 0:
 # %%
 all_levels = np.arange(300, 361, 5)
 single_levels = np.array_split(all_levels, size)[rank]
+
+
 # %%
 # for dec=1850
 def process_decade(dec):
@@ -308,15 +347,17 @@ def process_decade(dec):
     cwbs_dec = []
 
     for i, isen_level in enumerate(single_levels):
-        logging.info(f"rank {rank} Processing isentropic level {isen_level}K {i+1}/{len(single_levels)}")
-
-        pv_level = pv.sel(isentropic_level=isen_level)
-        anticyclonic_array, cyclonic_array = wavebreaking(
-            pv_level, upvp,  mf_var="upvp"
+        logging.info(
+            f"rank {rank} Processing isentropic level {isen_level}K {i+1}/{len(single_levels)}"
         )
 
+        pv_level = pv.sel(isentropic_level=isen_level)
+        anticyclonic_array, cyclonic_array = wavebreaking(pv_level, upvp, mf_var="upvp")
+
         # Add isentropic level as a coordinate
-        anticyclonic_array = anticyclonic_array.expand_dims({"isen_level": [isen_level]})
+        anticyclonic_array = anticyclonic_array.expand_dims(
+            {"isen_level": [isen_level]}
+        )
         cyclonic_array = cyclonic_array.expand_dims({"isen_level": [isen_level]})
 
         awbs_dec.append(anticyclonic_array)
@@ -366,6 +407,8 @@ def process_decade(dec):
 
         logging.info("Processing complete!")
 
+
 # %%
 process_decade(1850)
 process_decade(2090)
+# %%
