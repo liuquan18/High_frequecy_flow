@@ -149,47 +149,41 @@ def filter_events_by_latitude_fraction(events, lat_threshold=40, fraction=0.5):
 
 
 # %%
-def wavebreaking(pv, mflux, isen_level, mf_var="upvp"):
+def wavebreaking(pv, mflux, mf_var="upvp"):
     pv = pv * 1e6
-    pv = remap(pv, var="pv")
-    mflux = remap(mflux, var=mf_var, plev=25000)
+    pv = remap(pv, var = 'pv')
+    mflux = remap(mflux, var = mf_var, plev = 25000)
     # contour_levels = [-2*1e-6, 2*1e-6]
     contour_levels = [-2, 2]
-
-    smoothed = wb.calculate_smoothed_field(
-        data=pv.sel(isentropic_level=isen_level),
-        passes=5,
-        weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]),  # optional
-        mode="wrap",
-    )  # optional
+    
+    smoothed = wb.calculate_smoothed_field(data=pv,
+                                        passes=5,
+                                        weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]), # optional
+                                        mode="wrap") # optional
     # smooth the mflux
-    mflux = wb.calculate_smoothed_field(
-        data=mflux,
-        passes=5,
-        weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]),  # optional
-        mode="wrap",
-    )  # optional
+    mflux = wb.calculate_smoothed_field(data=mflux,
+                                        passes=5,
+                                        weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]), # optional
+                                        mode="wrap") # optional
 
     # make sure that the time of the smoothed data is the same as the mflux
-    mflux["time"] = smoothed["time"]
+    mflux['time'] = smoothed['time']
 
-    contours = wb.calculate_contours(
-        data=smoothed,
-        contour_levels=contour_levels,
-        periodic_add=120,  # optional
-        original_coordinates=False,
-    )  # optional
+
+    contours = wb.calculate_contours(data=smoothed,
+                                    contour_levels=contour_levels,
+                                    periodic_add=120, # optional
+                                    original_coordinates=False) # optional
 
     # calculate streamers
-    streamers = wb.calculate_streamers(
-        data=smoothed,
-        contour_levels=contour_levels,
-        contours=contours,  # optional
-        geo_dis=800,  # optional
-        cont_dis=1200,  # optional
-        intensity=mflux,  # optional
-        periodic_add=120,
-    )  # optional
+    streamers = wb.calculate_streamers(data=smoothed,
+                                    contour_levels=contour_levels,
+                                    contours=contours, #optional
+                                    geo_dis=800, # optional
+                                    cont_dis=1200, # optional
+                                    intensity=mflux, # optional
+                                    periodic_add=120) # optional
+
 
     # classify
     events = streamers
@@ -197,10 +191,11 @@ def wavebreaking(pv, mflux, isen_level, mf_var="upvp"):
     # stratospheric = events[events.mean_var >= contour_levels[1]]
     # tropospheric = events[events.mean_var < contour_levels[1]]
 
+
     # anticyclonic and cyclonic by intensity for the Northern Hemisphere
     anticyclonic = events[events.intensity > 0]
     cyclonic = events[events.intensity < 0]
-
+    
     # Filter anticyclonic events based on tracking conditions
     filtered_anticyclonic = filter_events_by_tracking(
         anticyclonic,
@@ -224,20 +219,25 @@ def wavebreaking(pv, mflux, isen_level, mf_var="upvp"):
     )
     filtered_cyclonic = filter_events_by_latitude_fraction(
         filtered_cyclonic, lat_threshold=40, fraction=0.5
-    )
+    ) 
+
 
     # make sure the geometry is valid
-    filtered_anticyclonic.geometry = filtered_anticyclonic.geometry.apply(
-        lambda geom: geom if geom.is_valid else geom.buffer(0)
-    )
-    filtered_cyclonic.geometry = filtered_cyclonic.geometry.apply(
-        lambda geom: geom if geom.is_valid else geom.buffer(0)
-    )
+    filtered_anticyclonic.geometry = filtered_anticyclonic.geometry.apply(lambda geom: geom if geom.is_valid else geom.buffer(0))
+    filtered_cyclonic.geometry = filtered_cyclonic.geometry.apply(lambda geom: geom if geom.is_valid else geom.buffer(0))
 
-    filtered_anticyclonic_array = wb.to_xarray(
-        data=smoothed, events=filtered_anticyclonic
-    )
-    filtered_cyclonic_array = wb.to_xarray(data=smoothed, events=filtered_cyclonic)
+
+    if not filtered_anticyclonic.empty:
+        filtered_anticyclonic_array = wb.to_xarray(
+            data=smoothed, events=filtered_anticyclonic
+        )
+    else:
+        filtered_anticyclonic_array = xr.zeros_like(smoothed)
+
+    if not filtered_cyclonic.empty:
+        filtered_cyclonic_array = wb.to_xarray(data=smoothed, events=filtered_cyclonic)
+    else:
+        filtered_cyclonic_array = xr.zeros_like(smoothed)
 
     return filtered_anticyclonic_array, filtered_cyclonic_array
 
@@ -304,8 +304,9 @@ def process_decade(dec):
     for i, isen_level in enumerate(single_levels):
         logging.info(f"rank {rank} Processing isentropic level {isen_level}K {i+1}/{len(single_levels)}")
 
+        pv_level = pv.sel(isentropic_level=isen_level)
         anticyclonic_array, cyclonic_array = wavebreaking(
-            pv, upvp, isen_level=isen_level, mf_var="upvp"
+            pv_level, upvp,  mf_var="upvp"
         )
 
         # Add isentropic level as a coordinate

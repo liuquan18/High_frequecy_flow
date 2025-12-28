@@ -151,7 +151,7 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
     # contour_levels = [-2*1e-6, 2*1e-6]
     contour_levels = [-2, 2]
     
-    smoothed = wb.calculate_smoothed_field(data=pv.sel(isentropic_level = 330),
+    smoothed = wb.calculate_smoothed_field(data=pv,
                                         passes=5,
                                         weights=np.array([[0, 1, 0], [1, 2, 1], [0, 1, 0]]), # optional
                                         mode="wrap") # optional
@@ -222,10 +222,17 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
     filtered_cyclonic.geometry = filtered_cyclonic.geometry.apply(lambda geom: geom if geom.is_valid else geom.buffer(0))
 
 
-    filtered_anticyclonic_array = wb.to_xarray(data=smoothed,
-                            events=filtered_anticyclonic)
-    filtered_cyclonic_array = wb.to_xarray(data=smoothed,
-                            events=filtered_cyclonic)
+    if not filtered_anticyclonic.empty:
+        filtered_anticyclonic_array = wb.to_xarray(
+            data=smoothed, events=filtered_anticyclonic
+        )
+    else:
+        filtered_anticyclonic_array = xr.zeros_like(smoothed)
+
+    if not filtered_cyclonic.empty:
+        filtered_cyclonic_array = wb.to_xarray(data=smoothed, events=filtered_cyclonic)
+    else:
+        filtered_cyclonic_array = xr.zeros_like(smoothed)
 
     return filtered_anticyclonic_array, filtered_cyclonic_array
 
@@ -234,6 +241,8 @@ node = sys.argv[1]
 ens = int(node)
 logging.info(f"Processing ensemble {ens}")
 mf_var = "upvp"  # can change to transient flux
+isen_level = 330  # K
+
 
 # %%
 #%%
@@ -283,7 +292,7 @@ for i, dec in enumerate(single_decades):
 
     pv_file = glob.glob(pv_path + f"*{dec}*.nc")
     pv = xr.open_dataset(pv_file[0])
-    pv = pv.pv
+    pv = pv.pv.sel(isentropic_level=isen_level)
 
     upvp_file = glob.glob(upvp_path + f"*{dec}*.nc")
     upvp = xr.open_dataset(upvp_file[0])['upvp']
