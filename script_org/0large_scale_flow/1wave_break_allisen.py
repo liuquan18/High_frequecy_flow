@@ -236,11 +236,13 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
             data=smoothed, events=filtered_anticyclonic
         )
     else:
+        logging.warning("No anticyclonic wave breaking events found; returning empty array.")
         filtered_anticyclonic_array = xr.zeros_like(smoothed)
 
     if not filtered_cyclonic.empty:
         filtered_cyclonic_array = wb.to_xarray(data=smoothed, events=filtered_cyclonic)
     else:
+        logging.warning("No cyclonic wave breaking events found; returning empty array.")
         filtered_cyclonic_array = xr.zeros_like(smoothed)
 
     return filtered_anticyclonic_array, filtered_cyclonic_array
