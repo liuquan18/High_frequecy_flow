@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=NAO_range
+#SBATCH --job-name=NAO_dis
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
