@@ -128,12 +128,26 @@ def filter_events_by_latitude_fraction(events, lat_threshold=40, fraction=0.5):
             Only events meeting the area fraction criterion.
     """
 
+    # Return empty if no events
+    if events.empty:
+        return events.copy()
+
     # Assume geometry is in PlateCarree (lon/lat)
     def area_above_lat(geom):
         # Intersect with everything north of lat_threshold
         north_box = box(0, lat_threshold, 360, 90)
-        inter = geom.intersection(north_box)
-        return inter.area if not inter.is_empty else 0.0
+        try:
+            inter = geom.intersection(north_box)
+            if inter.is_empty:
+                return 0.0
+            # Explicitly get area as float
+            area_val = (
+                float(inter.area) if hasattr(inter.area, "__float__") else inter.area
+            )
+            return area_val if np.isfinite(area_val) else 0.0
+        except Exception as e:
+            logging.warning(f"Error calculating area above latitude: {e}")
+            return 0.0
 
     # Ensure all geometries are valid before processing
     events = events.copy()
@@ -141,10 +155,17 @@ def filter_events_by_latitude_fraction(events, lat_threshold=40, fraction=0.5):
         lambda geom: geom if geom.is_valid else geom.buffer(0)
     )
 
-    total_areas = events.geometry.area
-    above_areas = events.geometry.apply(area_above_lat)
-    frac_above = above_areas / total_areas
-    filtered_events = events[frac_above > fraction].copy()
+    total_areas = events.geometry.area.values.astype(float)
+    above_areas = np.array([area_above_lat(geom) for geom in events.geometry])
+
+    # Handle division by zero
+    with np.errstate(divide="ignore", invalid="ignore"):
+        frac_above = np.divide(above_areas, total_areas)
+        frac_above = np.nan_to_num(frac_above, nan=0.0, posinf=0.0, neginf=0.0)
+
+    # Filter using numpy boolean indexing
+    mask = frac_above > fraction
+    filtered_events = events[mask].copy()
     return filtered_events
 
 
@@ -206,22 +227,25 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
     anticyclonic = events[events.intensity > 0]
     cyclonic = events[events.intensity < 0]
 
-    # Filter anticyclonic events based on tracking conditions
-    filtered_anticyclonic = filter_events_by_tracking(
-        anticyclonic,
-        time_range=72,
-        method="by_overlap",
-        buffer=0,
-        overlap=0.2,
-    )
+    # # Filter anticyclonic events based on tracking conditions
+    # filtered_anticyclonic = filter_events_by_tracking(
+    #     filtered_anticyclonic,
+    #     time_range=72,
+    #     method="by_overlap",
+    #     buffer=0,
+    #     overlap=0.2,
+    # )
 
-    filtered_cyclonic = filter_events_by_tracking(
-        cyclonic,
-        time_range=72,
-        method="by_overlap",
-        buffer=0,
-        overlap=0.2,
-    )
+    # filtered_cyclonic = filter_events_by_tracking(
+    #     filtered_anticyclonic,
+    #     time_range=72,
+    #     method="by_overlap",
+    #     buffer=0,
+    #     overlap=0.2,
+    # )
+
+    filtered_anticyclonic = anticyclonic
+    filtered_cyclonic = cyclonic
 
     # filter by latitude fraction above 40 degrees
     filtered_anticyclonic = filter_events_by_latitude_fraction(
