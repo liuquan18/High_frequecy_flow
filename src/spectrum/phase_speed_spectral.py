@@ -2,6 +2,8 @@
 import numpy as np
 import scipy.signal as ss
 import scipy.interpolate as si
+import matplotlib
+matplotlib.use('Agg')  # Use 'Agg' backend for non-interactive plotting
 import matplotlib.pyplot as mm
 import xarray as xr
 
