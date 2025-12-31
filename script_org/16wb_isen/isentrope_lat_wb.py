@@ -6,6 +6,8 @@ import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from scipy.ndimage import gaussian_filter
+from src.dynamics.theta_on_pv import find_isentrope_at_pv
+from matplotlib.patches import Patch
 
 # %% awb
 awb_pos_first = read_comp_var(
@@ -262,8 +264,25 @@ cwb_first = (
 cwb_last = (
     cwb_neg_last.sel(time=time_window).mean(dim="time").sum("event").mean(dim="lon")
 )
+
+# %% Tropopause
+pv_1850 = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0climatology/pv_1850.nc"
+)
+pv_2090 = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0climatology/pv_2090.nc"
+)
 # %%
-fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+pv_1850_zm = pv_1850.pv.mean(dim=("lon")) * 1e6
+pv_2090_zm = pv_2090.pv.mean(dim=("lon")) * 1e6
+
+# %%
+trops_1850 = find_isentrope_at_pv(pv_1850_zm)
+trops_2090 = find_isentrope_at_pv(pv_2090_zm)
+
+
+# %%
+fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=False)
 
 awb_first.plot.contourf(
     ax=axes[0],
@@ -280,7 +299,22 @@ awb_contour = awb_last.plot.contour(
     linestyles="solid",
     extend="max",
 )
-# axes[0].clabel(awb_contour, inline=True, fontsize=8)
+
+# plot the tropopause
+axes[0].plot(
+    trops_1850.lat,
+    trops_1850,
+    color="red",
+    linestyle="--",
+    linewidth=2,
+)
+axes[0].plot(
+    trops_2090.lat,
+    trops_2090,
+    color="black",
+    linestyle="--",
+    linewidth=2,
+)
 
 cwb_first.plot.contourf(
     ax=axes[1],
@@ -297,15 +331,56 @@ cwb_contour = cwb_last.plot.contour(
     linestyles="solid",
     extend="max",
 )
-# axes[1].clabel(cwb_contour, inline=True, fontsize=8)
 
+# plot the tropopause on second subplot
+axes[1].plot(
+    trops_1850.lat,
+    trops_1850,
+    color="red",
+    linestyle="--",
+    linewidth=2,
+)
+axes[1].plot(
+    trops_2090.lat,
+    trops_2090,
+    color="black",
+    linestyle="--",
+    linewidth=2,
+)
+
+# Create custom legend elements
+
+legend_elements = [
+    # AWB/CWB Frequency section
+    Patch(facecolor="gray", alpha=0.5, label="wave breaking 1850s"),
+    Line2D(
+        [0],
+        [0],
+        color="black",
+        linewidth=1.5,
+        linestyle="solid",
+        label="wave breaking 2090s",
+    ),
+    # Tropopause section
+    Line2D(
+        [0], [0], color="red", linewidth=2, linestyle="--", label="Tropopause 1850s"
+    ),
+    Line2D(
+        [0], [0], color="black", linewidth=2, linestyle="--", label="Tropopause 2090s"
+    ),
+]
+
+# Add legend to both subplots
+for ax in axes:
+    ax.legend(handles=legend_elements, loc="upper right", fontsize=9)
 
 axes[0].set_xlim(20, 90)
-axes[0].set_title("AWB Frequency (Lon-Mean)")
-axes[0].set_ylabel("Latitude")
+axes[0].set_title("AWB Frequency")
+axes[0].set_ylabel("isentrope (K)")
 axes[1].set_xlim(20, 90)
-axes[1].set_title("CWB Frequency (Lon-Mean)")
-axes[1].set_ylabel("Latitude")
+axes[1].set_title("CWB Frequency")
+axes[1].set_ylabel("")
+
 plt.tight_layout()
 plt.show()
 # %%
