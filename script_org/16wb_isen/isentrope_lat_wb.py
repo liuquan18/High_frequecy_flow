@@ -300,20 +300,22 @@ awb_contour = awb_last.plot.contour(
     extend="max",
 )
 
-# plot the tropopause
-axes[0].plot(
+# Fill between tropopause and y=0 with light colors
+axes[0].fill_between(
     trops_1850.lat,
+    300,
     trops_1850,
     color="red",
-    linestyle="--",
-    linewidth=2,
+    alpha=0.1,
+    label="Tropopause 1850s"
 )
-axes[0].plot(
+axes[0].fill_between(
     trops_2090.lat,
+    300,
     trops_2090,
     color="black",
-    linestyle="--",
-    linewidth=2,
+    alpha=0.1,
+    label="Tropopause 2090s"
 )
 
 cwb_first.plot.contourf(
@@ -332,52 +334,47 @@ cwb_contour = cwb_last.plot.contour(
     extend="max",
 )
 
-# plot the tropopause on second subplot
-axes[1].plot(
+# Fill between tropopause and y=0 on second subplot
+axes[1].fill_between(
     trops_1850.lat,
+    300,
     trops_1850,
     color="red",
-    linestyle="--",
-    linewidth=2,
+    alpha=0.1,
 )
-axes[1].plot(
+axes[1].fill_between(
     trops_2090.lat,
+    300,
     trops_2090,
     color="black",
-    linestyle="--",
-    linewidth=2,
+    alpha=0.1,
 )
 
 # Create custom legend elements
-
 legend_elements = [
-    # AWB/CWB Frequency section
-    Patch(facecolor="gray", alpha=0.5, label="wave breaking 1850s"),
+    # Wave breaking section
+    Patch(facecolor="gray", alpha=0.5, label="Wave breaking 1850s"),
     Line2D(
         [0],
         [0],
         color="black",
         linewidth=1.5,
         linestyle="solid",
-        label="wave breaking 2090s",
+        label="Wave breaking 2090s",
     ),
     # Tropopause section
-    Line2D(
-        [0], [0], color="red", linewidth=2, linestyle="--", label="Tropopause 1850s"
-    ),
-    Line2D(
-        [0], [0], color="black", linewidth=2, linestyle="--", label="Tropopause 2090s"
-    ),
+    Patch(facecolor="red", alpha=0.1, label="Tropopause 1850s"),
+    Patch(facecolor="black", alpha=0.1, label="Tropopause 2090s"),
 ]
 
 # Add legend to both subplots
 for ax in axes:
     ax.legend(handles=legend_elements, loc="upper right", fontsize=9)
 
-axes[0].set_xlim(20, 90)
+axes[0].set_xlim(22, 90)
 axes[0].set_title("AWB Frequency")
 axes[0].set_ylabel("isentrope (K)")
-axes[1].set_xlim(20, 90)
+axes[1].set_xlim(22, 90)
 axes[1].set_title("CWB Frequency")
 axes[1].set_ylabel("")
 
