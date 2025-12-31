@@ -214,8 +214,22 @@ fig.subplots_adjust(bottom=0.12)
 
 
 legend_elements = [
-    Line2D([0], [0], color="red", linewidth=1.5, linestyle="solid", label="AWB for positive NAO"),
-    Line2D([0], [0], color="blue", linewidth=1.5, linestyle="dashed", label="CWB for negative NAO"),
+    Line2D(
+        [0],
+        [0],
+        color="red",
+        linewidth=1.5,
+        linestyle="solid",
+        label="AWB for positive NAO",
+    ),
+    Line2D(
+        [0],
+        [0],
+        color="blue",
+        linewidth=1.5,
+        linestyle="dashed",
+        label="CWB for negative NAO",
+    ),
 ]
 fig.legend(
     handles=legend_elements,
@@ -228,4 +242,70 @@ fig.legend(
 plt.tight_layout(rect=[0, 0.08, 1, 1])
 plt.show()
 
+
+# %%
+
+# Select isentropic levels and time window
+time_window = slice(-5, 5)
+
+# Process data
+awb_first = (
+    awb_pos_first.sel(time=time_window).mean(dim="time").sum("event").mean(dim="lon")
+)
+awb_last = (
+    awb_pos_last.sel(time=time_window).mean(dim="time").sum("event").mean(dim="lon")
+)
+
+cwb_first = (
+    cwb_neg_first.sel(time=time_window).mean(dim="time").sum("event").mean(dim="lon")
+)
+cwb_last = (
+    cwb_neg_last.sel(time=time_window).mean(dim="time").sum("event").mean(dim="lon")
+)
+# %%
+fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+
+awb_first.plot.contourf(
+    ax=axes[0],
+    levels=np.arange(1, 6, 1),
+    cmap="Reds",
+    cbar_kwargs={"label": "AWB Frequency"},
+    extend="max",
+)
+awb_contour = awb_last.plot.contour(
+    ax=axes[0],
+    levels=np.arange(1, 6, 1),
+    colors="black",
+    linewidths=1.5,
+    linestyles="solid",
+    extend="max",
+)
+# axes[0].clabel(awb_contour, inline=True, fontsize=8)
+
+cwb_first.plot.contourf(
+    ax=axes[1],
+    levels=np.arange(1, 6, 1),
+    cmap="Blues",
+    cbar_kwargs={"label": "CWB Frequency"},
+    extend="max",
+)
+cwb_contour = cwb_last.plot.contour(
+    ax=axes[1],
+    levels=np.arange(1, 6, 1),
+    colors="black",
+    linewidths=1.5,
+    linestyles="solid",
+    extend="max",
+)
+# axes[1].clabel(cwb_contour, inline=True, fontsize=8)
+
+
+axes[0].set_xlim(20, 90)
+axes[0].set_title("AWB Frequency (Lon-Mean)")
+axes[0].set_ylabel("Latitude")
+axes[1].set_xlim(20, 90)
+axes[1].set_title("CWB Frequency (Lon-Mean)")
+axes[1].set_ylabel("Latitude")
+plt.tight_layout()
+plt.show()
 # %%
