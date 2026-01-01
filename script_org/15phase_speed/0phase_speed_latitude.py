@@ -41,8 +41,10 @@ if rank == 0:
     logging.info("Loading data...")
 
 
-upvp_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/upvp_daily/r{ens}i1p1f1/"
-upvp_file = glob.glob(upvp_path + f"*{decade}.nc")
+up_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_prime_daily/r{ens}i1p1f1/"
+vp_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/va_prime_daily/r{ens}i1p1f1/"
+up_files = glob.glob(up_path + f"*{decade}*.nc")
+vp_files = glob.glob(vp_path + f"*{decade}*.nc")
 # %%
 # save path
 output_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/phase_speed_spectrum_daily/r{ens}i1p1f1/"
@@ -59,10 +61,12 @@ NFFT = 128  # FFT length, total days 153, this gives two segments with 25% overl
 plev = 25000  # pressure level in Pa
 
 # %%
-upvp = xr.open_dataset(upvp_file[0]).upvp
-upvp = upvp.sel(plev=plev, lat=slice(0, 90))
+up = xr.open_dataset(up_files[0]).ua
+vp = xr.open_dataset(vp_files[0]).va
+up = up.sel(plev=plev, lat=slice(0, 90))
+vp = vp.sel(plev=plev, lat=slice(0, 90))
 # Get unique years and distribute across ranks
-years = np.unique(upvp.time.dt.year.values)
+years = np.unique(up.time.dt.year.values)
 n_years = len(years)
 years_per_rank = np.array_split(years, size)
 my_years = years_per_rank[rank]
@@ -73,16 +77,16 @@ if rank == 0:
 
 
 # %%
-def process_single_latitude_year(upvp_lat, lat_value):
+def process_single_latitude_year(up_lat, vp_lat):
     """
-    Process a single latitude for one year.
+    Process a single latitude for one year - calculate cross-spectra between up and vp.
 
     Parameters
     ----------
-    upvp_lat : np.ndarray
-        Momentum flux time series (time, lon)
-    lat_value : float
-        Latitude value for phase speed conversion
+    up_lat : np.ndarray
+        Zonal wind perturbation time series (time, lon)
+    vp_lat : np.ndarray
+        Meridional wind perturbation time series (time, lon)
 
     Returns
     -------
@@ -91,27 +95,131 @@ def process_single_latitude_year(upvp_lat, lat_value):
     P_cn : np.ndarray
         Negative phase speed spectrum (nps,)
     """
-    # Calculate space-time cross-spectra
+    # Calculate space-time cross-spectra between up and vp
     K_p, K_n, lon_freq, om = calc_spacetime_cross_spec(
-        upvp_lat, upvp_lat, dx=1, ts=1, NFFT=NFFT, smooth=1
+        up_lat, vp_lat, dx=1, ts=1, NFFT=NFFT, smooth=1
     )
 
     # Calculate phase speed spectrum
     P_cp, P_cn, C = calPhaseSpeedSpectrum(
         K_p, K_n, lon_freq, om, cmax=cmax, nps=nps, i1=1, i2=10
-    ) # sum over i1 to i2 frequency bins, 1-10 to capture synoptic waves
+    )  # sum over i1 to i2 frequency bins, 1-10 to capture synoptic waves
 
     return P_cp, P_cn
 
 
-def vectorized_phase_speed(upvp_data):
+def plot_wavenumber_phasespeed(K_p, K_n, lon_freq, om, lat_value, cmax=50, nps=100):
     """
-    Vectorized computation across all latitudes using apply_ufunc.
+    Create wavenumber-phase speed diagram showing eastward and westward propagating waves.
 
     Parameters
     ----------
-    upvp_data : xr.DataArray
-        Momentum flux (time, lat, lon)
+    K_p : np.ndarray
+        Positive frequency spectra (frequency, wavenumber)
+    K_n : np.ndarray
+        Negative frequency spectra (frequency, wavenumber)
+    lon_freq : np.ndarray
+        Wavenumbers (cycles per grid point)
+    om : np.ndarray
+        Frequencies (cycles per day)
+    lat_value : float
+        Latitude for phase speed conversion
+    cmax : float
+        Maximum phase speed in deg/day
+    nps : int
+        Number of phase speed bins
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        Figure object
+    """
+    from src.spectrum.phase_speed_spectral import calPhaseSpeedSpectrum
+    import scipy.interpolate as si
+
+    # Wavelength range to plot (select meaningful wavenumbers)
+    i1, i2 = 1, 10  # wavenumbers 1-10
+
+    # Phase speed grid
+    C = np.linspace(0.0, cmax, nps)
+
+    # Initialize arrays for wavenumber-phase speed spectra
+    P_cp_k = np.zeros((nps, i2 - i1))  # (phase_speed, wavenumber)
+    P_cn_k = np.zeros((nps, i2 - i1))
+
+    # Interpolate for each wavenumber separately (don't sum)
+    for idx, i in enumerate(range(i1, i2)):
+        # Interpolation functions c = omega / k
+        f1 = si.interp1d(
+            om / lon_freq[i], K_p[:, i], kind="linear", fill_value=0, bounds_error=False
+        )
+        f2 = si.interp1d(
+            om / lon_freq[i], K_n[:, i], kind="linear", fill_value=0, bounds_error=False
+        )
+
+        # Find valid range
+        k = -1
+        for j in range(len(C)):
+            if C[j] > max(om) / lon_freq[i]:
+                k = j
+                break
+        if k == -1:
+            k = len(C)
+
+        ad1 = np.zeros(nps)
+        ad1[:k] = f1(C[:k])
+        ad2 = np.zeros(nps)
+        ad2[:k] = f2(C[:k])
+
+        P_cp_k[:, idx] = ad1 * lon_freq[i]
+        P_cn_k[:, idx] = ad2 * lon_freq[i]
+
+    # Convert phase speed to m/s
+    earth_radius = 6371000
+    deg_to_m = 2 * np.pi * earth_radius / 360
+    lat_factor = np.cos(np.deg2rad(lat_value))
+    C_ms = C * deg_to_m * lat_factor / (24 * 3600)
+
+    # Wavenumber array
+    wavenumbers = np.arange(i1, i2)
+
+    # Create figure
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+    # Eastward waves
+    cs1 = axes[0].contourf(
+        wavenumbers, C_ms, P_cp_k, levels=15, cmap="YlOrRd", extend="max"
+    )
+    axes[0].set_xlabel("Wavenumber", fontsize=12)
+    axes[0].set_ylabel("Phase Speed (m/s)", fontsize=12)
+    axes[0].set_title(f"Eastward Waves at {lat_value:.1f}°N", fontsize=14)
+    axes[0].grid(True, alpha=0.3)
+    plt.colorbar(cs1, ax=axes[0], label="Power")
+
+    # Westward waves
+    cs2 = axes[1].contourf(
+        wavenumbers, C_ms, P_cn_k, levels=15, cmap="Blues", extend="max"
+    )
+    axes[1].set_xlabel("Wavenumber", fontsize=12)
+    axes[1].set_ylabel("Phase Speed (m/s)", fontsize=12)
+    axes[1].set_title(f"Westward Waves at {lat_value:.1f}°N", fontsize=14)
+    axes[1].grid(True, alpha=0.3)
+    plt.colorbar(cs2, ax=axes[1], label="Power")
+
+    plt.tight_layout()
+    return fig
+
+
+def vectorized_phase_speed(up_data, vp_data):
+    """
+    Vectorized computation of cross-spectra across all latitudes using apply_ufunc.
+
+    Parameters
+    ----------
+    up_data : xr.DataArray
+        Zonal wind perturbation (time, lat, lon)
+    vp_data : xr.DataArray
+        Meridional wind perturbation (time, lat, lon)
 
     Returns
     -------
@@ -120,24 +228,21 @@ def vectorized_phase_speed(upvp_data):
     P_cn_all : xr.DataArray
         Negative phase speed spectra (lat, phase_speed)
     """
-    n_lats = len(upvp_data.lat)
-
-    # Initialize output arrays
-    P_cp_all = np.zeros((n_lats, nps))
-    P_cn_all = np.zeros((n_lats, nps))
 
     # Use apply_ufunc to vectorize over latitude dimension
-    def compute_spectrum(upvp_vals):
-        """Wrapper function for apply_ufunc"""
-        P_cp, P_cn = process_single_latitude_year(
-            upvp_vals, 0
-        )  # lat_value not used in calculation
+    def compute_cross_spectrum(up_vals, vp_vals):
+        """Wrapper function for apply_ufunc - computes cross-spectrum"""
+        P_cp, P_cn = process_single_latitude_year(up_vals, vp_vals)
         return P_cp, P_cn
 
     result = xr.apply_ufunc(
-        compute_spectrum,
-        upvp_data,
-        input_core_dims=[["time", "lon"]],  # Process each (time, lon) slice
+        compute_cross_spectrum,
+        up_data,
+        vp_data,
+        input_core_dims=[
+            ["time", "lon"],
+            ["time", "lon"],
+        ],  # Process each (time, lon) slice
         output_core_dims=[["phase_speed"], ["phase_speed"]],  # Output dimensions
         exclude_dims=set(["time", "lon"]),  # Dimensions being reduced
         vectorize=True,  # Apply function to each latitude separately
@@ -161,11 +266,12 @@ P_cn_rank = None
 for year_idx, year in enumerate(my_years):
     print(f"Rank {rank}: Processing year {year} ({year_idx+1}/{len(my_years)})")
 
-    # Calculate momentum flux
-    upvp_year = upvp.sel(time=str(year))
+    # Select data for this year
+    up_year = up.sel(time=str(year))
+    vp_year = vp.sel(time=str(year))
 
-    # Vectorized computation across all latitudes
-    P_cp_year, P_cn_year = vectorized_phase_speed(upvp_year)
+    # Vectorized computation of cross-spectra across all latitudes
+    P_cp_year, P_cn_year = vectorized_phase_speed(up_year, vp_year)
 
     # Accumulate for this rank's years
     if P_cp_rank is None:
@@ -184,7 +290,7 @@ print(f"Rank {rank}: Completed processing {len(my_years)} years")
 
 # %%
 # Calculate phase speeds in physical units (only once at rank 0)
-lats = upvp.lat.values
+lats = up.lat.values
 lat_factors = np.cos(np.deg2rad(lats))
 C = np.linspace(0.0, cmax, nps)
 phase_speeds_physical = (
@@ -209,7 +315,7 @@ if rank == 0:
     print(f"Rank 0: Averaged over {n_years} years. Creating datasets...")
 
     # Create xarray DataArrays for saving
-    lats = upvp.lat.values
+    lats = up.lat.values
     C = np.linspace(0.0, cmax, nps)
 
     # Calculate phase speeds in physical units for each latitude
@@ -232,8 +338,8 @@ if rank == 0:
         attrs={
             "long_name": "Eastward phase speed power spectrum",
             "units": "power",
-            "description": f"u'v' cospectra averaged over {n_years} years (1850-1859)",
-            "level": "250 hPa",
+            "description": f"u'v' cospectra averaged over {n_years} years",
+            "level": f"{plev/100:.0f} hPa",
             "method": "Hayashi (1971) space-time cross-spectrum",
             "cmax": cmax,
             "NFFT": NFFT,
@@ -252,8 +358,8 @@ if rank == 0:
         attrs={
             "long_name": "Westward phase speed power spectrum",
             "units": "power",
-            "description": f"u'v' cospectra averaged over {n_years} years (1850-1859)",
-            "level": "250 hPa",
+            "description": f"u'v' cospectra averaged over {n_years} years",
+            "level": f"{plev/100:.0f} hPa",
             "method": "Hayashi (1971) space-time cross-spectrum",
             "cmax": cmax,
             "NFFT": NFFT,
@@ -264,85 +370,43 @@ if rank == 0:
     ds = xr.Dataset({"P_eastward": P_cp_da, "P_westward": P_cn_da})
 
     # Add global attributes
-    ds.attrs["title"] = "Phase Speed Spectrum from u-v cospectra"
-    ds.attrs["source"] = "MPI-ESM1-2-LR r1i1p1f1"
-    ds.attrs["period"] = "1850-1859 (first10)"
-    ds.attrs["pressure_level"] = "250 hPa"
+    ds.attrs["title"] = "Phase Speed Spectrum from u'v' cospectra"
+    ds.attrs["source"] = f"MPI-ESM1-2-LR r{ens}i1p1f1"
+    ds.attrs["decade"] = str(decade)
+    ds.attrs["pressure_level"] = f"{plev/100:.0f} hPa"
     ds.attrs["frequency_filter"] = "2-8 day bandpass"
 
     # Save to NetCDF
-    output_file = f"{output_path}phase_speed_upvp_cospectra_250hPa_{decade}.nc"
+    output_file = f"{output_path}phase_speed_upvp_cospectra_{plev/100:.0f}hPa_{decade}_r{ens}i1p1f1.nc"
     ds.to_netcdf(output_file)
     print(f"Saved dataset to: {output_file}")
 
+    # Create wavenumber-phase speed plot for a representative latitude (e.g., 45°N)
+    print("Creating wavenumber-phase speed plot...")
+    lat_idx = np.argmin(np.abs(lats - 45.0))  # Find index closest to 45°N
+    lat_plot = lats[lat_idx]
 
-#     # %%
-#     # Use middle latitude for representative phase speeds
-#     mid_lat_idx = len(lats) // 2
-#     phase_speeds_plot = phase_speeds_2d[mid_lat_idx, :]
+    # Get data for this latitude from first year (for visualization)
+    up_sample = up.sel(time=str(years[0]), lat=lat_plot, method="nearest")
+    vp_sample = vp.sel(time=str(years[0]), lat=lat_plot, method="nearest")
 
-#     # Plot phase speed spectrum as a function of latitude
-#     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+    # Calculate spectra for wavenumber-phase speed plot
+    K_p, K_n, lon_freq, om = calc_spacetime_cross_spec(
+        up_sample.values, vp_sample.values, dx=1, ts=1, NFFT=NFFT, smooth=1
+    )
 
-#     # Eastward (positive) phase speeds
-#     cs1 = axes[0].contourf(
-#         phase_speeds_plot, lats, P_cp_avg, levels=20, cmap="YlOrRd", extend="max"
-#     )
-#     axes[0].set_xlabel("Phase Speed (m/s)", fontsize=12)
-#     axes[0].set_ylabel("Latitude (°N)", fontsize=12)
-#     axes[0].set_title("Eastward Phase Speed Spectrum", fontsize=14)
-#     axes[0].set_xlim(0, phase_speeds_plot.max())
-#     axes[0].grid(True, alpha=0.3)
-#     plt.colorbar(cs1, ax=axes[0], label="Power")
+    # Create and save wavenumber-phase speed plot
+    fig = plot_wavenumber_phasespeed(
+        K_p, K_n, lon_freq, om, lat_plot, cmax=cmax, nps=nps
+    )
+    fig.savefig(
+        f"{output_path}wavenumber_phasespeed_{plev/100:.0f}hPa_{decade}_r{ens}i1p1f1.png",
+        dpi=300,
+        bbox_inches="tight",
+    )
+    print(f"Saved wavenumber-phase speed plot")
+    plt.close(fig)
 
-#     # Westward (negative) phase speeds
-#     cs2 = axes[1].contourf(
-#         -phase_speeds_plot, lats, P_cn_avg, levels=20, cmap="Blues", extend="max"
-#     )
-#     axes[1].set_xlabel("Phase Speed (m/s)", fontsize=12)
-#     axes[1].set_ylabel("Latitude (°N)", fontsize=12)
-#     axes[1].set_title("Westward Phase Speed Spectrum", fontsize=14)
-#     axes[1].set_xlim(-phase_speeds_plot.max(), 0)
-#     axes[1].grid(True, alpha=0.3)
-#     plt.colorbar(cs2, ax=axes[1], label="Power")
-
-#     plt.tight_layout()
-#     plt.savefig("phase_speed_eastward_westward.png", dpi=300, bbox_inches="tight")
-#     print("Saved: phase_speed_eastward_westward.png")
-#     plt.close()
-
-#     # %%
-#     # Combined plot
-#     fig, ax = plt.subplots(figsize=(12, 6))
-
-#     phase_speeds_combined = np.concatenate(
-#         [-phase_speeds_plot[::-1], phase_speeds_plot]
-#     )
-#     P_combined = np.concatenate([P_cn_avg[:, ::-1], P_cp_avg], axis=1)
-
-#     cs = ax.contourf(
-#         phase_speeds_combined, lats, P_combined, levels=20, cmap="RdBu_r", extend="max"
-#     )
-#     ax.axvline(
-#         0, color="black", linestyle="--", linewidth=1.5, label="Zero phase speed"
-#     )
-#     ax.set_xlabel("Phase Speed (m/s)", fontsize=12)
-#     ax.set_ylabel("Latitude (°N)", fontsize=12)
-#     ax.set_title(
-#         f"Phase Speed Spectrum (u'v' cospectra, 250 hPa, {n_years} years avg)",
-#         fontsize=14,
-#     )
-#     ax.grid(True, alpha=0.3)
-#     ax.legend(fontsize=10)
-#     plt.colorbar(cs, ax=ax, label="Power")
-
-#     plt.tight_layout()
-#     plt.savefig("phase_speed_combined.png", dpi=300, bbox_inches="tight")
-#     print("Saved: phase_speed_combined.png")
-#     plt.close()
-
-#     print("All done!")
-
-# # %%
+    print("All done!")
 
 # %%
