@@ -6,7 +6,7 @@ import matplotlib
 matplotlib.use('Agg')  # Use 'Agg' backend for non-interactive plotting
 import matplotlib.pyplot as mm
 import xarray as xr
-
+import matplotlib.pyplot as plt
 # %%
 def calc_spacetime_cross_spec(a, b, dx=1.0, ts=1.0, smooth=1, width=15.0, NFFT=256):
     """
@@ -162,4 +162,76 @@ def calPhaseSpeedSpectrum(P_p, P_n, f_lon, om, cmax, nps, i1=1, i2=50):
 
         # Sum over all wavenumbers
     return np.sum(P_cp, axis=1), np.sum(P_cn, axis=1), C
+
+
+def plot_latitude_phasespeed(P_cp_avg, P_cn_avg, phase_speeds_2d, lats):
+    """
+    Create latitude-phase speed diagram showing eastward and westward propagating waves.
+
+    Parameters
+    ----------
+    P_cp_avg : np.ndarray
+        Positive phase speed spectra averaged over years (lat, phase_speed)
+    P_cn_avg : np.ndarray
+        Negative phase speed spectra averaged over years (lat, phase_speed)
+    phase_speeds_2d : np.ndarray
+        Phase speeds in m/s (lat, phase_speed)
+    lats : np.ndarray
+        Latitude values
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        Figure object
+    """
+    # Use middle latitude for representative phase speeds
+    mid_lat_idx = len(lats) // 2
+    phase_speeds_plot = phase_speeds_2d[mid_lat_idx, :]
+
+    # Create figure with 3 subplots
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+
+    # Eastward waves
+    cs1 = axes[0].contourf(
+        phase_speeds_plot, lats, P_cp_avg, levels=20, cmap="YlOrRd", extend="max"
+    )
+    axes[0].set_xlabel("Phase Speed (m/s)", fontsize=12)
+    axes[0].set_ylabel("Latitude (°N)", fontsize=12)
+    axes[0].set_title("Eastward Phase Speed Spectrum", fontsize=14)
+    axes[0].set_xlim(0, phase_speeds_plot.max())
+    axes[0].grid(True, alpha=0.3)
+    plt.colorbar(cs1, ax=axes[0], label="Power")
+
+    # Westward waves
+    cs2 = axes[1].contourf(
+        -phase_speeds_plot, lats, P_cn_avg, levels=20, cmap="Blues", extend="max"
+    )
+    axes[1].set_xlabel("Phase Speed (m/s)", fontsize=12)
+    axes[1].set_ylabel("Latitude (°N)", fontsize=12)
+    axes[1].set_title("Westward Phase Speed Spectrum", fontsize=14)
+    axes[1].set_xlim(-phase_speeds_plot.max(), 0)
+    axes[1].grid(True, alpha=0.3)
+    plt.colorbar(cs2, ax=axes[1], label="Power")
+
+    # Combined plot
+    phase_speeds_combined = np.concatenate(
+        [-phase_speeds_plot[::-1], phase_speeds_plot]
+    )
+    P_combined = np.concatenate([P_cn_avg[:, ::-1], P_cp_avg], axis=1)
+
+    cs3 = axes[2].contourf(
+        phase_speeds_combined, lats, P_combined, levels=20, cmap="RdBu_r", extend="max"
+    )
+    axes[2].axvline(
+        0, color="black", linestyle="--", linewidth=1.5, label="Zero phase speed"
+    )
+    axes[2].set_xlabel("Phase Speed (m/s)", fontsize=12)
+    axes[2].set_ylabel("Latitude (°N)", fontsize=12)
+    axes[2].set_title("Combined Phase Speed Spectrum", fontsize=14)
+    axes[2].grid(True, alpha=0.3)
+    axes[2].legend(fontsize=10)
+    plt.colorbar(cs3, ax=axes[2], label="Power")
+
+    plt.tight_layout()
+    return fig
 
