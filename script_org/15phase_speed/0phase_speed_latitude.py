@@ -108,108 +108,6 @@ def process_single_latitude_year(up_lat, vp_lat):
     return P_cp, P_cn
 
 
-def plot_wavenumber_phasespeed(K_p, K_n, lon_freq, om, lat_value, cmax=50, nps=100):
-    """
-    Create wavenumber-phase speed diagram showing eastward and westward propagating waves.
-
-    Parameters
-    ----------
-    K_p : np.ndarray
-        Positive frequency spectra (frequency, wavenumber)
-    K_n : np.ndarray
-        Negative frequency spectra (frequency, wavenumber)
-    lon_freq : np.ndarray
-        Wavenumbers (cycles per grid point)
-    om : np.ndarray
-        Frequencies (cycles per day)
-    lat_value : float
-        Latitude for phase speed conversion
-    cmax : float
-        Maximum phase speed in deg/day
-    nps : int
-        Number of phase speed bins
-
-    Returns
-    -------
-    fig : matplotlib.figure.Figure
-        Figure object
-    """
-    from src.spectrum.phase_speed_spectral import calPhaseSpeedSpectrum
-    import scipy.interpolate as si
-
-    # Wavelength range to plot (select meaningful wavenumbers)
-    i1, i2 = 1, 10  # wavenumbers 1-10
-
-    # Phase speed grid
-    C = np.linspace(0.0, cmax, nps)
-
-    # Initialize arrays for wavenumber-phase speed spectra
-    P_cp_k = np.zeros((nps, i2 - i1))  # (phase_speed, wavenumber)
-    P_cn_k = np.zeros((nps, i2 - i1))
-
-    # Interpolate for each wavenumber separately (don't sum)
-    for idx, i in enumerate(range(i1, i2)):
-        # Interpolation functions c = omega / k
-        f1 = si.interp1d(
-            om / lon_freq[i], K_p[:, i], kind="linear", fill_value=0, bounds_error=False
-        )
-        f2 = si.interp1d(
-            om / lon_freq[i], K_n[:, i], kind="linear", fill_value=0, bounds_error=False
-        )
-
-        # Find valid range
-        k = -1
-        for j in range(len(C)):
-            if C[j] > max(om) / lon_freq[i]:
-                k = j
-                break
-        if k == -1:
-            k = len(C)
-
-        ad1 = np.zeros(nps)
-        ad1[:k] = f1(C[:k])
-        ad2 = np.zeros(nps)
-        ad2[:k] = f2(C[:k])
-
-        P_cp_k[:, idx] = ad1 * lon_freq[i]
-        P_cn_k[:, idx] = ad2 * lon_freq[i]
-
-    # Convert phase speed to m/s
-    earth_radius = 6371000
-    deg_to_m = 2 * np.pi * earth_radius / 360
-    lat_factor = np.cos(np.deg2rad(lat_value))
-    C_ms = C * deg_to_m * lat_factor / (24 * 3600)
-
-    # Wavenumber array
-    wavenumbers = np.arange(i1, i2)
-
-    # Create figure
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-
-    # Eastward waves
-    cs1 = axes[0].contourf(
-        wavenumbers, C_ms, P_cp_k, levels=15, cmap="YlOrRd", extend="max"
-    )
-    axes[0].set_xlabel("Wavenumber", fontsize=12)
-    axes[0].set_ylabel("Phase Speed (m/s)", fontsize=12)
-    axes[0].set_title(f"Eastward Waves at {lat_value:.1f}°N", fontsize=14)
-    axes[0].grid(True, alpha=0.3)
-    plt.colorbar(cs1, ax=axes[0], label="Power")
-
-    # Westward waves
-    cs2 = axes[1].contourf(
-        wavenumbers, C_ms, P_cn_k, levels=15, cmap="Blues", extend="max"
-    )
-    axes[1].set_xlabel("Wavenumber", fontsize=12)
-    axes[1].set_ylabel("Phase Speed (m/s)", fontsize=12)
-    axes[1].set_title(f"Westward Waves at {lat_value:.1f}°N", fontsize=14)
-    axes[1].grid(True, alpha=0.3)
-    plt.colorbar(cs2, ax=axes[1], label="Power")
-
-    plt.tight_layout()
-    return fig
-
-
 def vectorized_phase_speed(up_data, vp_data):
     """
     Vectorized computation of cross-spectra across all latitudes using apply_ufunc.
@@ -381,32 +279,18 @@ if rank == 0:
     ds.to_netcdf(output_file)
     print(f"Saved dataset to: {output_file}")
 
-    # Create wavenumber-phase speed plot for a representative latitude (e.g., 45°N)
-    print("Creating wavenumber-phase speed plot...")
-    lat_idx = np.argmin(np.abs(lats - 45.0))  # Find index closest to 45°N
-    lat_plot = lats[lat_idx]
+    # %%
+    # # Create latitude-phase speed plot
+    # print("Creating latitude-phase speed plot...")
+    # fig = plot_latitude_phasespeed(P_cp_avg, P_cn_avg, phase_speeds_2d, lats)
+    # fig.savefig(
+    #     f"{output_path}latitude_phasespeed_{plev/100:.0f}hPa_{decade}_r{ens}i1p1f1.png",
+    #     dpi=300,
+    #     bbox_inches="tight",
+    # )
+    # print(f"Saved latitude-phase speed plot")
+    # plt.close(fig)
 
-    # Get data for this latitude from first year (for visualization)
-    up_sample = up.sel(time=str(years[0]), lat=lat_plot, method="nearest")
-    vp_sample = vp.sel(time=str(years[0]), lat=lat_plot, method="nearest")
-
-    # Calculate spectra for wavenumber-phase speed plot
-    K_p, K_n, lon_freq, om = calc_spacetime_cross_spec(
-        up_sample.values, vp_sample.values, dx=1, ts=1, NFFT=NFFT, smooth=1
-    )
-
-    # Create and save wavenumber-phase speed plot
-    fig = plot_wavenumber_phasespeed(
-        K_p, K_n, lon_freq, om, lat_plot, cmax=cmax, nps=nps
-    )
-    fig.savefig(
-        f"{output_path}wavenumber_phasespeed_{plev/100:.0f}hPa_{decade}_r{ens}i1p1f1.png",
-        dpi=300,
-        bbox_inches="tight",
-    )
-    print(f"Saved wavenumber-phase speed plot")
-    plt.close(fig)
-
-    print("All done!")
+    # print("All done!")
 
 # %%
