@@ -31,7 +31,8 @@ def read_prime(decade, var="eke", **kwargs):
         chunks={"ens": 1, "time": -1, "lat": -1, "lon": -1, "plev": 1},
         parallel=True,
     )
-    data = data[name]
+    if name is not None:
+        data = data[name]
     # data.load()
     if plev is not None:
         data = data.sel(plev=plev)
