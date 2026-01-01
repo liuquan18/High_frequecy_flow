@@ -55,7 +55,7 @@ earth_radius = 6371000  # meters
 deg_to_m = 2 * np.pi * earth_radius / 360  # meters per degree longitude at equator
 cmax = 50  # maximum phase speed in grid units (deg/day)
 nps = 50  # number of phase speed bins
-NFFT = 256  # FFT length
+NFFT = 128  # FFT length, total days 153, this gives two segments with 25% overlap
 plev = 25000  # pressure level in Pa
 
 # %%
@@ -98,8 +98,8 @@ def process_single_latitude_year(upvp_lat, lat_value):
 
     # Calculate phase speed spectrum
     P_cp, P_cn, C = calPhaseSpeedSpectrum(
-        K_p, K_n, lon_freq, om, cmax=cmax, nps=nps, i1=1, i2=50
-    )
+        K_p, K_n, lon_freq, om, cmax=cmax, nps=nps, i1=1, i2=10
+    ) # sum over i1 to i2 frequency bins, 1-10 to capture synoptic waves
 
     return P_cp, P_cn
 
