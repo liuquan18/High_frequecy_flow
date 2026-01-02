@@ -56,6 +56,8 @@ def cal_theta_on2pvu(ta, ua, va):
 
     return pv, theta_DT
 
+
+
 #%%
 
 def interpolate_isent(tmpk, pv, isentlevs, pres):
@@ -124,8 +126,44 @@ def cal_pv_isent(ta, ua, va):
     pv_isent = pv_isent.pv
 
     return pv_isent
+#%%
+def from_pressure_to_isentropic(var, tmpk, pres, isentlevs = np.arange(300, 361, 5)):
+    """
+    Interpolate a variable from pressure levels to isentropic levels.
+    Parameters
+    ----------
+    var : xr.DataArray
+        Variable to interpolate with dimensions (time, plev, lat, lon)
+    tmpk : xr.DataArray 
+        Temperature in Kelvin with dimensions (time, plev, lat, lon)
+    pres : xr.DataArray
+        Pressure levels with dimensions (plev)
+    isentlevs : array-like
+        Isentropic levels to interpolate to (in K)
+    """
+    # potential temperature
+    tmpk = mpcalc.smooth_n_point(tmpk, 5, 2)
+    thta = mpcalc.potential_temperature(pres, tmpk)
+    thta = thta.transpose('time', 'plev','lat','lon')
+
+    # variable smoothing
+    var = mpcalc.smooth_n_point(var, 5, 2)
+    var_name = var.name
+
+    ds_isent = xr.Dataset({var_name: var, 'temperature': tmpk})
+
+    var_isent = ds_isent.groupby('time').apply(
+        lambda x: isentropic_interpolation_as_dataset(
+            isentlevs * units('K'),
+            x.temperature.isel(time=0),
+            x[var_name].isel(time=0),
+        )
+    )
+    var_isent = var_isent[var_name]
+    return var_isent
 
 
+#%%
 def find_isentrope_at_pv(pv_zm, target_pv=2):
     """
     Find the isentropic level where PV equals target_pv for each latitude.
