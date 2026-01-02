@@ -21,7 +21,6 @@ logging.basicConfig(level=logging.INFO)
 node = sys.argv[1]
 ens = int(node)
 decade = sys.argv[2]
-logging.info(f"Processing ensemble {ens} for decade {decade}")
 # %%
 # %%
 try:
@@ -38,6 +37,9 @@ except:
 # %%
 # Load data
 if rank == 0:
+    logging.info(f"MPI rank {rank} of {size} initialized.")
+    logging.info(f"Processing ensemble {ens} for decade {decade}")
+
     logging.info("Loading data...")
 
 
