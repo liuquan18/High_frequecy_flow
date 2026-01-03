@@ -38,7 +38,6 @@ except:
 if rank == 0:
     logging.info(f"MPI rank {rank} of {size} initialized.")
     logging.info(f"Processing ensemble {ens} for year {year}")
-    logging.info("Computing space-time cross-spectra...")
 
 # %%
 # Parameters
@@ -71,7 +70,7 @@ vp.name = "va"
 up = up.sel(time=up.time.dt.year == int(year))
 vp = vp.sel(time=vp.time.dt.year == int(year))
 if rank == 0:
-    print(f"Processing year {year}")
+    logging.info(f" Processing year {year}")
 
 up = up.sel(lat=slice(0, 90))
 vp = vp.sel(lat=slice(0, 90))
@@ -84,8 +83,8 @@ levels_per_rank = np.array_split(isents, size)
 my_levels = levels_per_rank[rank]
 
 if rank == 0:
-    print(f"Total levels: {n_levels}, MPI size: {size}")
-print(f"Rank {rank}: Processing {len(my_levels)} levels: {my_levels}")
+    print(f"    Total levels: {n_levels}, MPI size: {size}")
+logging.info(f"Rank {rank}: Processing {len(my_levels)} levels: {my_levels}")
 
 
 # %%
@@ -189,7 +188,7 @@ K_p_list = []
 K_n_list = []
 
 for level_idx, level in enumerate(my_levels):
-    print(f"Rank {rank}: Processing level {level} ({level_idx+1}/{len(my_levels)})")
+    logging.info(f"     Rank {rank}: Processing level {level} ({level_idx+1}/{len(my_levels)})")
 
     # Select data for this level
     up_level = up.sel(isentropic_level=level)
@@ -212,12 +211,12 @@ else:
     K_p_rank = None 
     K_n_rank = None
 
-print(f"Rank {rank}: Finished computing {len(my_levels)} levels")
+logging.info(f"    Rank {rank}: Finished computing {len(my_levels)} levels")
 
 # %%
 # Gather all results from all ranks to rank 0
 if rank == 0:
-    print("Gathering results from all ranks...")
+    logging.info("  Gathering results from all ranks...")
 
 # Gather xarray DataArrays from all ranks
 K_p_all_ranks = comm.gather(K_p_rank, root=0)
@@ -226,7 +225,7 @@ K_n_all_ranks = comm.gather(K_n_rank, root=0)
 # %%
 # Rank 0 combines all data into a single dataset
 if rank == 0:
-    print("Combining data from all ranks...")
+    logging.info("  Combining data from all ranks...")
 
     # Filter out None values and concatenate along isentropic_level
     K_p_list_all = [k for k in K_p_all_ranks if k is not None]
@@ -283,17 +282,14 @@ if rank == 0:
     ds["wavenumber"].attrs["units"] = "cycles/degree"
     ds["wavenumber"].attrs["long_name"] = "Zonal wavenumber"
 
-    print(f"Combined shape: {K_p_da.shape}")
-    print(f"Isentropic levels: {K_p_da.isentropic_level.values}")
-    print(f"Dataset dimensions: {ds.dims}")
 
     # Save to NetCDF
     output_file = (
         f"{output_path}spacetime_spectra_upvp_alllevels_{year}_r{ens}i1p1f1.nc"
     )
     ds.to_netcdf(output_file)
-    print(f"Saved combined dataset to: {output_file}")
+    logging.info(f"Saved combined dataset to: {output_file}")
 
-print(f"Rank {rank}: All done!")
+logging.info(f"Rank {rank}: All done!")
 
 # %%

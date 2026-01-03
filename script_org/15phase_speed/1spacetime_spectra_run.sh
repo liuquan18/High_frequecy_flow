@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=wind_isent
 #SBATCH --output=wind_isent.%j.out
-#SBATCH --nodes=10
+#SBATCH --nodes=6
 #SBATCH --ntasks-per-node=1
 #SBATCH --time=08:00:00
 #SBATCH --partition=compute
