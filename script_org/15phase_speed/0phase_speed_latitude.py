@@ -40,9 +40,9 @@ except:
 if rank == 0:
     logging.info("Loading data...")
 
-var1 = "ua_prime"
-var2 = "va_prime"
-var_out = "upvp_phase_speed_spectrum"
+var1 = 'ua' #"ua_prime"
+var2 = 'va' #"va_prime"
+var_out = 'uava_phase_speed_spectrum' #"upvp_phase_speed_spectrum"
 # %%
 
 up_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{var1}_daily/r{ens}i1p1f1/"
