@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=wind_isent
-#SBATCH --output=wind_isent.%j.out
+#SBATCH --job-name=spacetime
+#SBATCH --output=spacetime.%j.out
 #SBATCH --nodes=6
 #SBATCH --ntasks-per-node=1
 #SBATCH --time=08:00:00
@@ -8,6 +8,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=0
 #SBATCH --account=mh0033
+#SBATCH --mail-type=FAIL
 
 # Load modules
 module load python3/unstable
