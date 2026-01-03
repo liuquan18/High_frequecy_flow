@@ -37,7 +37,7 @@ except:
 # %%
 if rank == 0:
     logging.info(f"MPI rank {rank} of {size} initialized.")
-    logging.info(f"Processing ensemble {ens} for decade {decade}")
+    logging.info(f"Processing ensemble {ens} for year {year}")
     logging.info("Computing space-time cross-spectra...")
 
 # %%
