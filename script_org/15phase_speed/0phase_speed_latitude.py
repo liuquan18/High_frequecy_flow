@@ -102,8 +102,8 @@ def process_single_latitude_year(up_lat, vp_lat):
 
     # Calculate phase speed spectrum
     P_cp, P_cn, C = calPhaseSpeedSpectrum(
-        K_p, K_n, lon_freq, om, cmax=cmax, nps=nps, i1=1, i2=10
-    )  # sum over i1 to i2 frequency bins, 1-10 to capture synoptic waves
+        K_p, K_n, lon_freq, om, cmax=cmax, nps=nps, i1=1, i2=6
+    )  # sum over i1 to i2 frequency bins, 1-10 to capture synoptic waves, the sixth corresponds to wavenumber 0.03125*360=11.25  
 
     return P_cp, P_cn
 
