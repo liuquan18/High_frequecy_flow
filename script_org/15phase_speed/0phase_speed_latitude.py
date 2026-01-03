@@ -40,14 +40,18 @@ except:
 if rank == 0:
     logging.info("Loading data...")
 
+var1 = "ua_prime"
+var2 = "va_prime"
+var_out = "upvp_phase_speed_spectrum"
+# %%
 
-up_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_prime_daily/r{ens}i1p1f1/"
-vp_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/va_prime_daily/r{ens}i1p1f1/"
+up_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{var1}_daily/r{ens}i1p1f1/"
+vp_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{var2}_daily/r{ens}i1p1f1/"
 up_files = glob.glob(up_path + f"*{decade}*.nc")
 vp_files = glob.glob(vp_path + f"*{decade}*.nc")
 # %%
 # save path
-output_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/phase_speed_spectrum_daily/r{ens}i1p1f1/"
+output_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/{var_out}/r{ens}i1p1f1/"
 if rank == 0:
     if not os.path.exists(output_path):
         os.makedirs(output_path)
