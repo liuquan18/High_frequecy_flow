@@ -7,7 +7,7 @@ from src.data_helper.read_variable import read_prime
 # %%
 phase_speed_first = read_prime(
     decade=1850,
-    var="phase_speed_spectrum",
+    var="uava_phase_speed_spectrum",
     name=None,
     model_dir="MPI_GE_CMIP6",
     suffix="",
@@ -15,7 +15,7 @@ phase_speed_first = read_prime(
 # %%
 phase_speed_last = read_prime(
     decade=2090,
-    var="phase_speed_spectrum",
+    var="uava_phase_speed_spectrum",
     name=None,
     model_dir="MPI_GE_CMIP6",
     suffix="",
@@ -178,7 +178,7 @@ axes[0].legend(fontsize=10)
 # Right plot: Difference
 P_combined_diff = P_combined_last - P_combined_first
 
-levels_diff = np.arange(-0.4, 0.41, 0.04)
+levels_diff = np.arange(-0.3, 0.31, 0.03)
 levels_diff = levels_diff[levels_diff != 0]  # Remove zero level
 
 cs_diff = axes[1].contourf(
