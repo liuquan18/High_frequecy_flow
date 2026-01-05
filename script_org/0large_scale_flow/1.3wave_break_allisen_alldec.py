@@ -293,25 +293,18 @@ mf_var = "upvp"  # can change to transient flux
 decade = sys.argv[2] if len(sys.argv) > 2 else 1850
 
 # Manual switch to disable MPI (set to False to force serial processing)
-USE_MPI = False
 
 # %%
 # %%
-if USE_MPI:
-    try:
-        from mpi4py import MPI
+try:
+    from mpi4py import MPI
 
-        comm = MPI.COMM_WORLD
-        rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
-        size = comm.Get_size()  # 10
-        use_mpi = True
-    except Exception as e:
-        logging.warning(f"::: Warning: Proceeding without mpi4py! {e} :::")
-        rank = 0
-        size = 1
-        use_mpi = False
-else:
-    logging.info("MPI disabled by user setting (USE_MPI=False)")
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()  # [0,1,2,3,4,5,6,7,8,9]
+    size = comm.Get_size()  # 10
+    use_mpi = True
+except Exception as e:
+    logging.warning(f"::: Warning: Proceeding without mpi4py! {e} :::")
     rank = 0
     size = 1
     use_mpi = False

@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=wind_isent
-#SBATCH --output=wind_isent.%j.out
+#SBATCH --job-name=wb_isent
+#SBATCH --output=wb_isent.%j.out
 #SBATCH --nodes=13
 #SBATCH --ntasks-per-node=1
 #SBATCH --time=08:00:00
