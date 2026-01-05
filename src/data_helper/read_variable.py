@@ -47,8 +47,9 @@ def read_prime_single_ens(dec, ens, var, **kwargs):
     plev = kwargs.get("plev", None)
     suffix = kwargs.get("suffix", "")
     model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6_allplev")
+    base_dir = kwargs.get("base_dir", "/work/mh0033/m300883/High_frequecy_flow/data/")
     data_path = (
-        f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{var}_daily{suffix}/"
+        f"{base_dir}{model_dir}/{var}_daily{suffix}/"
     )
     files = glob.glob(data_path + f"r{ens}i1p1f1/*{dec}*")
     if len(files) == 0:
