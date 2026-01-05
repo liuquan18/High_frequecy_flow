@@ -21,4 +21,10 @@ conda activate air_sea
 export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
 
 # Launch MPI job directly
-srun --mpi=pmi2 python 1.3wave_break_allisen_alldec.py $1 $2 # ens # decade
+
+for dec in $(seq 1860 10 2080)
+do
+  srun --mpi=pmi2 python 1.3wave_break_allisen_alldec.py $1 $dec # ens # decade
+done
+
+# srun --mpi=pmi2 python 1.3wave_break_allisen_alldec.py $1 $2 # ens # decade
