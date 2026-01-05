@@ -44,7 +44,11 @@ decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
 var = sys.argv[2] if len(sys.argv) > 2 else 'ua'
 name = sys.argv[3] if len(sys.argv) > 3 else var
 model_dir = sys.argv[4] if len(sys.argv) > 4 else 'MPI_GE_CMIP6'
-plev = int(sys.argv[5]) if len(sys.argv) > 5 else None
+
+# Check if the argument is 'None' string before converting to int
+plev_arg = sys.argv[5] if len(sys.argv) > 5 else None
+plev = int(plev_arg) if plev_arg is not None and plev_arg != 'None' else None
+
 base_dir = sys.argv[6] if len(sys.argv) > 6 else '/work/mh0033/m300883/High_frequecy_flow/data/'
 suffix = sys.argv[7] if len(sys.argv) > 7 else ''
 
