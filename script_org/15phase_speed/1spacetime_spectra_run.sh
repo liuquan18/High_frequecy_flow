@@ -1,11 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=spacetime
 #SBATCH --output=spacetime.%j.out
-#SBATCH --nodes=6
+#SBATCH --nodes=13
 #SBATCH --ntasks-per-node=1
 #SBATCH --time=08:00:00
 #SBATCH --partition=compute
-#SBATCH --cpus-per-task=1
 #SBATCH --mem=0
 #SBATCH --account=mh0033
 #SBATCH --mail-type=FAIL
@@ -29,3 +28,4 @@ do
     # run the python script
     srun --mpi=pmi2 python 1compute_spacetime_spectra.py $1 ${year} # ens # year
 done
+# srun --mpi=pmi2 python 1compute_spacetime_spectra.py $1 1859 # ens # decade
