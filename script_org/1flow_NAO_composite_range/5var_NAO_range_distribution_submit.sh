@@ -15,7 +15,7 @@ var=$2
 name=$3
 model_dir=$4
 plev=$5
-suffix=$6
-base_dir=$7
+base_dir=$6
+suffix=$7
 # mpirun -n 5 python 5var_NAO_range_distribution.py $decade $var $name $model_dir $plev $suffix
-python 5var_NAO_range_distribution.py $decade $var $name $model_dir $plev $suffix $base_dir
+python 5var_NAO_range_distribution.py $decade $var $name $model_dir $plev $base_dir $suffix
