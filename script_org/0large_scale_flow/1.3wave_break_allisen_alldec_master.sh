@@ -5,5 +5,5 @@ for ens in {1..50}
 do
     echo "Ensemble member ${ens} for decade ${decade}"
     # run the python script
-    sbatch 1.3phase_speed_wind_run.sh ${ens} ${decade}
+    sbatch 1.3wave_break_allisen_alldec_run.sh ${ens} ${decade}
 done
