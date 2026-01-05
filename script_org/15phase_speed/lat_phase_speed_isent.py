@@ -3,11 +3,11 @@ import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
 from src.data_helper.read_variable import read_prime
-
+from src.dynamics.theta_on_pv import find_isentrope_at_pv
 # %%
 phase_speed_first = read_prime(
     decade=1850,
-    var="uava_phase_speed_spectrum",
+    var="upvp_isent_phase_speed_spectrum",
     name=None,
     model_dir="MPI_GE_CMIP6",
     suffix="",
@@ -15,28 +15,16 @@ phase_speed_first = read_prime(
 # %%
 phase_speed_last = read_prime(
     decade=2090,
-    var="uava_phase_speed_spectrum",
+    var="upvp_isent_phase_speed_spectrum",
     name=None,
     model_dir="MPI_GE_CMIP6",
     suffix="",
 )
-# %%
-ua_first = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_monthly_ensmean/ua_monmean_ensmean_185005_185909.nc"
-)
-ua_first = ua_first["ua"].mean(dim="time").sel(plev=25000).mean(dim="lon")
-ua_first = ua_first.sel(lat=slice(0, 90))
-# %%
-ua_last = xr.open_dataset(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_monthly_ensmean/ua_monmean_ensmean_209005_209909.nc"
-)
-ua_last = ua_last["ua"].mean(dim="time").sel(plev=25000).mean(dim="lon")
-ua_last = ua_last.sel(lat=slice(0, 90))
 
 
 # %%
 lats = phase_speed_first["lat"].values
-phase_speeds_2d = phase_speed_first["phase_speed_grid"].values
+phase_speeds_2d = phase_speed_first["phase_speed_ms"].values
 P_cp_first = phase_speed_first["P_eastward"].mean(dim="ens").values
 P_cn_first = phase_speed_first["P_westward"].mean(dim="ens").values
 
@@ -47,165 +35,222 @@ P_cn_last = phase_speed_last["P_westward"].mean(dim="ens").values
 # Use middle latitude for representative phase speeds
 mid_lat_idx = len(lats) // 2
 phase_speeds_plot = phase_speeds_2d[mid_lat_idx, :]
-
-# Plot phase speed spectrum as a function of latitude
-fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-
-# Eastward (positive) phase speeds
-cs1 = axes[0].contourf(
-    phase_speeds_plot, lats, P_cp_first, levels=20, cmap="YlOrRd", extend="max"
-)
-axes[0].set_xlabel("Phase Speed (m/s)", fontsize=12)
-axes[0].set_ylabel("Latitude (°N)", fontsize=12)
-axes[0].set_title("Eastward Phase Speed Spectrum", fontsize=14)
-axes[0].set_xlim(0, phase_speeds_plot.max())
-axes[0].grid(True, alpha=0.3)
-plt.colorbar(cs1, ax=axes[0], label="Power")
-
-# Westward (negative) phase speeds
-cs2 = axes[1].contourf(
-    -phase_speeds_plot, lats, P_cn_first, levels=20, cmap="Blues", extend="max"
-)
-axes[1].set_xlabel("Phase Speed (m/s)", fontsize=12)
-axes[1].set_ylabel("Latitude (°N)", fontsize=12)
-axes[1].set_title("Westward Phase Speed Spectrum", fontsize=14)
-axes[1].set_xlim(-phase_speeds_plot.max(), 0)
-axes[1].grid(True, alpha=0.3)
-plt.colorbar(cs2, ax=axes[1], label="Power")
-
-plt.tight_layout()
-
-
 # %%
-# Combined plot
-fig, axes = plt.subplots(1, 2, figsize=(18, 6))
-
-phase_speeds_combined = np.concatenate([-phase_speeds_plot[::-1], phase_speeds_plot])
-P_combined_first = np.concatenate([P_cn_first[:, ::-1], P_cp_first], axis=1)
-P_combined_last = np.concatenate([P_cn_last[:, ::-1], P_cp_last], axis=1)
-
-# Define consistent levels excluding zero
-levels = np.arange(-1.2, 1.21, 0.1)
-levels_line = levels[levels != 0]  # Remove zero level
-
-# First period plot
-cs1 = axes[0].contour(
-    phase_speeds_combined, lats, P_combined_first, levels=levels_line, colors="black"
-)
-axes[0].axvline(0, color="gray", linestyle="--", linewidth=1.5, alpha=0.5)
-axes[0].set_xlabel("Phase Speed (m/s)", fontsize=12)
-axes[0].set_ylabel("Latitude (°N)", fontsize=12)
-axes[0].set_title(
-    f"Phase Speed Spectrum (1850s)",
-    fontsize=14,
-)
-axes[0].grid(True, alpha=0.3)
-ua_first.plot(y="lat", ax=axes[0], color="k", linewidth=3, label="Zonal Wind (250 hPa)")
-axes[0].set_xlim(-20, 30)
-
-# Last period plot
-cs2 = axes[1].contour(
-    phase_speeds_combined, lats, P_combined_last, levels=levels, colors="black"
-)
-axes[1].axvline(0, color="gray", linestyle="--", linewidth=1.5, alpha=0.5)
-axes[1].set_xlabel("Phase Speed (m/s)", fontsize=12)
-axes[1].set_ylabel("Latitude (°N)", fontsize=12)
-axes[1].set_title(
-    f"Phase Speed Spectrum (2090s)",
-    fontsize=14,
-)
-axes[1].grid(True, alpha=0.3)
-ua_last.plot(y="lat", ax=axes[1], color="k", linewidth=3, label="Zonal Wind (250 hPa)")
-axes[1].set_xlim(-20, 30)
-
-
-plt.tight_layout()
-
 # %%
-# Combined single plot: first as colormap, last as contours + Difference plot
-fig, axes = plt.subplots(1, 2, figsize=(18, 6))
+# Multi-panel plot for all isentropic levels
+# Get isentropic levels from the data
+isent_levels = phase_speed_first["isentropic_level"].values
+n_levels = len(isent_levels)
 
+# Create figure with 2 rows and n_levels columns
+fig, axes = plt.subplots(2, n_levels, figsize=(2.5 * n_levels, 8), sharey=True)
+
+# Get data dimensions
+lats = phase_speed_first["lat"].values
+phase_speeds_2d = phase_speed_first["phase_speed_ms"].values
+mid_lat_idx = len(lats) // 2
+phase_speeds_plot = phase_speeds_2d[mid_lat_idx, :]
+
+# Combine positive and negative phase speeds
 phase_speeds_combined = np.concatenate([-phase_speeds_plot[::-1], phase_speeds_plot])
-P_combined_first = np.concatenate([P_cn_first[:, ::-1], P_cp_first], axis=1)
-P_combined_last = np.concatenate([P_cn_last[:, ::-1], P_cp_last], axis=1)
 
-# Define consistent levels excluding zero
+# Define consistent contour levels
 levels = np.arange(-1.21, 1.21, 0.1)
 levels_line = levels[levels != 0]  # Remove zero level
+levels_diff = np.arange(-0.3, 0.31, 0.03)
+levels_diff = levels_diff[levels_diff != 0]
 
-# Left plot: first as colormap, last as contours
-cs_fill = axes[0].contourf(
-    phase_speeds_combined,
-    lats,
-    P_combined_first,
-    levels=levels,
-    cmap="RdBu_r",
-    extend="both",
+# Loop through each isentropic level
+for i, isent_level in enumerate(isent_levels):
+    # Extract data for this isentropic level
+    P_cp_first_i = (
+        phase_speed_first["P_eastward"]
+        .sel(isentropic_level=isent_level)
+        .mean(dim="ens")
+        .values
+    )
+    P_cn_first_i = (
+        phase_speed_first["P_westward"]
+        .sel(isentropic_level=isent_level)
+        .mean(dim="ens")
+        .values
+    )
+
+    P_cp_last_i = (
+        phase_speed_last["P_eastward"]
+        .sel(isentropic_level=isent_level)
+        .mean(dim="ens")
+        .values
+    )
+    P_cn_last_i = (
+        phase_speed_last["P_westward"]
+        .sel(isentropic_level=isent_level)
+        .mean(dim="ens")
+        .values
+    )
+
+    # Combine eastward and westward
+    P_combined_first = np.concatenate([P_cn_first_i[:, ::-1], P_cp_first_i], axis=1)
+    P_combined_last = np.concatenate([P_cn_last_i[:, ::-1], P_cp_last_i], axis=1)
+
+    # Row 1: First decade (1850s)
+    cs1 = axes[0, i].contour(
+        phase_speeds_combined,
+        lats,
+        P_combined_first,
+        levels=levels_line,
+        colors="black",
+        linewidths=1.0,
+    )
+    axes[0, i].axvline(0, color="gray", linestyle="--", linewidth=1.0, alpha=0.5)
+    axes[0, i].set_xlim(-20, 30)
+    axes[0, i].grid(True, alpha=0.3)
+    axes[0, i].set_title(f"{int(isent_level)} K", fontsize=11)
+
+    if i == 0:
+        axes[0, i].set_ylabel("Latitude (°N)", fontsize=11)
+
+    # Row 2: Last decade (2090s)
+    cs2 = axes[1, i].contour(
+        phase_speeds_combined,
+        lats,
+        P_combined_last,
+        levels=levels_line,
+        colors="black",
+        linewidths=1.0,
+    )
+    axes[1, i].axvline(0, color="gray", linestyle="--", linewidth=1.0, alpha=0.5)
+    axes[1, i].set_xlim(-20, 30)
+    axes[1, i].set_xlabel("Phase Speed (m/s)", fontsize=11)
+    axes[1, i].grid(True, alpha=0.3)
+
+    if i == 0:
+        axes[1, i].set_ylabel("Latitude (°N)", fontsize=11)
+
+# Add row labels on the left
+fig.text(0.005, 0.75, "1850s", fontsize=13, fontweight="bold", rotation=90, va="center")
+fig.text(0.005, 0.25, "2090s", fontsize=13, fontweight="bold", rotation=90, va="center")
+
+plt.tight_layout(rect=[0.02, 0, 1, 1])
+plt.show()
+#%%
+# %% Tropopause
+pv_1850 = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0climatology/pv_1850.nc"
+)
+pv_2090 = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/0climatology/pv_2090.nc"
 )
 
-cs_line = axes[0].contour(
-    phase_speeds_combined,
+pv_1850_zm = pv_1850.pv.mean(dim=("lon")) * 1e6
+pv_2090_zm = pv_2090.pv.mean(dim=("lon")) * 1e6
+
+
+trops_1850 = find_isentrope_at_pv(pv_1850_zm)
+trops_2090 = find_isentrope_at_pv(pv_2090_zm)
+
+# %%
+# New plot: Average over phase speed range (-10, 20) m/s
+# Plot isentropic level vs latitude
+
+# Get dimensions
+lats = phase_speed_first["lat"].values
+isent_levels = phase_speed_first["isentropic_level"].values
+phase_speeds_2d = phase_speed_first["phase_speed_ms"].values
+
+# For each latitude, get phase speeds
+mid_lat_idx = len(lats) // 2
+phase_speeds_plot = phase_speeds_2d[mid_lat_idx, :]
+
+# Create combined phase speed array (negative for westward, positive for eastward)
+phase_speeds_combined = np.concatenate([-phase_speeds_plot[::-1], phase_speeds_plot])
+
+# Find indices for phase speed range (-10, 20)
+mask = (phase_speeds_combined >= -10) & (phase_speeds_combined <= 20)
+
+# Initialize arrays for averaged power
+P_avg_first = np.zeros((len(isent_levels), len(lats)))
+P_avg_last = np.zeros((len(isent_levels), len(lats)))
+
+# Loop through isentropic levels and average over phase speed range
+for i, isent_level in enumerate(isent_levels):
+    # Get power spectra for this isentropic level
+    P_cp_first_i = (
+        phase_speed_first["P_eastward"]
+        .sel(isentropic_level=isent_level)
+        .mean(dim="ens")
+        .values
+    )
+    P_cn_first_i = (
+        phase_speed_first["P_westward"]
+        .sel(isentropic_level=isent_level)
+        .mean(dim="ens")
+        .values
+    )
+
+    P_cp_last_i = (
+        phase_speed_last["P_eastward"]
+        .sel(isentropic_level=isent_level)
+        .mean(dim="ens")
+        .values
+    )
+    P_cn_last_i = (
+        phase_speed_last["P_westward"]
+        .sel(isentropic_level=isent_level)
+        .mean(dim="ens")
+        .values
+    )
+
+    # Combine eastward and westward
+    P_combined_first = np.concatenate([P_cn_first_i[:, ::-1], P_cp_first_i], axis=1)
+    P_combined_last = np.concatenate([P_cn_last_i[:, ::-1], P_cp_last_i], axis=1)
+
+    # Average over selected phase speed range
+    P_avg_first[i, :] = P_combined_first[:, mask].mean(axis=1)
+    P_avg_last[i, :] = P_combined_last[:, mask].mean(axis=1)
+
+# Create figure
+fig, ax = plt.subplots(figsize=(10, 8))
+
+# Define contour levels
+levels_filled = np.arange(-0.4, 0.41, 0.05)
+levels_line = np.arange(-0.4, 0.41, 0.05)
+levels_line = levels_line[np.abs(levels_line) > 1e-10]  # Remove zero level
+
+# Plot first decade as filled contours (colormap)
+cs_filled = ax.contourf(
+    lats, isent_levels, P_avg_first, levels=levels_filled, cmap="RdBu_r", extend="max"
+)
+
+# Plot last decade as line contours
+cs_line = ax.contour(
     lats,
-    P_combined_last,
-    levels=levels,
+    isent_levels,
+    P_avg_last,
+    levels=levels_line,
     colors="black",
     linewidths=1.5,
+    alpha=0.8,
 )
 
-axes[0].axvline(0, color="gray", linestyle="--", linewidth=1.5, alpha=0.5)
-axes[0].set_xlabel("Phase Speed (m/s)", fontsize=12)
-axes[0].set_ylabel("Latitude (°N)", fontsize=12)
-axes[0].set_title(
-    f"Phase Speed Spectrum: 1850s (shading) vs 2090s (contours)",
-    fontsize=14,
+# Add contour labels for last decade
+ax.clabel(cs_line, inline=True, fontsize=9, fmt="%.2f")
+
+# Labels and formatting
+ax.set_xlabel("Latitude (°N)", fontsize=12)
+ax.set_ylabel("Isentropic Level (K)", fontsize=12)
+ax.set_title(
+    "Phase Speed Power Averaged over (-10, 20) m/s\n1850s (filled) vs 2090s (blue contours)",
+    fontsize=13,
 )
-axes[0].grid(True, alpha=0.3)
+ax.grid(True, alpha=0.3)
 
-ua_first.plot(
-    y="lat", ax=axes[0], color="k", linewidth=3, linestyle="-", label="Zonal Wind 1850s"
-)
-ua_last.plot(
-    y="lat",
-    ax=axes[0],
-    color="k",
-    linewidth=3,
-    linestyle="--",
-    label="Zonal Wind 2090s",
-)
-axes[0].set_xlim(-20, 30)
-axes[0].legend(fontsize=10)
+# Add colorbar
+cbar = plt.colorbar(cs_filled, ax=ax, orientation="vertical", pad=0.02)
+cbar.set_label("Power (1850s)", fontsize=11)
 
-# Right plot: Difference
-P_combined_diff = P_combined_last - P_combined_first
-
-levels_diff = np.arange(-0.3, 0.31, 0.03)
-levels_diff = levels_diff[levels_diff != 0]  # Remove zero level
-
-cs_diff = axes[1].contourf(
-    phase_speeds_combined,
-    lats,
-    P_combined_diff,
-    levels=levels_diff,
-    cmap="RdBu",
-    extend="both",
-)
-
-axes[1].axvline(0, color="gray", linestyle="--", linewidth=1.5, alpha=0.5)
-axes[1].set_xlabel("Phase Speed (m/s)", fontsize=12)
-axes[1].set_ylabel("Latitude (°N)", fontsize=12)
-axes[1].set_title(
-    f"Phase Speed Spectrum Difference (2090s - 1850s)",
-    fontsize=14,
-)
-axes[1].grid(True, alpha=0.3)
-
-ua_diff = ua_last - ua_first
-ua_diff.plot(y="lat", ax=axes[1], color="k", linewidth=3, label="Zonal Wind Change")
-axes[1].set_xlim(-20, 30)
-axes[1].legend(fontsize=10)
-
-plt.colorbar(cs_fill, ax=axes[0], label="Power (1850s)")
-plt.colorbar(cs_diff, ax=axes[1], label="Power Difference")
 plt.tight_layout()
+plt.savefig("phase_speed_lat_isent_averaged.png", dpi=300, bbox_inches="tight")
+plt.show()
 
 # %%
