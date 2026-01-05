@@ -14,4 +14,4 @@
 export TQDM_DISABLE=1
 
 # mpirun -n 1 python 1wave_break_allisen.py $1
-python 1wave_break_allisen.py $1
+python 1.2wave_break_allisen.py $1
