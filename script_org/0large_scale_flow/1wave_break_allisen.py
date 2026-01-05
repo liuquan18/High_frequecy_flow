@@ -248,14 +248,14 @@ def wavebreaking(pv, mflux, mf_var="upvp"):
     filtered_cyclonic = cyclonic
 
     # filter by latitude fraction above 40 degrees
-    filtered_anticyclonic = filter_events_by_latitude_fraction(
-        filtered_anticyclonic, lat_threshold=40, fraction=0.5
-    )
+    # filtered_anticyclonic = filter_events_by_latitude_fraction(
+    #     filtered_anticyclonic, lat_threshold=40, fraction=0.5
+    # )
 
-    # more in the northern side of the jet
-    filtered_cyclonic = filter_events_by_latitude_fraction(
-        filtered_cyclonic, lat_threshold=50, fraction=0.5
-    )
+    # # more in the northern side of the jet
+    # filtered_cyclonic = filter_events_by_latitude_fraction(
+    #     filtered_cyclonic, lat_threshold=50, fraction=0.5
+    # )
 
     # make sure the geometry is valid
     filtered_anticyclonic.geometry = filtered_anticyclonic.geometry.apply(
@@ -322,8 +322,12 @@ pv_path = (
 )
 upvp_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/upvp_daily/r{ens}i1p1f1/"  # change to transient flux
 
-awb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_anticyclonic_allisen_daily/r{ens}i1p1f1/"
-cwb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_cyclonic_allisen_daily/r{ens}i1p1f1/"
+# awb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_anticyclonic_allisen_daily/r{ens}i1p1f1/"
+# cwb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_cyclonic_allisen_daily/r{ens}i1p1f1/"
+
+
+awb_path = f"/scratch/m/m300883/MPI_GE_CMIP6/wb_anticyclonic_allisen_daily/r{ens}i1p1f1/"
+cwb_path = f"/scratch/m/m300883/MPI_GE_CMIP6/wb_cyclonic_allisen_daily/r{ens}i1p1f1/"
 
 
 if rank == 0:
