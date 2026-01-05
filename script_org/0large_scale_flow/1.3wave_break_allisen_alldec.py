@@ -341,8 +341,7 @@ single_levels = np.array_split(all_levels, size)[rank]
 # for dec=1850
 def process_decade(dec):
     if rank == 0:
-        logging.info(f"Processing decade {dec}")
-        logging.info(f"Processing ensemble {ens}")
+        logging.info(f" Processing decade {dec}")
 
     pv_file = glob.glob(pv_path + f"*{dec}*.nc")
     pv = xr.open_dataset(pv_file[0])
@@ -356,7 +355,7 @@ def process_decade(dec):
 
     for i, isen_level in enumerate(single_levels):
         logging.info(
-            f"rank {rank} Processing isentropic level {isen_level}K {i+1}/{len(single_levels)}"
+            f"      rank {rank} Processing isentropic level {isen_level}K {i+1}/{len(single_levels)}"
         )
 
         pv_level = pv.sel(isentropic_level=isen_level)
@@ -389,7 +388,7 @@ def process_decade(dec):
 
     # Combine all results on rank 0
     if rank == 0:
-        logging.info("Combining results from all ranks")
+        logging.info("  Combining results from all ranks")
 
         # Filter out None values and concatenate
         awb_all_valid = [arr for arr in awb_all if arr is not None]
@@ -411,7 +410,7 @@ def process_decade(dec):
             # Save combined cyclonic data
             output_file = cwb_path + f"wb_cyclonic_ens{ens:02d}_dec{dec}_allisen.nc"
             cwb_combined.to_netcdf(output_file)
-            logging.info(f"Saved cyclonic wave breaking data to {output_file}")
+            logging.info(f" Saved cyclonic wave breaking data to {output_file}")
 
         logging.info("Processing complete!")
 
