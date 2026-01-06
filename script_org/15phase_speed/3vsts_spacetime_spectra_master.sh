@@ -3,5 +3,5 @@
 for ens in {1..50}
 do
     # run the python script
-    sbatch 1spacetime_spectra_run.sh ${ens}
+    sbatch 3vsts_spacetime_spectra_run.sh ${ens}
 done

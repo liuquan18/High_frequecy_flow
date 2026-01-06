@@ -24,5 +24,5 @@ ens=$1
 for decade in 1850 2090
 do
     echo "Running spacetime spectra for decade ${decade} ensemble member ${ens}"
-    srun --mpi=pmi2 python 1compute_spacetime_spectra.py ${ens} ${decade} # ens # decade
+    srun --mpi=pmi2 python 3vsts_spacetime_spectra.py ${ens} ${decade} # ens # decade
 done
