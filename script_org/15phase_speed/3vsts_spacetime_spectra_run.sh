@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=spacetime
 #SBATCH --output=spacetime.%j.out
-#SBATCH --nodes=10
-#SBATCH --ntasks-per-node=1
-#SBATCH --time=08:00:00
+#SBATCH --nodes=5
+#SBATCH --ntasks-per-node=2
+#SBATCH --time=02:00:00
 #SBATCH --partition=compute
 #SBATCH --mem=0
 #SBATCH --account=mh0033
