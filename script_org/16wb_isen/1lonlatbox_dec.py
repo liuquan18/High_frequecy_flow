@@ -21,8 +21,9 @@ def process_wb_latlonbox(dec, ens):
     
     wb_to = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_both_allisen_fldmean_dec/r{ens}i1p1f1/"
     
-    if not os.path.exists(wb_to):
-        os.makedirs(wb_to)
+    if rank == 0:
+        if not os.path.exists(wb_to):
+            os.makedirs(wb_to)
 
     awb_file = glob.glob(f"{awb_from}*{dec}*.nc")[0]
     cwb_file = glob.glob(f"{cwb_from}*{dec}*.nc")[0]
