@@ -19,6 +19,7 @@ conda activate air_sea
 
 # Set PMI library
 export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
+export TQDM_DISABLE=1
 
 # Launch MPI job directly
 
