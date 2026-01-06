@@ -172,21 +172,22 @@ for year_idx, year in enumerate(my_years):
     )
 
     # Load data for this year
-    vs_file = glob.glob(vs_path + f"*{year}*.nc")
-    ts_file = glob.glob(ts_path + f"*{year}*.nc")
+    vs_file = glob.glob(vs_path + f"*{decade}*.nc")
+    ts_file = glob.glob(ts_path + f"*{decade}*.nc")
 
     if len(vs_file) == 0 or len(ts_file) == 0:
         logging.warning(
-            f"     Rank {rank}: No data files found for year {year}, skipping..."
+            f"     Rank {rank}: No data files found for decade {decade}, skipping..."
         )
         continue
 
-    logging.info(f"     Rank {rank}: Loading data for year {year}...")
+    logging.info(f"     Rank {rank}: Loading data for decade {decade}...")
     vs = xr.open_dataset(vs_file[0]).va
     ts = xr.open_dataset(ts_file[0]).theta
 
-    vs = vs.sel(lat=slice(0, 90), plev = 85000)
-    ts = ts.sel(lat=slice(0, 90), plev = 85000)
+
+    vs = vs.sel(lat=slice(0, 90), plev = 85000, time = vs.time.dt.year == int(year))
+    ts = ts.sel(lat=slice(0, 90), plev = 85000, time = ts.time.dt.year == int(year))
 
     # Compute space-time cross-spectra for all latitudes
     logging.info(f"     Rank {rank}: Computing spectra for year {year}...")
