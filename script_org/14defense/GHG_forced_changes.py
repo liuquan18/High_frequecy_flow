@@ -144,7 +144,8 @@ prec_cmap_div = np.loadtxt(
 )
 prec_cmap_div = mcolors.ListedColormap(prec_cmap_div, name="prec_div")
 # %%
-fig, axes = plt.subplots(1, 4, figsize=(12, 5))
+fig, axes = plt.subplots(4, 1, figsize=(6, 12))
+fig.subplots_adjust(hspace=0.06)
 
 # NAO
 sns.lineplot(
@@ -167,7 +168,6 @@ sns.lineplot(
     linewidth=2,
 )
 
-
 # wave breaking
 sns.lineplot(
     data=awbs_df,
@@ -189,9 +189,7 @@ sns.lineplot(
     linewidth=2,
 )
 
-
 # momentum flux
-# sum
 sns.lineplot(
     data=sum_momentum,
     x="decade",
@@ -202,7 +200,6 @@ sns.lineplot(
     linestyle=":",
     linewidth=2,
 )
-
 sns.lineplot(
     data=transient_momentum,
     x="decade",
@@ -212,17 +209,6 @@ sns.lineplot(
     color="k",
     linewidth=2,
 )
-# sns.lineplot(
-#     data=steady_momentum,
-#     x="decade",
-#     y="momentum_flux",
-#     ax=axes[1, 0],
-#     label="stationary",
-#     color='k',
-#     linestyle="--",
-#     linewidth=2,
-# )
-
 
 # heat flux
 sns.lineplot(
@@ -245,31 +231,289 @@ sns.lineplot(
     linewidth=2,
 )
 
-plt.tight_layout()
-
-
-for ax in axes.flat:
+# format axes: alternate y-axis side, show only bottom spine on last row, hide top spine everywhere
+for i, ax in enumerate(axes):
     ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.tick_params(axis="both", labelsize=16)
-    ax.set_xlabel(ax.get_xlabel(), fontsize=16)
-    # Move legend below each axes, 2 columns
+    # alternate y-axis side: even indices -> left, odd -> right
+    if i % 2 == 0:
+        ax.yaxis.set_label_position("left")
+        ax.yaxis.tick_left()
+        ax.spines["left"].set_visible(True)
+        ax.spines["right"].set_visible(False)
+        visible_spine = "left"
+    else:
+        ax.yaxis.set_label_position("right")
+        ax.yaxis.tick_right()
+        ax.spines["right"].set_visible(True)
+        ax.spines["left"].set_visible(False)
+        visible_spine = "right"
+    # only last row shows bottom spine and x tick labels
+    ax.spines["bottom"].set_visible(i == 3)
+    if i != 3:
+        # remove x ticks and labels on top three subplots
+        ax.tick_params(
+            axis="x", which="both", bottom=False, top=False, labelbottom=False
+        )
+    else:
+        # ensure bottom subplot has x ticks/labels (if you want them)
+        ax.tick_params(axis="x", which="both", bottom=True, top=False, labelbottom=True)
+    ax.tick_params(axis="both", labelsize=14)
+
+    # set y-axis color to match the primary line color (first line plotted on this ax)
+    lines = ax.get_lines()
+    axis_color = lines[0].get_color() if len(lines) > 0 else "k"
+    # color the visible spine
+    ax.spines[visible_spine].set_color(axis_color)
+    # color tick labels and y label
+    ax.tick_params(axis="y", colors=axis_color)
+    if ax.yaxis.get_label() is not None:
+        ax.yaxis.label.set_color(axis_color)
+
     leg = ax.get_legend()
     if leg is not None:
         ax.legend(
             loc="lower center",
-            bbox_to_anchor=(0.5, -0.35),
+            bbox_to_anchor=(0.5, -0.22),
             ncol=1,
-            fontsize=14,
+            fontsize=12,
             frameon=False,
         )
 
-axes[0].set_ylabel("extreme NAO days", fontsize=16)
-axes[1].set_ylabel("wave breaking days", fontsize=16)
-axes[2].set_ylabel(r"std of $-\partial \overline{u'v'}/\partial y$", fontsize=16)
+axes[0].set_ylabel("extreme NAO days", fontsize=14)
+axes[1].set_ylabel("wave breaking days", fontsize=14)
+axes[2].set_ylabel(r"std of $-\partial \overline{u'v'}/\partial y$", fontsize=14)
 axes[3].set_ylabel(
-    r"std of $\partial^2 \overline{v'\theta'}/\partial y^2$", fontsize=16
+    r"std of $\partial^2 \overline{v'\theta'}/\partial y^2$", fontsize=14
 )
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/GHG_forced_changes.png", dpi=500, bbox_inches="tight", metadata={"Creator": __file__})
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/GHG_forced_changes.png",
+    dpi=500,
+    bbox_inches="tight",
+    metadata={"Creator": __file__},
+    transparent=True,
+)
+# %%
+fig, axes = plt.subplots(2, 1, figsize=(6, 8))
+fig.subplots_adjust(hspace=0.06)
+
+# momentum flux (top)
+sns.lineplot(
+    data=sum_momentum,
+    x="decade",
+    y="momentum_flux_sum",
+    ax=axes[0],
+    label="transient + stationary",
+    color="k",
+    linestyle=":",
+    linewidth=2,
+)
+sns.lineplot(
+    data=transient_momentum,
+    x="decade",
+    y="momentum_flux",
+    ax=axes[0],
+    label="transient",
+    color="k",
+    linewidth=2,
+)
+
+# heat flux (bottom)
+sns.lineplot(
+    data=transient_heat,
+    x="decade",
+    y="heat_flux",
+    ax=axes[1],
+    label="transient",
+    color="k",
+    linewidth=2,
+)
+sns.lineplot(
+    data=steady_heat,
+    x="decade",
+    y="heat_flux",
+    ax=axes[1],
+    label="stationary",
+    color="k",
+    linestyle="--",
+    linewidth=2,
+)
+
+# format 2-row axes: top -> left y-axis, bottom -> right y-axis (per user request alternate)
+for i, ax in enumerate(axes):
+    ax.spines["top"].set_visible(False)
+    if i % 2 == 0:
+        ax.yaxis.set_label_position("left")
+        ax.yaxis.tick_left()
+        ax.spines["left"].set_visible(True)
+        ax.spines["right"].set_visible(False)
+        visible_spine = "left"
+    else:
+        ax.yaxis.set_label_position("right")
+        ax.yaxis.tick_right()
+        ax.spines["right"].set_visible(True)
+        ax.spines["left"].set_visible(False)
+        visible_spine = "right"
+    # only bottom subplot shows bottom spine
+    ax.spines["bottom"].set_visible(i == (len(axes) - 1))
+    if i != (len(axes) - 1):
+        ax.tick_params(labelbottom=False)
+    ax.tick_params(axis="both", labelsize=14)
+
+    # color y-axis to match the primary line
+    lines = ax.get_lines()
+    axis_color = lines[0].get_color() if len(lines) > 0 else "k"
+    ax.spines[visible_spine].set_color(axis_color)
+    ax.tick_params(axis="y", colors=axis_color)
+    if ax.yaxis.get_label() is not None:
+        ax.yaxis.label.set_color(axis_color)
+
+axes[0].legend(frameon=False, fontsize=12)
+axes[1].legend(frameon=False, fontsize=12)
+axes[0].set_ylabel("")
+axes[1].set_ylabel("")
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/decade_poster.pdf",
+    dpi=500,
+    bbox_inches="tight",
+    transparent=True,
+)
+# %%
+fig, axes = plt.subplots(4, 1, figsize=(6, 8))
+plt.subplots_adjust(hspace=0.2)
+
+
+# NAO
+sns.lineplot(
+    data=NAO_merge,
+    x="decade",
+    y="days_pos",
+    ax=axes[0],
+    label="pos NAO",
+    color="#FF514A",
+    linewidth=1.5,
+)
+sns.lineplot(
+    data=NAO_merge,
+    x="decade",
+    y="days_neg",
+    ax=axes[0],
+    label="neg NAO",
+    color="#FF514A",
+    linestyle="--",
+    linewidth=1.5,
+)
+
+# wave breaking
+sns.lineplot(
+    data=awbs_df,
+    x="decade",
+    y="flag",
+    ax=axes[1],
+    label="anticyclonic",
+    color="#006E66",
+    linewidth=1.5,
+)
+sns.lineplot(
+    data=cwbs_df,
+    x="decade",
+    y="flag",
+    ax=axes[1],
+    label="cyclonic",
+    color="#006E66",
+    linestyle="--",
+    linewidth=1.5,
+)
+
+# momentum flux
+sns.lineplot(
+    data=sum_momentum,
+    x="decade",
+    y="momentum_flux_sum",
+    ax=axes[2],
+    label="transient + stationary",
+    color="k",
+    linestyle=":",
+    linewidth=1.5,
+)
+sns.lineplot(
+    data=transient_momentum,
+    x="decade",
+    y="momentum_flux",
+    ax=axes[2],
+    label="transient",
+    color="k",
+    linewidth=1.5,
+)
+
+# heat flux
+sns.lineplot(
+    data=transient_heat,
+    x="decade",
+    y="heat_flux",
+    ax=axes[3],
+    label="transient",
+    color="k",
+    linewidth=1.5,
+)
+sns.lineplot(
+    data=steady_heat,
+    x="decade",
+    y="heat_flux",
+    ax=axes[3],
+    label="stationary",
+    color="k",
+    linestyle="--",
+    linewidth=1.5,
+)
+
+for i, ax in enumerate(axes):
+    ax.spines["top"].set_visible(False)
+    ax.set_facecolor("none")
+    ax.set_ylabel("")
+    # remove all ticks at x-axis except bottom plot
+    if i % 2 == 0:
+        ax.yaxis.set_label_position("left")
+        ax.yaxis.tick_left()
+        ax.spines["left"].set_visible(True)
+        ax.spines["right"].set_visible(False)
+        visible_spine = "left"
+        # set color
+
+    else:
+        ax.yaxis.set_label_position("right")
+        ax.yaxis.tick_right()
+        ax.spines["right"].set_visible(True)
+        ax.spines["left"].set_visible(False)
+        visible_spine = "right"
+    ax.spines["bottom"].set_visible(i == 3)
+    if i != 3:
+        # remove x ticks and labels on top three subplots
+        ax.tick_params(
+            axis="x", which="both", bottom=False, top=False, labelbottom=False
+        )
+    else:
+        ax.tick_params(axis="x", which="both", bottom=True, top=False, labelbottom=True)
+    ax.set_xlabel("")
+    # remove legends and label them next to the lines
+    leg = ax.get_legend()
+    if leg is not None:
+        ax.legend().remove()
+
+    # color the visible y-axis to match the primary line on this axis
+    lines = ax.get_lines()
+    axis_color = lines[0].get_color() if len(lines) > 0 else "k"
+    ax.spines[visible_spine].set_color(axis_color)
+    ax.tick_params(axis="y", colors=axis_color)
+    if ax.yaxis.get_label() is not None:
+        ax.yaxis.label.set_color(axis_color)
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/GHG_forced_changes_nolegend.png",
+    dpi=500,
+    bbox_inches="tight",
+    metadata={"Creator": __file__},
+    transparent=True,
+)
 # %%

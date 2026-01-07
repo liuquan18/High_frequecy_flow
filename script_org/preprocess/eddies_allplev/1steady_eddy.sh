@@ -34,7 +34,7 @@ fi
 mkdir -p "${Ts_path}" "${tmp_dir}"
 
 
-export T_path Ts_path member tmp_dir var
+export T_path Ts_path member tmp_dir var T_mmean_path
 
 
 # function to band filter

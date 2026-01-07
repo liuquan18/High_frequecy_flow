@@ -27,7 +27,7 @@ transient_neg_last = read_comp_var('transient_eddy_heat_d2y2', 'neg', 2090, time
 steady_pos_first = read_comp_var('steady_eddy_heat_d2y2', 'pos', 1850, time_window='all', method = 'no_stat', name = 'eddy_heat_d2y2', model_dir = 'MPI_GE_CMIP6_allplev')
 steady_neg_first = read_comp_var('steady_eddy_heat_d2y2', 'neg', 1850, time_window='all', method = 'no_stat', name = 'eddy_heat_d2y2', model_dir = 'MPI_GE_CMIP6_allplev')
 steady_pos_last = read_comp_var('steady_eddy_heat_d2y2', 'pos', 2090, time_window ='all', method = 'no_stat', name = 'eddy_heat_d2y2', model_dir = 'MPI_GE_CMIP6_allplev')
-steady_neg_last = read_comp_var('steady_eddy_heat_d2y2', 'neg',       2090, time_window='all', method = 'no_stat', name = 'eddy_heat_d2y2', model_dir = 'MPI_GE_CMIP6_allplev')
+steady_neg_last = read_comp_var('steady_eddy_heat_d2y2', 'neg',2090, time_window='all', method = 'no_stat', name = 'eddy_heat_d2y2', model_dir = 'MPI_GE_CMIP6_allplev')
 
 #%%
 transient_clima_first = read_climatology('transient_eddy_heat_d2y2', 1850, name = 'eddy_heat_d2y2', model_dir = 'MPI_GE_CMIP6_allplev')

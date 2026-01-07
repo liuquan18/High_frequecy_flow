@@ -131,3 +131,34 @@ def NA_box(ax, lon_min=280, lon_max=340, lat_min=40, lat_max=80, n=100, **kwargs
         **kwargs
     )
     ax.add_patch(patch)
+
+# function to change lon from 0-360 to -180 to 180
+def lon360to180(data):
+    """
+    change longitude from 0-360 to -180 to 180
+    """
+    data = data.transpose(..., "lon")  # make the lon as the last dim
+    dims = data.dims  # all the dims
+    res_dims = tuple(dim for dim in dims if dim != "lon")  # dims apart from lon
+    res_coords = [data.coords[dim] for dim in res_dims]  # get the coords
+
+    lon_values = data.lon.values
+    lon_values = ((lon_values + 180) % 360) - 180
+    # sort the lon values and get the sorted indices
+    sorted_indices = np.argsort(lon_values)
+    sorted_lon_values = lon_values[sorted_indices]
+
+    # make the lons as index
+    lon_dim = xr.IndexVariable(
+        "lon", sorted_lon_values, attrs={"standard_name": "longitude", "units": "degrees_east"}
+    )
+
+    # the new coords with changed lon
+    new_coords = res_coords + [lon_dim]  # changed lon but new coords
+
+    data_values = data.values
+    sorted_data_values = data_values[..., sorted_indices]
+
+    new_data = xr.DataArray(sorted_data_values, coords=new_coords, name=data.name)
+
+    return new_data
