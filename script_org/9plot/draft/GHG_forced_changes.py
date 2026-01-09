@@ -11,9 +11,35 @@ import glob
 import logging
 
 logging.basicConfig(level=logging.INFO)
+# %%
+# NAO monthly data
 
 
-# %% NAO
+def read_extrc(model, fixed_pattern="decade_mpi"):
+    """read extreme counts"""
+    odir = "/work/mh0033/m300883/Tel_MMLE/data/" + model + "/extreme_count/"
+    filename = f"plev_50000_{fixed_pattern}_first_JJA_extre_counts.nc"
+    ds = xr.open_dataset(odir + filename).pc
+
+    # divide the ensemble size of each model
+    ens_sizes = {
+        "MPI_GE": 100,
+        "MPI_GE_onepct": 100,
+        "CanESM2": 50,
+        "CESM1_CAM5": 40,
+        "MK36": 30,
+        "GFDL_CM3": 20,
+        "MPI_GE_CMIP6": 50,
+    }
+    ds = ds / ens_sizes[model]
+    return ds
+
+
+# %%
+NAO_monthly_extremes = read_extrc("MPI_GE_CMIP6", fixed_pattern="decade_mpi")
+
+
+# %% NAO daily extremes
 def NAO_extremes(return_days=False, threshold=7):
     NAO_pos_counts = pd.DataFrame(columns=["decade", "count"])
     NAO_neg_counts = pd.DataFrame(columns=["decade", "count"])
@@ -58,8 +84,8 @@ NAO_merge = pd.merge(NAO_count_merge, NAO_days_merge, on="decade")
 # %%
 NAO_merge["decade"] = NAO_merge["decade"].astype(int)
 
-# %%
 
+# %%
 # wave breaking
 
 
@@ -107,16 +133,36 @@ steady_heat_scale_df["decade"] = (steady_heat_scale_df["time"].dt.year // 10) * 
 
 
 # %%
-fig, axes = plt.subplots(3, 1, figsize=(3.5, 6))
-plt.subplots_adjust(hspace=0.)
+fig, axes = plt.subplots(4, 1, figsize=(3.5, 10))
+plt.subplots_adjust(hspace=0.0)
 
+# Monthly NAO extremes
+NAO_monthly_extremes.sel(extr_type="pos", mode="NAO", confidence="true").plot.line(
+    ax=axes[0],
+    x="time",
+    color="k",
+    linewidth=1.5,
+    label="pos NAO",
+    add_legend=False,
+)
 
-# NAO
+NAO_monthly_extremes.sel(extr_type="neg", mode="NAO", confidence="true").plot.line(
+    ax=axes[0],
+    x="time",
+    color="k",
+    linewidth=1.5,
+    linestyle="--",
+    label="neg NAO",
+    add_legend=False,
+)
+axes[0].set_title("")  # Remove xarray auto-generated title
+
+# Daily NAO
 sns.lineplot(
     data=NAO_merge,
     x="decade",
     y="days_pos",
-    ax=axes[0],
+    ax=axes[1],
     label="pos NAO",
     color="k",
     linewidth=1.5,
@@ -125,7 +171,7 @@ sns.lineplot(
     data=NAO_merge,
     x="decade",
     y="days_neg",
-    ax=axes[0],
+    ax=axes[1],
     label="neg NAO",
     color="k",
     linestyle="--",
@@ -137,7 +183,7 @@ sns.lineplot(
     data=awb_df[awb_df["isen_level"] == 335],
     x="decade",
     y="awb",
-    ax=axes[1],
+    ax=axes[2],
     label="anticyclonic 335K",
     color="#006E66",
     linewidth=1.5,
@@ -146,7 +192,7 @@ sns.lineplot(
     data=cwb_df[cwb_df["isen_level"] == 325],
     x="decade",
     y="cwb",
-    ax=axes[1],
+    ax=axes[2],
     label="cyclonic 325K",
     color="#006E66",
     linestyle="--",
@@ -159,7 +205,7 @@ sns.lineplot(
     data=steady_heat_scale_df,
     x="decade",
     y="thermal_feedback",
-    ax=axes[2],
+    ax=axes[3],
     label="thermal feedback",
     color="#FF514A",
     linestyle="-",
@@ -186,8 +232,8 @@ for i, ax in enumerate(axes):
         ax.spines["right"].set_visible(True)
         ax.spines["left"].set_visible(False)
         visible_spine = "right"
-    ax.spines["bottom"].set_visible(i == 2)
-    if i != 2:
+    ax.spines["bottom"].set_visible(i == len(axes) - 1)
+    if i != len(axes) - 1:
         # remove x ticks and labels on top three subplots
         ax.tick_params(
             axis="x", which="both", bottom=False, top=False, labelbottom=False
@@ -204,28 +250,36 @@ for i, ax in enumerate(axes):
     if ax.yaxis.get_label() is not None:
         ax.yaxis.label.set_color(axis_color)
 
-    # add a, b, c labels
+    # add a, b, c, d labels
     axes[0].text(
         0.02,
-        1.1,
-        "a. NAO extremes",
+        0.9,
+        "a. Monthly NAO extremes",
         transform=axes[0].transAxes,
         fontsize=8,
         color="k",
     )
     axes[1].text(
         0.02,
-        0.85,
-        "b. Wave breaking",
+        0.9,
+        "b. Daily NAO extremes",
         transform=axes[1].transAxes,
         fontsize=8,
-        color="#006E66",
+        color="k",
     )
     axes[2].text(
         0.02,
-        0.8,
-        "c. thermal feedback from\n quasi-stationary eddies",
+        0.85,
+        "c. Wave breaking",
         transform=axes[2].transAxes,
+        fontsize=8,
+        color="#006E66",
+    )
+    axes[3].text(
+        0.02,
+        0.7,
+        "d. thermal feedback from\n quasi-stationary eddies",
+        transform=axes[3].transAxes,
         fontsize=8,
         color="#FF514A",
     )
@@ -236,7 +290,8 @@ for i, ax in enumerate(axes):
         fontsize=6,
         frameon=False,
         ncol=2,
-        bbox_to_anchor=(0, 0.1, 1, 1),
+        bbox_to_anchor=(0, -0.1, 1, 1),
+        labelcolor="k",
     )
 
     # add legend
@@ -244,17 +299,29 @@ for i, ax in enumerate(axes):
         loc="upper left",
         fontsize=6,
         frameon=False,
+        ncol=2,
+        bbox_to_anchor=(0, -0.1, 1, 1),
+        labelcolor="k",
+    )
+
+    # add legend
+    axes[2].legend(
+        loc="upper left",
+        fontsize=6,
+        frameon=False,
         ncol=1,
         bbox_to_anchor=(0, -0.15, 1, 1),
+        labelcolor="#006E66",
     )
-    
-    # remove legend from axes[2]
-    if axes[2].get_legend() is not None:
-        axes[2].get_legend().remove()
 
-    axes[0].set_ylabel(r"Frequency / days", fontsize = 8)
-    axes[1].set_ylabel(r"Frequency / days", fontsize = 8)
-    axes[2].set_ylabel(r"scaled standard deviations", fontsize = 8)
+    # remove legend from axes[3]
+    if axes[3].get_legend() is not None:
+        axes[3].get_legend().remove()
+
+    axes[0].set_ylabel(r"Frequency / months", fontsize=8)
+    axes[1].set_ylabel(r"Frequency / days", fontsize=8)
+    axes[2].set_ylabel(r"Frequency / days", fontsize=8)
+    axes[3].set_ylabel(r"scaled standard deviations", fontsize=8)
 
 
 plt.savefig(
