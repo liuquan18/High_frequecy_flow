@@ -433,7 +433,7 @@ cbar = fig.colorbar(
     cf_phi_trans,
     ax=axes[0, :],
     orientation="horizontal",
-    fraction=0.046,
+    fraction=0.06,
     pad=0.12,
     label=r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m $s^{-1}$ day $^{-1}$",
 )
