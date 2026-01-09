@@ -212,6 +212,12 @@ sns.lineplot(
     linewidth=1.5,
 )
 
+# Adjust position of last row to reduce gap with row above
+pos3 = axes[3].get_position()
+pos2 = axes[2].get_position()
+# Move axes[3] up by reducing the gap
+new_bottom = pos2.y0 - pos3.height + 0.07  # 0.02 controls the gap size
+axes[3].set_position([pos3.x0, new_bottom, pos3.width, pos3.height])
 
 for i, ax in enumerate(axes):
     ax.spines["top"].set_visible(False)
@@ -269,7 +275,7 @@ for i, ax in enumerate(axes):
     )
     axes[2].text(
         0.02,
-        0.85,
+        0.7,
         "c. Wave breaking",
         transform=axes[2].transAxes,
         fontsize=8,
@@ -277,7 +283,7 @@ for i, ax in enumerate(axes):
     )
     axes[3].text(
         0.02,
-        0.7,
+        0.4,
         "d. thermal feedback from\n quasi-stationary eddies",
         transform=axes[3].transAxes,
         fontsize=8,
@@ -310,7 +316,7 @@ for i, ax in enumerate(axes):
         fontsize=6,
         frameon=False,
         ncol=1,
-        bbox_to_anchor=(0, -0.15, 1, 1),
+        bbox_to_anchor=(0, -0.3, 1, 1),
         labelcolor="#006E66",
     )
 
