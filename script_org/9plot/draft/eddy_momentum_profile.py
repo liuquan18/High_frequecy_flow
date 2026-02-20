@@ -180,7 +180,7 @@ for i, ax in enumerate(axes):
     )
 
 plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/eddy_momentum_transient_only.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/eddy_momentum_transient_profile.pdf",
     bbox_inches="tight",
 )
 # %%
