@@ -302,20 +302,10 @@ awb_contour = awb_last.plot.contour(
 
 # Fill between tropopause and y=0 with light colors
 axes[0].fill_between(
-    trops_1850.lat,
-    300,
-    trops_1850,
-    color="red",
-    alpha=0.1,
-    label="Tropopause 1850s"
+    trops_1850.lat, 300, trops_1850, color="red", alpha=0.1, label="Tropopause 1850s"
 )
 axes[0].fill_between(
-    trops_2090.lat,
-    300,
-    trops_2090,
-    color="black",
-    alpha=0.1,
-    label="Tropopause 2090s"
+    trops_2090.lat, 300, trops_2090, color="black", alpha=0.1, label="Tropopause 2090s"
 )
 
 cwb_first.plot.contourf(
@@ -351,9 +341,25 @@ axes[1].fill_between(
 )
 
 # Create custom legend elements
-legend_elements = [
+legend_elements_awb = [
     # Wave breaking section
-    Patch(facecolor="gray", alpha=0.5, label="Wave breaking 1850s"),
+    Patch(facecolor="red", alpha=0.5, label="Wave breaking 1850s"),
+    Line2D(
+        [0],
+        [0],
+        color="black",
+        linewidth=1.5,
+        linestyle="solid",
+        label="Wave breaking 2090s",
+    ),
+    # Tropopause section
+    Patch(facecolor="red", alpha=0.1, label="Tropopause 1850s"),
+    Patch(facecolor="black", alpha=0.1, label="Tropopause 2090s"),
+]
+
+legend_elements_cwb = [
+    # Wave breaking section
+    Patch(facecolor="#4292C6", alpha=0.5, label="Wave breaking 1850s"),
     Line2D(
         [0],
         [0],
@@ -368,8 +374,8 @@ legend_elements = [
 ]
 
 # Add legend to both subplots
-for ax in axes:
-    ax.legend(handles=legend_elements, loc="upper right", fontsize=9)
+axes[0].legend(handles=legend_elements_awb, loc="upper right", fontsize=9)
+axes[1].legend(handles=legend_elements_cwb, loc="upper right", fontsize=9)
 
 axes[0].set_xlim(22, 90)
 axes[0].set_title("AWB Frequency")
@@ -377,7 +383,15 @@ axes[0].set_ylabel("isentrope (K)")
 axes[1].set_xlim(22, 90)
 axes[1].set_title("CWB Frequency")
 axes[1].set_ylabel("")
+# remove the upper and right spines
+for ax in axes:
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
 
 plt.tight_layout()
-plt.show()
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/wb_isen_lat.pdf",
+    transparent=True,
+    dpi=500,
+)
 # %%
