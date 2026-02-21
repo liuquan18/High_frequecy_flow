@@ -22,13 +22,14 @@ decade = sys.argv[2]
 
 # %%
 # Initialize MPI
+comm = None
 try:
     from mpi4py import MPI
 
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
-except:
+except Exception:
     logging.warning("::: Warning: Proceeding without mpi4py! :::")
     rank = 0
     size = 1
@@ -51,11 +52,11 @@ ts_files = glob.glob(ts_path + f"*{decade}*.nc")
 
 # %%
 # Output path
-output_path = (
-    f"/scratch/m/m300883/MPI_GE_CMIP6/vsts_space_time_spectra_daily/r{ens}i1p1f1/dec_{decade}/"
-)
-if not os.path.exists(output_path):
-    os.makedirs(output_path)
+output_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/vsts_space_time_spectra_daily/r{ens}i1p1f1/dec_{decade}/"
+if rank == 0:
+    os.makedirs(output_path, exist_ok=True)
+if comm is not None:
+    comm.Barrier()
 
 # %%
 # Get unique years and distribute across ranks
@@ -185,9 +186,8 @@ for year_idx, year in enumerate(my_years):
     vs = xr.open_dataset(vs_file[0]).va
     ts = xr.open_dataset(ts_file[0]).theta
 
-
-    vs = vs.sel(lat=slice(0, 90), plev = 85000, time = vs.time.dt.year == int(year))
-    ts = ts.sel(lat=slice(0, 90), plev = 85000, time = ts.time.dt.year == int(year))
+    vs = vs.sel(lat=slice(0, 90), plev=85000, time=vs.time.dt.year == int(year))
+    ts = ts.sel(lat=slice(0, 90), plev=85000, time=ts.time.dt.year == int(year))
 
     # Compute space-time cross-spectra for all latitudes
     logging.info(f"     Rank {rank}: Computing spectra for year {year}...")
