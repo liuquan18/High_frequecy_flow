@@ -388,6 +388,11 @@ for ax in axes:
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
+# add a, b labels
+axes[0].text(-0.1, 1.05, "a", transform=axes[0].transAxes, fontsize=14, fontweight="bold")
+axes[1].text(-0.1, 1.05, "b", transform=axes[1].transAxes, fontsize=14, fontweight="bold")
+
+
 plt.tight_layout()
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/wb_isen_lat.pdf",
