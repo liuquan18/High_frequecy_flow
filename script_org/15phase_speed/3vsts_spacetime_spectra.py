@@ -6,7 +6,6 @@ Saves K_p and K_n for each year independently for parallel processing
 import numpy as np
 import xarray as xr
 from src.spectrum.phase_speed_spectral import calc_spacetime_cross_spec
-from mpi4py import MPI
 import sys
 import os
 import glob
@@ -183,11 +182,21 @@ for year_idx, year in enumerate(my_years):
         continue
 
     logging.info(f"     Rank {rank}: Loading data for decade {decade}...")
-    vs = xr.open_dataset(vs_file[0]).va
-    ts = xr.open_dataset(ts_file[0]).theta
+    with xr.open_dataset(vs_file[0]) as vs_ds, xr.open_dataset(ts_file[0]) as ts_ds:
+        vs = (
+            vs_ds["va"]
+            .sel(lat=slice(0, 90), plev=85000, time=vs_ds.time.dt.year == int(year))
+            .load()
+        )
+        ts = (
+            ts_ds["theta"]
+            .sel(lat=slice(0, 90), plev=85000, time=ts_ds.time.dt.year == int(year))
+            .load()
+        )
 
-    vs = vs.sel(lat=slice(0, 90), plev=85000, time=vs.time.dt.year == int(year))
-    ts = ts.sel(lat=slice(0, 90), plev=85000, time=ts.time.dt.year == int(year))
+    if vs.sizes.get("time", 0) == 0 or ts.sizes.get("time", 0) == 0:
+        logging.warning(f"     Rank {rank}: Empty data for year {year}, skipping...")
+        continue
 
     # Compute space-time cross-spectra for all latitudes
     logging.info(f"     Rank {rank}: Computing spectra for year {year}...")
