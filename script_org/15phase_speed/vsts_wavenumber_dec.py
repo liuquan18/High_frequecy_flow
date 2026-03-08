@@ -8,7 +8,7 @@ from metpy.calc import first_derivative
 from metpy.units import units
 
 # %%
-base_dir = "/scratch/m/m300883/MPI_GE_CMIP6/vsts_space_time_spectra_daily/"
+base_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/vsts_space_time_spectra_daily/"
 
 
 # %%
@@ -28,13 +28,15 @@ def dec_mean(ens, decade):
 
 
 # %%
-# for ens in tqdm.tqdm(range(1, 51)):
-#     dec_mean(ens, 1850)
-#     dec_mean(ens, 2090)
-# %%
+for ens in tqdm.tqdm(range(1, 51)):
+    dec_mean(ens, 1850)
+    dec_mean(ens, 2090)
+
+#%%
 def read_dec(decade):
-    wb_dir = f"{base_dir}r*i1p1f1/vsts_kp_kn_dec_{decade}_r*i1p1f1.nc"
-    wb_files = glob.glob(wb_dir)
+    wb_dir = "/scratch/m/m300883/MPI_GE_CMIP6/vsts_space_time_spectra_daily/r*i1p1f1/"
+
+    wb_files = glob.glob(wb_dir+"*.nc")
 
     wb_data = xr.open_mfdataset(
         wb_files, combine="nested", parallel=True, concat_dim="ens"
@@ -42,7 +44,6 @@ def read_dec(decade):
     wb_data = wb_data.mean(dim="ens")
     wb_data["decade"] = decade
     return wb_data.compute()
-
 
 # %%
 vsts_1850 = read_dec(1850)
