@@ -155,7 +155,7 @@ cbar2 = fig.colorbar(
 cbar2.set_ticks([-0.2, -0.1, 0.0, 0.1, 0.2])
 
 # Axis labels
-axes[0].set_ylabel("Pressure [hPa]")
+axes[0].set_ylabel("Pressure / hPa")
 axes[0].set_yticks(
     [100000, 90000, 80000, 70000, 60000, 50000, 40000, 30000, 20000, 10000]
 )
