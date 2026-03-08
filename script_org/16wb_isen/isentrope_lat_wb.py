@@ -389,8 +389,8 @@ for ax in axes:
     ax.spines["right"].set_visible(False)
 
 # add a, b labels
-axes[0].text(-0.1, 1.05, "a", transform=axes[0].transAxes, fontsize=14, fontweight="bold")
-axes[1].text(-0.1, 1.05, "b", transform=axes[1].transAxes, fontsize=14, fontweight="bold")
+axes[0].text(0.04, 0.96, "a", transform=axes[0].transAxes, fontsize=14, fontweight="bold")
+axes[1].text(0.04, 0.96, "b", transform=axes[1].transAxes, fontsize=14, fontweight="bold")
 
 
 plt.tight_layout()
