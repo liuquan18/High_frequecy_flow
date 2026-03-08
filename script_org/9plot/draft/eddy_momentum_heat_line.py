@@ -302,8 +302,7 @@ axes[0, 0].set_ylabel(
     r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m $s^{-1}$ day $^{-1}$"
 )
 axes[1, 0].set_ylabel(
-    r"$-\frac{\partial}{\partial p} \left( f_0 \frac{\overline{v'\theta'}}{\overline{\theta}_p} \right)$ / m $s^{-1}$ day $^{-1}$"
-)
+    r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1} s^{-1}$")
 
 for ax in axes[:, :].flat:
     ax.set_xlabel("Days relative to extreme onset")
