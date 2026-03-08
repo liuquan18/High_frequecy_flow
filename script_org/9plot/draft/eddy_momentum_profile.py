@@ -126,7 +126,7 @@ cbar0 = fig.colorbar(
     pad=0.15,
     aspect=30,
     shrink=0.8,
-    label=r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day $^{-1}$]",
+    label=r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m $s^{-1}$ day $^{-1}$",
 )
 cbar0.set_ticks([-0.2, -0.1, 0.0, 0.1, 0.2])
 
@@ -138,7 +138,7 @@ cbar1 = fig.colorbar(
     pad=0.15,
     aspect=30,
     shrink=0.8,
-    label=r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day $^{-1}$]",
+    label=r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m $s^{-1}$ day $^{-1}$",
 )
 cbar1.set_ticks([-0.2, -0.1, 0.0, 0.1, 0.2])
 
@@ -150,7 +150,7 @@ cbar2 = fig.colorbar(
     pad=0.15,
     aspect=30,
     shrink=0.8,
-    label=r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ [m $s^{-1}$ day $^{-1}$]",
+    label=r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m $s^{-1}$ day $^{-1}$",
 )
 cbar2.set_ticks([-0.2, -0.1, 0.0, 0.1, 0.2])
 
