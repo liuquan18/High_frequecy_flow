@@ -169,14 +169,15 @@ axes[2].set_ylabel("")
 
 for i, ax in enumerate(axes):
     ax.text(
-        -0.08,
-        1.02,
+        0.1,
+        0.88,
         chr(97 + i),
         transform=ax.transAxes,
         fontsize=14,
         fontweight="bold",
         va="bottom",
         ha="right",
+        bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.7, edgecolor="none"),
     )
 
 plt.savefig(
