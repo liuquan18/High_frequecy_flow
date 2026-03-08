@@ -8,10 +8,15 @@ from src.data_helper.read_variable import read_prime
 
 # %%
 
+
 def read_dec(decade):
     wb_dir = "/scratch/m/m300883/MPI_GE_CMIP6/vsts_space_time_spectra_daily/r*i1p1f1/"
 
-    wb_files = glob.glob(wb_dir)
+    wb_files = sorted(glob.glob(wb_dir + f"*dec_{decade}*.nc"))
+    if len(wb_files) == 0:
+        wb_files = sorted(glob.glob(wb_dir + f"dec_{decade}/*.nc"))
+    if len(wb_files) == 0:
+        raise FileNotFoundError(f"No vsts files found for decade={decade}")
 
     wb_data = xr.open_mfdataset(
         wb_files, combine="nested", parallel=True, concat_dim="ens"
@@ -44,33 +49,47 @@ def calc_second_meridional_derivative(data, smooth=True):
 # Top-row data: transient eddy momentum flux in latitude-phase speed space
 phase_speed_first = read_prime(
     decade=1850,
-    var="upvp_isent_phase_speed_spectrum",
+    var="uava_phase_speed_spectrum",
     name=None,
     model_dir="MPI_GE_CMIP6",
     suffix="",
 )
+# %%
 phase_speed_last = read_prime(
     decade=2090,
-    var="upvp_isent_phase_speed_spectrum",
+    var="uava_phase_speed_spectrum",
     name=None,
     model_dir="MPI_GE_CMIP6",
     suffix="",
 )
 
-lats_phase = phase_speed_first["lat"].values
-phase_speeds_2d = phase_speed_first["phase_speed_ms"].values
-mid_lat_idx = len(lats_phase) // 2
+# %%
+ua_first = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_monthly_ensmean/ua_monmean_ensmean_185005_185909.nc"
+)
+ua_first = ua_first["ua"].mean(dim="time").sel(plev=25000).mean(dim="lon")
+ua_first = ua_first.sel(lat=slice(0, 90))
+# %%
+ua_last = xr.open_dataset(
+    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_monthly_ensmean/ua_monmean_ensmean_209005_209909.nc"
+)
+ua_last = ua_last["ua"].mean(dim="time").sel(plev=25000).mean(dim="lon")
+ua_last = ua_last.sel(lat=slice(0, 90))
+
+
+# %%
+lats = phase_speed_first["lat"].values
+phase_speeds_2d = phase_speed_first["phase_speed_grid"].values
+P_cp_first = phase_speed_first["P_eastward"].mean(dim="ens").values
+P_cn_first = phase_speed_first["P_westward"].mean(dim="ens").values
+
+P_cp_last = phase_speed_last["P_eastward"].mean(dim="ens").values
+P_cn_last = phase_speed_last["P_westward"].mean(dim="ens").values
+
+# %%
+# Use middle latitude for representative phase speeds
+mid_lat_idx = len(lats) // 2
 phase_speeds_plot = phase_speeds_2d[mid_lat_idx, :]
-phase_speeds_combined = np.concatenate([-phase_speeds_plot[::-1], phase_speeds_plot])
-
-# average over ensemble and isentropic levels for a single latitude-phase speed map
-p_cp_first = phase_speed_first["P_eastward"].mean(dim=("ens", "isentropic_level")).values
-p_cn_first = phase_speed_first["P_westward"].mean(dim=("ens", "isentropic_level")).values
-p_cp_last = phase_speed_last["P_eastward"].mean(dim=("ens", "isentropic_level")).values
-p_cn_last = phase_speed_last["P_westward"].mean(dim=("ens", "isentropic_level")).values
-
-p_combined_first = np.concatenate([p_cn_first[:, ::-1], p_cp_first], axis=1)
-p_combined_last = np.concatenate([p_cn_last[:, ::-1], p_cp_last], axis=1)
 
 
 # %%
@@ -89,103 +108,154 @@ feedback_2090 = calc_second_meridional_derivative(vsts_2090_combined).compute()
 
 
 # %%
-# Combined 2x2 figure: columns = decades, rows = diagnostics
-fig, axes = plt.subplots(2, 2, figsize=(12, 9), sharey="row")
+# Combined 2x2 plot:
+# Row 1: phase speed spectrum (overlay + difference)
+# Row 2: meridional-derivative feedback (overlay + difference)
+fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharey="row")
 
-# Row 1: latitude vs phase speed (transient momentum flux)
-levels_phase = np.arange(-1.2, 1.21, 0.1)
-cf_phase_1850 = axes[0, 0].contourf(
+phase_speeds_combined = np.concatenate([-phase_speeds_plot[::-1], phase_speeds_plot])
+P_combined_first = np.concatenate([P_cn_first[:, ::-1], P_cp_first], axis=1)
+P_combined_last = np.concatenate([P_cn_last[:, ::-1], P_cp_last], axis=1)
+
+# Define consistent levels excluding zero
+levels_mom = np.arange(-1.2, 1.21, 0.1)
+levels_mom_line = levels_mom[levels_mom != 0]  # Remove zero level
+
+levels_heat = np.arange(-5, 5.1, 1) * 1e-9
+levels_heat_line = levels_heat[levels_heat != 0]  # Remove zero level
+
+
+# Left plot: first as colormap, last as contours
+cs_fill = axes[0, 0].contourf(
+    lats,
     phase_speeds_combined,
-    lats_phase,
-    p_combined_first,
-    levels=levels_phase,
+    P_combined_first.T,
+    levels=levels_mom,
     cmap="RdBu_r",
     extend="both",
 )
-cf_phase_2090 = axes[0, 1].contourf(
+
+cs_line = axes[0, 0].contour(
+    lats,
     phase_speeds_combined,
-    lats_phase,
-    p_combined_last,
-    levels=levels_phase,
+    P_combined_last.T,
+    levels=levels_mom,
+    colors="black",
+    linewidths=1.5,
+)
+
+ua_first.plot(
+    x="lat",
+    ax=axes[0, 0],
+    color="k",
+    linewidth=3,
+    linestyle="-",
+    label="Zonal Wind 1850s",
+)
+ua_last.plot(
+    x="lat",
+    ax=axes[0, 0],
+    color="k",
+    linewidth=3,
+    linestyle="--",
+    label="Zonal Wind 2090s",
+)
+
+# Right plot: Difference
+P_combined_diff = P_combined_last - P_combined_first
+
+
+cs_diff = axes[0, 1].contourf(
+    lats,
+    phase_speeds_combined,
+    P_combined_diff.T,
+    levels=np.arange(-0.3, 0.31, 0.03),
     cmap="RdBu_r",
     extend="both",
 )
+
+ua_diff = ua_last - ua_first
+ua_diff.plot(x="lat", ax=axes[0, 1], color="k", linewidth=3, label="Zonal Wind Change")
+
 
 for ax in axes[0, :]:
-    ax.axvline(0, color="gray", linestyle="--", linewidth=1.0, alpha=0.6)
-    ax.set_xlim(-20, 30)
-    ax.set_xlabel("Phase speed [m s$^{-1}$]")
-    ax.grid(True, alpha=0.3)
+    ax.axhline(0, color="gray", linestyle="--", linewidth=1.5, alpha=0.5)
+    ax.set_xlabel("Latitude (°N)", fontsize=12)
+    ax.set_title("")
+    ax.set_ylim(-20, 30)
+    ax.legend(fontsize=10)
+    ax.set_ylabel("")
 
-axes[0, 0].set_ylabel("Latitude [°N]")
-axes[0, 0].set_title("1850s transient momentum flux")
-axes[0, 1].set_title("2090s transient momentum flux")
+axes[0, 0].set_ylabel(r"Phase speed (ua) /$ms^{-1}$", fontsize=12)
 
-# Row 2: latitude vs wavenumber (quasi-stationary thermal feedback)
-levels_feedback = np.arange(-5, 5.1, 1) * 1e-9
-cf_fb_1850 = axes[1, 0].contourf(
-    feedback_1850.lat,
-    feedback_1850.wavenumber,
-    feedback_1850.T,
-    levels=levels_feedback,
+fig.colorbar(cs_fill, ax=axes[0, 0], label="Power")
+fig.colorbar(cs_diff, ax=axes[0, 1], label="Power")
+
+# Bottom row: feedback in latitude-wavenumber space
+# 1850 as shading
+heat_first = feedback_1850.plot.contourf(
+    x="lat",
+    y="wavenumber",
+    ax=axes[1, 0],
+    add_labels=False,
+    levels=levels_heat,
     cmap="RdBu_r",
     extend="both",
+    cbar_kwargs={
+        "label": r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1} s^{-1}$"
+    },
 )
-cf_fb_2090 = axes[1, 1].contourf(
-    feedback_2090.lat,
-    feedback_2090.wavenumber,
-    feedback_2090.T,
-    levels=levels_feedback,
+# 2090 as contours
+heat_last = feedback_2090.plot.contour(
+    x="lat",
+    y="wavenumber",
+    ax=axes[1, 0],
+    add_labels=False,
+    levels=levels_heat_line,
+    colors="black",
+    linewidths=1.5,
+)
+
+# difference plot
+feedback_diff = feedback_2090 - feedback_1850
+heat_diff = feedback_diff.plot.contourf(
+    x="lat",
+    y="wavenumber",
+    ax=axes[1, 1],
+    add_labels=False,
+    levels=np.arange(-1.2, 1.3, 0.2) * 1e-9,
     cmap="RdBu_r",
     extend="both",
+    cbar_kwargs={
+        "label": r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1} s^{-1}$"
+    },
 )
+
 
 for ax in axes[1, :]:
-    ax.set_ylim(2, 8)
-    ax.set_xlabel("Latitude [°N]")
-    ax.grid(True, alpha=0.3)
+    ax.set_ylim(2, 6)
+    ax.set_yticks(range(2, 7))
+    ax.set_xlabel("Latitude (°N)", fontsize=12)
+    ax.set_title("")
+    ax.set_ylabel("")
+axes[1, 0].set_ylabel("Wavenumber", fontsize=12)
 
-axes[1, 0].set_ylabel("Wavenumber")
-axes[1, 0].set_title("1850s quasi-stationary thermal feedback")
-axes[1, 1].set_title("2090s quasi-stationary thermal feedback")
+# change the title of the colorbar
 
-# panel labels
-for i, ax in enumerate(axes.flat):
+
+panel_labels = ["a", "b", "c", "d"]
+for label, ax in zip(panel_labels, axes.ravel()):
     ax.text(
-        -0.1,
-        1.02,
-        chr(97 + i),
+        0.02,
+        0.98,
+        label,
         transform=ax.transAxes,
-        fontsize=13,
+        ha="left",
+        va="top",
+        fontsize=14,
         fontweight="bold",
-        va="bottom",
-        ha="right",
     )
 
-# one colorbar per row
-cbar1 = fig.colorbar(
-    cf_phase_1850,
-    ax=axes[0, :],
-    orientation="horizontal",
-    fraction=0.06,
-    pad=0.12,
-)
-cbar1.set_label("Transient eddy momentum flux power")
-
-cbar2 = fig.colorbar(
-    cf_fb_1850,
-    ax=axes[1, :],
-    orientation="horizontal",
-    fraction=0.06,
-    pad=0.2,
-)
-cbar2.set_label("Quasi-stationary eddy thermal-feedback proxy [1 m$^{-2}$]")
-
 plt.tight_layout()
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0defense/lat_phase_speed_thermal_feedback_2x2.pdf",
-    dpi=300,
-    bbox_inches="tight",
-)
-plt.show()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/lat_phase_speed_wavenumber.pdf", dpi=300, transparent=True)
 # %%
