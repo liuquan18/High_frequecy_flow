@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import os
+from matplotlib.lines import Line2D
 
 # %%
 # Read line plot data
@@ -302,7 +303,8 @@ axes[0, 0].set_ylabel(
     r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m $s^{-1}$ day $^{-1}$"
 )
 axes[1, 0].set_ylabel(
-    r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1} s^{-1}$")
+    r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1} s^{-1}$"
+)
 
 for ax in axes[:, :].flat:
     ax.set_xlabel("Days relative to extreme onset")
@@ -311,6 +313,38 @@ for ax in axes[:, :].flat:
 
 axes[0, 1].set_ylabel("")
 axes[1, 1].set_ylabel("")
+
+
+# Custom legend handles
+# Decade legend (colors)
+decade_handles = [
+    Line2D([0], [0], color="black", lw=2, label="1850s"),
+    Line2D([0], [0], color="red", lw=2, label="2090s"),
+]
+
+# Phase legend (styles)
+phase_handles = [
+    Line2D([0], [0], color="black", lw=2, linestyle="-", label="pos NAO"),
+    Line2D([0], [0], color="black", lw=2, linestyle="--", label="neg NAO"),
+]
+
+# Place legends: first col for decade, second for phase
+decade_legend = axes[0, 1].legend(
+    handles=decade_handles,
+    title="decade",
+    loc="lower left",
+    bbox_to_anchor=(0.1, 0.02),
+    frameon=False,
+)
+axes[0, 1].add_artist(decade_legend)
+phase_legend = axes[0, 1].legend(
+    handles=phase_handles,
+    title="phase",
+    loc="lower left",
+    bbox_to_anchor=(0.5, 0.02),
+    frameon=False,
+)
+
 
 # Add a, b, c, d labels
 for i, ax in enumerate(axes.flat):
