@@ -262,89 +262,93 @@ for i, ax in enumerate(axes):
         1,
         "a",
         transform=axes[0].transAxes,
-        fontsize=8,
+        fontsize=12,
         color="k",
+        weight='bold',
     )
     axes[1].text(
         1.05,
         1.05,
         "b",
         transform=axes[1].transAxes,
-        fontsize=8,
+        fontsize=12,
         color="k",
+        weight='bold',
     )
     axes[2].text(
         -0.05,
         1,
         "c",
         transform=axes[2].transAxes,
-        fontsize=8,
+        fontsize=12,
         color="k",
+        weight='bold',
     )
     axes[3].text(
         1.05,
         1,
         "d",
         transform=axes[3].transAxes,
-        fontsize=8,
+        fontsize=12,
         color="k",
+        weight='bold',
     )
 
     # add legend
     axes[0].legend(
         loc="upper left",
-        fontsize=6,
+        fontsize=8,
         frameon=False,
         ncol=2,
         bbox_to_anchor=(0, -0.1, 1, 1),
         labelcolor="k",
         title="Monthly NAO extremes",
-        title_fontsize=6,
+        title_fontsize=8,
     )
 
     # add legend
     axes[1].legend(
         loc="upper left",
-        fontsize=6,
+        fontsize=8,
         frameon=False,
         ncol=2,
-        bbox_to_anchor=(0, -0.05, 1, 1),
+        bbox_to_anchor=(0, 0, 1, 1),
         labelcolor="k",
         title="Daily NAO extremes",\
-        title_fontsize=6,
+        title_fontsize=8,
     )
 
     # add legend
     axes[2].legend(
         loc="upper left",
-        fontsize=6,
+        fontsize=8,
         frameon=False,
         ncol=1,
         bbox_to_anchor=(0, -0.3, 1, 1),
         labelcolor="#006E66",
         title="Wave breaking",
-        title_fontsize=6,
+        title_fontsize=8,
     )
 
     axes[3].legend(
         loc="upper left",
-        fontsize=6,
+        fontsize=8,
         frameon=False,
         ncol=1,
         bbox_to_anchor=(0, -0.3, 1, 1),
         labelcolor="#FF514A",
         title="Thermal feedback",
-        title_fontsize=6,
+        title_fontsize=8,
     )
 
     # remove legend from axes[3]
     if axes[3].get_legend() is not None:
         axes[3].get_legend().remove()
 
-    axes[0].set_ylabel(r"Frequency / months", fontsize=8)
-    axes[1].set_ylabel(r"Frequency / days", fontsize=8)
-    axes[2].set_ylabel(r"Frequency / days", fontsize=8)
-    axes[3].set_ylabel(r"scaled standard deviations", fontsize=8)
+    axes[0].set_ylabel(r"Frequency / months", fontsize=12)
+    axes[1].set_ylabel(r"Frequency / days", fontsize=12)
+    axes[2].set_ylabel(r"Frequency / days", fontsize=12)
+    axes[3].set_ylabel(r"scaled standard deviations", fontsize=12)
 
 
 plt.savefig(
