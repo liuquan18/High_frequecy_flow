@@ -97,6 +97,7 @@ phase_speeds_plot = phase_speeds_2d[mid_lat_idx, :]
 vsts_1850 = read_dec(1850)
 vsts_2090 = read_dec(2090)
 
+#%%
 vsts_1850_sum = vsts_1850.sum(dim="freq").isel(wavenumber=slice(1, None))
 vsts_2090_sum = vsts_2090.sum(dim="freq").isel(wavenumber=slice(1, None))
 
@@ -148,7 +149,7 @@ ua_first.plot(
     x="lat",
     ax=axes[0, 0],
     color="k",
-    linewidth=3,
+    linewidth=4,
     linestyle="-",
     label="Zonal Wind 1850s",
 )
@@ -156,7 +157,7 @@ ua_last.plot(
     x="lat",
     ax=axes[0, 0],
     color="k",
-    linewidth=3,
+    linewidth=4,
     linestyle="--",
     label="Zonal Wind 2090s",
 )
@@ -175,7 +176,7 @@ cs_diff = axes[0, 1].contourf(
 )
 
 ua_diff = ua_last - ua_first
-ua_diff.plot(x="lat", ax=axes[0, 1], color="k", linewidth=3, label="Zonal Wind Change")
+ua_diff.plot(x="lat", ax=axes[0, 1], color="k", linewidth=4, label="Zonal Wind Change")
 
 
 for ax in axes[0, :]:
@@ -188,8 +189,8 @@ for ax in axes[0, :]:
 
 axes[0, 0].set_ylabel(r"Phase speed (ua) /$ms^{-1}$", fontsize=12)
 
-fig.colorbar(cs_fill, ax=axes[0, 0], label="Power")
-fig.colorbar(cs_diff, ax=axes[0, 1], label="Power")
+fig.colorbar(cs_fill, ax=axes[0, 0], label="$u'v' / m^{2} s^{-2} \cdot \Delta c^{-1}$")
+fig.colorbar(cs_diff, ax=axes[0, 1], label="$u'v' / m^{2} s^{-2} \cdot \Delta c^{-1}$")
 
 # Bottom row: feedback in latitude-wavenumber space
 # 1850 as shading
@@ -202,7 +203,7 @@ heat_first = feedback_1850.plot.contourf(
     cmap="RdBu_r",
     extend="both",
     cbar_kwargs={
-        "label": r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1} s^{-1}$"
+        "label": r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1} s^{-1} \cdot \Delta c^{-1}$"
     },
 )
 # 2090 as contours
@@ -227,7 +228,7 @@ heat_diff = feedback_diff.plot.contourf(
     cmap="RdBu_r",
     extend="both",
     cbar_kwargs={
-        "label": r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1} s^{-1}$"
+        "label": r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1} s^{-1} \cdot \Delta c^{-1}$"
     },
 )
 
@@ -247,13 +248,14 @@ panel_labels = ["a", "b", "c", "d"]
 for label, ax in zip(panel_labels, axes.ravel()):
     ax.text(
         0.02,
-        0.98,
+        0.96,
         label,
         transform=ax.transAxes,
         ha="left",
         va="top",
         fontsize=14,
         fontweight="bold",
+        bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.7, edgecolor="none"),
     )
 
 plt.tight_layout()
