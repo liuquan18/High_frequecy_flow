@@ -258,36 +258,36 @@ for i, ax in enumerate(axes):
 
     # add a, b, c, d labels
     axes[0].text(
-        0.02,
-        0.9,
-        "a. Monthly NAO extremes",
+        -0.05,
+        1,
+        "a",
         transform=axes[0].transAxes,
         fontsize=8,
         color="k",
     )
     axes[1].text(
-        0.02,
-        0.9,
-        "b. Daily NAO extremes",
+        1.05,
+        1.05,
+        "b",
         transform=axes[1].transAxes,
         fontsize=8,
         color="k",
     )
     axes[2].text(
-        0.02,
-        0.7,
-        "c. Wave breaking",
+        -0.05,
+        1,
+        "c",
         transform=axes[2].transAxes,
         fontsize=8,
-        color="#006E66",
+        color="k",
     )
     axes[3].text(
-        0.02,
-        0.4,
-        "d. thermal feedback from\n quasi-stationary eddies",
+        1.05,
+        1,
+        "d",
         transform=axes[3].transAxes,
         fontsize=8,
-        color="#FF514A",
+        color="k",
     )
 
     # add legend
@@ -298,6 +298,8 @@ for i, ax in enumerate(axes):
         ncol=2,
         bbox_to_anchor=(0, -0.1, 1, 1),
         labelcolor="k",
+        title="Monthly NAO extremes",
+        title_fontsize=6,
     )
 
     # add legend
@@ -306,8 +308,10 @@ for i, ax in enumerate(axes):
         fontsize=6,
         frameon=False,
         ncol=2,
-        bbox_to_anchor=(0, -0.1, 1, 1),
+        bbox_to_anchor=(0, -0.05, 1, 1),
         labelcolor="k",
+        title="Daily NAO extremes",\
+        title_fontsize=6,
     )
 
     # add legend
@@ -318,6 +322,19 @@ for i, ax in enumerate(axes):
         ncol=1,
         bbox_to_anchor=(0, -0.3, 1, 1),
         labelcolor="#006E66",
+        title="Wave breaking",
+        title_fontsize=6,
+    )
+
+    axes[3].legend(
+        loc="upper left",
+        fontsize=6,
+        frameon=False,
+        ncol=1,
+        bbox_to_anchor=(0, -0.3, 1, 1),
+        labelcolor="#FF514A",
+        title="Thermal feedback",
+        title_fontsize=6,
     )
 
     # remove legend from axes[3]
