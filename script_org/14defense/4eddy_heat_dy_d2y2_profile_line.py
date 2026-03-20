@@ -160,49 +160,6 @@ steady_neg_first_anom = steady_neg_first_anom.rolling(lat=3, center=True).mean()
 steady_pos_last_anom = steady_pos_last_anom.rolling(lat=3, center=True).mean()
 steady_neg_last_anom = steady_neg_last_anom.rolling(lat=3, center=True).mean()
 
-
-# %%
-# Read dataframes from the saved CSV files
-transient_pos_first_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_pos_first_vptp_d2y2.csv"
-)
-transient_neg_first_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_neg_first_vptp_d2y2.csv"
-)
-transient_pos_last_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_pos_last_vptp_d2y2.csv"
-)
-transient_neg_last_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_neg_last_vptp_d2y2.csv"
-)
-
-steady_pos_first_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_pos_first_vsts_d2y2.csv"
-)
-steady_neg_first_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_neg_first_vsts_d2y2.csv"
-)
-steady_pos_last_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_pos_last_vsts_d2y2.csv"
-)
-steady_neg_last_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_neg_last_vsts_d2y2.csv"
-)
-
-sum_pos_first_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_pos_first_vptp_d2y2.csv"
-)
-sum_neg_first_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_neg_first_vptp_d2y2.csv"
-)
-sum_pos_last_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_pos_last_vptp_d2y2.csv"
-)
-sum_neg_last_df = pd.read_csv(
-    "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_neg_last_vptp_d2y2.csv"
-)
-
-
 # %%
 sum_levels = np.arange(-0.4, 0.41, 0.04)
 transient_levels = np.arange(-0.3, 0.31, 0.03)
@@ -431,3 +388,5 @@ for i, ax in enumerate(axes[:, 1:].flat):
     )
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/eddy_heat_dy_d2y2_profile.pdf", dpi=300, bbox_inches="tight", transparent=True, metadata={"Creator": __file__})
+
+# %%
