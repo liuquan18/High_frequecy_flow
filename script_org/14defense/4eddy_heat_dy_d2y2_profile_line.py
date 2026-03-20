@@ -123,7 +123,7 @@ def anomaly(ds, ds_clima):
     Calculate the anomaly of a dataset with respect to a climatology.
     """
     # average over time and events
-    ds = ds.sel(time=slice(-10, 5)).mean(dim=("time", "event", "lon"))
+    ds = ds.sel(time=slice(0, 10)).mean(dim=("time", "event", "lon"))
     ds_clima = ds_clima.mean(dim=("lon"))
     anomaly = ds - ds_clima
     return anomaly.compute()
@@ -205,7 +205,7 @@ sum_neg_last_df = pd.read_csv(
 
 # %%
 sum_levels = np.arange(-0.4, 0.41, 0.04)
-transient_levels = np.arange(-0.2, 0.21, 0.02)
+transient_levels = np.arange(-0.3, 0.31, 0.03)
 steady_levels = np.arange(-0.3, 0.31, 0.03)
 # %%
 fig, axes = plt.subplots(3, 3, figsize=(12, 12), sharex=False, sharey="row")
@@ -769,8 +769,8 @@ cbar_steady = fig.colorbar(
 )
 
 # Set ticks for colorbars
-cbar_transient.set_ticks([-0.2, 0.0, 0.2])
-cbar_steady.set_ticks([-0.3, 0.0, 0.3])
+cbar_transient.set_ticks([-0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3])
+cbar_steady.set_ticks([-0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3])
 # change y-ticks to hPa
 for ax in axes.flat:
     ax.set_yticks(
