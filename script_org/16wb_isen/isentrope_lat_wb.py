@@ -28,6 +28,7 @@ awb_pos_first = read_comp_var(
 #     method='no_stat',
 # )
 
+#%%
 awb_pos_last = read_comp_var(
     "wb_anticyclonic_allisen",
     "pos",
@@ -242,7 +243,7 @@ fig.legend(
 )
 
 plt.tight_layout(rect=[0, 0.08, 1, 1])
-plt.show()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0supplementary/wb_isen_map.png", transparent=True, dpi=500)
 
 
 # %%

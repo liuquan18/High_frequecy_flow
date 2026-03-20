@@ -132,7 +132,7 @@ fig.text(0.005, 0.75, "1850s", fontsize=13, fontweight="bold", rotation=90, va="
 fig.text(0.005, 0.25, "2090s", fontsize=13, fontweight="bold", rotation=90, va="center")
 
 plt.tight_layout(rect=[0.02, 0, 1, 1])
-plt.show()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0supplementary/phase_speed_lat_isent.png", dpi=300, bbox_inches="tight")
 #%%
 # %% Tropopause
 pv_1850 = xr.open_dataset(
