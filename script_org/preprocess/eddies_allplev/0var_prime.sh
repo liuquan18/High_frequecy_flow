@@ -3,11 +3,27 @@
 #SBATCH --time=01:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
-#SBATCH --ntasks=5
+#SBATCH --ntasks=2
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
 #SBATCH --account=mh0033
 #SBATCH --output=prime.%j.out
+
+# Avoid inheriting conflicting libraries from interactive environments.
+module purge
+
+# If a conda env was exported into this job, deactivate it to keep CDO runtime clean.
+if command -v conda >/dev/null 2>&1; then
+    while [ -n "${CONDA_PREFIX:-}" ]; do
+        conda deactivate || break
+    done
+fi
+
+# Remove any conda library paths that can override module runtime libraries.
+if [ -n "${LD_LIBRARY_PATH:-}" ]; then
+    LD_LIBRARY_PATH=$(echo "${LD_LIBRARY_PATH}" | tr ':' '\n' | grep -v '/conda/' | paste -sd ':' -)
+    export LD_LIBRARY_PATH
+fi
 
 module load cdo/2.5.0-gcc-11.2.0
 module load parallel
@@ -85,7 +101,8 @@ T_prime(){
 export -f band_filter
 export -f T_prime
 
-parallel -j 5 T_prime ::: {1850..2090..10}
+# parallel -j 5 T_prime ::: {1850..2090..10}
+parallel -j 2 T_prime ::: 1850 2090
 
 # check completion
 for dec in {1850..2090..10}; do
