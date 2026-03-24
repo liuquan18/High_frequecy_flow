@@ -1,8 +1,7 @@
 #!/bin/bash
-ens=$1
-decade=$2
-var1=$3
-var2=$4
+decade=$1
+var1=$2
+var2=$3
 #for loop 1-50
 for ens in {1..50}
 do
