@@ -168,7 +168,7 @@ contour_eke_levels = eke_levels[eke_levels != 0]
 fig, axes = plt.subplots(
     nrows=2,
     ncols=3,
-    figsize=(8.2, 6.0),
+    figsize=(8.0, 6.0),
     subplot_kw={"projection": ccrs.Orthographic(-30, 70)},
     constrained_layout=False,
 )
@@ -273,7 +273,6 @@ eke_diff_last_850.plot.contour(
     linewidths=0.9,
 )
 
-
 # --- Formatting ---
 for i, ax in enumerate(axes.flatten()):
     ax.coastlines(color="grey", linewidth=1)
@@ -319,6 +318,11 @@ cbar_bottom = fig.colorbar(
 cbar_bottom.set_label("eke / m$^2$ s$^{-2}$", fontsize=10)
 cbar_bottom.ax.tick_params(labelsize=9)
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/steady_eddy_composite.pdf", dpi=300)
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/steady_eddy_composite.pdf",
+    dpi=300,
+    bbox_inches="tight",
+    pad_inches=0.05,
+)
 
 # %%
