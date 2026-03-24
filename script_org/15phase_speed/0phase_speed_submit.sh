@@ -11,4 +11,4 @@
 
 
 
-mpirun -n 2 python 0phase_speed_latitude.py $1 $2
+mpirun -n 2 python 0phase_speed_latitude.py $1 $2 $3 $4 # ens, decade, var1, var2
