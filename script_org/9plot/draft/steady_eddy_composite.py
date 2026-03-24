@@ -318,3 +318,7 @@ cbar_bottom = fig.colorbar(
 )
 cbar_bottom.set_label("eke / m$^2$ s$^{-2}$", fontsize=10)
 cbar_bottom.ax.tick_params(labelsize=9)
+
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/steady_eddy_composite.pdf", dpi=300)
+
+# %%
