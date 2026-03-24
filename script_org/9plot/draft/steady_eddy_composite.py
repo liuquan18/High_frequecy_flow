@@ -174,74 +174,24 @@ fig, axes = plt.subplots(
 )
 fig.subplots_adjust(left=0.04, right=0.98, top=0.94, bottom=0.14, wspace=0.02, hspace=0.16)
 
-# zg*
-pos_map = pos_first_850.plot.contourf(
-    ax=axes[0, 0],
-    levels=zg_levels,
-    cmap="RdBu_r",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-)
-neg_map = neg_first_850.plot.contourf(
-    ax=axes[0, 1],
-    levels=zg_levels,
-    cmap="RdBu_r",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-)
-
-diff_map = diff_first_850.plot.contourf(
-    ax=axes[0, 2],
-    levels=zg_levels,
-    cmap="RdBu_r",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-)
-
-pos_last_850.plot.contour(
-    ax=axes[0, 0],
-    levels=contour_zg_levels,
-    colors="k",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-    linewidths=0.9,
-)
-neg_last_850.plot.contour(
-    ax=axes[0, 1],
-    levels=contour_zg_levels,
-    colors="k",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-    linewidths=0.9,
-)
-diff_last_850.plot.contour(
-    ax=axes[0, 2],
-    levels=contour_zg_levels,
-    colors="k",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-    linewidths=0.9,
-)
-
-
 # eke
 # first
 eke_map = eke_pos_first_850.plot.contourf(
-    ax=axes[1, 0],
+    ax=axes[0, 0],
     levels=eke_levels,
     cmap="RdBu_r",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
 )
 eke_neg_first_850.plot.contourf(
-    ax=axes[1, 1],
+    ax=axes[0, 1],
     levels=eke_levels,
     cmap="RdBu_r",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
 )
 eke_diff_first_850.plot.contourf(
-    ax=axes[1, 2],
+    ax=axes[0, 2],
     levels=eke_levels,
     cmap="RdBu_r",
     add_colorbar=False,
@@ -249,28 +199,76 @@ eke_diff_first_850.plot.contourf(
 )
 # eke last
 eke_pos_last_850.plot.contour(
-    ax=axes[1, 0],
+    ax=axes[0, 0],
     levels=contour_eke_levels,
     colors="k",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
-    linewidths=0.9,
+    linewidths=0.6,
 )
 eke_neg_last_850.plot.contour(
-    ax=axes[1, 1],
+    ax=axes[0, 1],
     levels=contour_eke_levels,
     colors="k",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
-    linewidths=0.9,
+    linewidths=0.6,
 )
 eke_diff_last_850.plot.contour(
-    ax=axes[1, 2],
+    ax=axes[0, 2],
     levels=contour_eke_levels,
     colors="k",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
-    linewidths=0.9,
+    linewidths=0.6,
+)
+
+# zg*
+pos_map = pos_first_850.plot.contourf(
+    ax=axes[1, 0],
+    levels=zg_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+neg_map = neg_first_850.plot.contourf(
+    ax=axes[1, 1],
+    levels=zg_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+diff_map = diff_first_850.plot.contourf(
+    ax=axes[1, 2],
+    levels=zg_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+)
+
+pos_last_850.plot.contour(
+    ax=axes[1, 0],
+    levels=contour_zg_levels,
+    colors="k",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    linewidths=0.6,
+)
+neg_last_850.plot.contour(
+    ax=axes[1, 1],
+    levels=contour_zg_levels,
+    colors="k",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    linewidths=0.6,
+)
+diff_last_850.plot.contour(
+    ax=axes[1, 2],
+    levels=contour_zg_levels,
+    colors="k",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    linewidths=0.6,
 )
 
 # --- Formatting ---
@@ -297,25 +295,25 @@ for label, ax in zip(panel_labels, axes.flatten()):
     )
 
 cbar_top = fig.colorbar(
-    pos_map,
+    eke_map,
     ax=axes[0, :],
     orientation="vertical",
     fraction=0.03,
     pad=0.02,
     aspect=28,
 )
-cbar_top.set_label(r"$\overline{zg^*}$/ m", fontsize=10)
+cbar_top.set_label("eke / m$^2$ s$^{-2}$", fontsize=10)
 cbar_top.ax.tick_params(labelsize=9)
 
 cbar_bottom = fig.colorbar(
-    eke_map,
+    pos_map,
     ax=axes[1, :],
     orientation="vertical",
     fraction=0.03,
     pad=0.02,
     aspect=28,
 )
-cbar_bottom.set_label("eke / m$^2$ s$^{-2}$", fontsize=10)
+cbar_bottom.set_label(r"$\overline{zg^*}$/ m", fontsize=10)
 cbar_bottom.ax.tick_params(labelsize=9)
 
 plt.savefig(
