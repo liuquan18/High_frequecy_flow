@@ -21,6 +21,8 @@ logging.basicConfig(level=logging.INFO)
 node = sys.argv[1]
 ens = int(node)
 decade = sys.argv[2]
+var1 = sys.argv[3] if len(sys.argv) > 3 else 'ua'
+var2 = sys.argv[4] if len(sys.argv) > 4 else 'va'
 logging.info(f"Processing ensemble {ens} for decade {decade}")
 # %%
 # %%
@@ -40,9 +42,7 @@ except:
 if rank == 0:
     logging.info("Loading data...")
 
-var1 = 'ua' #"ua_prime"
-var2 = 'va' #"va_prime"
-var_out = 'uava_phase_speed_spectrum' #"upvp_phase_speed_spectrum"
+var_out = f'{var1}{var2}_phase_speed_spectrum' #"upvp_phase_speed_spectrum"
 # %%
 
 up_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/{var1}_daily/r{ens}i1p1f1/"
@@ -62,11 +62,14 @@ deg_to_m = 2 * np.pi * earth_radius / 360  # meters per degree longitude at equa
 cmax = 50  # maximum phase speed in grid units (deg/day)
 nps = 50  # number of phase speed bins
 NFFT = 128  # FFT length, total days 153, this gives two segments with 25% overlap
-plev = 25000  # pressure level in Pa
+plev = 85000  # pressure level in Pa
 
 # %%
-up = xr.open_dataset(up_files[0]).ua
-vp = xr.open_dataset(vp_files[0]).va
+up = xr.open_dataset(up_files[0])
+vp = xr.open_dataset(vp_files[0])
+up = up[var1] # assuming the variable name in the dataset matches var1
+vp = vp[var2] # assuming the variable name in the dataset matches var2
+
 up = up.sel(plev=plev, lat=slice(0, 90))
 vp = vp.sel(plev=plev, lat=slice(0, 90))
 # Get unique years and distribute across ranks
@@ -279,7 +282,7 @@ if rank == 0:
     ds.attrs["frequency_filter"] = "2-8 day bandpass"
 
     # Save to NetCDF
-    output_file = f"{output_path}phase_speed_upvp_cospectra_{plev/100:.0f}hPa_{decade}_r{ens}i1p1f1.nc"
+    output_file = f"{output_path}phase_speed_{var1}{var2}_cospectra_{plev/100:.0f}hPa_{decade}_r{ens}i1p1f1.nc"
     ds.to_netcdf(output_file)
     print(f"Saved dataset to: {output_file}")
 
