@@ -175,6 +175,9 @@ for year_idx, year in enumerate(my_years):
     up_year = up.sel(time=str(year))
     vp_year = vp.sel(time=str(year))
 
+    up_year.load()
+    vp_year.load()
+
     # Vectorized computation of cross-spectra across all latitudes
     P_cp_year, P_cn_year = vectorized_phase_speed(up_year, vp_year)
 

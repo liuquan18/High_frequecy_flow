@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=phase_speed
-#SBATCH --time=04:00:00
+#SBATCH --time=03:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=2
