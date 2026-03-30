@@ -125,6 +125,12 @@ baroc_pos_first_df = pd.read_csv(os.path.join(base_dir, "baroc_pos_first.csv"))
 baroc_neg_first_df = pd.read_csv(os.path.join(base_dir, "baroc_neg_first.csv"))
 baroc_pos_last_df = pd.read_csv(os.path.join(base_dir, "baroc_pos_last.csv"))
 baroc_neg_last_df = pd.read_csv(os.path.join(base_dir, "baroc_neg_last.csv"))
+#%%
+baroc_pos_first_df['eady_growth_rate'] = baroc_pos_first_df['eady_growth_rate'] * 86400
+baroc_neg_first_df['eady_growth_rate'] = baroc_neg_first_df['eady_growth_rate'] * 86400
+baroc_pos_last_df['eady_growth_rate'] = baroc_pos_last_df['eady_growth_rate'] * 86400
+baroc_neg_last_df['eady_growth_rate'] = baroc_neg_last_df['eady_growth_rate'] * 86400
+
 # %%
 fig, axes = plt.subplots(
     4,
