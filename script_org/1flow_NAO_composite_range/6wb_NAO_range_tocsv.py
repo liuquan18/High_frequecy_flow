@@ -21,6 +21,11 @@ read_EP_flux = read_composite.read_EP_flux
 read_E_div = read_composite.read_E_div
 read_comp_var = read_composite.read_comp_var
 # %%
+awb_pos_first = read_comp_var(
+
+
+
+#%%
 transient_pos_first = read_comp_var('transient_eddy_heat_dy', 'pos', 1850, time_window='all', method = 'no_stat', name = 'eddy_heat_dy', model_dir = 'MPI_GE_CMIP6_allplev')
 transient_neg_first = read_comp_var('transient_eddy_heat_dy', 'neg', 1850, time_window='all', method = 'no_stat', name = 'eddy_heat_dy', model_dir = 'MPI_GE_CMIP6_allplev')
 transient_pos_last = read_comp_var('transient_eddy_heat_dy', 'pos', 2090, time_window='all', method = 'no_stat', name = 'eddy_heat_dy', model_dir = 'MPI_GE_CMIP6_allplev')
