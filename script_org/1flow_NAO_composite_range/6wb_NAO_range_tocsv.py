@@ -149,3 +149,4 @@ cwb_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMI
 cwb_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/cwb_neg_first_smooth_pv_dy.csv", index=False)
 cwb_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/cwb_pos_last_smooth_pv_dy.csv", index=False)
 cwb_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/cwb_neg_last_smooth_pv_dy.csv", index=False)
+# %%
