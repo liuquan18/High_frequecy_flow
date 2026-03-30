@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=phase_speed
-#SBATCH --time=06:00:00
+#SBATCH --time=03:30:00
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=2
@@ -11,4 +11,4 @@
 
 
 
-mpirun -n 2 python 0phase_speed_latitude.py $1 $2
+mpirun -n 2 python 0phase_speed_latitude.py $1 $2 $3 $4 # ens, decade, var1, var2
