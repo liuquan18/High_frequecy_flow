@@ -645,11 +645,11 @@ for i, ax in enumerate(axes.flatten()):
 
 # --- Colorbars ---
 rows_config = [
-    (cwb_pos_cf,   cwb_levels,   cwb_diff_levels,   "CWB\n(count)",  'both'),
-    (awb_pos_cf,   awb_levels,   awb_diff_levels,   "AWB\n(count)",  'both'),
-    (eke_pos_cf,   eke_levels,   eke_diff_levels,   "EKE\n(m$^2$ s$^{-2}$)",    'both'),
-    (ua_pos_cf,    ua_levels,    ua_diff_levels,    "ua\n(m s$^{-1}$)",          'both'),
-    (baroc_pos_cf, baroc_levels, baroc_diff_levels, "$\\sigma_E$\n(day$^{-1}$)",        'both'),
+    (cwb_pos_cf,   cwb_levels,   cwb_diff_levels,   "CWB / day",  'both'),
+    (awb_pos_cf,   awb_levels,   awb_diff_levels,   "AWB / day",  'both'),
+    (eke_pos_cf,   eke_levels,   eke_diff_levels,   "EKE / m$^2$ s$^{-2}$",    'both'),
+    (ua_pos_cf,    ua_levels,    ua_diff_levels,    "ua / m s$^{-1}$",          'both'),
+    (baroc_pos_cf, baroc_levels, baroc_diff_levels, "$\\sigma_E$ / day$^{-1}$",        'both'),
 ]
 
 def _cbar_fwd(pmin, pmax, dmin, dmax):
