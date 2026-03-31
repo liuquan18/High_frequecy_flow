@@ -160,11 +160,22 @@ baroc_neg_last_df = filter_time(baroc_neg_last_df)
 
 #%%
 def mean_diff_vs_1std(first_df, last_df, var_name):
-    """Return mean(last)-mean(first) and first_std per time step."""
-    first_stats = first_df.groupby("time")[var_name].agg(["mean", "std"]).reset_index()
-    first_stats.columns = ["time", "first_mean", "first_std"]
+    """Return mean(last)-mean(first) per time step.
+    Significance threshold: 95% CI half-width of first (1.96 * SEM),
+    consistent with the seaborn errorbar=("ci", 95) shading.
+    """
+    first_stats = (
+        first_df.groupby("time")[var_name]
+        .agg(["mean", "std", "count"])
+        .reset_index()
+    )
+    first_stats.columns = ["time", "first_mean", "first_std", "first_n"]
+    # 95% CI half-width (matches seaborn shading for large n)
+    first_stats["ci95"] = 1.96 * first_stats["first_std"] / first_stats["first_n"].pow(0.5)
+
     last_mean = last_df.groupby("time")[var_name].mean().reset_index()
     last_mean.columns = ["time", "last_mean"]
+
     result = first_stats.merge(last_mean, on="time")
     result["diff"] = result["last_mean"] - result["first_mean"]
     return result
@@ -196,21 +207,23 @@ def _plot_quartet(ax, pos_first, neg_first, pos_last, neg_last, y):
 
 def _plot_diff_bars(ax, pos_first, neg_first, pos_last, neg_last, var_name):
     """Bar subplot: mean(last)-mean(first) per time step.
-    Positive phase: orange; significant if diff > first_std.
-    Negative phase: green;  significant if diff < -first_std.
+    Positive phase: orange; significant if diff > 95% CI half-width of first.
+    Negative phase: green;  significant if diff < -95% CI half-width of first.
     Non-significant bars use alpha=0.2.
     """
     pos_diff = mean_diff_vs_1std(pos_first, pos_last, var_name)
     neg_diff = mean_diff_vs_1std(neg_first, neg_last, var_name)
     for _, row in pos_diff.iterrows():
-        significant = row["diff"] > row["first_std"]
+        significant = row["diff"] > row["ci95"]
         ax.bar(row["time"], row["diff"],
                color="orange" if significant else "none",
+               alpha=0.5 if significant else 1.0,
                edgecolor="orange", linewidth=0.8, width=0.8)
     for _, row in neg_diff.iterrows():
-        significant = row["diff"] < -row["first_std"]
+        significant = row["diff"] < -row["ci95"]
         ax.bar(row["time"], row["diff"],
                color="green" if significant else "none",
+               alpha=0.5 if significant else 1.0,
                edgecolor="green", linewidth=0.8, width=0.8)
     ax.axhline(0, color="k", lw=0.5)
     sns.despine(ax=ax, bottom=True)
