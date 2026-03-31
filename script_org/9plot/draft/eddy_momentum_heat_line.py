@@ -132,6 +132,33 @@ baroc_neg_first_df['eady_growth_rate'] = baroc_neg_first_df['eady_growth_rate'] 
 baroc_pos_last_df['eady_growth_rate'] = baroc_pos_last_df['eady_growth_rate'] * 86400
 baroc_neg_last_df['eady_growth_rate'] = baroc_neg_last_df['eady_growth_rate'] * 86400
 #%%
+# only keep time between -20 and 20
+def filter_time(df):
+    return df[(df["time"] >= -20) & (df["time"] <= 20)]
+awb_pos_first_df = filter_time(awb_pos_first_df)
+awb_neg_first_df = filter_time(awb_neg_first_df)
+awb_pos_last_df = filter_time(awb_pos_last_df)
+awb_neg_last_df = filter_time(awb_neg_last_df)
+
+cwb_pos_first_df = filter_time(cwb_pos_first_df)
+cwb_neg_first_df = filter_time(cwb_neg_first_df)
+cwb_pos_last_df = filter_time(cwb_pos_last_df)
+cwb_neg_last_df = filter_time(cwb_neg_last_df)
+
+eke_pos_first_df = filter_time(eke_pos_first_df)
+eke_neg_first_df = filter_time(eke_neg_first_df)
+eke_pos_last_df = filter_time(eke_pos_last_df)
+eke_neg_last_df = filter_time(eke_neg_last_df)
+
+baroc_pos_first_df = filter_time(baroc_pos_first_df)
+baroc_neg_first_df = filter_time(baroc_neg_first_df)
+baroc_pos_last_df = filter_time(baroc_pos_last_df)
+baroc_neg_last_df = filter_time(baroc_neg_last_df)
+
+
+
+
+#%%
 def mean_diff_vs_1std(first_df, last_df, var_name):
     """Return mean(last)-mean(first) and first_std per time step."""
     first_stats = first_df.groupby("time")[var_name].agg(["mean", "std"]).reset_index()
@@ -216,12 +243,12 @@ _plot_diff_bars(bar_axes[3][1], heat_steady_pos_first_df, heat_steady_neg_first_
 # ===== Titles =====
 main_axes[0][0].set_title("AWB")
 main_axes[0][1].set_title("CWB")
-main_axes[1][0].set_title("Transient eddies")
-main_axes[1][1].set_title("Quasi-stationary eddies")
+main_axes[1][0].set_title("Transient eddy momentum forcing")
+main_axes[1][1].set_title("Quasi-stationary eddy momentum forcing")
 main_axes[2][0].set_title("EKE")
 main_axes[2][1].set_title("Baroclinicity")
-main_axes[3][0].set_title("Transient eddies")
-main_axes[3][1].set_title("Quasi-stationary eddies")
+main_axes[3][0].set_title("Transient eddy thermal feedback")
+main_axes[3][1].set_title("Quasi-stationary eddy thermal feedback")
 
 # ===== y-labels =====
 main_axes[0][0].set_ylabel("Rossby wave breaking / day")
@@ -247,7 +274,8 @@ for r in range(4):
 # ===== Styling =====
 for r in range(4):
     for c in range(2):
-        sns.despine(ax=main_axes[r][c])
+        sns.despine(ax=main_axes[r][c], bottom=True)
+        main_axes[r][c].tick_params(bottom=False)
         main_axes[r][c].axvline(0, color="gray", linestyle="dotted", lw=1)
 
 # ===== Legend (top-right main panel) =====
@@ -280,10 +308,10 @@ for r in range(4):
         )
         panel_idx += 1
 
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines.pdf",
-#     dpi=300, bbox_inches="tight",
-# )
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines.pdf",
+    dpi=300, bbox_inches="tight",
+)
 
 
 # %%
