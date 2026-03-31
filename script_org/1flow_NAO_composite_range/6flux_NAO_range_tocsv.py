@@ -152,8 +152,11 @@ eke_clima_last = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/M
 eke_clima_first = eke_clima_first["eke"].mean(dim="time").sel(plev = 25000)
 eke_clima_last = eke_clima_last["eke"].mean(dim="time").sel(plev = 25000)
 #%%
-baroc_clima_first = read_climatology('eady_growth_rate', 1850, name = 'eady_growth_rate', model_dir = 'MPI_GE_CMIP6_allplev')
-baroc_clima_last = read_climatology('eady_growth_rate', 2090, name = 'eady_growth_rate', model_dir = 'MPI_GE_CMIP6_allplev')
+baroc_clima_first = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/eady_growth_rate_monthly_ensmean/eady_growth_rate_monmean_ensmean_185005_185909.nc")
+baroc_clima_last = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/eady_growth_rate_monthly_ensmean/eady_growth_rate_monmean_ensmean_209005_209909.nc")
+
+baroc_clima_first = baroc_clima_first["eady_growth_rate"].mean(dim="time")
+baroc_clima_last = baroc_clima_last["eady_growth_rate"].mean(dim="time")
 #%%
 # fldmean over
 def to_dataframe(ds, ds_clima, var_name, phase, decade, plev = 85000, lat_slice = slice(50, 70), lon_slice = slice(-120, 0)):
@@ -247,3 +250,5 @@ baroc_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_C
 baroc_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/baroc_neg_first.csv", index=False)
 baroc_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/baroc_pos_last.csv", index=False)
 baroc_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/baroc_neg_last.csv", index=False)
+
+# %%
