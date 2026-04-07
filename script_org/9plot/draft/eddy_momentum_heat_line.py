@@ -197,13 +197,16 @@ bar_axes  = [[fig.add_subplot(gs[3 * r + 1, c], sharex=main_axes[r][c]) for c in
 main_axes[1][1].sharey(main_axes[1][0])
 main_axes[3][1].sharey(main_axes[3][0])
 
+COLOR_POS = "#E57200"  # MPI orange
+COLOR_NEG = "#006C66"  # MPI green
+
 def _plot_quartet(ax, pos_first, neg_first, pos_last, neg_last, y):
     """Plot 4 lines (pos/neg × first/last) on one axis."""
     kw = dict(x="time", errorbar=("ci", 95), lw=2, legend=False)
-    sns.lineplot(data=pos_first, y=y, color="black", linestyle="solid",  ax=ax, **kw)
-    sns.lineplot(data=neg_first, y=y, color="black", linestyle="dashed", ax=ax, **kw)
-    sns.lineplot(data=pos_last,  y=y, color="red",   linestyle="solid",  ax=ax, **kw)
-    sns.lineplot(data=neg_last,  y=y, color="red",   linestyle="dashed", ax=ax, **kw)
+    sns.lineplot(data=pos_first, y=y, color=COLOR_POS, linestyle="solid",  ax=ax, **kw)
+    sns.lineplot(data=neg_first, y=y, color=COLOR_NEG, linestyle="solid",  ax=ax, **kw)
+    sns.lineplot(data=pos_last,  y=y, color=COLOR_POS, linestyle="dashed", ax=ax, **kw)
+    sns.lineplot(data=neg_last,  y=y, color=COLOR_NEG, linestyle="dashed", ax=ax, **kw)
 
 def _plot_diff_bars(ax, pos_first, neg_first, pos_last, neg_last, var_name):
     """Bar subplot: mean(last)-mean(first) per time step.
@@ -216,15 +219,15 @@ def _plot_diff_bars(ax, pos_first, neg_first, pos_last, neg_last, var_name):
     for _, row in pos_diff.iterrows():
         significant = row["diff"] > row["ci95"]
         ax.bar(row["time"], row["diff"],
-               color="orange" if significant else "none",
+               color=COLOR_POS if significant else "none",
                alpha=0.5 if significant else 1.0,
-               edgecolor="orange", linewidth=0.8, width=0.8)
+               edgecolor=COLOR_POS, linewidth=0.8, width=1.0)
     for _, row in neg_diff.iterrows():
         significant = row["diff"] < -row["ci95"]
         ax.bar(row["time"], row["diff"],
-               color="green" if significant else "none",
+               color=COLOR_NEG if significant else "none",
                alpha=0.5 if significant else 1.0,
-               edgecolor="green", linewidth=0.8, width=0.8)
+               edgecolor=COLOR_NEG, linewidth=0.8, width=1.0)
     ax.axhline(0, color="k", lw=0.5)
     sns.despine(ax=ax, bottom=True)
     ax.tick_params(bottom=False)
@@ -256,12 +259,12 @@ _plot_diff_bars(bar_axes[3][1], heat_steady_pos_first_df, heat_steady_neg_first_
 # ===== Titles =====
 main_axes[0][0].set_title("AWB")
 main_axes[0][1].set_title("CWB")
-main_axes[1][0].set_title("Transient eddy momentum forcing")
-main_axes[1][1].set_title("Quasi-stationary eddy momentum forcing")
+main_axes[1][0].set_title("eddy momentum forcing \n (transient)")
+main_axes[1][1].set_title("eddy momentum forcing \n (Quasi-stationary)")
 main_axes[2][0].set_title("EKE")
 main_axes[2][1].set_title("Baroclinicity")
-main_axes[3][0].set_title("Transient eddy thermal feedback")
-main_axes[3][1].set_title("Quasi-stationary eddy thermal feedback")
+main_axes[3][0].set_title("eddy thermal feedback \n (transient)")
+main_axes[3][1].set_title("eddy thermal feedback \n (Quasi-stationary)")
 
 # ===== y-labels =====
 main_axes[0][0].set_ylabel("Rossby wave breaking / day")
@@ -293,12 +296,12 @@ for r in range(4):
 
 # ===== Legend (top-right main panel) =====
 decade_handles = [
-    Line2D([0], [0], color="black", lw=2, label="1850s"),
-    Line2D([0], [0], color="red",   lw=2, label="2090s"),
+    Line2D([0], [0], color="gray",  lw=2, linestyle="-",  label="1850s"),
+    Line2D([0], [0], color="gray",  lw=2, linestyle="--", label="2090s"),
 ]
 phase_handles = [
-    Line2D([0], [0], color="black", lw=2, linestyle="-",  label="pos NAO"),
-    Line2D([0], [0], color="black", lw=2, linestyle="--", label="neg NAO"),
+    Line2D([0], [0], color=COLOR_POS, lw=2, label="pos NAO"),
+    Line2D([0], [0], color=COLOR_NEG, lw=2, label="neg NAO"),
 ]
 decade_legend = main_axes[1][1].legend(
     handles=decade_handles, title="decade",
@@ -325,6 +328,47 @@ plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines.pdf",
     dpi=300, bbox_inches="tight",
 )
+
+
+# %%
+# ===== Scatter: steady heat (x) vs AWB (positive y) / -CWB (negative y) =====
+def _ts_mean(df, var):
+    """Per-time-step mean."""
+    return df.groupby("time")[var].mean().reset_index()
+
+# Per-time means for heat (x)
+h_pos_first = _ts_mean(heat_steady_pos_first_df, "eddy_heat_d2y2")
+h_pos_last  = _ts_mean(heat_steady_pos_last_df,  "eddy_heat_d2y2")
+h_neg_first = _ts_mean(heat_steady_neg_first_df, "eddy_heat_d2y2")
+h_neg_last  = _ts_mean(heat_steady_neg_last_df,  "eddy_heat_d2y2")
+
+# Per-time means for AWB / CWB (y), merge on time to ensure alignment
+awb_pf = _ts_mean(awb_pos_first_df, "smooth_pv").merge(h_pos_first, on="time", suffixes=("_awb", "_heat"))
+awb_pl = _ts_mean(awb_pos_last_df,  "smooth_pv").merge(h_pos_last,  on="time", suffixes=("_awb", "_heat"))
+cwb_nf = _ts_mean(cwb_neg_first_df, "smooth_pv").merge(h_neg_first, on="time", suffixes=("_cwb", "_heat"))
+cwb_nl = _ts_mean(cwb_neg_last_df,  "smooth_pv").merge(h_neg_last,  on="time", suffixes=("_cwb", "_heat"))
+
+fig_sc, ax_sc = plt.subplots(figsize=(6, 5))
+
+# Positive phase — filled circles, y = AWB
+ax_sc.scatter(awb_pf["eddy_heat_d2y2"], awb_pf["smooth_pv"],
+              color="black", marker="o", s=25, label="pos 1850s")
+ax_sc.scatter(awb_pl["eddy_heat_d2y2"], awb_pl["smooth_pv"],
+              color="red",   marker="o", s=25, label="pos 2090s")
+
+# Negative phase — unfilled circles, y = -CWB
+ax_sc.scatter(cwb_nf["eddy_heat_d2y2"], -cwb_nf["smooth_pv"],
+              facecolors="none", edgecolors="black", marker="o", s=25, label="neg 1850s")
+ax_sc.scatter(cwb_nl["eddy_heat_d2y2"], -cwb_nl["smooth_pv"],
+              facecolors="none", edgecolors="red",   marker="o", s=25, label="neg 2090s")
+
+ax_sc.axhline(0, color="k", lw=0.5)
+ax_sc.axvline(0, color="k", lw=0.5, linestyle="dotted")
+ax_sc.set_xlabel(r"Steady eddy thermal feedback ($\frac{\partial^2}{\partial y^2} \overline{v'\theta'}$)")
+ax_sc.set_ylabel("AWB  (pos phase) / $-$CWB  (neg phase)")
+ax_sc.legend(frameon=False, fontsize=9)
+sns.despine(ax=ax_sc)
+plt.tight_layout()
 
 
 # %%
