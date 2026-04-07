@@ -103,7 +103,7 @@ uag_d2 = uag_p2 - uag_n2
 ua_dlev   = np.arange(-12, 13, 2)
 uag_dlev   = np.arange(-2, 2.1, 0.4)   # day⁻¹ (×86400 from s⁻¹)
 uv_dlev   = np.arange(-20, 21, 4)
-mom_dlev  = np.arange(-2, 2.1, 0.5)    # m/s/day
+mom_dlev  = np.arange(-3, 3.1, 0.5)    # m/s/day
 
 
 diff_rows = [
