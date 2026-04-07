@@ -38,33 +38,50 @@ transient_clima_last = read_climatology('transient_eddy_heat_dy', 2090, name = '
 steady_clima_first = read_climatology('steady_eddy_heat_dy', 1850, name = 'eddy_heat_dy', model_dir = 'MPI_GE_CMIP6_allplev')
 steady_clima_last = read_climatology('steady_eddy_heat_dy', 2090, name = 'eddy_heat_dy', model_dir = 'MPI_GE_CMIP6_allplev')
 #%%
-# %%
-def anomaly(ds, ds_clima):
-    """
-    Calculate the anomaly of a dataset with respect to a climatology.
-    """
-    # average over time and events
-    ds = ds.sel(time = slice(-10, 5)).mean(dim=('time', 'event', 'lon'))
-    ds_clima = ds_clima.mean(dim=('lon'))
-    anomaly = ds - ds_clima
-    return anomaly.compute()
-#%%
-transient_pos_first_anom = anomaly(transient_pos_first, transient_clima_first)
-transient_neg_first_anom = anomaly(transient_neg_first, transient_clima_first)
-transient_pos_last_anom = anomaly(transient_pos_last, transient_clima_last)
-transient_neg_last_anom = anomaly(transient_neg_last, transient_clima_last)
-#%%
-steady_pos_first_anom = anomaly(steady_pos_first, steady_clima_first)
-steady_neg_first_anom = anomaly(steady_neg_first, steady_clima_first)
-steady_pos_last_anom = anomaly(steady_pos_last, steady_clima_last)
-steady_neg_last_anom = anomaly(steady_neg_last, steady_clima_last)
+momentum_pos_first = read_comp_var(
+    "Fdiv_phi_transient",
+    "pos",
+    1850,
+    time_window='all',
+    method="no_stat",
+    name = 'div',
+    model_dir="MPI_GE_CMIP6_allplev",
+)
+momentum_neg_first = read_comp_var(
+    "Fdiv_phi_transient",
+    "neg",
+    1850,
+    time_window='all',
+    method="no_stat",
+    name = 'div',
+    model_dir="MPI_GE_CMIP6_allplev",
+)
+
+momentum_pos_last = read_comp_var(
+    "Fdiv_phi_transient",
+    "pos",
+    2090,
+    time_window='all',
+    method="no_stat",
+    name = 'div',
+    model_dir="MPI_GE_CMIP6_allplev",
+)
+momentum_neg_last = read_comp_var(
+    "Fdiv_phi_transient",
+    "neg",
+    2090,
+    time_window='all',
+    method="no_stat",
+    name="div",
+    model_dir="MPI_GE_CMIP6_allplev",
+)
 
 #%%
-sum_pos_first_anomaly = transient_pos_first_anom + steady_pos_first_anom
-sum_neg_first_anomaly = transient_neg_first_anom + steady_neg_first_anom
-sum_pos_last_anomaly = transient_pos_last_anom + steady_pos_last_anom
-sum_neg_last_anomaly = transient_neg_last_anom + steady_neg_last_anom
-#%%
+momentum_clima_first = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fdiv_phi_transient_monthly_ensmean/Fdiv_phi_transient_monmean_ensmean_185005_185909.nc")
+momentum_clima_last = xr.open_dataset("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/Fdiv_phi_transient_monthly_ensmean/Fdiv_phi_transient_monmean_ensmean_209005_209909.nc")
+momentum_clima_first = momentum_clima_first["div"].mean(dim="time").sel(plev = 25000)
+momentum_clima_last = momentum_clima_last["div"].mean(dim="time").sel(plev = 25000)
+
 
 ## eke
 #%%
@@ -209,23 +226,29 @@ sum_pos_last_df = transient_pos_last_df.copy()
 sum_pos_last_df["eddy_heat_dy"] = transient_pos_last_df["eddy_heat_dy"] + steady_pos_last_df["eddy_heat_dy"]
 sum_neg_last_df = transient_neg_last_df.copy()
 sum_neg_last_df["eddy_heat_dy"] = transient_neg_last_df["eddy_heat_dy"] + steady_neg_last_df["eddy_heat_dy"]
+#%%
+momentum_pos_first_df = to_dataframe(momentum_pos_first, momentum_clima_first, "momentum_flux_divergence", "pos", "1850", plev = None,)
+momentum_neg_first_df = to_dataframe(momentum_neg_first, momentum_clima_first, "momentum_flux_divergence", "neg", "1850", plev = None,)
+momentum_pos_last_df = to_dataframe(momentum_pos_last, momentum_clima_last, "momentum_flux_divergence", "pos", "2090", plev = None,)
+momentum_neg_last_df = to_dataframe(momentum_neg_last, momentum_clima_last, "momentum_flux_divergence", "neg", "2090", plev = None,)
+
 
 #%%
 # save dataframes
-transient_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_pos_first_vptp_dy.csv", index=False)
-transient_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_neg_first_vptp_dy.csv", index=False)
-transient_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_pos_last_vptp_dy.csv", index=False)
-transient_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/transient_neg_last_vptp_dy.csv", index=False)
+transient_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/transient_pos_first_vptp_dy.csv", index=False)
+transient_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/transient_neg_first_vptp_dy.csv", index=False)
+transient_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/transient_pos_last_vptp_dy.csv", index=False)
+transient_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/transient_neg_last_vptp_dy.csv", index=False)
 
-steady_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_pos_first_vsts_dy.csv", index=False)
-steady_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_neg_first_vsts_dy.csv", index=False)
-steady_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_pos_last_vsts_dy.csv", index=False)
-steady_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/steady_neg_last_vsts_dy.csv", index=False)
+steady_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/steady_pos_first_vsts_dy.csv", index=False)
+steady_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/steady_neg_first_vsts_dy.csv", index=False)
+steady_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/steady_pos_last_vsts_dy.csv", index=False)
+steady_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/steady_neg_last_vsts_dy.csv", index=False)
 
-sum_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_pos_first_vptp_dy.csv", index=False)
-sum_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_neg_first_vptp_dy.csv", index=False)
-sum_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_pos_last_vptp_dy.csv", index=False)
-sum_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/sum_neg_last_vptp_dy.csv", index=False)
+sum_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/sum_pos_first_vptp_dy.csv", index=False)
+sum_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/sum_neg_first_vptp_dy.csv", index=False)
+sum_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/sum_pos_last_vptp_dy.csv", index=False)
+sum_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/sum_neg_last_vptp_dy.csv", index=False)
 
 #%%
 eke_pos_first_df = to_dataframe(eke_pos_first, eke_clima_first, "eke", "pos", "1850", plev = None)
@@ -241,14 +264,19 @@ baroc_neg_last_df = to_dataframe(baroc_neg_last, baroc_clima_last, "eady_growth_
 
 #%%
 # save
-eke_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/eke_pos_first.csv", index=False)
-eke_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/eke_neg_first.csv", index=False)
-eke_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/eke_pos_last.csv", index=False)
-eke_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/eke_neg_last.csv", index=False)
+eke_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/eke_pos_first.csv", index=False)
+eke_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/eke_neg_first.csv", index=False)
+eke_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/eke_pos_last.csv", index=False)
+eke_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/eke_neg_last.csv", index=False)
 #%%
-baroc_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/baroc_pos_first.csv", index=False)
-baroc_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/baroc_neg_first.csv", index=False)
-baroc_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/baroc_pos_last.csv", index=False)
-baroc_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/baroc_neg_last.csv", index=False)
+baroc_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/baroc_pos_first.csv", index=False)
+baroc_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/baroc_neg_first.csv", index=False)
+baroc_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/baroc_pos_last.csv", index=False)
+baroc_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/baroc_neg_last.csv", index=False)
 
+# %%
+momentum_pos_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/Fdiv_phi_transient_pos_first.csv", index=False)
+momentum_neg_first_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/Fdiv_phi_transient_neg_first.csv", index=False)
+momentum_pos_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/Fdiv_phi_transient_pos_last.csv", index=False)
+momentum_neg_last_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/Fdiv_phi_transient_neg_last.csv", index=False)
 # %%
