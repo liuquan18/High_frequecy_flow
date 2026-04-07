@@ -223,6 +223,43 @@ vsts_neg_last = read_comp_var(
     name="vsets",
     model_dir="MPI_GE_CMIP6_allplev",
 )
+#%%
+vptp_pos_first = read_comp_var(
+    "vpetp",
+    "pos",
+    1850,
+    time_window=(0, 20),
+    method="no_stat",
+    name="vpetp",
+    model_dir="MPI_GE_CMIP6_allplev",
+)
+vptp_neg_first = read_comp_var(
+    "vpetp",
+    "neg",
+    1850,
+    time_window=(0, 20),
+    method="no_stat",
+    name="vpetp",
+    model_dir="MPI_GE_CMIP6_allplev",
+)
+vptp_pos_last = read_comp_var(
+    "vpetp",
+    "pos",
+    2090,
+    time_window=(0, 20),
+    method="no_stat",
+    name="vpetp",
+    model_dir="MPI_GE_CMIP6_allplev",
+)
+vptp_neg_last = read_comp_var(
+    "vpetp",
+    "neg",
+    2090,
+    time_window=(0, 20),
+    method="no_stat",
+    name="vpetp",
+    model_dir="MPI_GE_CMIP6_allplev",
+)
 
 #%%
 
@@ -301,6 +338,10 @@ _to_save = {
     "steady_eddy_heat_dy_neg_1850": vstsdy_neg_first,
     "steady_eddy_heat_dy_pos_2090": vstsdy_pos_last,
     "steady_eddy_heat_dy_neg_2090": vstsdy_neg_last,
+    "vpetp_pos_1850":            vptp_pos_first,
+    "vpetp_neg_1850":            vptp_neg_first,
+    "vpetp_pos_2090":            vptp_pos_last,
+    "vpetp_neg_2090":            vptp_neg_last,
 }
 
 for fname, da in _to_save.items():
