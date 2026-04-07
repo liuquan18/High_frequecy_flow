@@ -35,7 +35,7 @@ ua_pos_first = read_comp_var(
     "pos",
     1850,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="ua",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -44,7 +44,7 @@ ua_neg_first = read_comp_var(
     "neg",
     1850,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="ua",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -54,7 +54,7 @@ ua_pos_last = read_comp_var(
     "pos",
     2090,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="ua",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -63,7 +63,7 @@ ua_neg_last = read_comp_var(
     "neg",
     2090,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="ua",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -75,7 +75,7 @@ momentum_pos_first = read_comp_var(
     "pos",
     1850,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name = 'div',
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -84,7 +84,7 @@ momentum_neg_first = read_comp_var(
     "neg",
     1850,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name = 'div',
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -94,7 +94,7 @@ momentum_pos_last = read_comp_var(
     "pos",
     2090,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name = 'div',
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -103,7 +103,7 @@ momentum_neg_last = read_comp_var(
     "neg",
     2090,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="div",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -116,7 +116,7 @@ baroc_pos_first = read_comp_var(
     "pos",
     1850,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="eady_growth_rate",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -125,7 +125,7 @@ baroc_neg_first = read_comp_var(
     "neg",
     1850,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="eady_growth_rate",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -134,7 +134,7 @@ baroc_pos_last = read_comp_var(
     "pos",
     2090,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="eady_growth_rate",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -143,7 +143,7 @@ baroc_neg_last = read_comp_var(
     "neg",
     2090,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="eady_growth_rate",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -192,7 +192,7 @@ vsts_pos_first = read_comp_var(
     "pos",
     1850,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="vsets",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -201,7 +201,7 @@ vsts_neg_first = read_comp_var(
     "neg",
     1850,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="vsets",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -210,7 +210,7 @@ vsts_pos_last = read_comp_var(
     "pos",
     2090,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="vsets",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -219,7 +219,7 @@ vsts_neg_last = read_comp_var(
     "neg",
     2090,
     time_window=(0, 20),
-    method="mean",
+    method="no_stat",
     name="vsets",
     model_dir="MPI_GE_CMIP6_allplev",
 )
@@ -263,6 +263,14 @@ vstsdy_neg_last = read_comp_var(
     model_dir="MPI_GE_CMIP6_allplev",
 )
 
+#%%
+def _zonal_mean(da, lon_min=-90, lon_max=40):
+    """Zonal mean over [lon_min, lon_max], handling both 0-360 and -180-180 grids."""
+    if da.lon.max() > 180:
+        # Convert 0-360 to -180-180
+        da = da.assign_coords(lon=(da.lon + 180) % 360 - 180).sortby("lon")
+    return da.sel(lon=slice(lon_min, lon_max)).mean(dim="lon")
+
 # %% Save all variables to 0composite_feedback
 
 save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback"
@@ -297,7 +305,7 @@ _to_save = {
 
 for fname, da in _to_save.items():
     path = os.path.join(save_dir, f"{fname}.nc")
-    da.to_netcdf(path)
+    _zonal_mean(da).to_netcdf(path)
     print(f"Saved {path}")
 
 # %%
