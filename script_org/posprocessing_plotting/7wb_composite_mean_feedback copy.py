@@ -70,7 +70,7 @@ def _zonal_mean(da, lon_min=-90, lon_max=40):
 
 save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback"
 os.makedirs(save_dir, exist_ok=True)
-
+#%%
 awb_to_save = {
     "wb_anticyclonic_pos_1850":       awb["pos_1850"],
     "wb_anticyclonic_neg_1850":       awb["neg_1850"],
@@ -94,7 +94,7 @@ cwb_to_save = {
     "wb_cyclonic_neg_2090":          cwb["neg_2090"],
 }
 
-#%%
+
 for fname, da in cwb_to_save.items():
     path = os.path.join(save_dir, f"{fname}.nc")
     _zonal_mean(da, lon_min=-120, lon_max=-30).to_netcdf(path)
