@@ -121,94 +121,147 @@ uag_p2 = _ua_meridional_grad(ua_p2)*86400;  uag_n2 = _ua_meridional_grad(ua_n2)*
 uag_d1 = uag_p1 - uag_n1
 uag_d2 = uag_p2 - uag_n2
 
-# %% Plot – difference only: ua, ua_grad, upvp
+# %% Contour levels
+# -- difference (pos - neg) levels
 ua_dlev   = np.arange(-12, 13, 2)
-uag_dlev   = np.arange(-2, 2.1, 0.4)   # day⁻¹ (×86400 from s⁻¹)
+uag_dlev  = np.arange(-2, 2.1, 0.4)
 uv_dlev   = np.arange(-20, 21, 4)
-mom_dlev  = np.arange(-3, 3.1, 0.5)    # m/s/day
-awb_dlev  = np.arange(-3, 3.1, 1)    # day
-cwb_dlev  = np.arange(-1, 1.1, 0.5)    # day
+mom_dlev  = np.arange(-3, 3.1, 0.5)
+awb_dlev  = np.arange(-3, 3.1, 1)
+cwb_dlev  = np.arange(-1, 1.1, 0.5)
+
+# -- absolute (per-phase) levels
+ua_lev   = np.arange(-12, 13, 2)
+uag_lev  = np.arange(-2, 2.1, 0.4)
+uv_lev   = np.arange(-20, 21, 4)
+mom_lev  = np.arange(-3, 3.1, 0.5)
+awb_lev  = np.arange(-3, 3.1, 1)
+cwb_lev  = np.arange(-1, 1.1, 0.5)
 
 
-diff_rows = [
-    (ua_d1,  ua_d2,  ua_dlev,  "$\Delta u$ / m s$^{-1}$"),
-    (awb_d1, awb_d2, awb_dlev, "$\Delta$ awb / day"),
-    (cwb_d1, cwb_d2, cwb_dlev, "$\Delta$ cwb / day"),
-    (uag_d1, uag_d2, uag_dlev,  "$\\Delta(\\partial_y u)$ / day$^{-1}$"),
-    (uv_d1,  uv_d2,  uv_dlev,  "$\Delta(u'v')$ / m$^2$ s$^{-2}$"),
-    (mom_d1, mom_d2, mom_dlev,  "$\Delta(\\partial_y u'v')$ / m s$^{-1}$ day$^{-1}$"),
-]
 
-fig2, axes2 = plt.subplots(
-    nrows=len(diff_rows), ncols=3,
-    figsize=(8, 14),
-    constrained_layout=False,
-    sharey=True,
-    sharex=True,
-)
-fig2.subplots_adjust(left=0.09, right=0.83, top=0.93, bottom=0.08, wspace=0.08, hspace=0.22)
+# %% Shared plot function
+def _make_fig(rows_data, suptitle=""):
+    """Create a (nrows × 3) lat-time figure.
 
-
-for row_idx, (d1, d2, dlvl, label) in enumerate(diff_rows):
-    t   = d1.time.values
-    lat = d1.lat.values
-    dd  = d2 - d1  # change between decades
-    ddlv = dlvl / 2  # half levels for the difference column
-
-    for col_idx, (data, lvl) in enumerate([(d1, dlvl), (d2, dlvl), (dd, ddlv)]):
-        ax = axes2[row_idx, col_idx]
-        cf = ax.contourf(t, lat, data.values.T, levels=lvl, cmap="RdBu_r", extend="both")
-        ax.contour(t, lat, data.values.T,
-                   levels=[l for l in lvl if l != 0], colors="k", linewidths=0.5)
-        if col_idx == 0:
-            cf_main = cf  # capture for colorbar base (dlvl scale)
-
-    # Dual-axis colorbar: left ticks = dlvl (cols 0&1), right ticks = ddlv (col 2)
-    bbox = axes2[row_idx, 2].get_position()
-    cax2 = fig2.add_axes([bbox.x1 + 0.04, bbox.y0, 0.016, bbox.height])
-    cb2 = fig2.colorbar(cf_main, cax=cax2, orientation="vertical", extend="both")
-    cb2.set_ticks(dlvl)
-    cb2.ax.tick_params(labelsize=7)
-    cb2.ax.yaxis.set_ticks_position("left")
-    cb2.ax.yaxis.set_label_position("left")
-    cb2.ax.set_title(label, fontsize=7, pad=4)
-
-    pmin, pmax = float(dlvl[0]), float(dlvl[-1])
-    dmin, dmax = float(ddlv[0]), float(ddlv[-1])
-    ax_sec = cax2.secondary_yaxis(
-        "right",
-        functions=(lambda x, pm=pmin, pm2=pmax, dm=dmin, dm2=dmax:
-                       dm + (x - pm) * (dm2 - dm) / (pm2 - pm),
-                   lambda x, pm=pmin, pm2=pmax, dm=dmin, dm2=dmax:
-                       pm + (x - dm) * (pm2 - pm) / (dm2 - dm)),
+    rows_data: list of (d1, d2, lev, lev_dd, label)
+      d1    : data for 1850s
+      d2    : data for 2090s
+      lev   : contour levels for columns 0 and 1
+      lev_dd: contour levels for column 2 (d2 - d1)
+      label : colorbar title
+    Columns: 1850s | 2090s | 2090s - 1850s
+    """
+    fig, axes = plt.subplots(
+        nrows=len(rows_data), ncols=3,
+        figsize=(8, 14),
+        constrained_layout=False,
+        sharey=True, sharex=True,
     )
-    ax_sec.set_yticks(ddlv)
-    ax_sec.tick_params(labelsize=7)
+    fig.subplots_adjust(left=0.09, right=0.83, top=0.93, bottom=0.08,
+                        wspace=0.08, hspace=0.22)
 
-    # For uag row: no special formatter needed (values now in day⁻¹)
-    if row_idx == 1:
-        pass
+    for row_idx, (d1, d2, lvl, ddlv, label) in enumerate(rows_data):
+        t   = d1.time.values
+        lat = d1.lat.values
+        dd  = d2 - d1
 
-# axis labels and panel letters
-n_last_row_start = 3 * (len(diff_rows) - 1)
-for i, ax in enumerate(axes2.flatten()):
-    if i >= n_last_row_start:
-        ax.set_xlabel("Lag (days)", fontsize=8)
-    if i % 3 == 0:
-        ax.set_ylabel("Latitude (°N)", fontsize=8)
-    ax.tick_params(labelsize=7)
-    ax.text(0.02, 0.98, chr(97 + i), transform=ax.transAxes,
-            fontsize=9, fontweight="bold", va="top", ha="left")
-    ax.set_xlim(-5, 20)
-    # dotted vertical line at lag=0
-    ax.axvline(0, color="k", linestyle=":", linewidth=0.5)
+        for col_idx, (data, lv) in enumerate([(d1, lvl), (d2, lvl), (dd, ddlv)]):
+            ax = axes[row_idx, col_idx]
+            cf = ax.contourf(t, lat, data.values.T, levels=lv, cmap="RdBu_r", extend="both")
+            ax.contour(t, lat, data.values.T,
+                       levels=[l for l in lv if l != 0], colors="k", linewidths=0.5)
+            if col_idx == 0:
+                cf_main = cf
 
-titles = ["1850s", "2090s", "2090s - 1850s"]
-for ax, title in zip(axes2[0, :], titles):
-    ax.set_title(title, fontsize=8)
+        # Dual-axis colorbar: left = lvl (cols 0&1), right = ddlv (col 2)
+        bbox = axes[row_idx, 2].get_position()
+        cax = fig.add_axes([bbox.x1 + 0.04, bbox.y0, 0.016, bbox.height])
+        cb = fig.colorbar(cf_main, cax=cax, orientation="vertical", extend="both")
+        cb.set_ticks(lvl)
+        cb.ax.tick_params(labelsize=7)
+        cb.ax.yaxis.set_ticks_position("left")
+        cb.ax.yaxis.set_label_position("left")
+        cb.ax.set_title(label, fontsize=7, pad=4)
+
+        pmin, pmax = float(lvl[0]),  float(lvl[-1])
+        dmin, dmax = float(ddlv[0]), float(ddlv[-1])
+        ax_sec = cax.secondary_yaxis(
+            "right",
+            functions=(lambda x, pm=pmin, pm2=pmax, dm=dmin, dm2=dmax:
+                           dm + (x - pm) * (dm2 - dm) / (pm2 - pm),
+                       lambda x, pm=pmin, pm2=pmax, dm=dmin, dm2=dmax:
+                           pm + (x - dm) * (pm2 - pm) / (dm2 - dm)),
+        )
+        ax_sec.set_yticks(ddlv)
+        ax_sec.tick_params(labelsize=7)
+
+    n_last = 3 * (len(rows_data) - 1)
+    for i, ax in enumerate(axes.flatten()):
+        if i >= n_last:
+            ax.set_xlabel("Lag (days)", fontsize=8)
+        if i % 3 == 0:
+            ax.set_ylabel("Latitude (°N)", fontsize=8)
+        ax.tick_params(labelsize=7)
+        ax.text(0.02, 0.98, chr(97 + i), transform=ax.transAxes,
+                fontsize=9, fontweight="bold", va="top", ha="left")
+        ax.set_xlim(-5, 20)
+        ax.axvline(0, color="k", linestyle=":", linewidth=0.5)
+
+    for ax, title in zip(axes[0, :], ["1850s", "2090s", "2090s - 1850s"]):
+        ax.set_title(title, fontsize=8)
+
+    if suptitle:
+        fig.suptitle(suptitle, fontsize=10, y=0.97)
+
+    return fig
+
+
+# %% Plot 1 – difference (pos - neg)
+diff_rows = [
+    (ua_d1,  ua_d2,  ua_dlev,  ua_dlev  / 2, "$\\Delta u$ / m s$^{-1}$"),
+    (awb_d1, awb_d2, awb_dlev, awb_dlev / 2, "$\\Delta$ awb / day"),
+    (cwb_d1, cwb_d2, cwb_dlev, cwb_dlev / 2, "$\\Delta$ cwb / day"),
+    (uag_d1, uag_d2, uag_dlev, uag_dlev / 2, "$\\Delta(\\partial_y u)$ / day$^{-1}$"),
+    (uv_d1,  uv_d2,  uv_dlev,  uv_dlev  / 2, "$\\Delta(u'v')$ / m$^2$ s$^{-2}$"),
+    (mom_d1, mom_d2, mom_dlev, mom_dlev / 2,  "$\\Delta(\\partial_y u'v')$ / m s$^{-1}$ day$^{-1}$"),
+]
+fig_diff = _make_fig(diff_rows, suptitle="NAO positive $-$ negative")
 
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_diff_ua_grad_upvp.pdf",
+    dpi=300,
+)
+
+# %% Plot 2 – NAO positive
+pos_rows = [
+    (ua_p1,  ua_p2,  ua_lev,  ua_dlev / 2,  "$u$ / m s$^{-1}$"),
+    (awb_p1, awb_p2, awb_lev, awb_dlev / 2, "awb / day"),
+    (cwb_p1, cwb_p2, cwb_lev, cwb_dlev / 2, "cwb / day"),
+    (uag_p1, uag_p2, uag_lev, uag_dlev / 2, "$\\partial_y u$ / day$^{-1}$"),
+    (uv_p1,  uv_p2,  uv_lev,  uv_dlev / 2,  "$u'v'$ / m$^2$ s$^{-2}$"),
+    (mom_p1, mom_p2, mom_lev, mom_dlev / 2, "$\\partial_y u'v'$ / m s$^{-1}$ day$^{-1}$"),
+]
+fig_pos = _make_fig(pos_rows, suptitle="NAO positive")
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_pos_ua_grad_upvp.pdf",
+    dpi=300,
+)
+
+# %% Plot 3 – NAO negative
+neg_rows = [
+    (ua_n1,  ua_n2,  ua_lev,  ua_dlev / 2,  "$u$ / m s$^{-1}$"),
+    (awb_n1, awb_n2, awb_lev, awb_dlev / 2, "awb / day"),
+    (cwb_n1, cwb_n2, cwb_lev, cwb_dlev / 2, "cwb / day"),
+    (uag_n1, uag_n2, uag_lev, uag_dlev / 2, "$\\partial_y u$ / day$^{-1}$"),
+    (uv_n1,  uv_n2,  uv_lev,  uv_dlev / 2,  "$u'v'$ / m$^2$ s$^{-2}$"),
+    (mom_n1, mom_n2, mom_lev, mom_dlev / 2, "$\\partial_y u'v'$ / m s$^{-1}$ day$^{-1}$"),
+]
+fig_neg = _make_fig(neg_rows, suptitle="NAO negative")
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_neg_ua_grad_upvp.pdf",
     dpi=300,
 )
 
