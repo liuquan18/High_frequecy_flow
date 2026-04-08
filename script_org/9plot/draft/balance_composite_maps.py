@@ -362,9 +362,62 @@ fig, axes = plt.subplots(
 )
 fig.subplots_adjust(left=0.04, right=0.88, top=0.94, bottom=0.14, wspace=0.02, hspace=0.16)
 
-# first row cwb, pos, neg, diff
-cwb_pos_cf = cwb_pos_first.plot.contourf(
+# first row ua, pos, neg, diff
+ua_pos_cf = ua_pos_first.plot.contourf(
     ax=axes[0, 0],
+    levels=ua_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend = 'both',
+    alpha = 0.8,
+)
+ua_neg_first.plot.contourf(
+    ax=axes[0, 1],
+    levels=ua_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend = 'both',
+    alpha = 0.8,
+)
+ua_diff_first.plot.contourf(
+    ax=axes[0, 2],
+    levels=ua_diff_levels,
+    cmap="RdBu_r",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    extend = 'both',
+    alpha = 0.8,
+)
+ua_pos_last.plot.contour(
+    ax=axes[0, 0],
+    levels=[level for level in ua_levels if level != 0],
+    colors="k",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    linewidths=0.6,
+)
+ua_neg_last.plot.contour(
+    ax=axes[0, 1],
+    levels=[level for level in ua_levels if level != 0],
+    colors="k",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    linewidths=0.6,
+)
+ua_diff_last.plot.contour(
+    ax=axes[0, 2],
+    levels=[level for level in ua_diff_levels if level != 0],
+    colors="k",
+    add_colorbar=False,
+    transform=ccrs.PlateCarree(),
+    linewidths=0.6,
+)
+
+# second row cwb, pos, neg, diff
+cwb_pos_cf = cwb_pos_first.plot.contourf(
+    ax=axes[1, 0],
     levels=cwb_levels,
     cmap="RdBu_r",
     add_colorbar=False,
@@ -373,7 +426,7 @@ cwb_pos_cf = cwb_pos_first.plot.contourf(
     alpha = 0.8,
 )
 cwb_neg_first.plot.contourf(
-    ax=axes[0, 1],
+    ax=axes[1, 1],
     levels=cwb_levels,
     cmap="RdBu_r",
     add_colorbar=False,
@@ -383,7 +436,7 @@ cwb_neg_first.plot.contourf(
 )
 
 cwb_diff_first.plot.contourf(
-    ax=axes[0, 2],
+    ax=axes[1, 2],
     levels=cwb_diff_levels,
     cmap="RdBu_r",
     add_colorbar=False,
@@ -393,7 +446,7 @@ cwb_diff_first.plot.contourf(
 )
 
 cwb_pos_last.plot.contour(
-    ax=axes[0, 0],
+    ax=axes[1, 0],
     levels=[level for level in cwb_levels if level != 0],
     colors="k",
     add_colorbar=False,
@@ -401,7 +454,7 @@ cwb_pos_last.plot.contour(
     linewidths=0.6,
 )
 cwb_neg_last.plot.contour(
-    ax=axes[0, 1],
+    ax=axes[1, 1],
     levels=[level for level in cwb_levels if level != 0],
     colors="k",
     add_colorbar=False,
@@ -409,7 +462,7 @@ cwb_neg_last.plot.contour(
     linewidths=0.6,
 )
 cwb_diff_last.plot.contour(
-    ax=axes[0, 2],
+    ax=axes[1, 2],
     levels=[level for level in cwb_diff_levels if level != 0],
     colors="k",
     add_colorbar=False,
@@ -417,9 +470,9 @@ cwb_diff_last.plot.contour(
     linewidths=0.6,
 )
 
-# second row awb, pos, neg, diff
+# third row awb, pos, neg, diff
 awb_pos_cf = awb_pos_first.plot.contourf(
-    ax=axes[1, 0],
+    ax=axes[2, 0],
     levels=awb_levels,
     cmap="RdBu_r",
     add_colorbar=False,
@@ -428,7 +481,7 @@ awb_pos_cf = awb_pos_first.plot.contourf(
     alpha = 0.8,
 )
 awb_neg_first.plot.contourf(
-    ax=axes[1, 1],
+    ax=axes[2, 1],
     levels=awb_levels,
     cmap="RdBu_r",
     add_colorbar=False,
@@ -437,7 +490,7 @@ awb_neg_first.plot.contourf(
     alpha = 0.8,
 )
 awb_diff_first.plot.contourf(
-    ax=axes[1, 2],
+    ax=axes[2, 2],
     levels=awb_diff_levels,
     cmap="RdBu_r",
     add_colorbar=False,
@@ -446,7 +499,7 @@ awb_diff_first.plot.contourf(
     alpha = 0.8,
 )
 awb_pos_last.plot.contour(
-    ax=axes[1, 0],
+    ax=axes[2, 0],
     levels=[level for level in awb_levels if level != 0],
     colors="k",
     add_colorbar=False,
@@ -454,7 +507,7 @@ awb_pos_last.plot.contour(
     linewidths=0.6,
 )
 awb_neg_last.plot.contour(
-    ax=axes[1, 1],
+    ax=axes[2, 1],
     levels=[level for level in awb_levels if level != 0],
     colors="k",
     add_colorbar=False,
@@ -462,7 +515,7 @@ awb_neg_last.plot.contour(
     linewidths=0.6,
 )
 awb_diff_last.plot.contour(
-    ax=axes[1, 2],
+    ax=axes[2, 2],
     levels=[level for level in awb_diff_levels if level != 0],
     colors="k",
     add_colorbar=False,
@@ -470,9 +523,9 @@ awb_diff_last.plot.contour(
     linewidths=0.6,
 )
 
-# third row eke, pos, neg, diff
+# fourth row eke, pos, neg, diff
 eke_pos_cf = eke_pos_first.plot.contourf(
-    ax=axes[2, 0],
+    ax=axes[3, 0],
     levels=eke_levels,
     cmap="RdBu_r",
     add_colorbar=False,
@@ -481,7 +534,7 @@ eke_pos_cf = eke_pos_first.plot.contourf(
     alpha = 0.8,
 )
 eke_neg_first.plot.contourf(
-    ax=axes[2, 1],
+    ax=axes[3, 1],
     levels=eke_levels,
     cmap="RdBu_r",
     add_colorbar=False,
@@ -490,7 +543,7 @@ eke_neg_first.plot.contourf(
     alpha = 0.8,
 )
 eke_diff_first.plot.contourf(
-    ax=axes[2, 2],
+    ax=axes[3, 2],
     levels=eke_diff_levels,
     cmap="RdBu_r",
     add_colorbar=False,
@@ -499,7 +552,7 @@ eke_diff_first.plot.contourf(
     alpha = 0.8,
 )
 eke_pos_last.plot.contour(
-    ax=axes[2, 0],
+    ax=axes[3, 0],
     levels=[level for level in eke_levels if level != 0],
     colors="k",
     add_colorbar=False,
@@ -507,7 +560,7 @@ eke_pos_last.plot.contour(
     linewidths=0.6,
 )
 eke_neg_last.plot.contour(
-    ax=axes[2, 1],
+    ax=axes[3, 1],
     levels=[level for level in eke_levels if level != 0],
     colors="k",
     add_colorbar=False,
@@ -515,61 +568,8 @@ eke_neg_last.plot.contour(
     linewidths=0.6,
 )
 eke_diff_last.plot.contour(
-    ax=axes[2, 2],
+    ax=axes[3, 2],
     levels=[level for level in eke_diff_levels if level != 0],
-    colors="k",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-    linewidths=0.6,
-)
-
-# fourth row ua, pos, neg, diff
-ua_pos_cf = ua_pos_first.plot.contourf(
-    ax=axes[3, 0],
-    levels=ua_levels,
-    cmap="RdBu_r",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-    extend = 'both',
-    alpha = 0.8,
-)
-ua_neg_first.plot.contourf(
-    ax=axes[3, 1],
-    levels=ua_levels,
-    cmap="RdBu_r",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-    extend = 'both',
-    alpha = 0.8,
-)
-ua_diff_first.plot.contourf(
-    ax=axes[3, 2],
-    levels=ua_diff_levels,
-    cmap="RdBu_r",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-    extend = 'both',
-    alpha = 0.8,
-)
-ua_pos_last.plot.contour(
-    ax=axes[3, 0],
-    levels=[level for level in ua_levels if level != 0],
-    colors="k",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-    linewidths=0.6,
-)
-ua_neg_last.plot.contour(
-    ax=axes[3, 1],
-    levels=[level for level in ua_levels if level != 0],
-    colors="k",
-    add_colorbar=False,
-    transform=ccrs.PlateCarree(),
-    linewidths=0.6,
-)
-ua_diff_last.plot.contour(
-    ax=axes[3, 2],
-    levels=[level for level in ua_diff_levels if level != 0],
     colors="k",
     add_colorbar=False,
     transform=ccrs.PlateCarree(),
@@ -645,10 +645,10 @@ for i, ax in enumerate(axes.flatten()):
 
 # --- Colorbars ---
 rows_config = [
+    (ua_pos_cf,    ua_levels,    ua_diff_levels,    "ua / m s$^{-1}$",          'both'),
     (cwb_pos_cf,   cwb_levels,   cwb_diff_levels,   "CWB / day",  'both'),
     (awb_pos_cf,   awb_levels,   awb_diff_levels,   "AWB / day",  'both'),
     (eke_pos_cf,   eke_levels,   eke_diff_levels,   "EKE / m$^2$ s$^{-2}$",    'both'),
-    (ua_pos_cf,    ua_levels,    ua_diff_levels,    "ua / m s$^{-1}$",          'both'),
     (baroc_pos_cf, baroc_levels, baroc_diff_levels, "$\\sigma_E$ / day$^{-1}$",        'both'),
 ]
 
