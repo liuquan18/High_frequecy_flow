@@ -227,10 +227,10 @@ sum_pos_last_df["eddy_heat_dy"] = transient_pos_last_df["eddy_heat_dy"] + steady
 sum_neg_last_df = transient_neg_last_df.copy()
 sum_neg_last_df["eddy_heat_dy"] = transient_neg_last_df["eddy_heat_dy"] + steady_neg_last_df["eddy_heat_dy"]
 #%%
-momentum_pos_first_df = to_dataframe(momentum_pos_first, momentum_clima_first, "momentum_flux_divergence", "pos", "1850", plev = None,)
-momentum_neg_first_df = to_dataframe(momentum_neg_first, momentum_clima_first, "momentum_flux_divergence", "neg", "1850", plev = None,)
-momentum_pos_last_df = to_dataframe(momentum_pos_last, momentum_clima_last, "momentum_flux_divergence", "pos", "2090", plev = None,)
-momentum_neg_last_df = to_dataframe(momentum_neg_last, momentum_clima_last, "momentum_flux_divergence", "neg", "2090", plev = None,)
+momentum_pos_first_df = to_dataframe(momentum_pos_first, momentum_clima_first, "momentum_flux_divergence", "pos", "1850", plev = None,lon_slice = slice(None, None), lat_slice = slice(None, None))
+momentum_neg_first_df = to_dataframe(momentum_neg_first, momentum_clima_first, "momentum_flux_divergence", "neg", "1850", plev = None,lon_slice = slice(None, None), lat_slice = slice(None, None))
+momentum_pos_last_df = to_dataframe(momentum_pos_last, momentum_clima_last, "momentum_flux_divergence", "pos", "2090", plev = None,lon_slice = slice(None, None), lat_slice = slice(None, None))
+momentum_neg_last_df = to_dataframe(momentum_neg_last, momentum_clima_last, "momentum_flux_divergence", "neg", "2090", plev = None,lon_slice = slice(None, None), lat_slice = slice(None, None))
 
 
 #%%
