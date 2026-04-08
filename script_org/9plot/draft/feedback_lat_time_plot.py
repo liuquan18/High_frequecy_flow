@@ -141,7 +141,7 @@ cwb_lev  = np.arange(-1, 1.1, 0.5)
 
 
 # %% Shared plot function
-def _make_fig(rows_data, suptitle=""):
+def _make_fig(rows_data, suptitle="", col_titles=None):
     """Create a (nrows × 3) lat-time figure.
 
     rows_data: list of (d1, d2, lev, lev_dd, label)
@@ -164,7 +164,7 @@ def _make_fig(rows_data, suptitle=""):
     for row_idx, (d1, d2, lvl, ddlv, label) in enumerate(rows_data):
         t   = d1.time.values
         lat = d1.lat.values
-        dd  = d2 - d1
+        dd  = d2 - d1  # col2 − col1 (e.g. 2090s − 1850s, or neg − pos)
 
         for col_idx, (data, lv) in enumerate([(d1, lvl), (d2, lvl), (dd, ddlv)]):
             ax = axes[row_idx, col_idx]
@@ -208,7 +208,8 @@ def _make_fig(rows_data, suptitle=""):
         ax.set_xlim(-5, 20)
         ax.axvline(0, color="k", linestyle=":", linewidth=0.5)
 
-    for ax, title in zip(axes[0, :], ["1850s", "2090s", "2090s - 1850s"]):
+    _col_titles = col_titles if col_titles is not None else ["1850s", "2090s", "2090s - 1850s"]
+    for ax, title in zip(axes[0, :], _col_titles):
         ax.set_title(title, fontsize=8)
 
     if suptitle:
@@ -216,6 +217,72 @@ def _make_fig(rows_data, suptitle=""):
 
     return fig
 
+
+def _make_change_fig(rows_data, suptitle="", col_titles=None):
+    """Like _make_fig but col3 = d1 - d2 (col1 − col2, e.g. Δpos − Δneg)."""
+    fig, axes = plt.subplots(
+        nrows=len(rows_data), ncols=3,
+        figsize=(8, 14),
+        constrained_layout=False,
+        sharey=True, sharex=True,
+    )
+    fig.subplots_adjust(left=0.09, right=0.83, top=0.93, bottom=0.08,
+                        wspace=0.08, hspace=0.22)
+
+    for row_idx, (d1, d2, lvl, ddlv, label) in enumerate(rows_data):
+        t   = d1.time.values
+        lat = d1.lat.values
+        dd  = d1 - d2  # col1 − col2 (e.g. Δpos − Δneg)
+
+        for col_idx, (data, lv) in enumerate([(d1, lvl), (d2, lvl), (dd, ddlv)]):
+            ax = axes[row_idx, col_idx]
+            cf = ax.contourf(t, lat, data.values.T, levels=lv, cmap="RdBu_r", extend="both")
+            ax.contour(t, lat, data.values.T,
+                       levels=[l for l in lv if l != 0], colors="k", linewidths=0.5)
+            if col_idx == 0:
+                cf_main = cf
+
+        bbox = axes[row_idx, 2].get_position()
+        cax = fig.add_axes([bbox.x1 + 0.04, bbox.y0, 0.016, bbox.height])
+        cb = fig.colorbar(cf_main, cax=cax, orientation="vertical", extend="both")
+        cb.set_ticks(lvl)
+        cb.ax.tick_params(labelsize=7)
+        cb.ax.yaxis.set_ticks_position("left")
+        cb.ax.yaxis.set_label_position("left")
+        cb.ax.set_title(label, fontsize=7, pad=4)
+
+        pmin, pmax = float(lvl[0]),  float(lvl[-1])
+        dmin, dmax = float(ddlv[0]), float(ddlv[-1])
+        ax_sec = cax.secondary_yaxis(
+            "right",
+            functions=(lambda x, pm=pmin, pm2=pmax, dm=dmin, dm2=dmax:
+                           dm + (x - pm) * (dm2 - dm) / (pm2 - pm),
+                       lambda x, pm=pmin, pm2=pmax, dm=dmin, dm2=dmax:
+                           pm + (x - dm) * (pm2 - pm) / (dm2 - dm)),
+        )
+        ax_sec.set_yticks(ddlv)
+        ax_sec.tick_params(labelsize=7)
+
+    n_last = 3 * (len(rows_data) - 1)
+    for i, ax in enumerate(axes.flatten()):
+        if i >= n_last:
+            ax.set_xlabel("Lag (days)", fontsize=8)
+        if i % 3 == 0:
+            ax.set_ylabel("Latitude (°N)", fontsize=8)
+        ax.tick_params(labelsize=7)
+        ax.text(0.02, 0.98, chr(97 + i), transform=ax.transAxes,
+                fontsize=9, fontweight="bold", va="top", ha="left")
+        ax.set_xlim(-5, 20)
+        ax.axvline(0, color="k", linestyle=":", linewidth=0.5)
+
+    _col_titles = col_titles if col_titles is not None else ["col1", "col2", "col1 - col2"]
+    for ax, title in zip(axes[0, :], _col_titles):
+        ax.set_title(title, fontsize=8)
+
+    if suptitle:
+        fig.suptitle(suptitle, fontsize=10, y=0.97)
+
+    return fig
 
 # %% Plot 1 – difference (pos - neg)
 diff_rows = [
@@ -262,6 +329,27 @@ fig_neg = _make_fig(neg_rows, suptitle="NAO negative")
 
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_neg_ua_grad_upvp.pdf",
+    dpi=300,
+)
+
+# %% Plot 4 – Decadal change: Δ NAO+ | Δ NAO− | Δ NAO+ − Δ NAO−
+# col1 = pos_2090 − pos_1850,  col2 = neg_2090 − neg_1850,  col3 = col1 − col2
+change_rows = [
+    (ua_p2  - ua_p1,  ua_n2  - ua_n1,  ua_dlev  / 2, ua_dlev  / 2, "$\\delta u$ / m s$^{-1}$"),
+    (awb_p2 - awb_p1, awb_n2 - awb_n1, awb_dlev / 2, awb_dlev / 2, "$\\delta$ awb / day"),
+    (cwb_p2 - cwb_p1, cwb_n2 - cwb_n1, cwb_dlev / 2, cwb_dlev / 2, "$\\delta$ cwb / day"),
+    (uag_p2 - uag_p1, uag_n2 - uag_n1, uag_dlev / 2, uag_dlev / 2, "$\\delta(\\partial_y u)$ / day$^{-1}$"),
+    (uv_p2  - uv_p1,  uv_n2  - uv_n1,  uv_dlev  / 2, uv_dlev  / 2, "$\\delta(u'v')$ / m$^2$ s$^{-2}$"),
+    (mom_p2 - mom_p1, mom_n2 - mom_n1, mom_dlev / 2, mom_dlev / 2,  "$\\delta(\\partial_y u'v')$ / m s$^{-1}$ day$^{-1}$"),
+]
+fig_change = _make_change_fig(
+    change_rows,
+    suptitle="Decadal change (2090s $-$ 1850s)",
+    col_titles=["$\\delta$ NAO+", "$\\delta$ NAO$-$", "$\\delta$ NAO+ $-$ $\\delta$ NAO$-$"],
+)
+
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_change_pos_neg.pdf",
     dpi=300,
 )
 
