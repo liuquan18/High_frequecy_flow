@@ -43,6 +43,17 @@ upvp_neg_first = _load("upvp_neg_1850")
 upvp_pos_last  = _load("upvp_pos_2090")
 upvp_neg_last  = _load("upvp_neg_2090")
 
+#%%
+awb_pos_first = _load("wb_anticyclonic_pos_1850")
+awb_neg_first = _load("wb_anticyclonic_neg_1850")
+awb_pos_last  = _load("wb_anticyclonic_pos_2090")
+awb_neg_last  = _load("wb_anticyclonic_neg_2090")
+
+#%%
+cwb_pos_first = _load("wb_cyclonic_pos_1850")
+cwb_neg_first = _load("wb_cyclonic_neg_1850")
+cwb_pos_last  = _load("wb_cyclonic_pos_2090")
+cwb_neg_last  = _load("wb_cyclonic_neg_2090")
 
 # %%
 ua_pos_first=ua_pos_first.sel(plev = 25000)
@@ -59,6 +70,9 @@ upvp_neg_last=upvp_neg_last.sel(plev = 25000)
 # %% Prepare: average over event dim, compute diffs, scale baroclinicity
 def _em(da):
     return da.mean(dim="event").sel(lat=slice(0, 90))
+
+def _es(da):
+    return da.sum(dim="event").sel(lat=slice(0, 90)) 
 #%%
 ua_p1 = _em(ua_pos_first);  ua_n1 = _em(ua_neg_first)
 ua_p2 = _em(ua_pos_last);   ua_n2 = _em(ua_neg_last)
@@ -71,6 +85,14 @@ uv_d1 = uv_p1 - uv_n1;      uv_d2 = uv_p2 - uv_n2
 mom_p1 = _em(momentum_pos_first);  mom_n1 = _em(momentum_neg_first)
 mom_p2 = _em(momentum_pos_last);   mom_n2 = _em(momentum_neg_last)
 mom_d1 = mom_p1 - mom_n1;          mom_d2 = mom_p2 - mom_n2
+
+awb_p1 = _es(awb_pos_first);  awb_n1 = _es(awb_neg_first)
+awb_p2 = _es(awb_pos_last);   awb_n2 = _es(awb_neg_last)
+awb_d1 = awb_p1 - awb_n1;      awb_d2 = awb_p2 - awb_n2 
+
+cwb_p1 = _es(cwb_pos_first);  cwb_n1 = _es(cwb_neg_first)
+cwb_p2 = _es(cwb_pos_last);   cwb_n2 = _es(cwb_neg_last)
+cwb_d1 = cwb_p1 - cwb_n1;      cwb_d2 = cwb_p2 - cwb_n2
 
 
 #%%
@@ -104,18 +126,22 @@ ua_dlev   = np.arange(-12, 13, 2)
 uag_dlev   = np.arange(-2, 2.1, 0.4)   # day⁻¹ (×86400 from s⁻¹)
 uv_dlev   = np.arange(-20, 21, 4)
 mom_dlev  = np.arange(-3, 3.1, 0.5)    # m/s/day
+awb_dlev  = np.arange(-3, 3.1, 1)    # day
+cwb_dlev  = np.arange(-1, 1.1, 0.5)    # day
 
 
 diff_rows = [
     (ua_d1,  ua_d2,  ua_dlev,  "$\Delta u$ / m s$^{-1}$"),
+    (awb_d1, awb_d2, awb_dlev, "$\Delta$ awb / day"),
+    (cwb_d1, cwb_d2, cwb_dlev, "$\Delta$ cwb / day"),
     (uag_d1, uag_d2, uag_dlev,  "$\\Delta(\\partial_y u)$ / day$^{-1}$"),
     (uv_d1,  uv_d2,  uv_dlev,  "$\Delta(u'v')$ / m$^2$ s$^{-2}$"),
     (mom_d1, mom_d2, mom_dlev,  "$\Delta(\\partial_y u'v')$ / m s$^{-1}$ day$^{-1}$"),
 ]
 
 fig2, axes2 = plt.subplots(
-    nrows=4, ncols=3,
-    figsize=(10, 9),
+    nrows=len(diff_rows), ncols=3,
+    figsize=(8, 14),
     constrained_layout=False,
     sharey=True,
     sharex=True,
@@ -164,8 +190,9 @@ for row_idx, (d1, d2, dlvl, label) in enumerate(diff_rows):
         pass
 
 # axis labels and panel letters
+n_last_row_start = 3 * (len(diff_rows) - 1)
 for i, ax in enumerate(axes2.flatten()):
-    if i >= 9:
+    if i >= n_last_row_start:
         ax.set_xlabel("Lag (days)", fontsize=8)
     if i % 3 == 0:
         ax.set_ylabel("Latitude (°N)", fontsize=8)
