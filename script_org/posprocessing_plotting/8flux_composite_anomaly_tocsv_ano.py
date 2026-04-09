@@ -1,4 +1,4 @@
-
+#%%
 import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
@@ -186,7 +186,7 @@ steady_eddy_heat_d2y2_pos_last_df  = to_dataframe(steady_eddy_heat_d2y2_pos_last
 steady_eddy_heat_d2y2_neg_last_df  = to_dataframe(steady_eddy_heat_d2y2_neg_last,  "steady_eddy_heat_d2y2", "neg", 2090, ds_clim = steady_eddy_heat_d2y2_last)
 #%%
 # save the above dataframes for plotting
-save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/EOF_Region"
+save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/anomaly"
 os.makedirs(save_dir, exist_ok=True)
 _to_save = {
     "awb_pos_first_df": awb_pos_first_df,
@@ -224,3 +224,5 @@ _to_save = {
 }
 for name, df in _to_save.items():
     df.to_csv(os.path.join(save_dir, f"{name}.csv"), index=False)
+
+# %%
