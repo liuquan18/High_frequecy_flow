@@ -57,26 +57,41 @@ def _read_all(var_name, name=None, method="no_stat", chunks=None):
 # Jet stream zonal wind
 ua = _read_all("ua", name="ua")
 
-# Convergence of transient eddy momentum flux
-momentum = _read_all("Fdiv_phi_transient", name="div")
-
-# Transient eddy momentum flux (u'v')
-upvp = _read_all("upvp", name="upvp")
-
 # Baroclinicity (Eady growth rate)
 baroc = _read_all("eady_growth_rate", name="eady_growth_rate")
+baroc = {key: baroc[key].sel(plev=85000) for key in baroc}
 
 # Steady eddies / blocking (geopotential height)
 steady = _read_all("zg_steady", name="zg", method=None)
 
-# Transient meridional heat flux (v'T')
-vsts = _read_all("vsets", name="vsets")
 
-# Transient poleward heat flux
+# Transient eddy momentum flux (u'v')
+upvp = _read_all("upvp", name="upvp")
+
+# Transient eddy heat flux
 vptp = _read_all("vpetp", name="vpetp")
+
+# steady eddy momentum flux (u'v')
+uvs = _read_all("usvs", name="usvs")
+
+# steady eddy heat flux (v'T')
+vsts = _read_all("vsets", name="vsets")
 
 # Steady eddy meridional heat flux gradient
 vstsdy = _read_all("steady_eddy_heat_dy", name="eddy_heat_dy")
+#%%
+# Convergence of transient eddy momentum flux
+Fdiv_phi_transient = _read_all("Fdiv_phi_transient", name="div")
+
+# Convergence of steady eddy momentum flux
+Fdiv_phi_steady = _read_all("Fdiv_phi_steady", name="div")
+
+#%% 
+# second meridional gradient of transient eddy heat flux
+transient_eddy_heat_d2y2 = _read_all("transient_eddy_heat_d2y2", name="eddy_heat_d2y2")
+
+# second meridional gradient of steady eddy heat flux
+steady_eddy_heat_d2y2 = _read_all("steady_eddy_heat_d2y2", name="eddy_heat_d2y2")
 
 #%%
 eke = _read_all("eke", name="eke")
@@ -103,14 +118,18 @@ _to_save = {
     # "upvp_neg_1850":                  upvp["neg_1850"],
     # "upvp_pos_2090":                  upvp["pos_2090"],
     # "upvp_neg_2090":                  upvp["neg_2090"],
-    # "Fdiv_phi_transient_pos_1850":    momentum["pos_1850"],
-    # "Fdiv_phi_transient_neg_1850":    momentum["neg_1850"],
-    # "Fdiv_phi_transient_pos_2090":    momentum["pos_2090"],
-    # "Fdiv_phi_transient_neg_2090":    momentum["neg_2090"],
-    # "eady_growth_rate_pos_1850":      baroc["pos_1850"],
-    # "eady_growth_rate_neg_1850":      baroc["neg_1850"],
-    # "eady_growth_rate_pos_2090":      baroc["pos_2090"],
-    # "eady_growth_rate_neg_2090":      baroc["neg_2090"],
+    # "Fdiv_phi_transient_pos_1850":    Fdiv_phi_transient["pos_1850"],
+    # "Fdiv_phi_transient_neg_1850":    Fdiv_phi_transient["neg_1850"],
+    # "Fdiv_phi_transient_pos_2090":    Fdiv_phi_transient["pos_2090"],
+    # "Fdiv_phi_transient_neg_2090":    Fdiv_phi_transient["neg_2090"],
+    # "Fdiv_phi_steady_pos_1850":       Fdiv_phi_steady["pos_1850"],
+    # "Fdiv_phi_steady_neg_1850":       Fdiv_phi_steady["neg_1850"],
+    # "Fdiv_phi_steady_pos_2090":       Fdiv_phi_steady["pos_2090"],
+    # "Fdiv_phi_steady_neg_2090":       Fdiv_phi_steady["neg_2090"],
+    "eady_growth_rate_pos_1850":      baroc["pos_1850"],
+    "eady_growth_rate_neg_1850":      baroc["neg_1850"],
+    "eady_growth_rate_pos_2090":      baroc["pos_2090"],
+    "eady_growth_rate_neg_2090":      baroc["neg_2090"],
     # "zg_steady_pos_1850":             steady["pos_1850"],
     # "zg_steady_neg_1850":             steady["neg_1850"],
     # "zg_steady_pos_2090":             steady["pos_2090"],
@@ -127,10 +146,18 @@ _to_save = {
     # "vpetp_neg_1850":                 vptp["neg_1850"],
     # "vpetp_pos_2090":                 vptp["pos_2090"],
     # "vpetp_neg_2090":                 vptp["neg_2090"],
-    "eke_pos_1850":                  eke["pos_1850"],
-    "eke_neg_1850":                  eke["neg_1850"],
-    "eke_pos_2090":                  eke["pos_2090"],
-    "eke_neg_2090":                  eke["neg_2090"],
+    # "eke_pos_1850":                  eke["pos_1850"],
+    # "eke_neg_1850":                  eke["neg_1850"],
+    # "eke_pos_2090":                  eke["pos_2090"],
+    # "eke_neg_2090":                  eke["neg_2090"],
+    # "transient_eddy_heat_d2y2_pos_1850": transient_eddy_heat_d2y2["pos_1850"],
+    # "transient_eddy_heat_d2y2_neg_1850": transient_eddy_heat_d2y2["neg_1850"],
+    # "transient_eddy_heat_d2y2_pos_2090": transient_eddy_heat_d2y2["pos_2090"],
+    # "transient_eddy_heat_d2y2_neg_2090": transient_eddy_heat_d2y2["neg_2090"],
+    # "steady_eddy_heat_d2y2_pos_1850": steady_eddy_heat_d2y2["pos_1850"],
+    # "steady_eddy_heat_d2y2_neg_1850": steady_eddy_heat_d2y2["neg_1850"],
+    # "steady_eddy_heat_d2y2_pos_2090": steady_eddy_heat_d2y2["pos_2090"],
+    # "steady_eddy_heat_d2y2_neg_2090": steady_eddy_heat_d2y2["neg_2090"],
 }
 
 for fname, da in _to_save.items():

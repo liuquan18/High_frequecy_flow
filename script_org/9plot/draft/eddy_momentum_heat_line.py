@@ -63,17 +63,8 @@ heat_steady_neg_last_df = heat_steady_neg_last_df[
     (heat_steady_neg_last_df["time"] >= -20) & (heat_steady_neg_last_df["time"] <= 20)
 ]
 
-# read momentum data
-moment_transient_first_df = pd.read_csv(
-    os.path.join(momentum_dir, "transient_first_ano_plev25000.csv")
-)
-moment_transient_pos_first_df = moment_transient_first_df[
-    moment_transient_first_df["phase"] == "pos"
-]
-moment_transient_neg_first_df = moment_transient_first_df[
-    moment_transient_first_df["phase"] == "neg"
-]
-
+#%%
+# mementum for steady eddies from old data
 moment_steady_first_df = pd.read_csv(
     os.path.join(momentum_dir, "steady_first_ano_plev25000.csv")
 )
@@ -82,16 +73,6 @@ moment_steady_pos_first_df = moment_steady_first_df[
 ]
 moment_steady_neg_first_df = moment_steady_first_df[
     moment_steady_first_df["phase"] == "neg"
-]
-
-moment_transient_last_df = pd.read_csv(
-    os.path.join(momentum_dir, "transient_last_ano_plev25000.csv")
-)
-moment_transient_pos_last_df = moment_transient_last_df[
-    moment_transient_last_df["phase"] == "pos"
-]
-moment_transient_neg_last_df = moment_transient_last_df[
-    moment_transient_last_df["phase"] == "neg"
 ]
 
 moment_steady_last_df = pd.read_csv(
@@ -104,7 +85,9 @@ moment_steady_neg_last_df = moment_steady_last_df[
     moment_steady_last_df["phase"] == "neg"
 ]
 #%%
-base_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pdf/"
+base_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/"
+
+
 #%%
 awb_pos_first_df = pd.read_csv(os.path.join(base_dir, "awb_pos_first_smooth_pv_dy.csv"))
 awb_neg_first_df = pd.read_csv(os.path.join(base_dir, "awb_neg_first_smooth_pv_dy.csv"))
@@ -132,6 +115,13 @@ baroc_neg_first_df['eady_growth_rate'] = baroc_neg_first_df['eady_growth_rate'] 
 baroc_pos_last_df['eady_growth_rate'] = baroc_pos_last_df['eady_growth_rate'] * 86400
 baroc_neg_last_df['eady_growth_rate'] = baroc_neg_last_df['eady_growth_rate'] * 86400
 #%%
+moment_transient_pos_first_df = pd.read_csv(os.path.join(base_dir, "Fdiv_phi_transient_pos_first.csv"))
+moment_transient_neg_first_df = pd.read_csv(os.path.join(base_dir, "Fdiv_phi_transient_neg_first.csv"))
+moment_transient_pos_last_df = pd.read_csv(os.path.join(base_dir, "Fdiv_phi_transient_pos_last.csv"))
+moment_transient_neg_last_df = pd.read_csv(os.path.join(base_dir, "Fdiv_phi_transient_neg_last.csv"))
+
+
+#%%
 # only keep time between -20 and 20
 def filter_time(df):
     return df[(df["time"] >= -20) & (df["time"] <= 20)]
@@ -155,8 +145,10 @@ baroc_neg_first_df = filter_time(baroc_neg_first_df)
 baroc_pos_last_df = filter_time(baroc_pos_last_df)
 baroc_neg_last_df = filter_time(baroc_neg_last_df)
 
-
-
+moment_transient_pos_first_df = filter_time(moment_transient_pos_first_df)
+moment_transient_neg_first_df = filter_time(moment_transient_neg_first_df)
+moment_transient_pos_last_df = filter_time(moment_transient_pos_last_df)
+moment_transient_neg_last_df = filter_time(moment_transient_neg_last_df)
 
 #%%
 def mean_diff_vs_1std(first_df, last_df, var_name):
@@ -239,9 +231,9 @@ _plot_diff_bars(bar_axes[0][0], awb_pos_first_df, awb_neg_first_df, awb_pos_last
 _plot_diff_bars(bar_axes[0][1], cwb_pos_first_df, cwb_neg_first_df, cwb_pos_last_df, cwb_neg_last_df, "smooth_pv")
 
 # ===== Row 1: Transient momentum / Steady momentum =====
-_plot_quartet(main_axes[1][0], moment_transient_pos_first_df, moment_transient_neg_first_df, moment_transient_pos_last_df, moment_transient_neg_last_df, "N")
+_plot_quartet(main_axes[1][0], moment_transient_pos_first_df, moment_transient_neg_first_df, moment_transient_pos_last_df, moment_transient_neg_last_df, "momentum_flux_divergence")
 _plot_quartet(main_axes[1][1], moment_steady_pos_first_df, moment_steady_neg_first_df, moment_steady_pos_last_df, moment_steady_neg_last_df, "N")
-_plot_diff_bars(bar_axes[1][0], moment_transient_pos_first_df, moment_transient_neg_first_df, moment_transient_pos_last_df, moment_transient_neg_last_df, "N")
+_plot_diff_bars(bar_axes[1][0], moment_transient_pos_first_df, moment_transient_neg_first_df, moment_transient_pos_last_df, moment_transient_neg_last_df, "momentum_flux_divergence")
 _plot_diff_bars(bar_axes[1][1], moment_steady_pos_first_df, moment_steady_neg_first_df, moment_steady_pos_last_df, moment_steady_neg_last_df, "N")
 
 # ===== Row 2: EKE / Baroclinicity =====
@@ -324,10 +316,10 @@ for r in range(4):
         )
         panel_idx += 1
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines.pdf",
-    dpi=300, bbox_inches="tight",
-)
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines.pdf",
+#     dpi=300, bbox_inches="tight",
+# )
 
 
 # %%
