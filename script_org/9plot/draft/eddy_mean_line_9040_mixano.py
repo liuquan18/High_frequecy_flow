@@ -170,10 +170,10 @@ main_axes[0][0].set_title("AWB")
 main_axes[0][1].set_title("CWB")
 main_axes[1][0].set_title("eddy momentum forcing \n (transient)")
 main_axes[1][1].set_title("eddy momentum forcing \n (Quasi-stationary)")
-main_axes[2][0].set_title("EKE")
-main_axes[2][1].set_title("Baroclinicity")
-main_axes[3][0].set_title("eddy thermal feedback \n (transient)")
-main_axes[3][1].set_title("eddy thermal feedback \n (Quasi-stationary)")
+main_axes[2][0].set_title("EKE ano")
+main_axes[2][1].set_title("Baroclinicity ano")
+main_axes[3][0].set_title("eddy thermal feedback ano\n (transient)")
+main_axes[3][1].set_title("eddy thermal feedback ano\n (Quasi-stationary)")
 
 # ===== y-labels =====
 main_axes[0][0].set_ylabel("Rossby wave breaking / day")
@@ -214,12 +214,12 @@ phase_handles = [
 ]
 decade_legend = main_axes[1][1].legend(
     handles=decade_handles, title="decade",
-    loc="lower left", bbox_to_anchor=(0.1, 0.08), frameon=False,
+    loc="lower left", bbox_to_anchor=(0.1, 0.7), frameon=False,
 )
 main_axes[1][1].add_artist(decade_legend)
 main_axes[1][1].legend(
     handles=phase_handles, title="phase",
-    loc="lower left", bbox_to_anchor=(0.5, 0.08), frameon=False,
+    loc="lower left", bbox_to_anchor=(0.5, 0.7), frameon=False,
 )
 
 # ===== Panel labels =====
