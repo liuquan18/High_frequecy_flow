@@ -122,8 +122,8 @@ baroc_neg_df = pd.concat([baroc_neg_first_df, baroc_neg_last_df], ignore_index=T
 baroc_neg_df['baroclinicity'] = baroc_neg_df['baroclinicity'] * 86400 # convert to day^-1   
 
 
-zg_hat_neg_first_df = to_dataframe(zg_hat_neg_first, "zg_steady", "neg", 1850, lat_slice= slice(60, 80))
-zg_hat_neg_last_df  = to_dataframe(zg_hat_neg_last,  "zg_steady", "neg", 2090, lat_slice= slice(60, 80))
+zg_hat_neg_first_df = to_dataframe(zg_hat_neg_first, "GB_index", "neg", 1850, lat_slice= slice(60, 80))
+zg_hat_neg_last_df  = to_dataframe(zg_hat_neg_last,  "GB_index", "neg", 2090, lat_slice= slice(60, 80))
 zg_hat_neg_df = pd.concat([zg_hat_neg_first_df, zg_hat_neg_last_df], ignore_index=True)
 
 # drop plev from zg_steady and baroc_neg
@@ -137,7 +137,7 @@ neg_df = baroc_neg_df.merge(zg_hat_neg_df, on=['event', 'time', 'phase', 'decade
 COLOR_1850 = "#4C72B0"
 COLOR_2090 = "#DD8452"
 
-fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+fig, axes = plt.subplots(1, 2, figsize=(10, 5))
 
 # ----- Plot 1: pos_df, x=jet_lat, y=awb -----
 sns.scatterplot(
@@ -155,9 +155,9 @@ axes[0].set_ylim(-0.01, 0.03)
 
 # ----- Plot 2: neg_df, x=baroclinicity, y=cwb -----
 sns.scatterplot(
-    data = neg_df.groupby(['event', 'phase', 'decade'])[['baroclinicity', 'zg_steady']].mean().reset_index(),
+    data = neg_df.groupby(['event', 'phase', 'decade'])[['baroclinicity', 'GB_index']].mean().reset_index(),
     y= "baroclinicity",
-    x = "zg_steady",
+    x = "GB_index",
     alpha = 0.8,
     palette = [COLOR_1850, COLOR_2090],
     hue = "decade",
@@ -165,6 +165,15 @@ sns.scatterplot(
     sizes = 0.5,
 )
 
+# remove upper and right spines
+for ax in axes:
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
 
+axes[0].set_xlabel("Jet Latitude (°N)")
+axes[0].set_ylabel("AWB / day")
+axes[1].set_xlabel("GB Index")
+axes[1].set_ylabel("Baroclinicity / $day^{-1}$")
+plt.tight_layout()
 
 # %%
