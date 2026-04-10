@@ -175,6 +175,6 @@ axes[0].set_ylabel("AWB / day")
 axes[1].set_xlabel("GB Index")
 axes[1].set_ylabel("Baroclinicity / $day^{-1}$")
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/flux_composite_density.png", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/flux_composite_density.pdf")
 
 # %%
