@@ -61,9 +61,11 @@ ua = _read_all("ua", name="ua")
 baroc = _read_all("eady_growth_rate", name="eady_growth_rate")
 baroc = {key: baroc[key].sel(plev=85000) for key in baroc}
 
+#%%
 # Steady eddies / blocking (geopotential height)
-steady = _read_all("zg_steady", name="zg", method=None)
-
+steady = _read_all("zg_steady", name="zg", )
+zg_hat = _read_all("zg_hat", name="zg",)
+#%%
 
 # Transient eddy momentum flux (u'v')
 upvp = _read_all("upvp", name="upvp")
@@ -104,7 +106,7 @@ def _zonal_mean(da, lon_min=-90, lon_max=40):
         da = da.assign_coords(lon=(da.lon + 180) % 360 - 180).sortby("lon")
     return da.sel(lon=slice(lon_min, lon_max)).mean(dim="lon")
 
-# %% Save all variables to 0composite_feedback
+#  Save all variables to 0composite_feedback
 
 save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback"
 os.makedirs(save_dir, exist_ok=True)
@@ -126,10 +128,10 @@ _to_save = {
     # "Fdiv_phi_steady_neg_1850":       Fdiv_phi_steady["neg_1850"],
     # "Fdiv_phi_steady_pos_2090":       Fdiv_phi_steady["pos_2090"],
     # "Fdiv_phi_steady_neg_2090":       Fdiv_phi_steady["neg_2090"],
-    "eady_growth_rate_pos_1850":      baroc["pos_1850"],
-    "eady_growth_rate_neg_1850":      baroc["neg_1850"],
-    "eady_growth_rate_pos_2090":      baroc["pos_2090"],
-    "eady_growth_rate_neg_2090":      baroc["neg_2090"],
+    # "eady_growth_rate_pos_1850":      baroc["pos_1850"],
+    # "eady_growth_rate_neg_1850":      baroc["neg_1850"],
+    # "eady_growth_rate_pos_2090":      baroc["pos_2090"],
+    # "eady_growth_rate_neg_2090":      baroc["neg_2090"],
     # "zg_steady_pos_1850":             steady["pos_1850"],
     # "zg_steady_neg_1850":             steady["neg_1850"],
     # "zg_steady_pos_2090":             steady["pos_2090"],
@@ -158,6 +160,10 @@ _to_save = {
     # "steady_eddy_heat_d2y2_neg_1850": steady_eddy_heat_d2y2["neg_1850"],
     # "steady_eddy_heat_d2y2_pos_2090": steady_eddy_heat_d2y2["pos_2090"],
     # "steady_eddy_heat_d2y2_neg_2090": steady_eddy_heat_d2y2["neg_2090"],
+    "zg_hat_pos_1850": zg_hat["pos_1850"],
+    "zg_hat_neg_1850": zg_hat["neg_1850"],
+    "zg_hat_pos_2090": zg_hat["pos_2090"],
+    "zg_hat_neg_2090": zg_hat["neg_2090"],
 }
 
 for fname, da in _to_save.items():
