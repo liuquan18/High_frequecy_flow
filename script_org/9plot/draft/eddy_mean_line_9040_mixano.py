@@ -214,12 +214,12 @@ phase_handles = [
 ]
 decade_legend = main_axes[1][1].legend(
     handles=decade_handles, title="decade",
-    loc="lower left", bbox_to_anchor=(0.1, 0.7), frameon=False,
+    loc="lower left", bbox_to_anchor=(0.1, 0.6), frameon=False,
 )
 main_axes[1][1].add_artist(decade_legend)
 main_axes[1][1].legend(
     handles=phase_handles, title="phase",
-    loc="lower left", bbox_to_anchor=(0.5, 0.7), frameon=False,
+    loc="lower left", bbox_to_anchor=(0.5, 0.6), frameon=False,
 )
 
 # ===== Panel labels =====
