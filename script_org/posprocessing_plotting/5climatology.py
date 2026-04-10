@@ -36,25 +36,29 @@ transient_eddy_heat_d2y2_last = read_climatology("transient_eddy_heat_d2y2", dec
 #%%
 steady_eddy_heat_d2y2_first = read_climatology("steady_eddy_heat_d2y2", decade="1850", name="eddy_heat_d2y2", plev = 85000)
 steady_eddy_heat_d2y2_last = read_climatology("steady_eddy_heat_d2y2", decade="2090", name="eddy_heat_d2y2", plev = 85000)
-                                               
+#%%
+zg_steady_first = read_climatology("zg_steady", decade="1850", name="zg", plev = 50000)
+zg_steady_last = read_climatology("zg_steady", decade="2090", name="zg", plev = 50000)
 #%%
 # save 
 save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0flux_climatology"
 os.makedirs(save_dir, exist_ok=True)
 
 _to_save = {
-    "Fdiv_phi_transient_first": Fdiv_phi_transient_first,
-    "Fdiv_phi_transient_last": Fdiv_phi_transient_last,
-    "Fdiv_phi_steady_first": Fdiv_phi_steady_first,
-    "Fdiv_phi_steady_last": Fdiv_phi_steady_last,
-    "eke_first": eke_first,
-    "eke_last": eke_last,
-    "baroc_first": baroc_first,
-    "baroc_last": baroc_last,
-    "transient_eddy_heat_d2y2_first": transient_eddy_heat_d2y2_first,
-    "transient_eddy_heat_d2y2_last": transient_eddy_heat_d2y2_last,
-    "steady_eddy_heat_d2y2_first": steady_eddy_heat_d2y2_first,
-    "steady_eddy_heat_d2y2_last": steady_eddy_heat_d2y2_last,
+    # "Fdiv_phi_transient_first": Fdiv_phi_transient_first,
+    # "Fdiv_phi_transient_last": Fdiv_phi_transient_last,
+    # "Fdiv_phi_steady_first": Fdiv_phi_steady_first,
+    # "Fdiv_phi_steady_last": Fdiv_phi_steady_last,
+    # "eke_first": eke_first,
+    # "eke_last": eke_last,
+    # "baroc_first": baroc_first,
+    # "baroc_last": baroc_last,
+    # "transient_eddy_heat_d2y2_first": transient_eddy_heat_d2y2_first,
+    # "transient_eddy_heat_d2y2_last": transient_eddy_heat_d2y2_last,
+    # "steady_eddy_heat_d2y2_first": steady_eddy_heat_d2y2_first,
+    # "steady_eddy_heat_d2y2_last": steady_eddy_heat_d2y2_last,
+    "zg_steady_first": zg_steady_first,
+    "zg_steady_last": zg_steady_last,
 }
 
 for name, da in _to_save.items():
