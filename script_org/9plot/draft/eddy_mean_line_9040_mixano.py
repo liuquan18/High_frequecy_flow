@@ -42,22 +42,23 @@ Fdiv_steady_pos_last_df = _load_csv("Fdiv_steady_pos_last_df")
 Fdiv_steady_neg_last_df = _load_csv("Fdiv_steady_neg_last_df")
 
 #%%
+
+awb_pos_first_df = _load_csv("awb_pos_first_df")
+awb_neg_first_df = _load_csv("awb_neg_first_df")
+awb_pos_last_df = _load_csv("awb_pos_last_df")
+awb_neg_last_df = _load_csv("awb_neg_last_df")    
+
+eke_pos_first_df = _load_csv("eke_pos_first_df")
+eke_neg_first_df = _load_csv("eke_neg_first_df")
+eke_pos_last_df = _load_csv("eke_pos_last_df")
+eke_neg_last_df = _load_csv("eke_neg_last_df")
+
+baroc_pos_first_df = _load_csv("baroc_pos_first_df")    
+baroc_neg_first_df = _load_csv("baroc_neg_first_df")
+baroc_pos_last_df = _load_csv("baroc_pos_last_df")    
+baroc_neg_last_df = _load_csv("baroc_neg_last_df")
+
 # anomaly
-awb_pos_first_df = _load_csv("awb_pos_first_df", anomaly=True)
-awb_neg_first_df = _load_csv("awb_neg_first_df", anomaly=True)
-awb_pos_last_df = _load_csv("awb_pos_last_df", anomaly=True)
-awb_neg_last_df = _load_csv("awb_neg_last_df", anomaly=True)    
-
-eke_pos_first_df = _load_csv("eke_pos_first_df", anomaly=True)
-eke_neg_first_df = _load_csv("eke_neg_first_df", anomaly=True)
-eke_pos_last_df = _load_csv("eke_pos_last_df", anomaly=True)
-eke_neg_last_df = _load_csv("eke_neg_last_df", anomaly=True)
-
-baroc_pos_first_df = _load_csv("baroc_pos_first_df", anomaly=True)
-baroc_neg_first_df = _load_csv("baroc_neg_first_df", anomaly=True)
-baroc_pos_last_df = _load_csv("baroc_pos_last_df", anomaly=True)    
-baroc_neg_last_df = _load_csv("baroc_neg_last_df", anomaly=True)
-
 transient_eddy_heat_d2y2_pos_first_df = _load_csv("transient_eddy_heat_d2y2_pos_first_df", anomaly=True)
 transient_eddy_heat_d2y2_neg_first_df = _load_csv("transient_eddy_heat_d2y2_neg_first_df", anomaly=True)
 transient_eddy_heat_d2y2_pos_last_df = _load_csv("transient_eddy_heat_d2y2_pos_last_df", anomaly=True)
@@ -170,8 +171,8 @@ main_axes[0][0].set_title("AWB")
 main_axes[0][1].set_title("CWB")
 main_axes[1][0].set_title("eddy momentum forcing \n (transient)")
 main_axes[1][1].set_title("eddy momentum forcing \n (Quasi-stationary)")
-main_axes[2][0].set_title("EKE ano")
-main_axes[2][1].set_title("Baroclinicity ano")
+main_axes[2][0].set_title("EKE")
+main_axes[2][1].set_title("Baroclinicity")
 main_axes[3][0].set_title("eddy thermal feedback ano\n (transient)")
 main_axes[3][1].set_title("eddy thermal feedback ano\n (Quasi-stationary)")
 
