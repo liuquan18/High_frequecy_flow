@@ -17,7 +17,7 @@ from shapely.geometry import box
 
 logging.basicConfig(level=logging.INFO)
 
-SUM_ISEN = True
+SUM_ISEN = False
 
 # %%
 def remap(ifile, var="ua", plev=None):
