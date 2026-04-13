@@ -422,7 +422,10 @@ def process_decade(dec):
         logging.info("Processing complete!")
 
 
-# %%
-process_decade(1850)
-process_decade(2090)
-# %%
+# # %%
+# process_decade(1850)
+# process_decade(2090)
+# # %%
+for dec in range(1850, 2100, 10):
+    logging.info(f"Starting processing for decade {dec}")
+    process_decade(dec)
