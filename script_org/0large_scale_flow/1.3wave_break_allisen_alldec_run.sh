@@ -3,7 +3,7 @@
 #SBATCH --output=wb_isent.%j.out
 #SBATCH --nodes=13
 #SBATCH --ntasks-per-node=1
-#SBATCH --time=08:00:00
+#SBATCH --time=01:00:00
 #SBATCH --partition=compute
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=0
