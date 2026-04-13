@@ -25,14 +25,14 @@ from matplotlib.gridspec import GridSpec
 # %%
 data_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback"
 
-def _load(name):
+def _load_composite(name):
     return xr.open_dataarray(os.path.join(data_dir, f"{name}.nc"))
 
 #%%
-ua_pos_first = _load("ua_pos_1850")
-ua_neg_first = _load("ua_neg_1850")
-ua_pos_last  = _load("ua_pos_2090")
-ua_neg_last  = _load("ua_neg_2090")
+ua_pos_first = _load_composite("ua_pos_1850")
+ua_neg_first = _load_composite("ua_neg_1850")
+ua_pos_last  = _load_composite("ua_pos_2090")
+ua_neg_last  = _load_composite("ua_neg_2090")
 
 ua_pos_first = ua_pos_first.sel(lat = slice(0, 70))
 ua_neg_first = ua_neg_first.sel(lat = slice(0, 70))
@@ -40,25 +40,25 @@ ua_pos_last  = ua_pos_last.sel(lat = slice(0, 70))
 ua_neg_last  = ua_neg_last.sel(lat = slice(0, 70))
 
 #%%
-awb_pos_first = _load("wb_anticyclonic_pos_1850")
-awb_neg_first = _load("wb_anticyclonic_neg_1850")
-awb_pos_last  = _load("wb_anticyclonic_pos_2090")
-awb_neg_last  = _load("wb_anticyclonic_neg_2090")
+awb_pos_first = _load_composite("wb_anticyclonic_pos_1850")
+awb_neg_first = _load_composite("wb_anticyclonic_neg_1850")
+awb_pos_last  = _load_composite("wb_anticyclonic_pos_2090")
+awb_neg_last  = _load_composite("wb_anticyclonic_neg_2090")
 
 
 #%%
 # baroclinic growth rate
-baroc_pos_first = _load("eady_growth_rate_pos_1850")
-baroc_neg_first = _load("eady_growth_rate_neg_1850")
-baroc_pos_last  = _load("eady_growth_rate_pos_2090")
-baroc_neg_last  = _load("eady_growth_rate_neg_2090")
+baroc_pos_first = _load_composite("eady_growth_rate_pos_1850")
+baroc_neg_first = _load_composite("eady_growth_rate_neg_1850")
+baroc_pos_last  = _load_composite("eady_growth_rate_pos_2090")
+baroc_neg_last  = _load_composite("eady_growth_rate_neg_2090")
 
 
 #%%
-zg_hat_pos_first = _load("zg_hat_pos_1850")
-zg_hat_neg_first = _load("zg_hat_neg_1850")
-zg_hat_pos_last  = _load("zg_hat_pos_2090")
-zg_hat_neg_last  = _load("zg_hat_neg_2090")
+zg_hat_pos_first = _load_composite("zg_hat_pos_1850")
+zg_hat_neg_first = _load_composite("zg_hat_neg_1850")
+zg_hat_pos_last  = _load_composite("zg_hat_pos_2090")
+zg_hat_neg_last  = _load_composite("zg_hat_neg_2090")
 
 
 #%%
@@ -132,6 +132,16 @@ baroc_neg_df = baroc_neg_df.drop(columns=["plev"])
 
 neg_df = baroc_neg_df.merge(zg_hat_neg_df, on=['event', 'time', 'phase', 'decade'], how='inner')
 
+#%%
+pos_df = pos_df[pos_df['time'].isin(range(0, 31))]
+neg_df = neg_df[neg_df['time'].isin(range(0, 31))]
+
+
+
+
+
+
+
 # %%
 # ===== Density plots =====
 COLOR_1850 = "#4C72B0"
@@ -152,6 +162,7 @@ sns.scatterplot(
 
 )
 axes[0].set_ylim(-0.01, 0.03)
+axes[0].set_xlim(38, 64)
 
 # ----- Plot 2: neg_df, x=baroclinicity, y=cwb -----
 sns.scatterplot(
