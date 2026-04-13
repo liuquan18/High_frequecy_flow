@@ -162,7 +162,7 @@ sns.scatterplot(
 
 )
 axes[0].set_ylim(-0.01, 0.03)
-axes[0].set_xlim(38, 64)
+axes[0].set_xlim(38, 65)
 
 # ----- Plot 2: neg_df, x=baroclinicity, y=cwb -----
 sns.scatterplot(
@@ -186,6 +186,6 @@ axes[0].set_ylabel("AWB / day")
 axes[1].set_xlabel("GB Index")
 axes[1].set_ylabel("Baroclinicity / $day^{-1}$")
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/flux_composite_density.pdf")
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/flux_composite_density.pdf")
 
 # %%
