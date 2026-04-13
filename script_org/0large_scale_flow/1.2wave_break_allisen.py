@@ -408,7 +408,7 @@ def process_decade(dec):
 
             if SUM_ISEN:
                 awb_combined = awb_combined.sum(dim="isen_level")
-                awb_path = f"/scratch/m/m300883/MPI_GE_CMIP6/wb_anticyclonic_sumisen_daily/r{ens}i1p1f1/"
+                awb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_anticyclonic_sumisen_daily/r{ens}i1p1f1/"
 
 
             # Save combined anticyclonic data
@@ -422,7 +422,7 @@ def process_decade(dec):
 
             if SUM_ISEN:
                 cwb_combined = cwb_combined.sum(dim="isen_level")
-                cwb_path = f"/scratch/m/m300883/MPI_GE_CMIP6/wb_cyclonic_sumisen_daily/r{ens}i1p1f1/"
+                cwb_path = f"/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6/wb_cyclonic_sumisen_daily/r{ens}i1p1f1/"
 
             # Save combined cyclonic data
             output_file = cwb_path + f"wb_cyclonic_ens{ens:02d}_dec{dec}_allisen.nc"
