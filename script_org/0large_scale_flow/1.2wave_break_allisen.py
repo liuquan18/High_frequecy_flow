@@ -17,6 +17,7 @@ from shapely.geometry import box
 
 logging.basicConfig(level=logging.INFO)
 
+SUM_ISEN = True
 
 # %%
 def remap(ifile, var="ua", plev=None):
@@ -405,6 +406,11 @@ def process_decade(dec):
             awb_combined = xr.concat(awb_all_valid, dim="isen_level")
             awb_combined = awb_combined.sortby("isen_level")  # Ensure sorted by level
 
+            if SUM_ISEN:
+                awb_combined = awb_combined.sum(dim="isen_level")
+                awb_path = f"/scratch/m/m300883/MPI_GE_CMIP6/wb_anticyclonic_sumisen_daily/r{ens}i1p1f1/"
+
+
             # Save combined anticyclonic data
             output_file = awb_path + f"wb_anticyclonic_ens{ens:02d}_dec{dec}_allisen.nc"
             awb_combined.to_netcdf(output_file)
@@ -413,6 +419,10 @@ def process_decade(dec):
         if len(cwb_all_valid) > 0:
             cwb_combined = xr.concat(cwb_all_valid, dim="isen_level")
             cwb_combined = cwb_combined.sortby("isen_level")  # Ensure sorted by level
+
+            if SUM_ISEN:
+                cwb_combined = cwb_combined.sum(dim="isen_level")
+                cwb_path = f"/scratch/m/m300883/MPI_GE_CMIP6/wb_cyclonic_sumisen_daily/r{ens}i1p1f1/"
 
             # Save combined cyclonic data
             output_file = cwb_path + f"wb_cyclonic_ens{ens:02d}_dec{dec}_allisen.nc"
