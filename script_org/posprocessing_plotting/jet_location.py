@@ -5,7 +5,9 @@ import numpy as np
 # %%
 def _eddy_jet (ua):
     ua = ua.assign_coords(lon=(ua.lon + 180) % 360 - 180).sortby("lon") # -180 to 180
-    ua = ua.sel(lon=slice(-90, 40),lat = slice(0, 90)) # NAO region, the same for composite mean
+    ua = ua.sel(lat = slice(0, 90)) # NAO region, the same for composite mean
+    # smooth over lat
+    ua = ua.rolling(lat=5, center=True).mean()
     ua = ua.groupby("time.year").mean(dim="time") # annual mean
     return ua.sel(plev = slice(100000, 85000)).mean(dim = ('plev', 'lon')) # zonal mean eddy driven jet
 
@@ -18,16 +20,16 @@ def jet_latitude(ua):
     return jet_lat_df
 
 #%%
-base_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_monthly_ensmean"
-ua_decades = xr.open_mfdataset(base_dir + "/*.nc", combine='by_coords', preprocess=_eddy_jet)
-
+base_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/ua_hat_monthly_ensmean"
+ua_decades = xr.open_mfdataset(base_dir + "/*.nc", combine='by_coords', preprocess=_eddy_jet, parallel=True)
+ua_decades.load()
 #%%
 # asign the decade coordinate, 1859 to 1850
-ua_decades = ua_decades.assign_coords(decade=ua_decades['year'] // 10 * 10)
+decade=ua_decades['year'] // 10 * 10
+ua_decades['year'] = decade
+ua_decades = ua_decades.rename({'year': 'decade'})
 #%%
-jet_lat_df = jet_latitude(ua_decades.ua)
+ua_decades = ua_decades.ua
+ua_jet_loc = ua_decades.idxmax(dim="lat")
 #%%
-jet_lat_df.plot(x = 'decade', y = 'jet_lat')
-# %%
-# save
-jet_lat_df.to_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0flux_climatology/jet_latitude_alldecades.csv", index=False)
+#%%

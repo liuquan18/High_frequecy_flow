@@ -1,5 +1,5 @@
 #!/bin/bash
-var='ua'
+var='ua_hat'
 var_name='ua'
 model_dir='MPI_GE_CMIP6_allplev'
 plev=None # all levels
