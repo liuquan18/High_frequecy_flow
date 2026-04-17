@@ -391,7 +391,7 @@ for j, rd in enumerate(_ref_days):
                    edgecolors="white", linewidths=0.4, clip_on=False)
     ref_ax.text(j * 1.1, _band_y - 0.15, str(rd),
                 ha="center", va="top", fontsize=7)
-ref_ax.text(0.4, 1.15, "NAO days / member",
+ref_ax.text(0.4, 1.15, "occurrence/day",
             ha="center", va="top", transform=ref_ax.transAxes,
             fontsize=8.5, style="italic")
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/flux_composite_density.pdf")
