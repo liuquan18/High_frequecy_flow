@@ -84,8 +84,8 @@ for i, member in enumerate(members_single):
 
 
 # concat the results
-theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='event')
-theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='event')
+theta_2PVU_poss = xr.concat([x for x in theta_2PVU_poss if x is not None], dim='event')
+theta_2PVU_negs = xr.concat([x for x in theta_2PVU_negs if x is not None], dim='event')
 
 #%%
 # postprocessing to align with the scatter plot
