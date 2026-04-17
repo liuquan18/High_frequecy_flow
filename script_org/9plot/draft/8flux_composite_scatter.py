@@ -1,4 +1,6 @@
 #%%
+from glob import glob
+
 import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,24 +17,27 @@ from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 from matplotlib.ticker import MaxNLocator, FuncFormatter
 
+from matplotlib.colors import LinearSegmentedColormap, ListedColormap, BoundaryNorm, to_hex
 from src.plotting.util import map_smooth
 import src.plotting.util as util
 import metpy.calc as mpcalc
 from metpy.units import units
 from matplotlib.lines import Line2D
 from matplotlib.gridspec import GridSpec
+from src.data_helper.read_NAO_extremes import read_NAO_extremes
 
 # %%
 data_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback"
 
-def _load_composite(name):
+def load_composite(name):
     return xr.open_dataarray(os.path.join(data_dir, f"{name}.nc"))
 
+# ---- 1850s and 2090s composite ----
 #%%
-ua_pos_first = _load_composite("ua_pos_1850")
-ua_neg_first = _load_composite("ua_neg_1850")
-ua_pos_last  = _load_composite("ua_pos_2090")
-ua_neg_last  = _load_composite("ua_neg_2090")
+ua_pos_first = load_composite("ua_pos_1850")
+ua_neg_first = load_composite("ua_neg_1850")
+ua_pos_last  = load_composite("ua_pos_2090")
+ua_neg_last  = load_composite("ua_neg_2090")
 
 ua_pos_first = ua_pos_first.sel(lat = slice(0, 70))
 ua_neg_first = ua_neg_first.sel(lat = slice(0, 70))
@@ -40,25 +45,25 @@ ua_pos_last  = ua_pos_last.sel(lat = slice(0, 70))
 ua_neg_last  = ua_neg_last.sel(lat = slice(0, 70))
 
 #%%
-awb_pos_first = _load_composite("wb_anticyclonic_pos_1850")
-awb_neg_first = _load_composite("wb_anticyclonic_neg_1850")
-awb_pos_last  = _load_composite("wb_anticyclonic_pos_2090")
-awb_neg_last  = _load_composite("wb_anticyclonic_neg_2090")
+awb_pos_first = load_composite("wb_anticyclonic_pos_1850")
+awb_neg_first = load_composite("wb_anticyclonic_neg_1850")
+awb_pos_last  = load_composite("wb_anticyclonic_pos_2090")
+awb_neg_last  = load_composite("wb_anticyclonic_neg_2090")
 
 
 #%%
 # baroclinic growth rate
-baroc_pos_first = _load_composite("eady_growth_rate_pos_1850")
-baroc_neg_first = _load_composite("eady_growth_rate_neg_1850")
-baroc_pos_last  = _load_composite("eady_growth_rate_pos_2090")
-baroc_neg_last  = _load_composite("eady_growth_rate_neg_2090")
+baroc_pos_first = load_composite("eady_growth_rate_pos_1850")
+baroc_neg_first = load_composite("eady_growth_rate_neg_1850")
+baroc_pos_last  = load_composite("eady_growth_rate_pos_2090")
+baroc_neg_last  = load_composite("eady_growth_rate_neg_2090")
 
 
 #%%
-zg_hat_pos_first = _load_composite("zg_hat_pos_1850")
-zg_hat_neg_first = _load_composite("zg_hat_neg_1850")
-zg_hat_pos_last  = _load_composite("zg_hat_pos_2090")
-zg_hat_neg_last  = _load_composite("zg_hat_neg_2090")
+zg_hat_pos_first = load_composite("zg_hat_pos_1850")
+zg_hat_neg_first = load_composite("zg_hat_neg_1850")
+zg_hat_pos_last  = load_composite("zg_hat_pos_2090")
+zg_hat_neg_last  = load_composite("zg_hat_neg_2090")
 
 
 #%%
@@ -93,15 +98,22 @@ def to_dataframe(ds, var_name, phase, decade, lat_slice = slice(50, 70), ds_clim
     df["decade"] = decade
     return df
 #%% calculate the jet location (lat of max ua)
-def jet_latitude(ua, phase, decade):
+def jet_latitude(ua, phase, decade = None, to_df = True):
+    # a limit of jet loc between (25, 70)
+    ua = ua.sel(lat=slice(25, 70))
     # average over lon if present, then find lat of max ua
     if "lon" in ua.dims:
         ua = ua.mean(dim="lon")
+    if "plev" in ua.dims:
+        ua = ua.sel(plev=slice(92500, 70000)).mean(dim="plev") # eddy driven jet
     jet_lat = ua.idxmax(dim="lat")
-    jet_lat_df = jet_lat.to_dataframe("jet_lat").reset_index()
-    jet_lat_df["phase"] = phase
-    jet_lat_df["decade"] = decade
-    return jet_lat_df
+    if to_df:
+        jet_lat_df = jet_lat.to_dataframe("jet_lat").reset_index()
+        jet_lat_df["phase"] = phase
+        jet_lat_df["decade"] = decade
+        return jet_lat_df
+    else:
+        return jet_lat
 
 #%%
 # awb_lat_slice = slice(40, 60)
@@ -136,18 +148,126 @@ neg_df = baroc_neg_df.merge(zg_hat_neg_df, on=['event', 'time', 'phase', 'decade
 pos_df = pos_df[pos_df['time'].isin(range(0, 31))]
 neg_df = neg_df[neg_df['time'].isin(range(0, 31))]
 
+# %% NAO daily extremes
+def NAO_extremes(return_days=False, threshold=7):
+    NAO_pos_counts = pd.DataFrame(columns=["decade", "count"])
+    NAO_neg_counts = pd.DataFrame(columns=["decade", "count"])
+
+    for i, dec in enumerate(range(1850, 2100, 10)):
+        NAO_pos = read_NAO_extremes(dec, "positive")
+        NAO_neg = read_NAO_extremes(dec, "negative")
+
+        # filter only duration above 7 days
+        NAO_pos = NAO_pos[NAO_pos["extreme_duration"] >= threshold]
+        NAO_neg = NAO_neg[NAO_neg["extreme_duration"] >= threshold]
+
+        if return_days:
+            # NAO duration sum
+            NAO_pos_count = NAO_pos["extreme_duration"].sum() / 50
+            NAO_neg_count = NAO_neg["extreme_duration"].sum() / 50
+
+        else:
+            NAO_pos_count = NAO_pos.shape[0] / 50
+            NAO_neg_count = NAO_neg.shape[0] / 50
+
+        NAO_pos_counts.loc[i] = [dec, NAO_pos_count]
+        NAO_neg_counts.loc[i] = [dec, NAO_neg_count]
+
+    return NAO_pos_counts, NAO_neg_counts
 
 
+NAO_pos_count, NAO_neg_count = NAO_extremes(False, 5)
+NAO_pos_days, NAO_neg_days = NAO_extremes(True, 5)
 
+NAO_pos_days = NAO_pos_days.rename(columns={"count": "days"})
+NAO_neg_days = NAO_neg_days.rename(columns={"count": "days"})
 
+NAO_count_merge = pd.merge(
+    NAO_pos_count, NAO_neg_count, on="decade", suffixes=("_pos", "_neg")
+)
+NAO_days_merge = pd.merge(
+    NAO_pos_days, NAO_neg_days, on="decade", suffixes=("_pos", "_neg")
+)
+NAO_merge = pd.merge(NAO_count_merge, NAO_days_merge, on="decade")
 
+NAO_merge["decade"] = NAO_merge["decade"].astype(int)
+
+#%%
+# ---- composite for each decade ----
+all_dec_dir = '/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback_alldec/'
+
+def _add_decade_dim(da, decade):
+    da = da.expand_dims(decade=[decade])
+    return da
+
+def load_composite_decade(var, phase, lat_slice = None):
+    decades = np.arange(1850, 2100, 10)
+    das = []
+    for decade in decades:
+        try:
+            da = xr.open_dataarray(os.path.join(all_dec_dir, f"{var}_NAO_{phase}_{decade}.nc"))
+            da = _add_decade_dim(da, decade)
+            das.append(da)
+        except FileNotFoundError:
+            print(f"File for decade {decade} not found, skipping")
+    if len(das) == 0:
+        raise ValueError(f"No files found for variable {var} and phase {phase}")
+  
+    das = xr.concat(das, dim="decade")
+    if lat_slice is not None:
+        das = das.sel(lat=lat_slice).mean(dim="lat")
+    return das
+
+#%%
+awb_pos_decades = load_composite_decade("wb_anticyclonic_allisen", "pos", lat_slice=slice(40, 60))
+#%%
+ua_pos_decades = load_composite_decade("ua", "pos", lat_slice=None) # for jet loc
+jet_lat_pos_decades = jet_latitude(ua_pos_decades, phase="pos", decade=None, to_df=False)
+#%%
+baroc_neg_decades = load_composite_decade("eady_growth_rate", "neg", lat_slice=slice(50, 70))
+# unit
+baroc_neg_decades = baroc_neg_decades * 86400 # convert to day^-1
+
+zg_hat_neg_decades = load_composite_decade("zg_hat", "neg", lat_slice=slice(60, 80))
+
+#%%
+# to df
+awb_pos_decades_df = awb_pos_decades.to_dataframe("awb").reset_index()
+awb_pos_decades_df["phase"] = "pos"
+jet_lat_pos_decades_df = jet_lat_pos_decades.to_dataframe("jet_lat").reset_index()
+jet_lat_pos_decades_df["phase"] = "pos"
+
+baroc_neg_decades_df = baroc_neg_decades.to_dataframe("baroclinicity").reset_index()
+baroc_neg_decades_df["phase"] = "neg"
+zg_hat_neg_decades_df = zg_hat_neg_decades.to_dataframe("GB_index").reset_index()
+zg_hat_neg_decades_df["phase"] = "neg"
+
+#%%
+dec_pos_df = awb_pos_decades_df.merge(jet_lat_pos_decades_df, on=["decade", "phase"], how="inner").merge(NAO_merge[['days_pos', 'decade']], on="decade", how="inner")
+
+dec_neg_df = baroc_neg_decades_df.merge(zg_hat_neg_decades_df, on=["decade", "phase"], how="inner").merge(NAO_merge[['days_neg', 'decade']], on="decade", how="inner")
 
 # %%
 # ===== Density plots =====
 COLOR_1850 = "#4C72B0"
 COLOR_2090 = "#DD8452"
 
-fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+# Discrete colormap: one distinct color per decade (25 decades)
+# Endpoints are pinned to row-1 colors; vivid teal anchors the middle
+_continuous = LinearSegmentedColormap.from_list(
+    "_decade_base",
+    [COLOR_1850, "#29AB87", COLOR_2090],
+    N=256,
+)
+decades_all = np.arange(1850, 2100, 10)   # 25 decades
+_n = len(decades_all)
+_colors = [to_hex(_continuous(i / (_n - 1))) for i in range(_n)]
+_cmap_decades = ListedColormap(_colors, name="decade_cmap")
+_bounds = np.arange(1845, 2100, 10)       # boundaries between decades
+_norm_decades = BoundaryNorm(_bounds, _cmap_decades.N)
+decade_palette = {int(dec): _colors[i] for i, dec in enumerate(decades_all)}
+
+fig, axes = plt.subplots(2, 2, figsize=(10, 10))
 
 # ----- Plot 1: pos_df, x=jet_lat, y=awb -----
 sns.scatterplot(
@@ -157,12 +277,12 @@ sns.scatterplot(
     alpha = 0.8,
     palette = [COLOR_1850, COLOR_2090],
     hue = "decade",
-    ax = axes[0],
+    ax = axes[0, 0],
     sizes = 0.5,
 
 )
-axes[0].set_ylim(-0.01, 0.03)
-axes[0].set_xlim(38, 65)
+axes[0, 0].set_ylim(-0.01, 0.03)
+axes[0, 0].set_xlim(38, 65)
 
 # ----- Plot 2: neg_df, x=baroclinicity, y=cwb -----
 sns.scatterplot(
@@ -172,20 +292,85 @@ sns.scatterplot(
     alpha = 0.8,
     palette = [COLOR_1850, COLOR_2090],
     hue = "decade",
-    ax = axes[1],
+    ax = axes[0, 1],
     sizes = 0.5,
 )
 
+# ----- Plot 3: dec_pos_df, x=jet_lat, y=awb, size=NAO count -----
+sns.scatterplot(
+    data = dec_pos_df.groupby(['decade', 'phase'])[['jet_lat', 'awb', 'days_pos']].mean().reset_index(),
+    x = "jet_lat",
+    y = "awb",
+    hue = "decade",
+    palette = decade_palette,
+    size = "days_pos",
+    alpha = 0.8,
+    ax = axes[1, 0],
+    legend=False,
+    sizes = (20, 300),
+)
+
+# ----- Plot 4: dec_neg_df, x=baroclinicity, y=cwb, size=NAO count -----
+sns.scatterplot(
+    data = dec_neg_df.groupby(['decade', 'phase'])[['baroclinicity', 'GB_index', 'days_neg']].mean().reset_index(),
+    x = "GB_index",
+    y = "baroclinicity",
+    hue = "decade",
+    palette = decade_palette,
+    size = "days_neg",
+    alpha = 0.8,
+    ax = axes[1, 1],
+    legend=False,
+    sizes = (20, 300),
+)
+
+
+
+
 # remove upper and right spines
-for ax in axes:
+for ax in axes.flatten():
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
-axes[0].set_xlabel("Jet Latitude (°N)")
-axes[0].set_ylabel("AWB / day")
-axes[1].set_xlabel("GB Index")
-axes[1].set_ylabel("Baroclinicity / $day^{-1}$")
+axes[0, 0].set_xlabel("Jet Latitude (°N)")
+axes[0, 0].set_ylabel("AWB / day")
+axes[0, 1].set_xlabel("GB Index")
+axes[0, 1].set_ylabel("Baroclinicity / $day^{-1}$")
+axes[1, 0].set_xlabel("Jet Latitude (°N)")
+axes[1, 0].set_ylabel("AWB / day")
+axes[1, 1].set_xlabel("GB Index")
+axes[1, 1].set_ylabel("Baroclinicity / $day^{-1}$")
+
 plt.tight_layout()
+plt.subplots_adjust(bottom=0.18)   # make room for legend row
+
+# ----- Discrete colorbar for decade (spanning the full bottom) -----
+cbar_ax = fig.add_axes([0.08, 0.06, 0.84, 0.025])   # [left, bottom, width, height]
+sm = plt.cm.ScalarMappable(cmap=_cmap_decades, norm=_norm_decades)
+sm.set_array([])
+cbar = fig.colorbar(sm, cax=cbar_ax, orientation="horizontal", spacing="uniform")
+cbar.set_ticks(decades_all[::2])           # label every other decade
+cbar.set_ticklabels([str(int(d)) for d in decades_all[::2]])
+cbar.set_label("Decade", labelpad=4)
+
+# ----- Size legend (right side of colorbar) -----
+# representative size values taken from the data range
+_size_vals = [10, 20, 30]
+_size_handles = [
+    plt.scatter([], [], s=s * 8, color="grey", alpha=0.7,
+                label=f"{s} days", edgecolors="none")
+    for s in _size_vals
+]
+fig.legend(
+    handles=_size_handles,
+    title="NAO days / member",
+    loc="lower right",
+    bbox_to_anchor=(0.99, 0.01),
+    ncol=len(_size_vals),
+    frameon=False,
+    fontsize=9,
+    title_fontsize=9,
+)
 # plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/flux_composite_density.pdf")
 
 # %%
