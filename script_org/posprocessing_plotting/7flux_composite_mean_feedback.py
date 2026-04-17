@@ -56,6 +56,7 @@ def _read_all(var_name, name=None, method="no_stat", chunks=None):
 
 # Jet stream zonal wind
 ua = _read_all("ua", name="ua")
+ua_hat = _read_all("ua_hat", name="ua")
 
 # Baroclinicity (Eady growth rate)
 baroc = _read_all("eady_growth_rate", name="eady_growth_rate")
@@ -116,6 +117,10 @@ _to_save = {
     # "ua_neg_1850":                    ua["neg_1850"],
     # "ua_pos_2090":                    ua["pos_2090"],
     # "ua_neg_2090":                    ua["neg_2090"],
+    "ua_hat_pos_1850":                  ua_hat["pos_1850"],
+    "ua_hat_neg_1850":                  ua_hat["neg_1850"],
+    "ua_hat_pos_2090":                  ua_hat["pos_2090"],    
+    "ua_hat_neg_2090":                  ua_hat["neg_2090"],
     # "upvp_pos_1850":                  upvp["pos_1850"],
     # "upvp_neg_1850":                  upvp["neg_1850"],
     # "upvp_pos_2090":                  upvp["pos_2090"],
@@ -160,10 +165,10 @@ _to_save = {
     # "steady_eddy_heat_d2y2_neg_1850": steady_eddy_heat_d2y2["neg_1850"],
     # "steady_eddy_heat_d2y2_pos_2090": steady_eddy_heat_d2y2["pos_2090"],
     # "steady_eddy_heat_d2y2_neg_2090": steady_eddy_heat_d2y2["neg_2090"],
-    "zg_hat_pos_1850": zg_hat["pos_1850"],
-    "zg_hat_neg_1850": zg_hat["neg_1850"],
-    "zg_hat_pos_2090": zg_hat["pos_2090"],
-    "zg_hat_neg_2090": zg_hat["neg_2090"],
+    # "zg_hat_pos_1850": zg_hat["pos_1850"],
+    # "zg_hat_neg_1850": zg_hat["neg_1850"],
+    # "zg_hat_pos_2090": zg_hat["pos_2090"],
+    # "zg_hat_neg_2090": zg_hat["neg_2090"],
 }
 
 for fname, da in _to_save.items():
