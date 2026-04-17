@@ -342,35 +342,58 @@ axes[1, 1].set_xlabel("GB Index")
 axes[1, 1].set_ylabel("Baroclinicity / $day^{-1}$")
 
 plt.tight_layout()
-plt.subplots_adjust(bottom=0.18)   # make room for legend row
+plt.subplots_adjust(bottom=0.22)   # make room for bubble-colorband legend
 
-# ----- Discrete colorbar for decade (spanning the full bottom) -----
-cbar_ax = fig.add_axes([0.08, 0.06, 0.84, 0.025])   # [left, bottom, width, height]
-sm = plt.cm.ScalarMappable(cmap=_cmap_decades, norm=_norm_decades)
-sm.set_array([])
-cbar = fig.colorbar(sm, cax=cbar_ax, orientation="horizontal", spacing="uniform")
-cbar.set_ticks(decades_all[::2])           # label every other decade
-cbar.set_ticklabels([str(int(d)) for d in decades_all[::2]])
-cbar.set_label("Decade", labelpad=4)
+# ===== Combined bubble-colorband legend =====
+# Left panel: colored blocks + bubbles for every decade
+# Right panel: reference scale for bubble size (NAO days)
 
-# ----- Size legend (right side of colorbar) -----
-# representative size values taken from the data range
-_size_vals = [10, 20, 30]
-_size_handles = [
-    plt.scatter([], [], s=s * 8, color="grey", alpha=0.7,
-                label=f"{s} days", edgecolors="none")
-    for s in _size_vals
-]
-fig.legend(
-    handles=_size_handles,
-    title="NAO days / member",
-    loc="lower right",
-    bbox_to_anchor=(0.99, 0.01),
-    ncol=len(_size_vals),
-    frameon=False,
-    fontsize=9,
-    title_fontsize=9,
-)
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/flux_composite_density.pdf")
+# --- size scaling (match seaborn sizes=(20,300)) ---
+_days_pos_dec = NAO_merge.set_index("decade")["days_pos"].reindex(decades_all.astype(int)).values
+_days_neg_dec = NAO_merge.set_index("decade")["days_neg"].reindex(decades_all.astype(int)).values
+_days_avg = (_days_pos_dec + _days_neg_dec) / 2
+_s_vmin, _s_vmax = _days_avg.min(), _days_avg.max()
+def _msize(v):
+    return 20 + (v - _s_vmin) / (_s_vmax - _s_vmin) * (300 - 20)
+
+# --- colorband axis (color + decade labels only) ---
+leg_ax = fig.add_axes([0.09, 0.03, 0.7, 0.08])
+leg_ax.set_xlim(1843, 2097)
+leg_ax.set_ylim(-1.5, 1.2)
+leg_ax.axis("off")
+
+# draw colored band (rectangles)
+_band_y, _band_h = 0.0, 0.8
+for i, dec in enumerate(decades_all):
+    leg_ax.add_patch(
+        plt.Rectangle((dec - 5, _band_y), 10, _band_h,
+                      color=_colors[i], zorder=1, clip_on=False)
+    )
+
+# decade labels below band (every other decade)
+for dec in decades_all[::2]:
+    leg_ax.text(dec, _band_y - 0.15, str(int(dec)),
+                ha="center", va="top", fontsize=7, rotation=45)
+
+leg_ax.text(0.5, 1.15, "Decade",
+            ha="center", va="top", transform=leg_ax.transAxes,
+            fontsize=8.5, style="italic")
+
+# --- size reference axis (right) ---
+ref_ax = fig.add_axes([0.80, 0.03, 0.16, 0.08])
+ref_ax.set_xlim(-0.5, 3.5)
+ref_ax.set_ylim(-1.5, 1.2)
+ref_ax.axis("off")
+
+_ref_days = [round(_s_vmin), round((_s_vmin + _s_vmax) / 2), round(_s_vmax)]
+for j, rd in enumerate(_ref_days):
+    ref_ax.scatter(j * 1.1, 0.4, s=_msize(rd), color="grey",
+                   edgecolors="white", linewidths=0.4, clip_on=False)
+    ref_ax.text(j * 1.1, _band_y - 0.15, str(rd),
+                ha="center", va="top", fontsize=7)
+ref_ax.text(0.4, 1.15, "NAO days / member",
+            ha="center", va="top", transform=ref_ax.transAxes,
+            fontsize=8.5, style="italic")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/flux_composite_density.pdf")
 
 # %%
