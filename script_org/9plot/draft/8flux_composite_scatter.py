@@ -220,6 +220,7 @@ def load_composite_decade(var, phase, lat_slice = None):
 
 #%%
 awb_pos_decades = load_composite_decade("wb_anticyclonic_allisen", "pos", lat_slice=slice(40, 60))
+awb_pos_decades = awb_pos_decades / 10 # per year
 #%%
 ua_pos_decades = load_composite_decade("ua", "pos", lat_slice=None) # for jet loc
 jet_lat_pos_decades = jet_latitude(ua_pos_decades, phase="pos", decade=None, to_df=False)
@@ -246,6 +247,7 @@ zg_hat_neg_decades_df["phase"] = "neg"
 dec_pos_df = awb_pos_decades_df.merge(jet_lat_pos_decades_df, on=["decade", "phase"], how="inner").merge(NAO_merge[['days_pos', 'decade']], on="decade", how="inner")
 
 dec_neg_df = baroc_neg_decades_df.merge(zg_hat_neg_decades_df, on=["decade", "phase"], how="inner").merge(NAO_merge[['days_neg', 'decade']], on="decade", how="inner")
+#%%
 
 # %%
 # ===== Density plots =====
@@ -325,8 +327,6 @@ sns.scatterplot(
 )
 
 
-
-
 # remove upper and right spines
 for ax in axes.flatten():
     ax.spines['top'].set_visible(False)
@@ -337,7 +337,7 @@ axes[0, 0].set_ylabel("AWB / day")
 axes[0, 1].set_xlabel("GB Index")
 axes[0, 1].set_ylabel("Baroclinicity / $day^{-1}$")
 axes[1, 0].set_xlabel("Jet Latitude (°N)")
-axes[1, 0].set_ylabel("AWB / day")
+axes[1, 0].set_ylabel("AWB / day $year ^{-1}$")
 axes[1, 1].set_xlabel("GB Index")
 axes[1, 1].set_ylabel("Baroclinicity / $day^{-1}$")
 
