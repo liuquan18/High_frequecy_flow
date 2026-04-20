@@ -115,19 +115,7 @@ def to_dataframe(ds, var_name, phase, decade, lat_slice = slice(50, 70), ds_clim
     df["decade"] = decade
     return df
 
-#%%
-# awb_lat_slice = slice(40, 60)
-# cwb_lat_slice = slice(50, 70)
-awb_pos_first_df = to_dataframe(awb_pos_first, "awb", "pos", 1850, lat_slice = slice(40, 60))
-awb_neg_first_df = to_dataframe(awb_neg_first, "awb", "neg", 1850, lat_slice = slice(40, 60))
-awb_pos_last_df  = to_dataframe(awb_pos_last,  "awb", "pos", 2090, lat_slice = slice(40, 60))
-awb_neg_last_df  = to_dataframe(awb_neg_last,  "awb", "neg", 2090, lat_slice = slice(40, 60))
-
-cwb_pos_first_df = to_dataframe(cwb_pos_first, "cwb", "pos", 1850, lat_slice = slice(50, 70))
-cwb_neg_first_df = to_dataframe(cwb_neg_first, "cwb", "neg", 1850, lat_slice = slice(50, 70))
-cwb_pos_last_df  = to_dataframe(cwb_pos_last,  "cwb", "pos", 2090, lat_slice = slice(50, 70))
-cwb_neg_last_df  = to_dataframe(cwb_neg_last,  "cwb", "neg", 2090, lat_slice = slice(50, 70))
-#%%
+#%%#%%
 Fdiv_transient_pos_first_df = to_dataframe(Fdiv_transient_pos_first, "Fdiv_transient", "pos", 1850, )
 Fdiv_transient_neg_first_df = to_dataframe(Fdiv_transient_neg_first, "Fdiv_transient", "neg", 1850, )
 Fdiv_transient_pos_last_df  = to_dataframe(Fdiv_transient_pos_last,  "Fdiv_transient", "pos", 2090, )
@@ -164,14 +152,6 @@ steady_eddy_heat_d2y2_neg_last_df  = to_dataframe(steady_eddy_heat_d2y2_neg_last
 save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/non_anomaly"
 os.makedirs(save_dir, exist_ok=True)
 _to_save = {
-    "awb_pos_first_df": awb_pos_first_df,
-    "awb_neg_first_df": awb_neg_first_df,
-    "awb_pos_last_df":  awb_pos_last_df,
-    "awb_neg_last_df":  awb_neg_last_df,
-    "cwb_pos_first_df": cwb_pos_first_df,
-    "cwb_neg_first_df": cwb_neg_first_df,
-    "cwb_pos_last_df":  cwb_pos_last_df,
-    "cwb_neg_last_df":  cwb_neg_last_df,
     "Fdiv_transient_pos_first_df": Fdiv_transient_pos_first_df,
     "Fdiv_transient_neg_first_df": Fdiv_transient_neg_first_df,
     "Fdiv_transient_pos_last_df":  Fdiv_transient_pos_last_df,
