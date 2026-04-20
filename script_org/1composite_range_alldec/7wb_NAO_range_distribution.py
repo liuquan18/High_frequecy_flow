@@ -89,19 +89,22 @@ theta_2PVU_negs = xr.concat([x for x in theta_2PVU_negs if x is not None], dim='
 
 #%%
 # postprocessing to align with the scatter plot
-# NAO region, -60, 30 lon, and zonal mean
-def _zonal_mean(da, lon_min=-60, lon_max=30): #-120, -30 for cwb
-    """Zonal mean over [lon_min, lon_max], handling both 0-360 and -180-180 grids."""
+# awb region [-60, 30, 40, 60], cwb region [-120, -30, 50, 70]
+def _reduce_num(da, frac = 0.1, lon_min=-60, lon_max=30, lat_min=40, lat_max=60): #lon: -120, -30; lat: 50, 70 for cwb
+    """Return 1 per (event, time) if >=frac of pixels in box have WB (value==1), else 0."""
     if da.lon.max() > 180:
         # Convert 0-360 to -180-180
         da = da.assign_coords(lon=(da.lon + 180) % 360 - 180).sortby("lon")
-    # only Northern Hemisphere, the same for composite mean
-    da = da.sel(lat=slice(0, 90))
-    return da.sel(lon=slice(lon_min, lon_max)).mean(dim="lon")
+    da_box = da.sel(lat=slice(lat_min, lat_max), lon=slice(lon_min, lon_max))
+    total = da_box.sizes['lat'] * da_box.sizes['lon']
+    wb_count = (da_box == 1).sum(dim=['lat', 'lon'])
+    fraction = wb_count / total
+    return xr.where(fraction >= frac, 1, 0)
 
 
-theta_2PVU_poss = _zonal_mean(theta_2PVU_poss)
-theta_2PVU_negs = _zonal_mean(theta_2PVU_negs)
+#%%
+theta_2PVU_poss = _reduce_num(theta_2PVU_poss)
+theta_2PVU_negs = _reduce_num(theta_2PVU_negs)
 
 #%%
 # feedback, so only (0, 31) days, 
