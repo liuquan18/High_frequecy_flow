@@ -73,8 +73,11 @@ def _reduce_num(da, frac = 0.1, lon_min=-60, lon_max=30, lat_min=40, lat_max=60)
 
 # %% Save all variables to 0composite_feedback
 
-save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback"
-os.makedirs(save_dir, exist_ok=True)
+save_xr_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback"
+os.makedirs(save_xr_dir, exist_ok=True)
+
+save_df_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/non_anomaly"
+os.makedirs(save_df_dir, exist_ok=True)
 #%%
 awb_to_save = {
     "wb_anticyclonic_pos_1850":       awb["pos_1850"],
@@ -84,12 +87,21 @@ awb_to_save = {
 }
 # awb_lon_slice = slice(-60, 30)
 # cwb_lon_slice = slice(-120, -30)
-
+save_xr_dir
 # awb save
 for fname, da in awb_to_save.items():
-    path = os.path.join(save_dir, f"{fname}.nc")
-    _reduce_num(da, lon_min=-60, lon_max=30, lat_min=40, lat_max=60).to_netcdf(path)
-    print(f"Saved {path}")
+    xr_path = os.path.join(save_xr_dir, f"{fname}.nc")
+    awb_count = _reduce_num(da, lon_min=-60, lon_max=30, lat_min=40, lat_max=60)
+    # save xarray
+    # awb_count.to_netcdf(xr_path)
+    # save df
+    df = awb_count.to_dataframe("count").reset_index()
+    df["phase"] = fname.split("_")[2] # pos or neg
+    df["decade"] = fname.split("_")[3] # 1850 or 2090
+
+    df_path = os.path.join(save_df_dir, f"{fname}.csv")
+    df.to_csv(df_path, index=False)
+    print(f"Saved {df_path}")
 
 #%%
 cwb_to_save = {
@@ -98,11 +110,18 @@ cwb_to_save = {
     "wb_cyclonic_pos_2090":          cwb["pos_2090"],
     "wb_cyclonic_neg_2090":          cwb["neg_2090"],
 }
-
+save_xr_dir
 
 for fname, da in cwb_to_save.items():
-    path = os.path.join(save_dir, f"{fname}.nc")
-    _reduce_num(da, lon_min=-120, lon_max=-30, lat_min=50, lat_max=70).to_netcdf(path)
-    print(f"Saved {path}")
+    xr_path = os.path.join(save_xr_dir, f"{fname}.nc")
+    cwb_count = _reduce_num(da, lon_min=-120, lon_max=-30, lat_min=50, lat_max=70)
+    # cwb_count.to_netcdf(xr_path)
+    df = cwb_count.to_dataframe("count").reset_index()
+    df["phase"] = fname.split("_")[2] # pos or neg
+    df["decade"] = fname.split("_")[3] # 1850 or 2090
+    df_path = os.path.join(save_df_dir, f"{fname}.csv")
+    df.to_csv(df_path, index=False)
+    print(f"Saved {df_path}")
 # %%
 
+#%%
