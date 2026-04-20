@@ -89,6 +89,7 @@ theta_2PVU_negs = xr.concat([x for x in theta_2PVU_negs if x is not None], dim='
 
 #%%
 # postprocessing to align with the scatter plot
+# Count, if >=20% of pixels in box have WB (value==1), then count as 1 occurrence, else 0.
 # awb region [-60, 30, 40, 60], cwb region [-120, -30, 50, 70]
 def _reduce_num(da, frac = 0.2, lon_min=-60, lon_max=30, lat_min=40, lat_max=60): #lon: -120, -30; lat: 50, 70 for cwb
     """Return 1 per (event, time) if >=frac of pixels in box have WB (value==1), else 0."""
