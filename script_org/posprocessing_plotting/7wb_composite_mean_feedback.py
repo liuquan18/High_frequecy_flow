@@ -45,7 +45,7 @@ def _read_all(var_name, name=None, method="no_stat", chunks=None):
     if chunks is not None:
         kwargs["chunks"] = chunks
     return {
-        f"{phase}_{decade}": read_comp_var(var_name, phase, decade, **kwargs).mean(dim = 'isen_level', skipna=True)
+        f"{phase}_{decade}": read_comp_var(var_name, phase, decade, **kwargs).sum(dim = 'isen_level', skipna=True)
         for phase in ("pos", "neg")
         for decade in (1850, 2090)
     }
@@ -57,14 +57,19 @@ awb = _read_all("wb_anticyclonic_allisen", name="smooth_pv", chunks=None)
 #%%
 cwb = _read_all("wb_cyclonic_allisen", name="smooth_pv", chunks=None)
 
-
 #%%
-def _zonal_mean(da, lon_min=-90, lon_max=40):
-    """Zonal mean over [lon_min, lon_max], handling both 0-360 and -180-180 grids."""
+# Count, if >=10% of pixels in box have WB (value==1), then count as 1 occurrence, else 0.
+# awb region [-60, 30, 40, 60], cwb region [-120, -30, 50, 70]
+def _reduce_num(da, frac = 0.1, lon_min=-60, lon_max=30, lat_min=40, lat_max=60): #lon: -120, -30; lat: 50, 70 for cwb
+    """Return 1 per (event, time) if >=frac of pixels in box have WB (value==1), else 0."""
     if da.lon.max() > 180:
         # Convert 0-360 to -180-180
         da = da.assign_coords(lon=(da.lon + 180) % 360 - 180).sortby("lon")
-    return da.sel(lon=slice(lon_min, lon_max)).mean(dim="lon")
+    da_box = da.sel(lat=slice(lat_min, lat_max), lon=slice(lon_min, lon_max))
+    total = da_box.sizes['lat'] * da_box.sizes['lon']
+    wb_count = (da_box >= 1).sum(dim=['lat', 'lon'])
+    fraction = wb_count / total
+    return xr.where(fraction >= frac, 1, 0)
 
 # %% Save all variables to 0composite_feedback
 
@@ -83,7 +88,7 @@ awb_to_save = {
 # awb save
 for fname, da in awb_to_save.items():
     path = os.path.join(save_dir, f"{fname}.nc")
-    _zonal_mean(da, lon_min=-60, lon_max=30).to_netcdf(path)
+    _reduce_num(da, lon_min=-60, lon_max=30, lat_min=40, lat_max=60).to_netcdf(path)
     print(f"Saved {path}")
 
 #%%
@@ -97,7 +102,7 @@ cwb_to_save = {
 
 for fname, da in cwb_to_save.items():
     path = os.path.join(save_dir, f"{fname}.nc")
-    _zonal_mean(da, lon_min=-120, lon_max=-30).to_netcdf(path)
+    _reduce_num(da, lon_min=-120, lon_max=-30, lat_min=50, lat_max=70).to_netcdf(path)
     print(f"Saved {path}")
 # %%
 

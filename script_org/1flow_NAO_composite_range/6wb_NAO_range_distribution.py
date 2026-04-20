@@ -43,7 +43,7 @@ def composite_single_ens(var, decade, ens, **kwargs):
 decade = int(sys.argv[1]) if len(sys.argv) > 1 else 1850
 var = sys.argv[2] if len(sys.argv) > 2 else 'ua'
 name = sys.argv[3] if len(sys.argv) > 3 else var
-model_dir = sys.argv[4] if len(sys.argv) > 4 else 'MPI_GE_CMIP6_allplev'
+model_dir = sys.argv[4] if len(sys.argv) > 4 else 'MPI_GE_CMIP6'
 
 # Check if the argument is 'None' string before converting to int
 plev_arg = sys.argv[5] if len(sys.argv) > 5 else None
@@ -84,40 +84,11 @@ for i, member in enumerate(members_single):
 
 
 # concat the results
-theta_2PVU_poss = xr.concat([x for x in theta_2PVU_poss if x is not None], dim='event')
-theta_2PVU_negs = xr.concat([x for x in theta_2PVU_negs if x is not None], dim='event')
-
-#%%
-# postprocessing to align with the scatter plot
-# Count, if >=20% of pixels in box have WB (value==1), then count as 1 occurrence, else 0.
-# awb region [-60, 30, 40, 60], cwb region [-120, -30, 50, 70]
-def _reduce_num(da, frac = 0.1, lon_min=-60, lon_max=30, lat_min=40, lat_max=60): #lon: -120, -30; lat: 50, 70 for cwb
-    """Return 1 per (event, time) if >=frac of pixels in box have WB (value==1), else 0."""
-    if da.lon.max() > 180:
-        # Convert 0-360 to -180-180
-        da = da.assign_coords(lon=(da.lon + 180) % 360 - 180).sortby("lon")
-    da_box = da.sel(lat=slice(lat_min, lat_max), lon=slice(lon_min, lon_max))
-    total = da_box.sizes['lat'] * da_box.sizes['lon']
-    wb_count = (da_box >= 1).sum(dim=['lat', 'lon'])
-    fraction = wb_count / total
-    return xr.where(fraction >= frac, 1, 0)
-
-
-#%%
-theta_2PVU_poss = _reduce_num(theta_2PVU_poss)
-theta_2PVU_negs = _reduce_num(theta_2PVU_negs)
-
-#%%
-# feedback, so only (0, 31) days, 
-theta_2PVU_poss = theta_2PVU_poss.sel(time=slice(0, 30))
-theta_2PVU_negs = theta_2PVU_negs.sel(time=slice(0, 30))
-
-# average over time and event
-theta_2PVU_poss = theta_2PVU_poss.mean(dim='time').sum(dim = 'event')
-theta_2PVU_negs = theta_2PVU_negs.mean(dim='time').sum(dim = 'event')
+theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='event')
+theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='event')
 
 # save the results
-save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback_alldec/"
+save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_distribution/"
 
 theta_2PVU_poss.to_netcdf(f'{save_dir}{var}{suffix}_NAO_pos_{decade}.nc')
 theta_2PVU_negs.to_netcdf(f'{save_dir}{var}{suffix}_NAO_neg_{decade}.nc')
