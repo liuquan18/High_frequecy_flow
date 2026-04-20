@@ -26,10 +26,23 @@ awb_neg_first_df = _load_csv("awb_neg_first_df")
 awb_pos_last_df = _load_csv("awb_pos_last_df")
 awb_neg_last_df = _load_csv("awb_neg_last_df")
 
+# the old data was averaged over isentropic levels, rather than summed.
+awb_pos_first_df["awb"] *= 13 # 13 levels
+awb_neg_first_df["awb"] *= 13
+awb_pos_last_df["awb"] *= 13
+awb_neg_last_df["awb"] *= 13
+
+
+#%%
 cwb_pos_first_df = _load_csv("cwb_pos_first_df")
 cwb_neg_first_df = _load_csv("cwb_neg_first_df")
 cwb_pos_last_df = _load_csv("cwb_pos_last_df")
 cwb_neg_last_df = _load_csv("cwb_neg_last_df")
+#
+cwb_pos_first_df["cwb"] *= 13 # 13 levels
+cwb_neg_first_df["cwb"] *= 13
+cwb_pos_last_df["cwb"] *= 13
+cwb_neg_last_df["cwb"] *= 13
 
 Fdiv_transient_pos_first_df = _load_csv("Fdiv_transient_pos_first_df")
 Fdiv_transient_neg_first_df = _load_csv("Fdiv_transient_neg_first_df")
@@ -42,11 +55,6 @@ Fdiv_steady_pos_last_df = _load_csv("Fdiv_steady_pos_last_df")
 Fdiv_steady_neg_last_df = _load_csv("Fdiv_steady_neg_last_df")
 
 #%%
-
-awb_pos_first_df = _load_csv("awb_pos_first_df")
-awb_neg_first_df = _load_csv("awb_neg_first_df")
-awb_pos_last_df = _load_csv("awb_pos_last_df")
-awb_neg_last_df = _load_csv("awb_neg_last_df")    
 
 eke_pos_first_df = _load_csv("eke_pos_first_df")
 eke_neg_first_df = _load_csv("eke_neg_first_df")
@@ -105,6 +113,7 @@ bar_axes  = [[fig.add_subplot(gs[3 * r + 1, c], sharex=main_axes[r][c]) for c in
 # Share y-axis within row 1 (momentum) and row 3 (heat)
 main_axes[1][1].sharey(main_axes[1][0])
 main_axes[3][1].sharey(main_axes[3][0])
+bar_axes[0][1].sharey(bar_axes[0][0])
 bar_axes[1][1].sharey(bar_axes[1][0])
 
 COLOR_POS = "#E57200"  # MPI orange
@@ -177,7 +186,7 @@ main_axes[3][0].set_title("eddy thermal feedback ano\n (transient)")
 main_axes[3][1].set_title("eddy thermal feedback ano\n (Quasi-stationary)")
 
 # ===== y-labels =====
-main_axes[0][0].set_ylabel("Rossby wave breaking / day")
+main_axes[0][0].set_ylabel("Rossby wave breaking index")
 main_axes[1][0].set_ylabel(r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m $s^{-1}$ day$^{-1}$")
 main_axes[2][0].set_ylabel("EKE / m$^2$ s$^{-2}$")
 main_axes[2][1].set_ylabel("Eady growth rate / day$^{-1}$")
