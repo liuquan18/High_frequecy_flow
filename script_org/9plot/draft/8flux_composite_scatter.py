@@ -312,6 +312,8 @@ sns.scatterplot(
     ax = axes[1, 0],
     legend=False,
     sizes = (20, 300),
+    edgecolors = 'black',
+    linewidths = 0.5,
 )
 
 # ----- Plot 4: dec_neg_df, x=baroclinicity, y=cwb, size=NAO count -----
