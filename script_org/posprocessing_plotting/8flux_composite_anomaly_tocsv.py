@@ -61,7 +61,11 @@ eke_pos_first = _load("eke_pos_1850")
 eke_neg_first = _load("eke_neg_1850")
 eke_pos_last  = _load("eke_pos_2090")
 eke_neg_last  = _load("eke_neg_2090")
-
+#%%
+eke_high_pos_first = _load("eke_high_pos_1850")
+eke_high_neg_first = _load("eke_high_neg_1850")
+eke_high_pos_last  = _load("eke_high_pos_2090")
+eke_high_neg_last  = _load("eke_high_neg_2090")
 #%%
 # baroclinic growth rate
 baroc_pos_first = _load("eady_growth_rate_pos_1850")
@@ -133,6 +137,11 @@ eke_neg_first_df = to_dataframe(eke_neg_first, "eke", "neg", 1850, lat_slice=sli
 eke_pos_last_df  = to_dataframe(eke_pos_last,  "eke", "pos", 2090, lat_slice=slice(40, 70))
 eke_neg_last_df  = to_dataframe(eke_neg_last,  "eke", "neg", 2090, lat_slice=slice(40, 70))
 
+eke_high_pos_first_df = to_dataframe(eke_high_pos_first, "eke_high", "pos", 1850, lat_slice=slice(50, 70))
+eke_high_neg_first_df = to_dataframe(eke_high_neg_first, "eke_high", "neg", 1850, lat_slice=slice(50, 70))
+eke_high_pos_last_df  = to_dataframe(eke_high_pos_last,  "eke_high", "pos", 2090, lat_slice=slice(50, 70))
+eke_high_neg_last_df  = to_dataframe(eke_high_neg_last,  "eke_high", "neg", 2090, lat_slice=slice(50, 70))
+
 baroc_pos_first_df = to_dataframe(baroc_pos_first, "baroclinicity", "pos", 1850, )
 baroc_neg_first_df = to_dataframe(baroc_neg_first, "baroclinicity", "neg", 1850, )
 baroc_pos_last_df  = to_dataframe(baroc_pos_last,  "baroclinicity", "pos", 2090, )
@@ -161,10 +170,14 @@ _to_save = {
     # "Fdiv_steady_neg_first_df": Fdiv_steady_neg_first_df,
     # "Fdiv_steady_pos_last_df":  Fdiv_steady_pos_last_df,
     # "Fdiv_steady_neg_last_df":  Fdiv_steady_neg_last_df,
-    "eke_pos_first_df": eke_pos_first_df,
-    "eke_neg_first_df": eke_neg_first_df,
-    "eke_pos_last_df":  eke_pos_last_df,
-    "eke_neg_last_df":  eke_neg_last_df,
+    # "eke_pos_first_df": eke_pos_first_df,
+    # "eke_neg_first_df": eke_neg_first_df,
+    # "eke_pos_last_df":  eke_pos_last_df,
+    # "eke_neg_last_df":  eke_neg_last_df,
+    "eke_high_pos_first_df": eke_high_pos_first_df,
+    "eke_high_neg_first_df": eke_high_neg_first_df,
+    "eke_high_pos_last_df":  eke_high_pos_last_df,
+    "eke_high_neg_last_df":  eke_high_neg_last_df,
     # "baroc_pos_first_df": baroc_pos_first_df,
     # "baroc_neg_first_df": baroc_neg_first_df,
     # "baroc_pos_last_df":  baroc_pos_last_df,

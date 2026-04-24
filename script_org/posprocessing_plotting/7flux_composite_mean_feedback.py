@@ -98,7 +98,8 @@ steady_eddy_heat_d2y2 = _read_all("steady_eddy_heat_d2y2", name="eddy_heat_d2y2"
 
 #%%
 eke = _read_all("eke", name="eke")
-
+#%%
+eke_high = _read_all("eke_high", name="eke")
 #%%
 def _zonal_mean(da, lon_min=-90, lon_max=40):
     """Zonal mean over [lon_min, lon_max], handling both 0-360 and -180-180 grids."""
@@ -117,10 +118,10 @@ _to_save = {
     # "ua_neg_1850":                    ua["neg_1850"],
     # "ua_pos_2090":                    ua["pos_2090"],
     # "ua_neg_2090":                    ua["neg_2090"],
-    "ua_hat_pos_1850":                  ua_hat["pos_1850"],
-    "ua_hat_neg_1850":                  ua_hat["neg_1850"],
-    "ua_hat_pos_2090":                  ua_hat["pos_2090"],    
-    "ua_hat_neg_2090":                  ua_hat["neg_2090"],
+    # "ua_hat_pos_1850":                  ua_hat["pos_1850"],
+    # "ua_hat_neg_1850":                  ua_hat["neg_1850"],
+    # "ua_hat_pos_2090":                  ua_hat["pos_2090"],    
+    # "ua_hat_neg_2090":                  ua_hat["neg_2090"],
     # "upvp_pos_1850":                  upvp["pos_1850"],
     # "upvp_neg_1850":                  upvp["neg_1850"],
     # "upvp_pos_2090":                  upvp["pos_2090"],
@@ -157,6 +158,10 @@ _to_save = {
     # "eke_neg_1850":                  eke["neg_1850"],
     # "eke_pos_2090":                  eke["pos_2090"],
     # "eke_neg_2090":                  eke["neg_2090"],
+    "eke_high_pos_1850":                eke_high["pos_1850"],
+    "eke_high_neg_1850":                eke_high["neg_1850"],
+    "eke_high_pos_2090":                eke_high["pos_2090"],
+    "eke_high_neg_2090":                eke_high["neg_2090"],
     # "transient_eddy_heat_d2y2_pos_1850": transient_eddy_heat_d2y2["pos_1850"],
     # "transient_eddy_heat_d2y2_neg_1850": transient_eddy_heat_d2y2["neg_1850"],
     # "transient_eddy_heat_d2y2_pos_2090": transient_eddy_heat_d2y2["pos_2090"],
