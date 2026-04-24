@@ -60,16 +60,12 @@ cwb = _read_all("wb_cyclonic_allisen", name="smooth_pv", chunks=None)
 #%%
 # Count, if >=10% of pixels in box have WB (value==1), then count as 1 occurrence, else 0.
 # awb region [-60, 30, 40, 60], cwb region [-120, -30, 50, 70]
-def _reduce_num(da, frac = 0.1, lon_min=-60, lon_max=30, lat_min=40, lat_max=60): #lon: -120, -30; lat: 50, 70 for cwb
-    """Return 1 per (event, time) if >=frac of pixels in box have WB (value==1), else 0."""
+def _fld_mean(da, lat_min = 40, lat_max = 60, lon_min=-90, lon_max=40):
+    """Zonal mean over [lon_min, lon_max], handling both 0-360 and -180-180 grids."""
     if da.lon.max() > 180:
         # Convert 0-360 to -180-180
         da = da.assign_coords(lon=(da.lon + 180) % 360 - 180).sortby("lon")
-    da_box = da.sel(lat=slice(lat_min, lat_max), lon=slice(lon_min, lon_max))
-    total = da_box.sizes['lat'] * da_box.sizes['lon']
-    wb_count = (da_box >= 1).sum(dim=['lat', 'lon'])
-    fraction = wb_count / total
-    return xr.where(fraction >= frac, 1, 0)
+    return da.sel(lat = slice(lat_min, lat_max), lon=slice(lon_min, lon_max)).mean(dim=("lon", "lat"), skipna=True)
 
 # %% Save all variables to 0composite_feedback
 
@@ -91,7 +87,7 @@ save_xr_dir
 # awb save
 for fname, da in awb_to_save.items():
     xr_path = os.path.join(save_xr_dir, f"{fname}.nc")
-    awb_count = _reduce_num(da, lon_min=-60, lon_max=30, lat_min=40, lat_max=60)
+    awb_count = _fld_mean(da, lat_min = 40, lat_max=60, lon_min=-60, lon_max=30)
     # save xarray
     # awb_count.to_netcdf(xr_path)
     # save df
@@ -114,7 +110,7 @@ save_xr_dir
 
 for fname, da in cwb_to_save.items():
     xr_path = os.path.join(save_xr_dir, f"{fname}.nc")
-    cwb_count = _reduce_num(da, lon_min=-120, lon_max=-30, lat_min=50, lat_max=70)
+    cwb_count = _fld_mean(da, lat_min = 50, lat_max=70, lon_min=-120, lon_max=-30)
     # cwb_count.to_netcdf(xr_path)
     df = cwb_count.to_dataframe("count").reset_index()
     df["phase"] = fname.split("_")[2] # pos or neg
