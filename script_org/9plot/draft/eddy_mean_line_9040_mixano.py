@@ -129,20 +129,20 @@ def _plot_quartet(ax, pos_first, neg_first, pos_last, neg_last, y):
 
 def _plot_diff_bars(ax, pos_first, neg_first, pos_last, neg_last, var_name):
     """Bar subplot: mean(last)-mean(first) per time step.
-    Positive phase: orange; significant if diff > 95% CI half-width of first.
-    Negative phase: green;  significant if diff < -95% CI half-width of first.
+    Both phases: significant if |diff| > 95% CI half-width of first.
+    This handles flipped cases (e.g. neg phase with positive anomaly).
     Non-significant bars use alpha=0.2.
     """
     pos_diff = mean_diff_vs_1std(pos_first, pos_last, var_name)
     neg_diff = mean_diff_vs_1std(neg_first, neg_last, var_name)
     for _, row in pos_diff.iterrows():
-        significant = row["diff"] > row["ci95"]
+        significant = abs(row["diff"]) > row["ci95"]
         ax.bar(row["time"], row["diff"],
                color=COLOR_POS if significant else "none",
                alpha=0.5 if significant else 1.0,
                edgecolor=COLOR_POS, linewidth=0.8, width=1.0)
     for _, row in neg_diff.iterrows():
-        significant = row["diff"] < -row["ci95"]
+        significant = abs(row["diff"]) > row["ci95"]
         ax.bar(row["time"], row["diff"],
                color=COLOR_NEG if significant else "none",
                alpha=0.5 if significant else 1.0,
@@ -248,9 +248,16 @@ for r in range(4):
         main_axes[r][c].set_xlim(-20, 20)
         bar_axes[r][c].set_xlim(-20, 20)
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_mix.pdf",
-    dpi=300, bbox_inches="tight",
-)
+# make bar axes y-limits symmetric
+for r in range(4):
+    for c in range(2):
+        ax = bar_axes[r][c]
+        abs_max = max(abs(ax.get_ylim()[0]), abs(ax.get_ylim()[1]))
+        ax.set_ylim(-abs_max, abs_max)
+
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_mix.pdf",
+#     dpi=300, bbox_inches="tight",
+# )
 
 # %%
