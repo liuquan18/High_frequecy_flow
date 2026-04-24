@@ -111,6 +111,7 @@ main_axes = [[fig.add_subplot(gs[3 * r, c]) for c in range(2)] for r in range(4)
 bar_axes  = [[fig.add_subplot(gs[3 * r + 1, c], sharex=main_axes[r][c]) for c in range(2)] for r in range(4)]
 
 # Share y-axis within row 1 (momentum) and row 3 (heat)
+main_axes[0][1].sharey(main_axes[0][0])
 main_axes[1][1].sharey(main_axes[1][0])
 main_axes[3][1].sharey(main_axes[3][0])
 bar_axes[0][1].sharey(bar_axes[0][0])
@@ -222,12 +223,12 @@ phase_handles = [
     Line2D([0], [0], color=COLOR_POS, lw=2, label="pos NAO"),
     Line2D([0], [0], color=COLOR_NEG, lw=2, label="neg NAO"),
 ]
-decade_legend = main_axes[1][1].legend(
+decade_legend = main_axes[0][1].legend(
     handles=decade_handles, title="decade",
     loc="lower left", bbox_to_anchor=(0.1, 0.6), frameon=False,
 )
-main_axes[1][1].add_artist(decade_legend)
-main_axes[1][1].legend(
+main_axes[0][1].add_artist(decade_legend)
+main_axes[0][1].legend(
     handles=phase_handles, title="phase",
     loc="lower left", bbox_to_anchor=(0.5, 0.6), frameon=False,
 )
