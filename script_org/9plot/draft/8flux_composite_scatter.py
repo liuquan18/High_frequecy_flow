@@ -404,7 +404,7 @@ for i, dec in enumerate(decades_all):
 # outer border around the entire colorband
 leg_ax.add_patch(
     plt.Rectangle((1845, _band_y), 250, _band_h,
-                  fill=False, edgecolor='black', linewidth=1., zorder=2, clip_on=False)
+                  fill=False, edgecolor='black', linewidth=0.5, zorder=100, clip_on=False)
 )
 
 # decade labels below band (every other decade)
