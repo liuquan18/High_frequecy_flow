@@ -62,6 +62,7 @@ eke_neg_first = _load("eke_neg_1850")
 eke_pos_last  = _load("eke_pos_2090")
 eke_neg_last  = _load("eke_neg_2090")
 
+#%%
 # baroclinic growth rate
 baroc_pos_first = _load("eady_growth_rate_pos_1850")
 baroc_neg_first = _load("eady_growth_rate_neg_1850")
@@ -127,15 +128,15 @@ Fdiv_steady_pos_last_df  = to_dataframe(Fdiv_steady_pos_last,  "Fdiv_steady", "p
 Fdiv_steady_neg_last_df  = to_dataframe(Fdiv_steady_neg_last,  "Fdiv_steady", "neg", 2090, )
 
 #%%
-eke_pos_first_df = to_dataframe(eke_pos_first, "eke", "pos", 1850, )
-eke_neg_first_df = to_dataframe(eke_neg_first, "eke", "neg", 1850, )
-eke_pos_last_df  = to_dataframe(eke_pos_last,  "eke", "pos", 2090, )
-eke_neg_last_df  = to_dataframe(eke_neg_last,  "eke", "neg", 2090, )
+eke_pos_first_df = to_dataframe(eke_pos_first, "eke", "pos", 1850, lat_slice=slice(40, 70))
+eke_neg_first_df = to_dataframe(eke_neg_first, "eke", "neg", 1850, lat_slice=slice(40, 70))
+eke_pos_last_df  = to_dataframe(eke_pos_last,  "eke", "pos", 2090, lat_slice=slice(40, 70))
+eke_neg_last_df  = to_dataframe(eke_neg_last,  "eke", "neg", 2090, lat_slice=slice(40, 70))
 
-baroc_pos_first_df = to_dataframe(baroc_pos_first, "baroclinicity", "pos", 1850,)
-baroc_neg_first_df = to_dataframe(baroc_neg_first, "baroclinicity", "neg", 1850,)
-baroc_pos_last_df  = to_dataframe(baroc_pos_last,  "baroclinicity", "pos", 2090,)
-baroc_neg_last_df  = to_dataframe(baroc_neg_last,  "baroclinicity", "neg", 2090,)
+baroc_pos_first_df = to_dataframe(baroc_pos_first, "baroclinicity", "pos", 1850, )
+baroc_neg_first_df = to_dataframe(baroc_neg_first, "baroclinicity", "neg", 1850, )
+baroc_pos_last_df  = to_dataframe(baroc_pos_last,  "baroclinicity", "pos", 2090, )
+baroc_neg_last_df  = to_dataframe(baroc_neg_last,  "baroclinicity", "neg", 2090, )
 
 #%%
 transient_eddy_heat_d2y2_pos_first_df = to_dataframe(transient_eddy_heat_d2y2_pos_first, "transient_eddy_heat_d2y2", "pos", 1850, )
@@ -152,30 +153,30 @@ steady_eddy_heat_d2y2_neg_last_df  = to_dataframe(steady_eddy_heat_d2y2_neg_last
 save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/non_anomaly"
 os.makedirs(save_dir, exist_ok=True)
 _to_save = {
-    "Fdiv_transient_pos_first_df": Fdiv_transient_pos_first_df,
-    "Fdiv_transient_neg_first_df": Fdiv_transient_neg_first_df,
-    "Fdiv_transient_pos_last_df":  Fdiv_transient_pos_last_df,
-    "Fdiv_transient_neg_last_df":  Fdiv_transient_neg_last_df,
-    "Fdiv_steady_pos_first_df": Fdiv_steady_pos_first_df,
-    "Fdiv_steady_neg_first_df": Fdiv_steady_neg_first_df,
-    "Fdiv_steady_pos_last_df":  Fdiv_steady_pos_last_df,
-    "Fdiv_steady_neg_last_df":  Fdiv_steady_neg_last_df,
+    # "Fdiv_transient_pos_first_df": Fdiv_transient_pos_first_df,
+    # "Fdiv_transient_neg_first_df": Fdiv_transient_neg_first_df,
+    # "Fdiv_transient_pos_last_df":  Fdiv_transient_pos_last_df,
+    # "Fdiv_transient_neg_last_df":  Fdiv_transient_neg_last_df,
+    # "Fdiv_steady_pos_first_df": Fdiv_steady_pos_first_df,
+    # "Fdiv_steady_neg_first_df": Fdiv_steady_neg_first_df,
+    # "Fdiv_steady_pos_last_df":  Fdiv_steady_pos_last_df,
+    # "Fdiv_steady_neg_last_df":  Fdiv_steady_neg_last_df,
     "eke_pos_first_df": eke_pos_first_df,
     "eke_neg_first_df": eke_neg_first_df,
     "eke_pos_last_df":  eke_pos_last_df,
     "eke_neg_last_df":  eke_neg_last_df,
-    "baroc_pos_first_df": baroc_pos_first_df,
-    "baroc_neg_first_df": baroc_neg_first_df,
-    "baroc_pos_last_df":  baroc_pos_last_df,
-    "baroc_neg_last_df":  baroc_neg_last_df,
-    "transient_eddy_heat_d2y2_pos_first_df": transient_eddy_heat_d2y2_pos_first_df,
-    "transient_eddy_heat_d2y2_neg_first_df": transient_eddy_heat_d2y2_neg_first_df,
-    "transient_eddy_heat_d2y2_pos_last_df": transient_eddy_heat_d2y2_pos_last_df,
-    "transient_eddy_heat_d2y2_neg_last_df": transient_eddy_heat_d2y2_neg_last_df,
-    "steady_eddy_heat_d2y2_pos_first_df": steady_eddy_heat_d2y2_pos_first_df,
-    "steady_eddy_heat_d2y2_neg_first_df": steady_eddy_heat_d2y2_neg_first_df,
-    "steady_eddy_heat_d2y2_pos_last_df": steady_eddy_heat_d2y2_pos_last_df,
-    "steady_eddy_heat_d2y2_neg_last_df": steady_eddy_heat_d2y2_neg_last_df,
+    # "baroc_pos_first_df": baroc_pos_first_df,
+    # "baroc_neg_first_df": baroc_neg_first_df,
+    # "baroc_pos_last_df":  baroc_pos_last_df,
+    # "baroc_neg_last_df":  baroc_neg_last_df,
+    # "transient_eddy_heat_d2y2_pos_first_df": transient_eddy_heat_d2y2_pos_first_df,
+    # "transient_eddy_heat_d2y2_neg_first_df": transient_eddy_heat_d2y2_neg_first_df,
+    # "transient_eddy_heat_d2y2_pos_last_df": transient_eddy_heat_d2y2_pos_last_df,
+    # "transient_eddy_heat_d2y2_neg_last_df": transient_eddy_heat_d2y2_neg_last_df,
+    # "steady_eddy_heat_d2y2_pos_first_df": steady_eddy_heat_d2y2_pos_first_df,
+    # "steady_eddy_heat_d2y2_neg_first_df": steady_eddy_heat_d2y2_neg_first_df,
+    # "steady_eddy_heat_d2y2_pos_last_df": steady_eddy_heat_d2y2_pos_last_df,
+    # "steady_eddy_heat_d2y2_neg_last_df": steady_eddy_heat_d2y2_neg_last_df,
 }
 for name, df in _to_save.items():
     df.to_csv(os.path.join(save_dir, f"{name}.csv"), index=False)
