@@ -255,9 +255,9 @@ for r in range(4):
         abs_max = max(abs(ax.get_ylim()[0]), abs(ax.get_ylim()[1]))
         ax.set_ylim(-abs_max, abs_max)
 
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_mix.pdf",
-#     dpi=300, bbox_inches="tight",
-# )
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_mix.pdf",
+    dpi=300, bbox_inches="tight",
+)
 
 # %%
