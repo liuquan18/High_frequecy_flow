@@ -198,15 +198,21 @@ cbar_ax = fig.add_axes([0.20, 0.1, 0.60, 0.025])
 cbar = fig.colorbar(mappable_baroc, cax=cbar_ax, orientation="horizontal")
 cbar.set_label("Eady growth rate (day$^{-1}$)")
 
-# Top ticks: baroc_levels
+# Top ticks: baroc_levels  (panels a, b, g, h)
 baroc_tick_labels = [f"{v:.0f}" for v in baroc_levels]
 cbar.ax.xaxis.set_ticks_position("top")
 cbar.ax.xaxis.set_label_position("top")
 cbar.set_ticks(baroc_levels)
 cbar.set_ticklabels(baroc_tick_labels)
 cbar.ax.tick_params(axis="x", labelsize=7, pad=2)
+cbar.ax.annotate(
+    "a, b, g, h",
+    xy=(1.05, 0.3), xycoords="axes fraction",
+    xytext=(5, 0), textcoords="offset points",
+    va="bottom", ha="left", fontsize=8,
+)
 
-# Bottom ticks row 1: baroc_diff_levels, mapped to the base colorbar scale [-10, 10]
+# Bottom ticks row 1: baroc_diff_levels, mapped to the base colorbar scale [-10, 10]  (panel c)
 ax_bottom_1 = cbar.ax.twiny()
 ax_bottom_1.set_xlim(cbar.ax.get_xlim())
 ax_bottom_1.xaxis.set_ticks_position("bottom")
@@ -216,8 +222,14 @@ ax_bottom_1.spines["top"].set_visible(False)
 ax_bottom_1.set_xticks(baroc_diff_levels * 10)
 ax_bottom_1.set_xticklabels([f"{v:.1f}" for v in baroc_diff_levels])
 ax_bottom_1.tick_params(axis="x", labelsize=7, pad=1)
+ax_bottom_1.annotate(
+    "c",
+    xy=(1.05, 0.0), xycoords="axes fraction",
+    xytext=(5, -14), textcoords="offset points",
+    va="center", ha="left", fontsize=8,
+)
 
-# Bottom ticks row 2: baroc_diff_diff_levels, mapped to the base colorbar scale [-10, 10]
+# Bottom ticks row 2: baroc_diff_diff_levels, mapped to the base colorbar scale [-10, 10]  (panels d–f, i)
 ax_bottom_2 = cbar.ax.twiny()
 ax_bottom_2.set_xlim(cbar.ax.get_xlim())
 ax_bottom_2.xaxis.set_ticks_position("bottom")
@@ -227,6 +239,12 @@ ax_bottom_2.spines["top"].set_visible(False)
 ax_bottom_2.set_xticks(baroc_diff_diff_levels * 20)
 ax_bottom_2.set_xticklabels([f"{v:.1f}" for v in baroc_diff_diff_levels])
 ax_bottom_2.tick_params(axis="x", labelsize=7, pad=1)
+ax_bottom_2.annotate(
+    "d–f, i",
+    xy=(1.05, 0.0), xycoords="axes fraction",
+    xytext=(5, -30), textcoords="offset points",
+    va="center", ha="left", fontsize=8,
+)
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/baroclinicity_profile_full.pdf", dpi=300, bbox_inches='tight')
 
