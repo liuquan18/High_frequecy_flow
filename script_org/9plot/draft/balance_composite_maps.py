@@ -681,7 +681,7 @@ for row_idx, (pos_cf, pos_levels, diff_levels, title, ext) in enumerate(rows_con
     ax_sec.tick_params(labelsize=7)
     cb.ax.set_title(title, fontsize=7, pad=4)
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/balance_composite.pdf", dpi=300)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/balance_composite.pdf", dpi=300, bbox_inches="tight",)
 
 
 # %%
