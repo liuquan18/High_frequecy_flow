@@ -172,6 +172,7 @@ def read_extrc(model, fixed_pattern="decade_mpi"):
 
 
 NAO_monthly_extremes = read_extrc("MPI_GE_CMIP6", fixed_pattern="decade_mpi")
+NAO_monthly_extremes['time'] = NAO_monthly_extremes['time'].dt.year
 
 # %% NAO daily extremes
 def NAO_extremes(return_days=False, threshold=7):
@@ -296,7 +297,6 @@ decade_palette = {int(dec): _colors[i] for i, dec in enumerate(decades_all)}
 
 fig, axes = plt.subplots(3, 2, figsize=(8, 12))
 
-NAO_monthly_extremes['time'] = NAO_monthly_extremes['time'].dt.year
 # Monthly NAO extremes
 ln = NAO_monthly_extremes.sel(extr_type="pos", mode="NAO", confidence="true").plot.line(
     ax=axes[0, 0],
@@ -440,9 +440,9 @@ axes[2, 1].text(-0.08, 1.1, "f", transform=axes[2, 1].transAxes,
                 ha="left", va="top", fontsize=12, fontweight="bold")
 
 axes[0, 0].set_xlabel("Year")
-axes[0, 0].set_ylabel("NAO extremes / member")
+axes[0, 0].set_ylabel("Extreme NAO months / decade $^{-1}$")
 axes[0, 1].set_xlabel("Decade")
-axes[0, 1].set_ylabel("NAO days / member")
+axes[0, 1].set_ylabel("Extreme NAO days / decade $^{-1}$")
 axes[1, 0].set_xlabel("Jet Latitude (°N)")
 axes[1, 0].set_ylabel("AWB occurrence / day")
 axes[1, 1].set_xlabel("GB Index")
