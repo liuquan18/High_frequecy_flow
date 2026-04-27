@@ -125,7 +125,7 @@ baroc_clim_diff_zonal = _zonal_mean(baroc_clim_diff)
 
 #%%
 baroc_levels = np.arange(-10, 10.1, 1)
-baroc_diff_levels = np.arange(-1, 1.1, 0.2)
+baroc_diff_levels = np.arange(-2, 2.1, 0.2)
 baroc_diff_diff_levels = np.arange(-0.5, 0.6, 0.1)
 
 def _plot_profile(da, ax, label=None, levels = baroc_levels, fill = True, ):
@@ -230,24 +230,26 @@ ax_bottom_2.tick_params(axis="x", labelsize=7, pad=1)
 
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/baroclinicity_profile_full.pdf", dpi=300, bbox_inches='tight')
 
-# %%
-# new plot, only with above axes[0, 2] and axes[1, 2],
-fig, axes = plt.subplots(1, 2, figsize = (12, 6), sharey=True)
-_plot_profile(baroc_diff_first_zonal, axes[0], label="diff_1850", levels=baroc_diff_levels)
-_plot_profile(baroc_diff_last_zonal, axes[0], label="diff_2090", fill=False, levels=baroc_diff_levels)
-_plot_profile(baroc_diff_diff_first_last, axes[1], label="diff_diff_2090-1850", levels=baroc_diff_diff_levels)
-for i, ax in enumerate(axes.flatten()):
-    ax.set_ylim(1000, 250)
-    ax.set_xlim(20, 90)
-    ax.yaxis.set_major_formatter(matplotlib.ticker.ScalarFormatter())
-    ax.yaxis.set_major_locator(MaxNLocator(5))
-    ax.set_xlabel("Latitude")
-    ax.set_ylabel("")
-    # add a, b in the top left corner
-    ax.text(0.02, 0.98, chr(97 + i), transform=ax.transAxes, fontsize=14, verticalalignment='top', fontweight='bold')
-axes[0].set_title("NAO pos - neg")
-axes[1].set_title("(NAO pos - neg) 2090 - (NAO pos - neg) 1850")
-axes[0].legend(loc='lower left')
+# # %%
+# # new plot, only with above axes[0, 2] and axes[1, 2],
+# fig, axes = plt.subplots(1, 2, figsize = (12, 6), sharey=True)
+# _plot_profile(baroc_diff_first_zonal, axes[0], label="diff_1850", levels=baroc_diff_levels)
+# _plot_profile(baroc_diff_last_zonal, axes[0], label="diff_2090", fill=False, levels=baroc_diff_levels)
+# _plot_profile(baroc_diff_diff_first_last, axes[1], label="diff_diff_2090-1850", levels=baroc_diff_diff_levels)
+# for i, ax in enumerate(axes.flatten()):
+#     ax.set_ylim(1000, 250)
+#     ax.set_xlim(20, 90)
+#     ax.yaxis.set_major_formatter(matplotlib.ticker.ScalarFormatter())
+#     ax.yaxis.set_major_locator(MaxNLocator(5))
+#     ax.set_xlabel("Latitude")
+#     ax.set_ylabel("")
+#     # add a, b in the top left corner
+#     ax.text(0.02, 0.98, chr(97 + i), transform=ax.transAxes, fontsize=14, verticalalignment='top', fontweight='bold')
+# axes[0].set_title("NAO pos - neg")
+# axes[1].set_title("(NAO pos - neg) 2090 - (NAO pos - neg) 1850")
+# axes[0].legend(loc='lower left')
 
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/baroclinicity_profile.pdf", dpi=300, bbox_inches='tight')
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/baroclinicity_profile.pdf", dpi=300, bbox_inches='tight')
+# # %%
+
 # %%
