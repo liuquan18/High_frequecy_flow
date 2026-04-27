@@ -498,7 +498,7 @@ leg_ax.text(0.5, 1.15, "Decade",
             fontsize=8.5, style="italic")
 
 # --- size reference axis (right) ---
-ref_ax = fig.add_axes([0.80, 0.05, 0.16, 0.08])
+ref_ax = fig.add_axes([0.80, 0.07, 0.16, 0.08])
 ref_ax.set_xlim(-0.5, 3.5)
 ref_ax.set_ylim(-1.5, 1.2)
 ref_ax.axis("off")
@@ -513,5 +513,4 @@ ref_ax.text(0.4, 1.15, "NAO extremes/day",
             ha="center", va="top", transform=ref_ax.transAxes,
             fontsize=8.5, style="italic")
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/flux_composite_density.pdf", dpi = 300, bbox_inches='tight')
-
 # %%
