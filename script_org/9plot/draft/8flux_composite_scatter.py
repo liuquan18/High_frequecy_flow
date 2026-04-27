@@ -149,6 +149,30 @@ neg_df = baroc_neg_df.merge(zg_hat_neg_df, on=['event', 'time', 'phase', 'decade
 pos_df = pos_df[pos_df['time'].isin(range(0, 31))]
 neg_df = neg_df[neg_df['time'].isin(range(0, 31))]
 
+#%%
+
+def read_extrc(model, fixed_pattern="decade_mpi"):
+    """read extreme counts"""
+    odir = "/work/mh0033/m300883/Tel_MMLE/data/" + model + "/extreme_count/"
+    filename = f"plev_50000_{fixed_pattern}_first_JJA_extre_counts.nc"
+    ds = xr.open_dataset(odir + filename).pc
+
+    # divide the ensemble size of each model
+    ens_sizes = {
+        "MPI_GE": 100,
+        "MPI_GE_onepct": 100,
+        "CanESM2": 50,
+        "CESM1_CAM5": 40,
+        "MK36": 30,
+        "GFDL_CM3": 20,
+        "MPI_GE_CMIP6": 50,
+    }
+    ds = ds / ens_sizes[model]
+    return ds
+
+
+NAO_monthly_extremes = read_extrc("MPI_GE_CMIP6", fixed_pattern="decade_mpi")
+
 # %% NAO daily extremes
 def NAO_extremes(return_days=False, threshold=7):
     NAO_pos_counts = pd.DataFrame(columns=["decade", "count"])
@@ -249,7 +273,6 @@ zg_hat_neg_decades_df["phase"] = "neg"
 dec_pos_df = awb_pos_decades_df.merge(jet_pos_decades_df, on=["decade", "phase"], how="inner").merge(NAO_merge[['days_pos', 'decade']], on="decade", how="inner")
 
 dec_neg_df = baroc_neg_decades_df.merge(zg_hat_neg_decades_df, on=["decade", "phase"], how="inner").merge(NAO_merge[['days_neg', 'decade']], on="decade", how="inner")
-#%%
 
 # %%
 # ===== Density plots =====
@@ -271,7 +294,56 @@ _bounds = np.arange(1845, 2100, 10)       # boundaries between decades
 _norm_decades = BoundaryNorm(_bounds, _cmap_decades.N)
 decade_palette = {int(dec): _colors[i] for i, dec in enumerate(decades_all)}
 
-fig, axes = plt.subplots(2, 2, figsize=(10, 10))
+fig, axes = plt.subplots(3, 2, figsize=(8, 12))
+
+# Monthly NAO extremes
+ln = NAO_monthly_extremes.sel(extr_type="pos", mode="NAO", confidence="true").plot.line(
+    ax=axes[0, 0],
+    x="time",
+    color="k",
+    linewidth=1.5,
+    label="pos NAO",
+    add_legend=True,
+)
+
+NAO_monthly_extremes.sel(extr_type="neg", mode="NAO", confidence="true").plot.line(
+    ax=axes[0, 0],
+    x="time",
+    color="k",
+    linewidth=1.5,
+    linestyle="--",
+    label="neg NAO",
+    add_legend=True,
+)
+axes[0, 0].set_title("")  # Remove xarray auto-generated title
+# add legend with custom labels
+handles = [
+    Line2D([0], [0], color="k", linewidth=1.5, label="pos NAO"),
+    Line2D([0], [0], color="k", linewidth=1.5, linestyle="--", label="neg NAO"),
+]
+axes[0, 0].legend(handles=handles, loc="upper left")
+
+
+# Daily NAO
+sns.lineplot(
+    data=NAO_merge,
+    x="decade",
+    y="days_pos",
+    ax=axes[0, 1],
+    label="pos NAO",
+    color="k",
+    linewidth=1.5,
+)
+sns.lineplot(
+    data=NAO_merge,
+    x="decade",
+    y="days_neg",
+    ax=axes[0, 1],
+    label="neg NAO",
+    color="k",
+    linestyle="--",
+    linewidth=1.5,
+)
 
 # ----- Plot 1: pos_df, x=jet_lat, y=awb -----
 sns.scatterplot(
@@ -281,12 +353,12 @@ sns.scatterplot(
     alpha = 0.8,
     palette = [COLOR_1850, COLOR_2090],
     hue = "decade",
-    ax = axes[0, 0],
+    ax = axes[1, 0],
     sizes = 0.5,
 )
 # axes[0, 0].set_ylim(-0.01, 0.03)
-axes[0, 0].set_xlim(35, 60)
-sns.move_legend(axes[0, 0], "upper left",)
+axes[1, 0].set_xlim(35, 60)
+sns.move_legend(axes[1, 0], "upper left",)
 
 # ----- Plot 2: neg_df, x=baroclinicity, y=cwb -----
 sns.scatterplot(
@@ -296,7 +368,7 @@ sns.scatterplot(
     alpha = 0.8,
     palette = [COLOR_1850, COLOR_2090],
     hue = "decade",
-    ax = axes[0, 1],
+    ax = axes[1, 1],
     sizes = 0.5,
 )
 
@@ -309,7 +381,7 @@ sns.scatterplot(
     palette = decade_palette,
     size = "days_pos",
     alpha = 0.8,
-    ax = axes[1, 0],
+    ax = axes[2, 0],
     legend=False,
     sizes = (20, 300),
     edgecolors = 'black',
@@ -325,7 +397,7 @@ sns.scatterplot(
     palette = decade_palette,
     size = "days_neg",
     alpha = 0.8,
-    ax = axes[1, 1],
+    ax = axes[2, 1],
     legend=False,
     sizes = (20, 300),
     edgecolors = 'black',
@@ -338,14 +410,14 @@ _pos_dec_mean = dec_pos_df.groupby(['decade', 'phase'])[['jet_lat', 'awb']].mean
 for _dec, _label in [(1850, '1850'), (2090, '2090')]:
     _row = _pos_dec_mean[_pos_dec_mean['decade'] == _dec]
     if not _row.empty:
-        axes[1, 0].annotate(_label, xy=(_row['jet_lat'].values[0], _row['awb'].values[0]),
+        axes[2, 0].annotate(_label, xy=(_row['jet_lat'].values[0], _row['awb'].values[0]),
                             xytext=(4, 4), textcoords='offset points', fontsize=8)
 
 _neg_dec_mean = dec_neg_df.groupby(['decade', 'phase'])[['GB_index', 'baroclinicity']].mean().reset_index()
 for _dec, _label in [(1850, '1850'), (2090, '2090')]:
     _row = _neg_dec_mean[_neg_dec_mean['decade'] == _dec]
     if not _row.empty:
-        axes[1, 1].annotate(_label, xy=(_row['GB_index'].values[0], _row['baroclinicity'].values[0]),
+        axes[2, 1].annotate(_label, xy=(_row['GB_index'].values[0], _row['baroclinicity'].values[0]),
                             xytext=(4, 4), textcoords='offset points', fontsize=8)
 
 # remove upper and right spines
@@ -361,15 +433,23 @@ axes[1, 0].text(-0.08, 1.1, "c", transform=axes[1, 0].transAxes,
                 ha="left", va="top", fontsize=12, fontweight="bold")
 axes[1, 1].text(-0.08, 1.1, "d", transform=axes[1, 1].transAxes,
                 ha="left", va="top", fontsize=12, fontweight="bold")
+axes[2, 0].text(-0.08, 1.1, "e", transform=axes[2, 0].transAxes,
+                ha="left", va="top", fontsize=12, fontweight="bold")
+axes[2, 1].text(-0.08, 1.1, "f", transform=axes[2, 1].transAxes,
+                ha="left", va="top", fontsize=12, fontweight="bold")
 
-axes[0, 0].set_xlabel("Jet Latitude (°N)")
-axes[0, 0].set_ylabel("Anticyclonic wave breaking index")
-axes[0, 1].set_xlabel("GB Index")
-axes[0, 1].set_ylabel("Eady growth rate / $day^{-1}$")
+axes[0, 0].set_xlabel("Year")
+axes[0, 0].set_ylabel("NAO extremes / member")
+axes[0, 1].set_xlabel("Decade")
+axes[0, 1].set_ylabel("NAO days / member")
 axes[1, 0].set_xlabel("Jet Latitude (°N)")
 axes[1, 0].set_ylabel("AWB occurrence / day")
 axes[1, 1].set_xlabel("GB Index")
 axes[1, 1].set_ylabel("Eady growth rate / $day^{-1}$")
+axes[2, 0].set_xlabel("Jet Latitude (°N)")
+axes[2, 0].set_ylabel("AWB occurrence / day")
+axes[2, 1].set_xlabel("GB Index")
+axes[2, 1].set_ylabel("Eady growth rate / $day^{-1}$")
 
 plt.tight_layout()
 plt.subplots_adjust(bottom=0.22)   # make room for bubble-colorband legend
@@ -389,7 +469,7 @@ def _msize(v):
 # --- colorband axis (color + decade labels only) ---
 _grey_colors = sns.color_palette('Greys', n_colors=len(decades_all))
 
-leg_ax = fig.add_axes([0.09, 0.05, 0.7, 0.08])
+leg_ax = fig.add_axes([0.09, 0.07, 0.7, 0.08])
 leg_ax.set_xlim(1843, 2097)
 leg_ax.set_ylim(-1.5, 1.2)
 leg_ax.axis("off")
@@ -431,6 +511,6 @@ for j, rd in enumerate(_ref_days):
 ref_ax.text(0.4, 1.15, "NAO extremes/day",
             ha="center", va="top", transform=ref_ax.transAxes,
             fontsize=8.5, style="italic")
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/flux_composite_density.pdf")
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/flux_composite_density.pdf", dpi = 300, bbox_inches='tight')
 
 # %%
