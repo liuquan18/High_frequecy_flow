@@ -296,6 +296,7 @@ decade_palette = {int(dec): _colors[i] for i, dec in enumerate(decades_all)}
 
 fig, axes = plt.subplots(3, 2, figsize=(8, 12))
 
+NAO_monthly_extremes['time'] = NAO_monthly_extremes['time'].dt.year
 # Monthly NAO extremes
 ln = NAO_monthly_extremes.sel(extr_type="pos", mode="NAO", confidence="true").plot.line(
     ax=axes[0, 0],
