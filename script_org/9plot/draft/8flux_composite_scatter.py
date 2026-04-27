@@ -246,7 +246,7 @@ def load_composite_decade(var, phase, lat_slice = None):
 
 #%%
 awb_pos_decades = load_composite_decade("wb_anticyclonic_allisen", "pos", lat_slice=None)
-# awb_pos_decades = awb_pos_decades *31 / 50 # sum over time, per ensemble
+awb_pos_decades = awb_pos_decades *31 / 50 # sum over time, per ensemble
 #%%
 jet_pos_decades = load_composite_decade("jetloc_", "pos", lat_slice=None) # for jet loc
 
@@ -444,7 +444,7 @@ axes[0, 0].set_ylabel("Extreme NAO months / decade $^{-1}$")
 axes[0, 1].set_xlabel("Decade")
 axes[0, 1].set_ylabel("Extreme NAO days / decade $^{-1}$")
 axes[1, 0].set_xlabel("Jet Latitude (°N)")
-axes[1, 0].set_ylabel("AWB occurrence / day")
+axes[1, 0].set_ylabel("Anticyclonic wave breaking index")
 axes[1, 1].set_xlabel("GB Index")
 axes[1, 1].set_ylabel("Eady growth rate / $day^{-1}$")
 axes[2, 0].set_xlabel("Jet Latitude (°N)")
