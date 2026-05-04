@@ -44,10 +44,17 @@ cwb_neg_first_df["cwb"] *= 13
 cwb_pos_last_df["cwb"] *= 13
 cwb_neg_last_df["cwb"] *= 13
 
-Fdiv_transient_pos_first_df = _load_csv("Fdiv_transient_pos_first_df")
-Fdiv_transient_neg_first_df = _load_csv("Fdiv_transient_neg_first_df")
-Fdiv_transient_pos_last_df = _load_csv("Fdiv_transient_pos_last_df")
-Fdiv_transient_neg_last_df = _load_csv("Fdiv_transient_neg_last_df")
+Fdiv_transient_high_pos_first_df = _load_csv("Fdiv_transient_high_pos_first_df")
+Fdiv_transient_high_neg_first_df = _load_csv("Fdiv_transient_high_neg_first_df")
+Fdiv_transient_high_pos_last_df = _load_csv("Fdiv_transient_high_pos_last_df")
+Fdiv_transient_high_neg_last_df = _load_csv("Fdiv_transient_high_neg_last_df")
+
+Fdiv_transient_lower_pos_first_df = _load_csv("Fdiv_transient_lower_pos_first_df")
+Fdiv_transient_lower_neg_first_df = _load_csv("Fdiv_transient_lower_neg_first_df")
+Fdiv_transient_lower_pos_last_df = _load_csv("Fdiv_transient_lower_pos_last_df")
+Fdiv_transient_lower_neg_last_df = _load_csv("Fdiv_transient_lower_neg_last_df")
+
+
 
 Fdiv_steady_pos_first_df = _load_csv("Fdiv_steady_pos_first_df")
 Fdiv_steady_neg_first_df = _load_csv("Fdiv_steady_neg_first_df")
@@ -111,10 +118,10 @@ main_axes = [[fig.add_subplot(gs[3 * r, c]) for c in range(2)] for r in range(4)
 bar_axes  = [[fig.add_subplot(gs[3 * r + 1, c], sharex=main_axes[r][c]) for c in range(2)] for r in range(4)]
 
 # Share y-axis within row 1 (momentum) and row 3 (heat)
-main_axes[0][1].sharey(main_axes[0][0])
+# main_axes[0][1].sharey(main_axes[0][0])
 main_axes[1][1].sharey(main_axes[1][0])
 main_axes[3][1].sharey(main_axes[3][0])
-bar_axes[0][1].sharey(bar_axes[0][0])
+# bar_axes[0][1].sharey(bar_axes[0][0])
 bar_axes[1][1].sharey(bar_axes[1][0])
 
 COLOR_POS = "#E57200"  # MPI orange
@@ -159,10 +166,10 @@ _plot_diff_bars(bar_axes[0][0], awb_pos_first_df, awb_neg_first_df, awb_pos_last
 _plot_diff_bars(bar_axes[0][1], cwb_pos_first_df, cwb_neg_first_df, cwb_pos_last_df, cwb_neg_last_df, "cwb")
 
 # ===== Row 1: Transient momentum / Steady momentum =====
-_plot_quartet(main_axes[1][0], Fdiv_transient_pos_first_df, Fdiv_transient_neg_first_df, Fdiv_transient_pos_last_df, Fdiv_transient_neg_last_df, "Fdiv_transient")
-_plot_quartet(main_axes[1][1], Fdiv_steady_pos_first_df, Fdiv_steady_neg_first_df, Fdiv_steady_pos_last_df, Fdiv_steady_neg_last_df, "Fdiv_steady")
-_plot_diff_bars(bar_axes[1][0], Fdiv_transient_pos_first_df, Fdiv_transient_neg_first_df, Fdiv_transient_pos_last_df, Fdiv_transient_neg_last_df, "Fdiv_transient")
-_plot_diff_bars(bar_axes[1][1], Fdiv_steady_pos_first_df, Fdiv_steady_neg_first_df, Fdiv_steady_pos_last_df, Fdiv_steady_neg_last_df, "Fdiv_steady")
+_plot_quartet(main_axes[1][0], Fdiv_transient_high_pos_first_df, Fdiv_transient_high_neg_first_df, Fdiv_transient_high_pos_last_df, Fdiv_transient_high_neg_last_df, "Fdiv_transient")
+_plot_quartet(main_axes[1][1], Fdiv_transient_lower_pos_first_df, Fdiv_transient_lower_neg_first_df, Fdiv_transient_lower_pos_last_df, Fdiv_transient_lower_neg_last_df, "Fdiv_transient")
+_plot_diff_bars(bar_axes[1][0], Fdiv_transient_high_pos_first_df, Fdiv_transient_high_neg_first_df, Fdiv_transient_high_pos_last_df, Fdiv_transient_high_neg_last_df, "Fdiv_transient")
+_plot_diff_bars(bar_axes[1][1], Fdiv_transient_lower_pos_first_df, Fdiv_transient_lower_neg_first_df, Fdiv_transient_lower_pos_last_df, Fdiv_transient_lower_neg_last_df, "Fdiv_transient")
 
 # ===== Row 2: EKE / Baroclinicity =====
 _plot_quartet(main_axes[2][0], eke_pos_first_df, eke_neg_first_df, eke_pos_last_df, eke_neg_last_df, "eke")
@@ -179,8 +186,8 @@ _plot_diff_bars(bar_axes[3][1], steady_eddy_heat_d2y2_pos_first_df, steady_eddy_
 # ===== Titles =====
 main_axes[0][0].set_title("AWB")
 main_axes[0][1].set_title("CWB")
-main_axes[1][0].set_title("eddy momentum forcing \n (transient)")
-main_axes[1][1].set_title("eddy momentum forcing \n (Quasi-stationary)")
+main_axes[1][0].set_title("eddy momentum forcing \n (higher latitude)")
+main_axes[1][1].set_title("eddy momentum forcing \n (lower latitude)")
 main_axes[2][0].set_title("EKE")
 main_axes[2][1].set_title("Baroclinicity")
 main_axes[3][0].set_title("eddy thermal feedback ano\n (transient)")
@@ -223,14 +230,14 @@ phase_handles = [
     Line2D([0], [0], color=COLOR_POS, lw=2, label="pos NAO"),
     Line2D([0], [0], color=COLOR_NEG, lw=2, label="neg NAO"),
 ]
-decade_legend = main_axes[0][1].legend(
+decade_legend = main_axes[0][0].legend(
     handles=decade_handles, title="decade",
-    loc="lower left", bbox_to_anchor=(0.1, 0.6), frameon=False,
+    loc="lower left", bbox_to_anchor=(0.1, 0.7), frameon=False,
 )
-main_axes[0][1].add_artist(decade_legend)
-main_axes[0][1].legend(
+main_axes[0][0].add_artist(decade_legend)
+main_axes[0][0].legend(
     handles=phase_handles, title="phase",
-    loc="lower left", bbox_to_anchor=(0.5, 0.6), frameon=False,
+    loc="lower left", bbox_to_anchor=(0.7, 0.7), frameon=False,
 )
 
 # ===== Panel labels =====
@@ -254,7 +261,7 @@ for r in range(4):
     for c in range(2):
         ax = bar_axes[r][c]
         abs_max = max(abs(ax.get_ylim()[0]), abs(ax.get_ylim()[1]))
-        ax.set_ylim(-abs_max, abs_max)
+#         ax.set_ylim(-abs_max, abs_max)
 
 plt.savefig(
     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_mix.pdf",
