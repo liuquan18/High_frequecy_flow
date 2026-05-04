@@ -190,8 +190,8 @@ main_axes[1][0].set_title("eddy momentum forcing \n (higher latitude)")
 main_axes[1][1].set_title("eddy momentum forcing \n (lower latitude)")
 main_axes[2][0].set_title("EKE")
 main_axes[2][1].set_title("Baroclinicity")
-main_axes[3][0].set_title("eddy thermal feedback ano\n (transient)")
-main_axes[3][1].set_title("eddy thermal feedback ano\n (Quasi-stationary)")
+main_axes[3][0].set_title("eddy thermal forcing ano\n (transient)")
+main_axes[3][1].set_title("eddy thermal forcing ano\n (Quasi-stationary)")
 
 # ===== y-labels =====
 main_axes[0][0].set_ylabel("Rossby wave breaking index")
