@@ -13,7 +13,7 @@ import os
 import matplotlib
 from src.plotting.util import lon360to180
 
-from matplotlib.patches import Patch
+from matplotlib.patches import Patch, Ellipse
 from matplotlib.lines import Line2D
 from matplotlib.ticker import MaxNLocator, FuncFormatter
 
@@ -276,6 +276,28 @@ dec_pos_df = awb_pos_decades_df.merge(jet_pos_decades_df, on=["decade", "phase"]
 dec_neg_df = baroc_neg_decades_df.merge(zg_hat_neg_decades_df, on=["decade", "phase"], how="inner").merge(NAO_merge[['days_neg', 'decade']], on="decade", how="inner")
 
 # %%
+def confidence_ellipse(x, y, ax, n_std=1.5, facecolor='none', **kwargs):
+    """Draw a covariance confidence ellipse for data (x, y) on ax."""
+    if len(x) < 2:
+        return
+    cov = np.cov(x, y)
+    vals, vecs = np.linalg.eigh(cov)
+    # largest eigenvalue first
+    order = vals.argsort()[::-1]
+    vals, vecs = vals[order], vecs[:, order]
+    angle = np.degrees(np.arctan2(*vecs[:, 0][::-1]))
+    width, height = 2 * n_std * np.sqrt(vals)
+    ellipse = Ellipse(
+        xy=(np.mean(x), np.mean(y)),
+        width=width,
+        height=height,
+        angle=angle,
+        facecolor=facecolor,
+        **kwargs,
+    )
+    ax.add_patch(ellipse)
+
+
 # ===== Density plots =====
 COLOR_1850 = "#4C72B0"
 COLOR_2090 = "#DD8452"
@@ -358,8 +380,15 @@ sns.scatterplot(
     sizes = 0.5,
 )
 # axes[0, 0].set_ylim(-0.01, 0.03)
-axes[1, 0].set_xlim(35, 60)
+axes[1, 0].set_xlim(35, 63)
 sns.move_legend(axes[1, 0], "upper left",)
+
+# Confidence ellipses for axes[1, 0]
+_pos_grouped = pos_df.groupby(['event', 'phase', 'decade'])[['jet_lat', 'awb']].mean().reset_index()
+for _dec, _color in [(1850, COLOR_1850), (2090, COLOR_2090)]:
+    _sub = _pos_grouped[_pos_grouped['decade'] == _dec]
+    confidence_ellipse(_sub['jet_lat'].values, _sub['awb'].values, axes[1, 0],
+                       n_std=2, edgecolor=_color, linewidth=1.5, linestyle='--', zorder=5)
 
 # ----- Plot 2: neg_df, x=baroclinicity, y=cwb -----
 sns.scatterplot(
@@ -372,6 +401,13 @@ sns.scatterplot(
     ax = axes[1, 1],
     sizes = 0.5,
 )
+
+# Confidence ellipses for axes[1, 1]
+_neg_grouped = neg_df.groupby(['event', 'phase', 'decade'])[['baroclinicity', 'GB_index']].mean().reset_index()
+for _dec, _color in [(1850, COLOR_1850), (2090, COLOR_2090)]:
+    _sub = _neg_grouped[_neg_grouped['decade'] == _dec]
+    confidence_ellipse(_sub['GB_index'].values, _sub['baroclinicity'].values, axes[1, 1],
+                       n_std=2, edgecolor=_color, linewidth=1.5, linestyle='--', zorder=5)
 
 # ----- Plot 3: dec_pos_df, x=jet_lat, y=awb, size=NAO count -----
 sns.scatterplot(
