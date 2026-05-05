@@ -85,10 +85,12 @@ vstsdy = _read_all("steady_eddy_heat_dy", name="eddy_heat_dy")
 #%%
 # Convergence of transient eddy momentum flux
 Fdiv_phi_transient = _read_all("Fdiv_phi_transient", name="div")
-
 # Convergence of steady eddy momentum flux
 Fdiv_phi_steady = _read_all("Fdiv_phi_steady", name="div")
 
+#%%
+Fdiv_p_transient = _read_all("Fdiv_p_transient", name="div2")
+Fdiv_p_steady = _read_all("Fdiv_p_steady", name="div2")
 #%% 
 # second meridional gradient of transient eddy heat flux
 transient_eddy_heat_d2y2 = _read_all("transient_eddy_heat_d2y2", name="eddy_heat_d2y2")
@@ -108,6 +110,7 @@ def _zonal_mean(da, lon_min=-90, lon_max=40):
         da = da.assign_coords(lon=(da.lon + 180) % 360 - 180).sortby("lon")
     return da.sel(lon=slice(lon_min, lon_max)).mean(dim="lon")
 
+
 #  Save all variables to 0composite_feedback
 
 save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback"
@@ -126,14 +129,22 @@ _to_save = {
     # "upvp_neg_1850":                  upvp["neg_1850"],
     # "upvp_pos_2090":                  upvp["pos_2090"],
     # "upvp_neg_2090":                  upvp["neg_2090"],
-    # "Fdiv_phi_transient_pos_1850":    Fdiv_phi_transient["pos_1850"],
-    # "Fdiv_phi_transient_neg_1850":    Fdiv_phi_transient["neg_1850"],
-    # "Fdiv_phi_transient_pos_2090":    Fdiv_phi_transient["pos_2090"],
-    # "Fdiv_phi_transient_neg_2090":    Fdiv_phi_transient["neg_2090"],
+    "Fdiv_phi_transient_pos_1850":    Fdiv_phi_transient["pos_1850"],
+    "Fdiv_phi_transient_neg_1850":    Fdiv_phi_transient["neg_1850"],
+    "Fdiv_phi_transient_pos_2090":    Fdiv_phi_transient["pos_2090"],
+    "Fdiv_phi_transient_neg_2090":    Fdiv_phi_transient["neg_2090"],
+    "Fdiv_p_transient_pos_1850":      Fdiv_p_transient["pos_1850"],
+    "Fdiv_p_transient_neg_1850":      Fdiv_p_transient["neg_1850"],
+    "Fdiv_p_transient_pos_2090":      Fdiv_p_transient["pos_2090"],
+    "Fdiv_p_transient_neg_2090":      Fdiv_p_transient["neg_2090"],
     # "Fdiv_phi_steady_pos_1850":       Fdiv_phi_steady["pos_1850"],
     # "Fdiv_phi_steady_neg_1850":       Fdiv_phi_steady["neg_1850"],
     # "Fdiv_phi_steady_pos_2090":       Fdiv_phi_steady["pos_2090"],
     # "Fdiv_phi_steady_neg_2090":       Fdiv_phi_steady["neg_2090"],
+    # "Fdiv_p_steady_pos_1850":         Fdiv_p_steady["pos_1850"],
+    # "Fdiv_p_steady_neg_1850":         Fdiv_p_steady["neg_1850"],
+    # "Fdiv_p_steady_pos_2090":         Fdiv_p_steady["pos_2090"],
+    # "Fdiv_p_steady_neg_2090":         Fdiv_p_steady["neg_2090"],
     # "eady_growth_rate_pos_1850":      baroc["pos_1850"],
     # "eady_growth_rate_neg_1850":      baroc["neg_1850"],
     # "eady_growth_rate_pos_2090":      baroc["pos_2090"],
@@ -154,10 +165,10 @@ _to_save = {
     # "vpetp_neg_1850":                 vptp["neg_1850"],
     # "vpetp_pos_2090":                 vptp["pos_2090"],
     # "vpetp_neg_2090":                 vptp["neg_2090"],
-    "eke_pos_1850":                  eke["pos_1850"],
-    "eke_neg_1850":                  eke["neg_1850"],
-    "eke_pos_2090":                  eke["pos_2090"],
-    "eke_neg_2090":                  eke["neg_2090"],
+    # "eke_pos_1850":                  eke["pos_1850"],
+    # "eke_neg_1850":                  eke["neg_1850"],
+    # "eke_pos_2090":                  eke["pos_2090"],
+    # "eke_neg_2090":                  eke["neg_2090"],
     # "eke_high_pos_1850":                eke_high["pos_1850"],
     # "eke_high_neg_1850":                eke_high["neg_1850"],
     # "eke_high_pos_2090":                eke_high["pos_2090"],
