@@ -309,19 +309,12 @@ for r in range(4):
     for c in range(2):
         ax = bar_axes[r][c]
         abs_max = max(abs(ax.get_ylim()[0]), abs(ax.get_ylim()[1]))
-#         ax.set_ylim(-abs_max, abs_max)
+        ax.set_ylim(-abs_max, abs_max)
 
-# plt.savefig(
-#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_mix.pdf",
-#     dpi=300, bbox_inches="tight",
-# )
-
-
-
-
-
-
-
+plt.savefig(
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_mix.pdf",
+    dpi=300, bbox_inches="tight",
+)
 
 
 
@@ -329,12 +322,6 @@ for r in range(4):
 
 # %%
 # ===== Separate plot: EP flux component decomposition =====
-
-# Load raw Fdiv_steady files (no high/lower lat split)
-Fdiv_steady_pos_first_raw = _load_csv("Fdiv_steady_pos_first_df")
-Fdiv_steady_neg_first_raw = _load_csv("Fdiv_steady_neg_first_df")
-Fdiv_steady_pos_last_raw  = _load_csv("Fdiv_steady_pos_last_df")
-Fdiv_steady_neg_last_raw  = _load_csv("Fdiv_steady_neg_last_df")
 
 fig2 = plt.figure(figsize=(10, 22))
 gs2 = GridSpec(
@@ -406,17 +393,6 @@ _plot_diff_bars(bar_axes2[3][0],
 main_axes2[3][1].set_visible(False)
 bar_axes2[3][1].set_visible(False)
 
-# ===== Row 4: Fdiv_steady (no lat split, left col only) =====
-_plot_quartet(main_axes2[4][0],
-              Fdiv_steady_pos_first_raw, Fdiv_steady_neg_first_raw,
-              Fdiv_steady_pos_last_raw,  Fdiv_steady_neg_last_raw,
-              "Fdiv_steady")
-_plot_diff_bars(bar_axes2[4][0],
-                Fdiv_steady_pos_first_raw, Fdiv_steady_neg_first_raw,
-                Fdiv_steady_pos_last_raw,  Fdiv_steady_neg_last_raw,
-                "Fdiv_steady")
-main_axes2[4][1].set_visible(False)
-bar_axes2[4][1].set_visible(False)
 
 # ===== Titles =====
 main_axes2[0][0].set_title(r"$-\nabla_\phi F_\phi$ transient (higher lat)")
