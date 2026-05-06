@@ -141,7 +141,6 @@ zg_hat_neg_df = pd.concat([zg_hat_neg_first_df, zg_hat_neg_last_df], ignore_inde
 
 # drop plev from zg_steady and baroc_neg
 zg_hat_neg_df = zg_hat_neg_df.drop(columns=["plev"])
-baroc_neg_df = baroc_neg_df.drop(columns=["plev"])
 
 neg_df = baroc_neg_df.merge(zg_hat_neg_df, on=['event', 'time', 'phase', 'decade'], how='inner')
 
@@ -276,7 +275,7 @@ dec_pos_df = awb_pos_decades_df.merge(jet_pos_decades_df, on=["decade", "phase"]
 dec_neg_df = baroc_neg_decades_df.merge(zg_hat_neg_decades_df, on=["decade", "phase"], how="inner").merge(NAO_merge[['days_neg', 'decade']], on="decade", how="inner")
 
 # %%
-def confidence_ellipse(x, y, ax, n_std=1.5, facecolor='none', **kwargs):
+def confidence_ellipse(x, y, ax, n_std=2., facecolor='none', **kwargs):
     """Draw a covariance confidence ellipse for data (x, y) on ax."""
     if len(x) < 2:
         return
@@ -388,7 +387,7 @@ _pos_grouped = pos_df.groupby(['event', 'phase', 'decade'])[['jet_lat', 'awb']].
 for _dec, _color in [(1850, COLOR_1850), (2090, COLOR_2090)]:
     _sub = _pos_grouped[_pos_grouped['decade'] == _dec]
     confidence_ellipse(_sub['jet_lat'].values, _sub['awb'].values, axes[1, 0],
-                       n_std=2, edgecolor=_color, linewidth=1.5, linestyle='--', zorder=5)
+                       n_std=2., edgecolor=_color, linewidth=1.5, linestyle='--', zorder=5)
 
 # ----- Plot 2: neg_df, x=baroclinicity, y=cwb -----
 sns.scatterplot(
@@ -407,7 +406,7 @@ _neg_grouped = neg_df.groupby(['event', 'phase', 'decade'])[['baroclinicity', 'G
 for _dec, _color in [(1850, COLOR_1850), (2090, COLOR_2090)]:
     _sub = _neg_grouped[_neg_grouped['decade'] == _dec]
     confidence_ellipse(_sub['GB_index'].values, _sub['baroclinicity'].values, axes[1, 1],
-                       n_std=2, edgecolor=_color, linewidth=1.5, linestyle='--', zorder=5)
+                       n_std=2., edgecolor=_color, linewidth=1.5, linestyle='--', zorder=5)
 
 # ----- Plot 3: dec_pos_df, x=jet_lat, y=awb, size=NAO count -----
 sns.scatterplot(
