@@ -125,15 +125,15 @@ baroc_pos_last_df = _load_csv("baroc_pos_last_df")
 baroc_neg_last_df = _load_csv("baroc_neg_last_df")
 
 # anomaly
-transient_eddy_heat_d2y2_pos_first_df = _load_csv("transient_eddy_heat_d2y2_pos_first_df", anomaly=True)
-transient_eddy_heat_d2y2_neg_first_df = _load_csv("transient_eddy_heat_d2y2_neg_first_df", anomaly=True)
-transient_eddy_heat_d2y2_pos_last_df = _load_csv("transient_eddy_heat_d2y2_pos_last_df", anomaly=True)
-transient_eddy_heat_d2y2_neg_last_df = _load_csv("transient_eddy_heat_d2y2_neg_last_df", anomaly=True)
+transient_eddy_heat_d2y2_pos_first_df = _load_csv("transient_eddy_heat_d2y2_pos_first_df")
+transient_eddy_heat_d2y2_neg_first_df = _load_csv("transient_eddy_heat_d2y2_neg_first_df")
+transient_eddy_heat_d2y2_pos_last_df = _load_csv("transient_eddy_heat_d2y2_pos_last_df")
+transient_eddy_heat_d2y2_neg_last_df = _load_csv("transient_eddy_heat_d2y2_neg_last_df")
 
-steady_eddy_heat_d2y2_pos_first_df = _load_csv("steady_eddy_heat_d2y2_pos_first_df", anomaly=True)
-steady_eddy_heat_d2y2_neg_first_df = _load_csv("steady_eddy_heat_d2y2_neg_first_df", anomaly=True)
-steady_eddy_heat_d2y2_pos_last_df = _load_csv("steady_eddy_heat_d2y2_pos_last_df", anomaly=True)
-steady_eddy_heat_d2y2_neg_last_df = _load_csv("steady_eddy_heat_d2y2_neg_last_df", anomaly=True)
+steady_eddy_heat_d2y2_pos_first_df = _load_csv("steady_eddy_heat_d2y2_pos_first_df")
+steady_eddy_heat_d2y2_neg_first_df = _load_csv("steady_eddy_heat_d2y2_neg_first_df")
+steady_eddy_heat_d2y2_pos_last_df = _load_csv("steady_eddy_heat_d2y2_pos_last_df")
+steady_eddy_heat_d2y2_neg_last_df = _load_csv("steady_eddy_heat_d2y2_neg_last_df")
 
 #%%
 def mean_diff_vs_1std(first_df, last_df, var_name):
