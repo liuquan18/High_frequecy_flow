@@ -52,6 +52,7 @@ plev = int(plev_arg) if plev_arg is not None and plev_arg != 'None' else None
 base_dir = sys.argv[6] if len(sys.argv) > 6 else '/work/mh0033/m300883/High_frequecy_flow/data/'
 suffix = sys.argv[7] if len(sys.argv) > 7 else ''
 
+
 # report the input
 logging.info(f"Rank {rank} of {size} is processing {var} for decade {decade}, model_dir {model_dir}, name {name}, suffix {suffix}, plev {plev}")
 # %%
@@ -72,23 +73,23 @@ for i, member in enumerate(members_single):
 
 
 # # combine all members from all cores
-# theta_2PVU_poss = comm.gather(theta_2PVU_poss, root=0)
-# theta_2PVU_negs = comm.gather(theta_2PVU_negs, root=0)
+theta_2PVU_poss = comm.gather(theta_2PVU_poss, root=0)
+theta_2PVU_negs = comm.gather(theta_2PVU_negs, root=0)
 
 # # concatenate the results 
-# if rank == 0:
+if rank == 0:
 
-# # Flatten the gathered lists
-# theta_2PVU_poss = [item for sublist in theta_2PVU_poss for item in sublist if item is not None]
-# theta_2PVU_negs = [item for sublist in theta_2PVU_negs for item in sublist if item is not None]
+    # # Flatten the gathered lists
+    theta_2PVU_poss = [item for sublist in theta_2PVU_poss for item in sublist if item is not None]
+    theta_2PVU_negs = [item for sublist in theta_2PVU_negs for item in sublist if item is not None]
 
 
-# concat the results
-theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='event')
-theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='event')
+    # concat the results
+    theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='event')
+    theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='event')
 
-# save the results
-save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_distribution/"
+    # save the results
+    save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_distribution/"
 
-theta_2PVU_poss.to_netcdf(f'{save_dir}{var}{suffix}_NAO_pos_{decade}.nc')
-theta_2PVU_negs.to_netcdf(f'{save_dir}{var}{suffix}_NAO_neg_{decade}.nc')
+    theta_2PVU_poss.to_netcdf(f'{save_dir}{var}{suffix}_NAO_pos_{decade}.nc')
+    theta_2PVU_negs.to_netcdf(f'{save_dir}{var}{suffix}_NAO_neg_{decade}.nc')
