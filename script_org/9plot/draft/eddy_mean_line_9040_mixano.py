@@ -237,8 +237,8 @@ _plot_diff_bars(bar_axes[3][1], steady_eddy_heat_d2y2_pos_first_df, steady_eddy_
 # ===== Titles =====
 main_axes[0][0].set_title("AWB")
 main_axes[0][1].set_title("CWB")
-main_axes[1][0].set_title("eddy momentum forcing \n (higher latitude)")
-main_axes[1][1].set_title("eddy momentum forcing \n (lower latitude)")
+main_axes[1][0].set_title("EP flux convergence \n (higher latitude)")
+main_axes[1][1].set_title("EP flux convergence \n (lower latitude)")
 main_axes[2][0].set_title("EKE")
 main_axes[2][1].set_title("Baroclinicity")
 main_axes[3][0].set_title("eddy thermal forcing ano\n (transient)")
@@ -246,7 +246,7 @@ main_axes[3][1].set_title("eddy thermal forcing ano\n (Quasi-stationary)")
 
 # ===== y-labels =====
 main_axes[0][0].set_ylabel("Rossby wave breaking index")
-main_axes[1][0].set_ylabel(r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m $s^{-1}$ day$^{-1}$")
+main_axes[1][0].set_ylabel(r"$- \nabla \cdot \mathbf{F}$ / m $s^{-1}$ day$^{-1}$")
 main_axes[2][0].set_ylabel("EKE / m$^2$ s$^{-2}$")
 main_axes[2][1].set_ylabel("Eady growth rate / day$^{-1}$")
 main_axes[3][0].set_ylabel(r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1}$ s$^{-1}$")
@@ -319,4 +319,181 @@ for r in range(4):
 #     dpi=300, bbox_inches="tight",
 # )
 
+
+
+
+
+
+
+
+
+
+
+
 # %%
+# ===== Separate plot: EP flux component decomposition =====
+
+# Load raw Fdiv_steady files (no high/lower lat split)
+Fdiv_steady_pos_first_raw = _load_csv("Fdiv_steady_pos_first_df")
+Fdiv_steady_neg_first_raw = _load_csv("Fdiv_steady_neg_first_df")
+Fdiv_steady_pos_last_raw  = _load_csv("Fdiv_steady_pos_last_df")
+Fdiv_steady_neg_last_raw  = _load_csv("Fdiv_steady_neg_last_df")
+
+fig2 = plt.figure(figsize=(10, 22))
+gs2 = GridSpec(
+    14, 2, figure=fig2,
+    height_ratios=[3, 1, 0.5, 3, 1, 0.5, 3, 1, 0.5, 3, 1, 0.5, 3, 1],
+    hspace=0.08, wspace=0.35,
+)
+
+main_axes2 = [[fig2.add_subplot(gs2[3 * r, c]) for c in range(2)] for r in range(5)]
+bar_axes2  = [[fig2.add_subplot(gs2[3 * r + 1, c], sharex=main_axes2[r][c]) for c in range(2)] for r in range(5)]
+
+# ===== Row 0: Fdiv_phi_transient (high lat left, lower lat right) =====
+_plot_quartet(main_axes2[0][0],
+              Fdiv_phi_transient_high_pos_first_df, Fdiv_phi_transient_high_neg_first_df,
+              Fdiv_phi_transient_high_pos_last_df,  Fdiv_phi_transient_high_neg_last_df,
+              "Fdiv_phi_transient")
+_plot_quartet(main_axes2[0][1],
+              Fdiv_phi_transient_lower_pos_first_df, Fdiv_phi_transient_lower_neg_first_df,
+              Fdiv_phi_transient_lower_pos_last_df,  Fdiv_phi_transient_lower_neg_last_df,
+              "Fdiv_phi_transient")
+_plot_diff_bars(bar_axes2[0][0],
+                Fdiv_phi_transient_high_pos_first_df, Fdiv_phi_transient_high_neg_first_df,
+                Fdiv_phi_transient_high_pos_last_df,  Fdiv_phi_transient_high_neg_last_df,
+                "Fdiv_phi_transient")
+_plot_diff_bars(bar_axes2[0][1],
+                Fdiv_phi_transient_lower_pos_first_df, Fdiv_phi_transient_lower_neg_first_df,
+                Fdiv_phi_transient_lower_pos_last_df,  Fdiv_phi_transient_lower_neg_last_df,
+                "Fdiv_phi_transient")
+
+# ===== Row 1: Fdiv_p_transient (high lat left, lower lat right) =====
+_plot_quartet(main_axes2[1][0],
+              Fdiv_p_transient_high_pos_first_df, Fdiv_p_transient_high_neg_first_df,
+              Fdiv_p_transient_high_pos_last_df,  Fdiv_p_transient_high_neg_last_df,
+              "Fdiv_p_transient")
+_plot_quartet(main_axes2[1][1],
+              Fdiv_p_transient_lower_pos_first_df, Fdiv_p_transient_lower_neg_first_df,
+              Fdiv_p_transient_lower_pos_last_df,  Fdiv_p_transient_lower_neg_last_df,
+              "Fdiv_p_transient")
+_plot_diff_bars(bar_axes2[1][0],
+                Fdiv_p_transient_high_pos_first_df, Fdiv_p_transient_high_neg_first_df,
+                Fdiv_p_transient_high_pos_last_df,  Fdiv_p_transient_high_neg_last_df,
+                "Fdiv_p_transient")
+_plot_diff_bars(bar_axes2[1][1],
+                Fdiv_p_transient_lower_pos_first_df, Fdiv_p_transient_lower_neg_first_df,
+                Fdiv_p_transient_lower_pos_last_df,  Fdiv_p_transient_lower_neg_last_df,
+                "Fdiv_p_transient")
+
+# ===== Row 2: Fdiv_phi_steady (no lat split, left col only) =====
+_plot_quartet(main_axes2[2][0],
+              Fdiv_phi_steady_pos_first_df, Fdiv_phi_steady_neg_first_df,
+              Fdiv_phi_steady_pos_last_df,  Fdiv_phi_steady_neg_last_df,
+              "Fdiv_phi_steady")
+_plot_diff_bars(bar_axes2[2][0],
+                Fdiv_phi_steady_pos_first_df, Fdiv_phi_steady_neg_first_df,
+                Fdiv_phi_steady_pos_last_df,  Fdiv_phi_steady_neg_last_df,
+                "Fdiv_phi_steady")
+main_axes2[2][1].set_visible(False)
+bar_axes2[2][1].set_visible(False)
+
+# ===== Row 3: Fdiv_p_steady (no lat split, left col only) =====
+_plot_quartet(main_axes2[3][0],
+              Fdiv_p_steady_pos_first_df, Fdiv_p_steady_neg_first_df,
+              Fdiv_p_steady_pos_last_df,  Fdiv_p_steady_neg_last_df,
+              "Fdiv_p_steady")
+_plot_diff_bars(bar_axes2[3][0],
+                Fdiv_p_steady_pos_first_df, Fdiv_p_steady_neg_first_df,
+                Fdiv_p_steady_pos_last_df,  Fdiv_p_steady_neg_last_df,
+                "Fdiv_p_steady")
+main_axes2[3][1].set_visible(False)
+bar_axes2[3][1].set_visible(False)
+
+# ===== Row 4: Fdiv_steady (no lat split, left col only) =====
+_plot_quartet(main_axes2[4][0],
+              Fdiv_steady_pos_first_raw, Fdiv_steady_neg_first_raw,
+              Fdiv_steady_pos_last_raw,  Fdiv_steady_neg_last_raw,
+              "Fdiv_steady")
+_plot_diff_bars(bar_axes2[4][0],
+                Fdiv_steady_pos_first_raw, Fdiv_steady_neg_first_raw,
+                Fdiv_steady_pos_last_raw,  Fdiv_steady_neg_last_raw,
+                "Fdiv_steady")
+main_axes2[4][1].set_visible(False)
+bar_axes2[4][1].set_visible(False)
+
+# ===== Titles =====
+main_axes2[0][0].set_title(r"$-\nabla_\phi F_\phi$ transient (higher lat)")
+main_axes2[0][1].set_title(r"$-\nabla_\phi F_\phi$ transient (lower lat)")
+main_axes2[1][0].set_title(r"$-\nabla_p F_p$ transient (higher lat)")
+main_axes2[1][1].set_title(r"$-\nabla_p F_p$ transient (lower lat)")
+main_axes2[2][0].set_title(r"$-\nabla_\phi F_\phi$ steady")
+main_axes2[3][0].set_title(r"$-\nabla_p F_p$ steady")
+main_axes2[4][0].set_title(r"$\nabla \cdot F$ steady")
+
+# ===== y-labels =====
+for r in range(5):
+    main_axes2[r][0].set_ylabel(r"m $s^{-1}$ day$^{-1}$")
+for r in range(2):
+    main_axes2[r][1].set_ylabel("")
+
+# ===== x-labels: only bottom bar row =====
+for r in range(5):
+    for c in range(2):
+        main_axes2[r][c].set_xlabel("")
+        plt.setp(main_axes2[r][c].get_xticklabels(), visible=False)
+    if r < 4:
+        bar_axes2[r][0].set_xlabel("")
+        plt.setp(bar_axes2[r][0].get_xticklabels(), visible=False)
+        if r < 2:
+            bar_axes2[r][1].set_xlabel("")
+            plt.setp(bar_axes2[r][1].get_xticklabels(), visible=False)
+    else:
+        bar_axes2[r][0].set_xlabel("Days relative to extreme onset")
+
+# ===== Styling =====
+for r in range(5):
+    for c in range(2):
+        if main_axes2[r][c].get_visible():
+            sns.despine(ax=main_axes2[r][c], bottom=True)
+            main_axes2[r][c].tick_params(bottom=False)
+            main_axes2[r][c].axvline(0, color="gray", linestyle="dotted", lw=1)
+
+# ===== xlim =====
+for r in range(5):
+    for c in range(2):
+        main_axes2[r][c].set_xlim(-20, 20.5)
+        bar_axes2[r][c].set_xlim(-20, 20.5)
+
+# ===== Legend =====
+decade_handles2 = [
+    Line2D([0], [0], color="gray", lw=2, linestyle="-",  label="1850s"),
+    Line2D([0], [0], color="gray", lw=2, linestyle="--", label="2090s"),
+]
+phase_handles2 = [
+    Line2D([0], [0], color=COLOR_POS, lw=2, label="pos NAO"),
+    Line2D([0], [0], color=COLOR_NEG, lw=2, label="neg NAO"),
+]
+decade_legend2 = main_axes2[0][0].legend(
+    handles=decade_handles2, title="decade",
+    loc="lower left", bbox_to_anchor=(0.1, 0.7), frameon=False,
+)
+main_axes2[0][0].add_artist(decade_legend2)
+main_axes2[0][0].legend(
+    handles=phase_handles2, title="phase",
+    loc="lower left", bbox_to_anchor=(0.7, 0.7), frameon=False,
+)
+
+# ===== Panel labels =====
+panel_idx2 = 0
+for r in range(5):
+    for c in range(2):
+        if main_axes2[r][c].get_visible():
+            main_axes2[r][c].text(
+                -0.08, 1.02, chr(97 + panel_idx2),
+                transform=main_axes2[r][c].transAxes,
+                fontsize=14, fontweight="bold", va="bottom", ha="right",
+            )
+            panel_idx2 += 1
+
+# %%
+

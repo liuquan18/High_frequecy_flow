@@ -58,9 +58,27 @@ def _read_all(var_name, name=None, method="no_stat", chunks=None):
 ua = _read_all("ua", name="ua")
 ua_hat = _read_all("ua_hat", name="ua")
 
+# Convergence of transient eddy momentum flux
+Fdiv_phi_transient = _read_all("Fdiv_phi_transient_ano", name="div")
+# Convergence of steady eddy momentum flux
+Fdiv_phi_steady = _read_all("Fdiv_phi_steady_ano", name="div")
+
+#%%
+Fdiv_p_transient = _read_all("Fdiv_p_transient_ano", name="div2")
+Fdiv_p_steady = _read_all("Fdiv_p_steady_ano", name="div2")
+
+#%%
+eke = _read_all("eke_ano", name="eke")
+#%%
 # Baroclinicity (Eady growth rate)
-baroc = _read_all("eady_growth_rate", name="eady_growth_rate")
-baroc = {key: baroc[key].sel(plev=85000) for key in baroc}
+baroc = _read_all("eady_growth_rate_ano", name="eady_growth_rate")
+
+#%%
+# second meridional gradient of transient eddy heat flux
+transient_eddy_heat_d2y2 = _read_all("transient_eddy_heat_d2y2_ano", name="eddy_heat_d2y2")
+
+# second meridional gradient of steady eddy heat flux
+steady_eddy_heat_d2y2 = _read_all("steady_eddy_heat_d2y2_ano", name="eddy_heat_d2y2")
 
 #%%
 # Steady eddies / blocking (geopotential height)
@@ -83,23 +101,11 @@ vsts = _read_all("vsets", name="vsets")
 # Steady eddy meridional heat flux gradient
 vstsdy = _read_all("steady_eddy_heat_dy", name="eddy_heat_dy")
 #%%
-# Convergence of transient eddy momentum flux
-Fdiv_phi_transient = _read_all("Fdiv_phi_transient", name="div")
-# Convergence of steady eddy momentum flux
-Fdiv_phi_steady = _read_all("Fdiv_phi_steady", name="div")
 
-#%%
-Fdiv_p_transient = _read_all("Fdiv_p_transient", name="div2")
-Fdiv_p_steady = _read_all("Fdiv_p_steady", name="div2")
 #%% 
-# second meridional gradient of transient eddy heat flux
-transient_eddy_heat_d2y2 = _read_all("transient_eddy_heat_d2y2", name="eddy_heat_d2y2")
-
-# second meridional gradient of steady eddy heat flux
-steady_eddy_heat_d2y2 = _read_all("steady_eddy_heat_d2y2", name="eddy_heat_d2y2")
 
 #%%
-eke = _read_all("eke", name="eke")
+
 #%%
 eke_high = _read_all("eke_high", name="eke")
 #%%
@@ -129,14 +135,14 @@ _to_save = {
     # "upvp_neg_1850":                  upvp["neg_1850"],
     # "upvp_pos_2090":                  upvp["pos_2090"],
     # "upvp_neg_2090":                  upvp["neg_2090"],
-    "Fdiv_phi_transient_pos_1850":    Fdiv_phi_transient["pos_1850"],
-    "Fdiv_phi_transient_neg_1850":    Fdiv_phi_transient["neg_1850"],
-    "Fdiv_phi_transient_pos_2090":    Fdiv_phi_transient["pos_2090"],
-    "Fdiv_phi_transient_neg_2090":    Fdiv_phi_transient["neg_2090"],
-    "Fdiv_p_transient_pos_1850":      Fdiv_p_transient["pos_1850"],
-    "Fdiv_p_transient_neg_1850":      Fdiv_p_transient["neg_1850"],
-    "Fdiv_p_transient_pos_2090":      Fdiv_p_transient["pos_2090"],
-    "Fdiv_p_transient_neg_2090":      Fdiv_p_transient["neg_2090"],
+    # "Fdiv_phi_transient_pos_1850":    Fdiv_phi_transient["pos_1850"],
+    # "Fdiv_phi_transient_neg_1850":    Fdiv_phi_transient["neg_1850"],
+    # "Fdiv_phi_transient_pos_2090":    Fdiv_phi_transient["pos_2090"],
+    # "Fdiv_phi_transient_neg_2090":    Fdiv_phi_transient["neg_2090"],
+    # "Fdiv_p_transient_pos_1850":      Fdiv_p_transient["pos_1850"],
+    # "Fdiv_p_transient_neg_1850":      Fdiv_p_transient["neg_1850"],
+    # "Fdiv_p_transient_pos_2090":      Fdiv_p_transient["pos_2090"],
+    # "Fdiv_p_transient_neg_2090":      Fdiv_p_transient["neg_2090"],
     # "Fdiv_phi_steady_pos_1850":       Fdiv_phi_steady["pos_1850"],
     # "Fdiv_phi_steady_neg_1850":       Fdiv_phi_steady["neg_1850"],
     # "Fdiv_phi_steady_pos_2090":       Fdiv_phi_steady["pos_2090"],
@@ -145,10 +151,10 @@ _to_save = {
     # "Fdiv_p_steady_neg_1850":         Fdiv_p_steady["neg_1850"],
     # "Fdiv_p_steady_pos_2090":         Fdiv_p_steady["pos_2090"],
     # "Fdiv_p_steady_neg_2090":         Fdiv_p_steady["neg_2090"],
-    # "eady_growth_rate_pos_1850":      baroc["pos_1850"],
-    # "eady_growth_rate_neg_1850":      baroc["neg_1850"],
-    # "eady_growth_rate_pos_2090":      baroc["pos_2090"],
-    # "eady_growth_rate_neg_2090":      baroc["neg_2090"],
+    "eady_growth_rate_pos_1850":      baroc["pos_1850"],
+    "eady_growth_rate_neg_1850":      baroc["neg_1850"],
+    "eady_growth_rate_pos_2090":      baroc["pos_2090"],
+    "eady_growth_rate_neg_2090":      baroc["neg_2090"],
     # "zg_steady_pos_1850":             steady["pos_1850"],
     # "zg_steady_neg_1850":             steady["neg_1850"],
     # "zg_steady_pos_2090":             steady["pos_2090"],
