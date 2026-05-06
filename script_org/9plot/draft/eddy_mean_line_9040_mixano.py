@@ -13,10 +13,7 @@ from matplotlib.gridspec import GridSpec
 # Load dataframes from saved CSV files
 
 def _load_csv(name, anomaly=False):
-    if anomaly:
-        load_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/anomaly"
-    else:
-        load_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/non_anomaly"
+    load_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/non_anomaly"
     return pd.read_csv(os.path.join(load_dir, f"{name}.csv"))
 
 #%%
