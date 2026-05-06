@@ -180,7 +180,7 @@ def date_range_composite(zg, date_range):
     try:
         composite = xr.concat(composite, dim="event")
     except ValueError:
-        pass
+        composite = None
     return composite
 
 
