@@ -44,23 +44,74 @@ cwb_neg_first_df["cwb"] *= 13
 cwb_pos_last_df["cwb"] *= 13
 cwb_neg_last_df["cwb"] *= 13
 
-Fdiv_transient_high_pos_first_df = _load_csv("Fdiv_transient_high_pos_first_df")
-Fdiv_transient_high_neg_first_df = _load_csv("Fdiv_transient_high_neg_first_df")
-Fdiv_transient_high_pos_last_df = _load_csv("Fdiv_transient_high_pos_last_df")
-Fdiv_transient_high_neg_last_df = _load_csv("Fdiv_transient_high_neg_last_df")
+# #%%
+Fdiv_phi_transient_high_pos_first_df = _load_csv("Fdiv_phi_transient_high_pos_first_df")
+Fdiv_phi_transient_high_neg_first_df = _load_csv("Fdiv_phi_transient_high_neg_first_df")
+Fdiv_phi_transient_high_pos_last_df = _load_csv("Fdiv_phi_transient_high_pos_last_df")
+Fdiv_phi_transient_high_neg_last_df = _load_csv("Fdiv_phi_transient_high_neg_last_df")
 
-Fdiv_transient_lower_pos_first_df = _load_csv("Fdiv_transient_lower_pos_first_df")
-Fdiv_transient_lower_neg_first_df = _load_csv("Fdiv_transient_lower_neg_first_df")
-Fdiv_transient_lower_pos_last_df = _load_csv("Fdiv_transient_lower_pos_last_df")
-Fdiv_transient_lower_neg_last_df = _load_csv("Fdiv_transient_lower_neg_last_df")
+Fdiv_phi_transient_lower_pos_first_df = _load_csv("Fdiv_phi_transient_lower_pos_first_df")
+Fdiv_phi_transient_lower_neg_first_df = _load_csv("Fdiv_phi_transient_lower_neg_first_df")
+Fdiv_phi_transient_lower_pos_last_df = _load_csv("Fdiv_phi_transient_lower_pos_last_df")
+Fdiv_phi_transient_lower_neg_last_df = _load_csv("Fdiv_phi_transient_lower_neg_last_df")
 
 
+Fdiv_p_transient_high_pos_first_df = _load_csv("Fdiv_p_transient_high_pos_first_df")
+Fdiv_p_transient_high_neg_first_df = _load_csv("Fdiv_p_transient_high_neg_first_df")
+Fdiv_p_transient_high_pos_last_df = _load_csv("Fdiv_p_transient_high_pos_last_df")
+Fdiv_p_transient_high_neg_last_df = _load_csv("Fdiv_p_transient_high_neg_last_df")
 
-Fdiv_steady_pos_first_df = _load_csv("Fdiv_steady_pos_first_df")
-Fdiv_steady_neg_first_df = _load_csv("Fdiv_steady_neg_first_df")
-Fdiv_steady_pos_last_df = _load_csv("Fdiv_steady_pos_last_df")
-Fdiv_steady_neg_last_df = _load_csv("Fdiv_steady_neg_last_df")
+Fdiv_p_transient_lower_pos_first_df = _load_csv("Fdiv_p_transient_lower_pos_first_df")
+Fdiv_p_transient_lower_neg_first_df = _load_csv("Fdiv_p_transient_lower_neg_first_df")
+Fdiv_p_transient_lower_pos_last_df = _load_csv("Fdiv_p_transient_lower_pos_last_df")
+Fdiv_p_transient_lower_neg_last_df = _load_csv("Fdiv_p_transient_lower_neg_last_df")
+#%%
+Fdiv_transient_high_pos_first_df = Fdiv_phi_transient_high_pos_first_df.merge(Fdiv_p_transient_high_pos_first_df, on=["event","time", "phase", "decade"])
+Fdiv_transient_high_pos_first_df['div'] = Fdiv_transient_high_pos_first_df['Fdiv_phi_transient'] - Fdiv_transient_high_pos_first_df['Fdiv_p_transient']
 
+Fdiv_transient_high_neg_first_df = Fdiv_phi_transient_high_neg_first_df.merge(Fdiv_p_transient_high_neg_first_df, on=["event","time", "phase", "decade"])
+Fdiv_transient_high_neg_first_df['div'] = Fdiv_transient_high_neg_first_df['Fdiv_phi_transient'] - Fdiv_transient_high_neg_first_df['Fdiv_p_transient']
+
+Fdiv_transient_high_pos_last_df = Fdiv_phi_transient_high_pos_last_df.merge(Fdiv_p_transient_high_pos_last_df, on=["event","time", "phase", "decade"])  
+Fdiv_transient_high_pos_last_df['div'] = Fdiv_transient_high_pos_last_df['Fdiv_phi_transient'] - Fdiv_transient_high_pos_last_df['Fdiv_p_transient']
+
+Fdiv_transient_high_neg_last_df = Fdiv_phi_transient_high_neg_last_df.merge(Fdiv_p_transient_high_neg_last_df, on=["event","time", "phase", "decade"])
+Fdiv_transient_high_neg_last_df['div'] = Fdiv_transient_high_neg_last_df['Fdiv_phi_transient'] - Fdiv_transient_high_neg_last_df['Fdiv_p_transient']
+
+Fdiv_transient_lower_pos_first_df = Fdiv_phi_transient_lower_pos_first_df.merge(Fdiv_p_transient_lower_pos_first_df, on=["event","time", "phase", "decade"])
+Fdiv_transient_lower_pos_first_df['div'] = Fdiv_transient_lower_pos_first_df['Fdiv_phi_transient'] - Fdiv_transient_lower_pos_first_df['Fdiv_p_transient']
+
+Fdiv_transient_lower_neg_first_df = Fdiv_phi_transient_lower_neg_first_df.merge(Fdiv_p_transient_lower_neg_first_df, on=["event","time", "phase", "decade"])
+Fdiv_transient_lower_neg_first_df['div'] = Fdiv_transient_lower_neg_first_df['Fdiv_phi_transient'] - Fdiv_transient_lower_neg_first_df['Fdiv_p_transient']
+
+Fdiv_transient_lower_pos_last_df = Fdiv_phi_transient_lower_pos_last_df.merge(Fdiv_p_transient_lower_pos_last_df, on=["event","time", "phase", "decade"])
+Fdiv_transient_lower_pos_last_df['div'] = Fdiv_transient_lower_pos_last_df['Fdiv_phi_transient'] - Fdiv_transient_lower_pos_last_df['Fdiv_p_transient']
+
+Fdiv_transient_lower_neg_last_df = Fdiv_phi_transient_lower_neg_last_df.merge(Fdiv_p_transient_lower_neg_last_df, on=["event","time", "phase", "decade"])
+Fdiv_transient_lower_neg_last_df['div'] = Fdiv_transient_lower_neg_last_df['Fdiv_phi_transient'] - Fdiv_transient_lower_neg_last_df['Fdiv_p_transient']
+#%%
+
+Fdiv_phi_steady_pos_first_df = _load_csv("Fdiv_phi_steady_pos_first_df")
+Fdiv_phi_steady_neg_first_df = _load_csv("Fdiv_phi_steady_neg_first_df")
+Fdiv_phi_steady_pos_last_df = _load_csv("Fdiv_phi_steady_pos_last_df")
+Fdiv_phi_steady_neg_last_df = _load_csv("Fdiv_phi_steady_neg_last_df")
+
+Fdiv_p_steady_pos_first_df = _load_csv("Fdiv_p_steady_pos_first_df")
+Fdiv_p_steady_neg_first_df = _load_csv("Fdiv_p_steady_neg_first_df")
+Fdiv_p_steady_pos_last_df = _load_csv("Fdiv_p_steady_pos_last_df")
+Fdiv_p_steady_neg_last_df = _load_csv("Fdiv_p_steady_neg_last_df")
+
+Fdiv_steady_high_pos_first_df = Fdiv_phi_steady_pos_first_df.merge(Fdiv_p_steady_pos_first_df, on=["event","time", "phase", "decade"])
+Fdiv_steady_high_pos_first_df['div'] = Fdiv_steady_high_pos_first_df['Fdiv_phi_steady'] - Fdiv_steady_high_pos_first_df['Fdiv_p_steady']
+
+Fdiv_steady_high_neg_first_df = Fdiv_phi_steady_neg_first_df.merge(Fdiv_p_steady_neg_first_df, on=["event","time", "phase", "decade"])
+Fdiv_steady_high_neg_first_df['div'] = Fdiv_steady_high_neg_first_df['Fdiv_phi_steady'] - Fdiv_steady_high_neg_first_df['Fdiv_p_steady']
+
+Fdiv_steady_high_pos_last_df = Fdiv_phi_steady_pos_last_df.merge(Fdiv_p_steady_pos_last_df, on=["event","time", "phase", "decade"])
+Fdiv_steady_high_pos_last_df['div'] = Fdiv_steady_high_pos_last_df['Fdiv_phi_steady'] - Fdiv_steady_high_pos_last_df['Fdiv_p_steady']
+
+Fdiv_steady_high_neg_last_df = Fdiv_phi_steady_neg_last_df.merge(Fdiv_p_steady_neg_last_df, on=["event","time", "phase", "decade"])
+Fdiv_steady_high_neg_last_df['div'] = Fdiv_steady_high_neg_last_df['Fdiv_phi_steady'] - Fdiv_steady_high_neg_last_df['Fdiv_p_steady']
 #%%
 
 eke_pos_first_df = _load_csv("eke_pos_first_df")
@@ -119,10 +170,10 @@ bar_axes  = [[fig.add_subplot(gs[3 * r + 1, c], sharex=main_axes[r][c]) for c in
 
 # Share y-axis within row 1 (momentum) and row 3 (heat)
 # main_axes[0][1].sharey(main_axes[0][0])
-main_axes[1][1].sharey(main_axes[1][0])
+# main_axes[1][1].sharey(main_axes[1][0])
 main_axes[3][1].sharey(main_axes[3][0])
 # bar_axes[0][1].sharey(bar_axes[0][0])
-bar_axes[1][1].sharey(bar_axes[1][0])
+# bar_axes[1][1].sharey(bar_axes[1][0])
 
 COLOR_POS = "#E57200"  # MPI orange
 COLOR_NEG = "#006C66"  # MPI green
@@ -166,10 +217,10 @@ _plot_diff_bars(bar_axes[0][0], awb_pos_first_df, awb_neg_first_df, awb_pos_last
 _plot_diff_bars(bar_axes[0][1], cwb_pos_first_df, cwb_neg_first_df, cwb_pos_last_df, cwb_neg_last_df, "cwb")
 
 # ===== Row 1: Transient momentum / Steady momentum =====
-_plot_quartet(main_axes[1][0], Fdiv_transient_high_pos_first_df, Fdiv_transient_high_neg_first_df, Fdiv_transient_high_pos_last_df, Fdiv_transient_high_neg_last_df, "Fdiv_transient")
-_plot_quartet(main_axes[1][1], Fdiv_transient_lower_pos_first_df, Fdiv_transient_lower_neg_first_df, Fdiv_transient_lower_pos_last_df, Fdiv_transient_lower_neg_last_df, "Fdiv_transient")
-_plot_diff_bars(bar_axes[1][0], Fdiv_transient_high_pos_first_df, Fdiv_transient_high_neg_first_df, Fdiv_transient_high_pos_last_df, Fdiv_transient_high_neg_last_df, "Fdiv_transient")
-_plot_diff_bars(bar_axes[1][1], Fdiv_transient_lower_pos_first_df, Fdiv_transient_lower_neg_first_df, Fdiv_transient_lower_pos_last_df, Fdiv_transient_lower_neg_last_df, "Fdiv_transient")
+_plot_quartet(main_axes[1][0], Fdiv_transient_high_pos_first_df, Fdiv_transient_high_neg_first_df, Fdiv_transient_high_pos_last_df, Fdiv_transient_high_neg_last_df, "div")
+_plot_quartet(main_axes[1][1], Fdiv_transient_lower_pos_first_df, Fdiv_transient_lower_neg_first_df, Fdiv_transient_lower_pos_last_df, Fdiv_transient_lower_neg_last_df, "div")
+_plot_diff_bars(bar_axes[1][0], Fdiv_transient_high_pos_first_df, Fdiv_transient_high_neg_first_df, Fdiv_transient_high_pos_last_df, Fdiv_transient_high_neg_last_df, "div")
+_plot_diff_bars(bar_axes[1][1], Fdiv_transient_lower_pos_first_df, Fdiv_transient_lower_neg_first_df, Fdiv_transient_lower_pos_last_df, Fdiv_transient_lower_neg_last_df, "div")
 
 # ===== Row 2: EKE / Baroclinicity =====
 _plot_quartet(main_axes[2][0], eke_pos_first_df, eke_neg_first_df, eke_pos_last_df, eke_neg_last_df, "eke")
@@ -253,8 +304,8 @@ for r in range(4):
 # for all axes, xlim -20, 20
 for r in range(4):
     for c in range(2):
-        main_axes[r][c].set_xlim(-20, 20)
-        bar_axes[r][c].set_xlim(-20, 20)
+        main_axes[r][c].set_xlim(-20, 20.5)
+        bar_axes[r][c].set_xlim(-20, 20.5)
 
 # make bar axes y-limits symmetric
 for r in range(4):
@@ -263,9 +314,9 @@ for r in range(4):
         abs_max = max(abs(ax.get_ylim()[0]), abs(ax.get_ylim()[1]))
 #         ax.set_ylim(-abs_max, abs_max)
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_mix.pdf",
-    dpi=300, bbox_inches="tight",
-)
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_mix.pdf",
+#     dpi=300, bbox_inches="tight",
+# )
 
 # %%
