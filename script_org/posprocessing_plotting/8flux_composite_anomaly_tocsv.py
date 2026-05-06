@@ -126,10 +126,10 @@ def to_dataframe(ds, var_name, phase, decade, lat_slice = slice(50, 70), ds_clim
     return df
 
 #%%#%%
-Fdiv_phi_transient_high_pos_first_df = to_dataframe(Fdiv_phi_transient_pos_first, "Fdiv_phi_transient", "pos", 1850, )
-Fdiv_phi_transient_high_neg_first_df = to_dataframe(Fdiv_phi_transient_neg_first, "Fdiv_phi_transient", "neg", 1850, )
-Fdiv_phi_transient_high_pos_last_df  = to_dataframe(Fdiv_phi_transient_pos_last,  "Fdiv_phi_transient", "pos", 2090, )
-Fdiv_phi_transient_high_neg_last_df  = to_dataframe(Fdiv_phi_transient_neg_last,  "Fdiv_phi_transient", "neg", 2090, )
+Fdiv_phi_transient_high_pos_first_df = to_dataframe(Fdiv_phi_transient_pos_first, "Fdiv_phi_transient", "pos", 1850, lat_slice=slice(50, 70))
+Fdiv_phi_transient_high_neg_first_df = to_dataframe(Fdiv_phi_transient_neg_first, "Fdiv_phi_transient", "neg", 1850, lat_slice=slice(50, 70))
+Fdiv_phi_transient_high_pos_last_df  = to_dataframe(Fdiv_phi_transient_pos_last,  "Fdiv_phi_transient", "pos", 2090, lat_slice=slice(50, 70))
+Fdiv_phi_transient_high_neg_last_df  = to_dataframe(Fdiv_phi_transient_neg_last,  "Fdiv_phi_transient", "neg", 2090, lat_slice=slice(50, 70))
 
 #%%
 # lower latitude 
@@ -140,10 +140,10 @@ Fdiv_phi_transient_lower_neg_last_df  = to_dataframe(Fdiv_phi_transient_neg_last
 
 
 #%%
-Fdiv_p_transient_high_pos_first_df = to_dataframe(Fdiv_p_transient_pos_first, "Fdiv_p_transient", "pos", 1850, )
-Fdiv_p_transient_high_neg_first_df = to_dataframe(Fdiv_p_transient_neg_first, "Fdiv_p_transient", "neg", 1850, )
-Fdiv_p_transient_high_pos_last_df  = to_dataframe(Fdiv_p_transient_pos_last,  "Fdiv_p_transient", "pos", 2090, )
-Fdiv_p_transient_high_neg_last_df  = to_dataframe(Fdiv_p_transient_neg_last,  "Fdiv_p_transient", "neg", 2090, )    
+Fdiv_p_transient_high_pos_first_df = to_dataframe(Fdiv_p_transient_pos_first, "Fdiv_p_transient", "pos", 1850, lat_slice=slice(50, 70))
+Fdiv_p_transient_high_neg_first_df = to_dataframe(Fdiv_p_transient_neg_first, "Fdiv_p_transient", "neg", 1850, lat_slice=slice(50, 70))
+Fdiv_p_transient_high_pos_last_df  = to_dataframe(Fdiv_p_transient_pos_last,  "Fdiv_p_transient", "pos", 2090, lat_slice=slice(50, 70))
+Fdiv_p_transient_high_neg_last_df  = to_dataframe(Fdiv_p_transient_neg_last,  "Fdiv_p_transient", "neg", 2090, lat_slice=slice(50, 70))    
 
 
 Fdiv_p_transient_lower_pos_first_df = to_dataframe(Fdiv_p_transient_pos_first, "Fdiv_p_transient", "pos", 1850, lat_slice=slice(30, 50))
@@ -239,18 +239,18 @@ _to_save = {
     # "Fdiv_p_steady_neg_first_df": Fdiv_p_steady_neg_first_df,
     # "Fdiv_p_steady_pos_last_df":  Fdiv_p_steady_pos_last_df,
     # "Fdiv_p_steady_neg_last_df":  Fdiv_p_steady_neg_last_df,
-    # "eke_pos_first_df": eke_pos_first_df,
-    # "eke_neg_first_df": eke_neg_first_df,
-    # "eke_pos_last_df":  eke_pos_last_df,
-    # "eke_neg_last_df":  eke_neg_last_df,
+    "eke_pos_first_df": eke_pos_first_df,
+    "eke_neg_first_df": eke_neg_first_df,
+    "eke_pos_last_df":  eke_pos_last_df,
+    "eke_neg_last_df":  eke_neg_last_df,
     # "eke_high_pos_first_df": eke_high_pos_first_df,
     # "eke_high_neg_first_df": eke_high_neg_first_df,
     # "eke_high_pos_last_df":  eke_high_pos_last_df,
     # "eke_high_neg_last_df":  eke_high_neg_last_df,
-    "baroc_pos_first_df": baroc_pos_first_df,
-    "baroc_neg_first_df": baroc_neg_first_df,
-    "baroc_pos_last_df":  baroc_pos_last_df,
-    "baroc_neg_last_df":  baroc_neg_last_df,
+    # "baroc_pos_first_df": baroc_pos_first_df,
+    # "baroc_neg_first_df": baroc_neg_first_df,
+    # "baroc_pos_last_df":  baroc_pos_last_df,
+    # "baroc_neg_last_df":  baroc_neg_last_df,
     # "transient_eddy_heat_d2y2_pos_first_df": transient_eddy_heat_d2y2_pos_first_df,
     # "transient_eddy_heat_d2y2_neg_first_df": transient_eddy_heat_d2y2_neg_first_df,
     # "transient_eddy_heat_d2y2_pos_last_df": transient_eddy_heat_d2y2_pos_last_df,

@@ -238,12 +238,12 @@ main_axes[1][0].set_title("EP flux convergence \n (higher latitude)")
 main_axes[1][1].set_title("EP flux convergence \n (lower latitude)")
 main_axes[2][0].set_title("EKE")
 main_axes[2][1].set_title("Baroclinicity")
-main_axes[3][0].set_title("eddy thermal forcing ano\n (transient)")
-main_axes[3][1].set_title("eddy thermal forcing ano\n (Quasi-stationary)")
+main_axes[3][0].set_title("eddy thermal forcing\n (transient)")
+main_axes[3][1].set_title("eddy thermal forcing\n (Quasi-stationary)")
 
 # ===== y-labels =====
 main_axes[0][0].set_ylabel("Rossby wave breaking index")
-main_axes[1][0].set_ylabel(r"$- \nabla \cdot \mathbf{F}$ / m $s^{-1}$ day$^{-1}$")
+main_axes[1][0].set_ylabel(r"$- \nabla \cdot F$ / m $s^{-1}$ day$^{-1}$")
 main_axes[2][0].set_ylabel("EKE / m$^2$ s$^{-2}$")
 main_axes[2][1].set_ylabel("Eady growth rate / day$^{-1}$")
 main_axes[3][0].set_ylabel(r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1}$ s$^{-1}$")
@@ -311,10 +311,10 @@ for r in range(4):
         abs_max = max(abs(ax.get_ylim()[0]), abs(ax.get_ylim()[1]))
         ax.set_ylim(-abs_max, abs_max)
 
-plt.savefig(
-    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_mix.pdf",
-    dpi=300, bbox_inches="tight",
-)
+# plt.savefig(
+#     "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_mix.pdf",
+#     dpi=300, bbox_inches="tight",
+# )
 
 
 
