@@ -72,24 +72,34 @@ for i, member in enumerate(members_single):
     theta_2PVU_negs.append(theta_2pvu_neg)
 
 
-# # combine all members from all cores
-theta_2PVU_poss = comm.gather(theta_2PVU_poss, root=0)
-theta_2PVU_negs = comm.gather(theta_2PVU_negs, root=0)
+# Write per-rank results to temp files to avoid MPI 2GB message size limit
+import tempfile, os, glob
 
-# # concatenate the results 
+save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_distribution/"
+tmp_dir = os.path.join(save_dir, f"tmp_{decade}_{var}{suffix}")
 if rank == 0:
+    os.makedirs(tmp_dir, exist_ok=True)
+comm.Barrier()
 
-    # # Flatten the gathered lists
-    theta_2PVU_poss = [item for sublist in theta_2PVU_poss for item in sublist if item is not None]
-    theta_2PVU_negs = [item for sublist in theta_2PVU_negs for item in sublist if item is not None]
+poss_valid = [x for x in theta_2PVU_poss if x is not None]
+negs_valid = [x for x in theta_2PVU_negs if x is not None]
 
+if poss_valid:
+    xr.concat(poss_valid, dim='event').to_netcdf(os.path.join(tmp_dir, f"pos_rank{rank}.nc"))
+if negs_valid:
+    xr.concat(negs_valid, dim='event').to_netcdf(os.path.join(tmp_dir, f"neg_rank{rank}.nc"))
 
-    # concat the results
-    theta_2PVU_poss = xr.concat(theta_2PVU_poss, dim='event')
-    theta_2PVU_negs = xr.concat(theta_2PVU_negs, dim='event')
+comm.Barrier()
 
-    # save the results
-    save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_distribution/"
+if rank == 0:
+    pos_files = sorted(glob.glob(os.path.join(tmp_dir, "pos_rank*.nc")))
+    neg_files = sorted(glob.glob(os.path.join(tmp_dir, "neg_rank*.nc")))
 
-    theta_2PVU_poss.to_netcdf(f'{save_dir}{var}{suffix}_NAO_pos_{decade}.nc')
-    theta_2PVU_negs.to_netcdf(f'{save_dir}{var}{suffix}_NAO_neg_{decade}.nc')
+    xr.open_mfdataset(pos_files, combine='nested', concat_dim='event').to_netcdf(
+        f'{save_dir}{var}{suffix}_NAO_pos_{decade}.nc')
+    xr.open_mfdataset(neg_files, combine='nested', concat_dim='event').to_netcdf(
+        f'{save_dir}{var}{suffix}_NAO_neg_{decade}.nc')
+
+    for f in pos_files + neg_files:
+        os.remove(f)
+    os.rmdir(tmp_dir)
