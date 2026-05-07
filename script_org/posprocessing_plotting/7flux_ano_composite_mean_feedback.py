@@ -55,25 +55,25 @@ def _read_all(var_name, name=None, method="no_stat", chunks=None):
 # --- Read composite data (pos/neg × 1850/2090) ---
 #%%
 # Convergence of transient eddy momentum flux
-Fdiv_phi_transient = _read_all("Fdiv_phi_transient", name="div")
-Fdiv_p_transient = _read_all("Fdiv_p_transient", name="div2")
+Fdiv_phi_transient = _read_all("Fdiv_phi_transient_ano", name="div")
+Fdiv_p_transient = _read_all("Fdiv_p_transient_ano", name="div2")
 #%%
 # Convergence of steady eddy momentum flux
-Fdiv_phi_steady = _read_all("Fdiv_phi_steady", name="div")
-Fdiv_p_steady = _read_all("Fdiv_p_steady", name="div2")
+Fdiv_phi_steady = _read_all("Fdiv_phi_steady_ano", name="div")
+Fdiv_p_steady = _read_all("Fdiv_p_steady_ano", name="div2")
 
 #%%
-eke = _read_all("eke", name="eke")
+eke = _read_all("eke_ano", name="eke")
 #%%
 # Baroclinicity (Eady growth rate)
-baroc = _read_all("eady_growth_rate", name="eady_growth_rate")
+baroc = _read_all("eady_growth_rate_ano", name="eady_growth_rate")
 
 #%%
 # second meridional gradient of transient eddy heat flux
-transient_eddy_heat_d2y2 = _read_all("transient_eddy_heat_d2y2", name="eddy_heat_d2y2")
+transient_eddy_heat_d2y2 = _read_all("transient_eddy_heat_d2y2_ano", name="eddy_heat_d2y2")
 
 # second meridional gradient of steady eddy heat flux
-steady_eddy_heat_d2y2 = _read_all("steady_eddy_heat_d2y2", name="eddy_heat_d2y2")
+steady_eddy_heat_d2y2 = _read_all("steady_eddy_heat_d2y2_ano", name="eddy_heat_d2y2")
 
 #%%
 #%%
