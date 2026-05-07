@@ -64,6 +64,9 @@ Fdiv_p_steady = _read_all("Fdiv_p_steady_ano", name="div2")
 
 #%%
 eke = _read_all("eke_ano", name="eke")
+
+#%%
+eke_high = _read_all("eke_high_ano", name="eke")
 #%%
 # Baroclinicity (Eady growth rate)
 baroc = _read_all("eady_growth_rate_ano", name="eady_growth_rate")
@@ -139,14 +142,14 @@ _to_save = {
     # "vpetp_neg_1850":                 vptp["neg_1850"],
     # "vpetp_pos_2090":                 vptp["pos_2090"],
     # "vpetp_neg_2090":                 vptp["neg_2090"],
-    "eke_pos_1850":                  eke["pos_1850"],
-    "eke_neg_1850":                  eke["neg_1850"],
-    "eke_pos_2090":                  eke["pos_2090"],
-    "eke_neg_2090":                  eke["neg_2090"],
-    # "eke_high_pos_1850":                eke_high["pos_1850"],
-    # "eke_high_neg_1850":                eke_high["neg_1850"],
-    # "eke_high_pos_2090":                eke_high["pos_2090"],
-    # "eke_high_neg_2090":                eke_high["neg_2090"],
+    # "eke_pos_1850":                  eke["pos_1850"],
+    # "eke_neg_1850":                  eke["neg_1850"],
+    # "eke_pos_2090":                  eke["pos_2090"],
+    # "eke_neg_2090":                  eke["neg_2090"],
+    "eke_high_pos_1850":                eke_high["pos_1850"],
+    "eke_high_neg_1850":                eke_high["neg_1850"],
+    "eke_high_pos_2090":                eke_high["pos_2090"],
+    "eke_high_neg_2090":                eke_high["neg_2090"],
     # "transient_eddy_heat_d2y2_pos_1850": transient_eddy_heat_d2y2["pos_1850"],
     # "transient_eddy_heat_d2y2_neg_1850": transient_eddy_heat_d2y2["neg_1850"],
     # "transient_eddy_heat_d2y2_pos_2090": transient_eddy_heat_d2y2["pos_2090"],
