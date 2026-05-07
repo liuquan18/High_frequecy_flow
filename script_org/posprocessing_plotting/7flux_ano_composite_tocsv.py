@@ -23,7 +23,7 @@ from matplotlib.lines import Line2D
 from matplotlib.gridspec import GridSpec
 
 # %%
-data_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback"
+data_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback/anomaly"
 
 def _load(name):
     return xr.open_dataarray(os.path.join(data_dir, f"{name}.nc"))
