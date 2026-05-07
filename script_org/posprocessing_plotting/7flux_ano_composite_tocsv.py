@@ -108,11 +108,8 @@ steady_eddy_heat_d2y2_neg_last  = _load("steady_eddy_heat_d2y2_neg_2090")
 
 #%%
 # fldmean over
-def to_dataframe(ds, var_name, phase, decade, lat_slice = slice(50, 70), ds_clim = None):
+def to_dataframe(ds, var_name, phase, decade, lat_slice = slice(50, 70)):
     ds = ds.sel(lat=lat_slice)    
-    if ds_clim is not None:
-        ds_clim = ds_clim.sel(lat=lat_slice)
-        ds = ds - ds_clim # anomaly
 
     # create weights
     weights = np.cos(np.deg2rad(ds.lat))
