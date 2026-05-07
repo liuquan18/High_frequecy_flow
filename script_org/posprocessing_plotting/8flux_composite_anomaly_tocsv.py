@@ -204,7 +204,7 @@ steady_eddy_heat_d2y2_pos_last_df  = to_dataframe(steady_eddy_heat_d2y2_pos_last
 steady_eddy_heat_d2y2_neg_last_df  = to_dataframe(steady_eddy_heat_d2y2_neg_last,  "steady_eddy_heat_d2y2", "neg", 2090, )
 #%%
 # save the above dataframes for plotting
-save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/non_anomaly"
+save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/anomaly"
 os.makedirs(save_dir, exist_ok=True)
 _to_save = {
     # "Fdiv_phi_transient_high_pos_first_df": Fdiv_phi_transient_high_pos_first_df,
