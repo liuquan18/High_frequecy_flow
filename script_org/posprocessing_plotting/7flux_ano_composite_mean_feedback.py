@@ -53,10 +53,6 @@ def _read_all(var_name, name=None, method="no_stat", chunks=None):
 
 #%%
 # --- Read composite data (pos/neg × 1850/2090) ---
-
-# Jet stream zonal wind
-ua = _read_all("ua", name="ua")
-ua_hat = _read_all("ua_hat", name="ua")
 #%%
 # Convergence of transient eddy momentum flux
 Fdiv_phi_transient = _read_all("Fdiv_phi_transient_ano", name="div")
@@ -80,33 +76,6 @@ transient_eddy_heat_d2y2 = _read_all("transient_eddy_heat_d2y2_ano", name="eddy_
 steady_eddy_heat_d2y2 = _read_all("steady_eddy_heat_d2y2_ano", name="eddy_heat_d2y2")
 
 #%%
-# Steady eddies / blocking (geopotential height)
-steady = _read_all("zg_steady", name="zg", )
-zg_hat = _read_all("zg_hat", name="zg",)
-#%%
-
-# Transient eddy momentum flux (u'v')
-upvp = _read_all("upvp", name="upvp")
-
-# Transient eddy heat flux
-vptp = _read_all("vpetp", name="vpetp")
-
-# steady eddy momentum flux (u'v')
-uvs = _read_all("usvs", name="usvs")
-
-# steady eddy heat flux (v'T')
-vsts = _read_all("vsets", name="vsets")
-
-# Steady eddy meridional heat flux gradient
-vstsdy = _read_all("steady_eddy_heat_dy", name="eddy_heat_dy")
-#%%
-
-#%% 
-
-#%%
-
-#%%
-eke_high = _read_all("eke_high", name="eke")
 #%%
 def _zonal_mean(da, lon_min=-90, lon_max=40):
     """Zonal mean over [lon_min, lon_max], handling both 0-360 and -180-180 grids."""
