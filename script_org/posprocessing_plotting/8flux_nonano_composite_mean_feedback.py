@@ -118,7 +118,7 @@ def _zonal_mean(da, lon_min=-90, lon_max=40):
 
 #  Save all variables to 0composite_feedback
 
-save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback"
+save_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0composite_feedback/non_anomaly"
 os.makedirs(save_dir, exist_ok=True)
 
 _to_save = {
