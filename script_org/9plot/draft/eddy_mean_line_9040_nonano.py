@@ -16,30 +16,7 @@ def _load_csv(name, anomaly=False):
     load_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/non_anomaly"
     return pd.read_csv(os.path.join(load_dir, f"{name}.csv"))
 
-#%%
-# non ano
-awb_pos_first_df = _load_csv("awb_pos_first_df")
-awb_neg_first_df = _load_csv("awb_neg_first_df")
-awb_pos_last_df = _load_csv("awb_pos_last_df")
-awb_neg_last_df = _load_csv("awb_neg_last_df")
 
-# the old data was averaged over isentropic levels, rather than summed.
-awb_pos_first_df["awb"] *= 13 # 13 levels
-awb_neg_first_df["awb"] *= 13
-awb_pos_last_df["awb"] *= 13
-awb_neg_last_df["awb"] *= 13
-
-
-#%%
-cwb_pos_first_df = _load_csv("cwb_pos_first_df")
-cwb_neg_first_df = _load_csv("cwb_neg_first_df")
-cwb_pos_last_df = _load_csv("cwb_pos_last_df")
-cwb_neg_last_df = _load_csv("cwb_neg_last_df")
-#
-cwb_pos_first_df["cwb"] *= 13 # 13 levels
-cwb_neg_first_df["cwb"] *= 13
-cwb_pos_last_df["cwb"] *= 13
-cwb_neg_last_df["cwb"] *= 13
 
 # #%%
 Fdiv_phi_transient_high_pos_first_df = _load_csv("Fdiv_phi_transient_high_pos_first_df")
@@ -120,17 +97,6 @@ baroc_pos_first_df = _load_csv("baroc_pos_first_df")
 baroc_neg_first_df = _load_csv("baroc_neg_first_df")
 baroc_pos_last_df = _load_csv("baroc_pos_last_df")    
 baroc_neg_last_df = _load_csv("baroc_neg_last_df")
-
-# anomaly
-transient_eddy_heat_d2y2_pos_first_df = _load_csv("transient_eddy_heat_d2y2_pos_first_df")
-transient_eddy_heat_d2y2_neg_first_df = _load_csv("transient_eddy_heat_d2y2_neg_first_df")
-transient_eddy_heat_d2y2_pos_last_df = _load_csv("transient_eddy_heat_d2y2_pos_last_df")
-transient_eddy_heat_d2y2_neg_last_df = _load_csv("transient_eddy_heat_d2y2_neg_last_df")
-
-steady_eddy_heat_d2y2_pos_first_df = _load_csv("steady_eddy_heat_d2y2_pos_first_df")
-steady_eddy_heat_d2y2_neg_first_df = _load_csv("steady_eddy_heat_d2y2_neg_first_df")
-steady_eddy_heat_d2y2_pos_last_df = _load_csv("steady_eddy_heat_d2y2_pos_last_df")
-steady_eddy_heat_d2y2_neg_last_df = _load_csv("steady_eddy_heat_d2y2_neg_last_df")
 
 #%%
 def mean_diff_vs_1std(first_df, last_df, var_name):
