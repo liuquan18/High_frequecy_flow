@@ -411,7 +411,7 @@ for r in range(2):
         )
         panel_idx += 1
 plt.savefig(
-    "/work/mh0033/m300883/High_frequec_flow/docs/plots/0after_defense/feedback_lines_efficiency_nonano.pdf",
+    "/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_lines_efficiency_nonano.pdf",
     dpi=300, bbox_inches="tight",
 )
 # %%
