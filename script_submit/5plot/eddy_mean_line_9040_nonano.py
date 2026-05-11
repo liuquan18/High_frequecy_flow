@@ -270,4 +270,91 @@ plt.savefig(
 
 
 
+
+
+# %%
+Fdiv_transient_high_pos_first_df['ratio'] = Fdiv_transient_high_pos_first_df['Fdiv_phi_transient'] / -1 * Fdiv_transient_high_pos_first_df['Fdiv_p_transient']
+Fdiv_transient_high_neg_first_df['ratio'] = Fdiv_transient_high_neg_first_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_high_neg_first_df['Fdiv_p_transient']
+
+Fdiv_transient_high_pos_last_df['ratio'] = Fdiv_transient_high_pos_last_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_high_pos_last_df['Fdiv_p_transient']
+Fdiv_transient_high_neg_last_df['ratio'] = Fdiv_transient_high_neg_last_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_high_neg_last_df['Fdiv_p_transient']
+
+Fdiv_transient_lower_pos_first_df['ratio'] = Fdiv_transient_lower_pos_first_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_lower_pos_first_df['Fdiv_p_transient']
+Fdiv_transient_lower_neg_first_df['ratio'] = Fdiv_transient_lower_neg_first_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_lower_neg_first_df['Fdiv_p_transient']
+
+Fdiv_transient_lower_pos_last_df['ratio'] = Fdiv_transient_lower_pos_last_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_lower_pos_last_df['Fdiv_p_transient']
+Fdiv_transient_lower_neg_last_df['ratio'] = Fdiv_transient_lower_neg_last_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_lower_neg_last_df['Fdiv_p_transient']
+
+#%%
+fig = plt.figure(figsize=(10, 6))
+gs = GridSpec(
+    3, 2, figure=fig,
+    height_ratios=[3, 1, 0.5],
+    hspace=0.08, wspace=0.35,
+)
+main_ax_high = fig.add_subplot(gs[0, 0])
+main_ax_lower = fig.add_subplot(gs[0, 1])
+bar_ax_high = fig.add_subplot(gs[1, 0], sharex=main_ax_high)
+bar_ax_lower = fig.add_subplot(gs[1, 1], sharex=main_ax_lower)
+
+_plot_quartet(
+    main_ax_high,
+    Fdiv_transient_high_pos_first_df,
+    Fdiv_transient_high_neg_first_df,
+    Fdiv_transient_high_pos_last_df,
+    Fdiv_transient_high_neg_last_df,
+    "ratio",
+)
+_plot_quartet(
+    main_ax_lower,
+    Fdiv_transient_lower_pos_first_df,
+    Fdiv_transient_lower_neg_first_df,
+    Fdiv_transient_lower_pos_last_df,
+    Fdiv_transient_lower_neg_last_df,
+    "ratio",
+)
+
+_plot_diff_bars(
+    bar_ax_high,
+    Fdiv_transient_high_pos_first_df,
+    Fdiv_transient_high_neg_first_df,
+    Fdiv_transient_high_pos_last_df,
+    Fdiv_transient_high_neg_last_df,
+    "ratio",
+)
+_plot_diff_bars(
+    bar_ax_lower,
+    Fdiv_transient_lower_pos_first_df,
+    Fdiv_transient_lower_neg_first_df,
+    Fdiv_transient_lower_pos_last_df,
+    Fdiv_transient_lower_neg_last_df,
+    "ratio",
+)
+
+main_ax_high.set_title("EP flux convergence ratio (higher latitude)")
+main_ax_lower.set_title("EP flux convergence ratio (lower latitude)")
+main_ax_high.set_ylabel(r"$F_{\phi}/F_p$")
+main_ax_lower.set_ylabel("")
+
+# main_ax_high.set_ylim(-30, 30)
+# main_ax_lower.set_ylim(-30, 30)
+
+# bar_ax_high.set_ylim(-10, 10)
+# bar_ax_lower.set_ylim(-10, 10)
+
+for ax in [main_ax_high, main_ax_lower]:
+    ax.set_xlim(-20, 20.5)
+    ax.axvline(0, color="gray", linestyle="dotted", lw=1)
+    sns.despine(ax=ax, bottom=True)
+    ax.tick_params(bottom=False)
+    ax.set_xlabel("")
+    plt.setp(ax.get_xticklabels(), visible=False)
+
+
+
+for ax in [bar_ax_high, bar_ax_lower]:
+    ax.set_xlabel("Days relative to extreme onset")
+    ax.set_xlim(-20, 20.5)
+    abs_max = max(abs(ax.get_ylim()[0]), abs(ax.get_ylim()[1]))
+    ax.set_ylim(-abs_max, abs_max)
 # %%
