@@ -273,32 +273,66 @@ plt.savefig(
 
 
 # %%
-Fdiv_transient_high_pos_first_df['ratio'] = Fdiv_transient_high_pos_first_df['Fdiv_phi_transient'] / -1 * Fdiv_transient_high_pos_first_df['Fdiv_p_transient']
-Fdiv_transient_high_neg_first_df['ratio'] = Fdiv_transient_high_neg_first_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_high_neg_first_df['Fdiv_p_transient']
+Fdiv_transient_high_pos_first_df['ratio'] = Fdiv_transient_high_pos_first_df['Fdiv_phi_transient'] / (baroc_pos_first_df['baroclinicity'] * 86400)
+Fdiv_transient_high_neg_first_df['ratio'] = Fdiv_transient_high_neg_first_df['Fdiv_phi_transient'] / (baroc_neg_first_df['baroclinicity'] * 86400)
+Fdiv_transient_high_pos_last_df['ratio'] = Fdiv_transient_high_pos_last_df['Fdiv_phi_transient'] / (baroc_pos_last_df['baroclinicity'] * 86400)
+Fdiv_transient_high_neg_last_df['ratio'] = Fdiv_transient_high_neg_last_df['Fdiv_phi_transient'] / (baroc_neg_last_df['baroclinicity'] * 86400)
 
-Fdiv_transient_high_pos_last_df['ratio'] = Fdiv_transient_high_pos_last_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_high_pos_last_df['Fdiv_p_transient']
-Fdiv_transient_high_neg_last_df['ratio'] = Fdiv_transient_high_neg_last_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_high_neg_last_df['Fdiv_p_transient']
-
-Fdiv_transient_lower_pos_first_df['ratio'] = Fdiv_transient_lower_pos_first_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_lower_pos_first_df['Fdiv_p_transient']
-Fdiv_transient_lower_neg_first_df['ratio'] = Fdiv_transient_lower_neg_first_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_lower_neg_first_df['Fdiv_p_transient']
-
-Fdiv_transient_lower_pos_last_df['ratio'] = Fdiv_transient_lower_pos_last_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_lower_pos_last_df['Fdiv_p_transient']
-Fdiv_transient_lower_neg_last_df['ratio'] = Fdiv_transient_lower_neg_last_df['Fdiv_phi_transient'] / -1 *  Fdiv_transient_lower_neg_last_df['Fdiv_p_transient']
-
+Fdiv_transient_lower_pos_first_df['ratio'] = Fdiv_transient_lower_pos_first_df['Fdiv_phi_transient'] / (baroc_pos_first_df['baroclinicity'] * 86400)
+Fdiv_transient_lower_neg_first_df['ratio'] = Fdiv_transient_lower_neg_first_df['Fdiv_phi_transient'] / (baroc_neg_first_df['baroclinicity'] * 86400)
+Fdiv_transient_lower_pos_last_df['ratio'] = Fdiv_transient_lower_pos_last_df['Fdiv_phi_transient'] / (baroc_pos_last_df['baroclinicity'] * 86400)
+Fdiv_transient_lower_neg_last_df['ratio'] = Fdiv_transient_lower_neg_last_df['Fdiv_phi_transient'] / (baroc_neg_last_df['baroclinicity'] * 86400)
 #%%
-fig = plt.figure(figsize=(10, 6))
+fig = plt.figure(figsize=(10, 10))
 gs = GridSpec(
-    3, 2, figure=fig,
-    height_ratios=[3, 1, 0.5],
+    6, 2, figure=fig,
+    height_ratios=[3, 1, 0.5, 3, 1, 0.5],
     hspace=0.08, wspace=0.35,
 )
-main_ax_high = fig.add_subplot(gs[0, 0])
-main_ax_lower = fig.add_subplot(gs[0, 1])
-bar_ax_high = fig.add_subplot(gs[1, 0], sharex=main_ax_high)
-bar_ax_lower = fig.add_subplot(gs[1, 1], sharex=main_ax_lower)
+main_ax_high = [fig.add_subplot(gs[r, 0]) for r in range(0, 6, 3)]
+main_ax_lower = [fig.add_subplot(gs[r, 1]) for r in range(0, 6, 3)]
+bar_ax_high = [fig.add_subplot(gs[r, 0], sharex=main_ax_high[0]) for r in range(1, 6, 3)]
+bar_ax_lower = [fig.add_subplot(gs[r, 1], sharex=main_ax_lower[0]) for r in range(1, 6, 3)]
 
 _plot_quartet(
-    main_ax_high,
+    main_ax_high[0],
+    Fdiv_transient_high_pos_first_df,
+    Fdiv_transient_high_neg_first_df,
+    Fdiv_transient_high_pos_last_df,
+    Fdiv_transient_high_neg_last_df,
+    "div",
+)
+
+_plot_quartet(
+    main_ax_lower[0],
+    Fdiv_transient_lower_pos_first_df,
+    Fdiv_transient_lower_neg_first_df,
+    Fdiv_transient_lower_pos_last_df,
+    Fdiv_transient_lower_neg_last_df,
+    "div",
+)
+
+_plot_diff_bars(
+    bar_ax_high[0],
+    Fdiv_transient_high_pos_first_df,
+    Fdiv_transient_high_neg_first_df,
+    Fdiv_transient_high_pos_last_df,
+    Fdiv_transient_high_neg_last_df,
+    "div",
+)
+
+_plot_diff_bars(
+    bar_ax_lower[0],
+    Fdiv_transient_lower_pos_first_df,
+    Fdiv_transient_lower_neg_first_df,
+    Fdiv_transient_lower_pos_last_df,
+    Fdiv_transient_lower_neg_last_df,
+    "div",
+)
+
+
+_plot_quartet(
+    main_ax_high[1],
     Fdiv_transient_high_pos_first_df,
     Fdiv_transient_high_neg_first_df,
     Fdiv_transient_high_pos_last_df,
@@ -306,7 +340,7 @@ _plot_quartet(
     "ratio",
 )
 _plot_quartet(
-    main_ax_lower,
+    main_ax_lower[1],
     Fdiv_transient_lower_pos_first_df,
     Fdiv_transient_lower_neg_first_df,
     Fdiv_transient_lower_pos_last_df,
@@ -315,7 +349,7 @@ _plot_quartet(
 )
 
 _plot_diff_bars(
-    bar_ax_high,
+    bar_ax_high[1],
     Fdiv_transient_high_pos_first_df,
     Fdiv_transient_high_neg_first_df,
     Fdiv_transient_high_pos_last_df,
@@ -323,7 +357,7 @@ _plot_diff_bars(
     "ratio",
 )
 _plot_diff_bars(
-    bar_ax_lower,
+    bar_ax_lower[1],
     Fdiv_transient_lower_pos_first_df,
     Fdiv_transient_lower_neg_first_df,
     Fdiv_transient_lower_pos_last_df,
@@ -331,18 +365,17 @@ _plot_diff_bars(
     "ratio",
 )
 
-main_ax_high.set_title("EP flux convergence ratio (higher latitude)")
-main_ax_lower.set_title("EP flux convergence ratio (lower latitude)")
-main_ax_high.set_ylabel(r"$F_{\phi}/F_p$")
-main_ax_lower.set_ylabel("")
+main_ax_high[0].set_title("EP flux convergence (higher latitude)")
+main_ax_lower[0].set_title("EP flux convergence (lower latitude)")
+main_ax_high[1].set_title("Efficiency (higher latitude)")
+main_ax_lower[1].set_title("Efficiency (lower latitude)")
+main_ax_high[0].set_ylabel(r"$- \nabla \cdot F$ / m $s^{-1}$ day$^{-1}$")
+main_ax_lower[0].set_ylabel("")
+main_ax_high[1].set_ylabel("sink / source")
+main_ax_lower[1].set_ylabel("")
 
-# main_ax_high.set_ylim(-30, 30)
-# main_ax_lower.set_ylim(-30, 30)
 
-# bar_ax_high.set_ylim(-10, 10)
-# bar_ax_lower.set_ylim(-10, 10)
-
-for ax in [main_ax_high, main_ax_lower]:
+for ax in main_ax_high + main_ax_lower:
     ax.set_xlim(-20, 20.5)
     ax.axvline(0, color="gray", linestyle="dotted", lw=1)
     sns.despine(ax=ax, bottom=True)
@@ -351,10 +384,34 @@ for ax in [main_ax_high, main_ax_lower]:
     plt.setp(ax.get_xticklabels(), visible=False)
 
 
+for i, (ax_high, ax_lower) in enumerate(zip(bar_ax_high, bar_ax_lower)):
+    for ax in [ax_high, ax_lower]:
+        ax.set_xlim(-20, 20.5)
+        abs_max = max(abs(ax.get_ylim()[0]), abs(ax.get_ylim()[1]))
+        ax.set_ylim(-abs_max, abs_max)
+        if i == 0:
+            ax.set_xlabel("")
+            plt.setp(ax.get_xticklabels(), visible=False)
+        else:
+            ax.set_xlabel("Days relative to extreme onset")
 
-for ax in [bar_ax_high, bar_ax_lower]:
-    ax.set_xlabel("Days relative to extreme onset")
-    ax.set_xlim(-20, 20.5)
-    abs_max = max(abs(ax.get_ylim()[0]), abs(ax.get_ylim()[1]))
-    ax.set_ylim(-abs_max, abs_max)
+# ===== Panel labels =====
+panel_idx = 0
+for r in range(2):
+    for c in range(2):
+        main_ax_high[r].text(
+            -0.08, 1.02, chr(97 + panel_idx),
+            transform=main_ax_high[r].transAxes,
+            fontsize=14, fontweight="bold", va="bottom", ha="right",
+        )
+        main_ax_lower[r].text(
+            -0.08, 1.02, chr(97 + panel_idx + 2),
+            transform=main_ax_lower[r].transAxes,
+            fontsize=14, fontweight="bold", va="bottom", ha="right",
+        )
+        panel_idx += 1
+plt.savefig(
+    "/work/mh0033/m300883/High_frequec_flow/docs/plots/0after_defense/feedback_lines_efficiency_nonano.pdf",
+    dpi=300, bbox_inches="tight",
+)
 # %%
