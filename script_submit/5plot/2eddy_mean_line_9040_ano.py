@@ -24,10 +24,10 @@ awb_pos_last_df = _load_csv("awb_pos_last_df")
 awb_neg_last_df = _load_csv("awb_neg_last_df")
 
 # the old data was averaged over isentropic levels, rather than summed.
-awb_pos_first_df["awb"] *= 13 # 13 levels
-awb_neg_first_df["awb"] *= 13
-awb_pos_last_df["awb"] *= 13
-awb_neg_last_df["awb"] *= 13
+awb_pos_first_df["awb"] *= 13*100 # 13 levels, to percent
+awb_neg_first_df["awb"] *= 13*100
+awb_pos_last_df["awb"] *= 13*100
+awb_neg_last_df["awb"] *= 13*100
 
 
 #%%
@@ -36,10 +36,10 @@ cwb_neg_first_df = _load_csv("cwb_neg_first_df")
 cwb_pos_last_df = _load_csv("cwb_pos_last_df")
 cwb_neg_last_df = _load_csv("cwb_neg_last_df")
 #
-cwb_pos_first_df["cwb"] *= 13 # 13 levels
-cwb_neg_first_df["cwb"] *= 13
-cwb_pos_last_df["cwb"] *= 13
-cwb_neg_last_df["cwb"] *= 13
+cwb_pos_first_df["cwb"] *= 13*100 # 13 levels, to percent
+cwb_neg_first_df["cwb"] *= 13*100
+cwb_pos_last_df["cwb"] *= 13*100
+cwb_neg_last_df["cwb"] *= 13*100
 
 # #%%
 Fdiv_phi_transient_high_pos_first_df = _load_csv("Fdiv_phi_transient_high_pos_first_df")
@@ -232,8 +232,8 @@ _plot_diff_bars(bar_axes[3][0], transient_eddy_heat_d2y2_pos_first_df, transient
 _plot_diff_bars(bar_axes[3][1], steady_eddy_heat_d2y2_pos_first_df, steady_eddy_heat_d2y2_neg_first_df, steady_eddy_heat_d2y2_pos_last_df, steady_eddy_heat_d2y2_neg_last_df, "steady_eddy_heat_d2y2")
 
 # ===== Titles =====
-main_axes[0][0].set_title("AWB")
-main_axes[0][1].set_title("CWB")
+main_axes[0][0].set_title("Anticyclonic wave breaking")
+main_axes[0][1].set_title("Cyclonic wave breaking")
 main_axes[1][0].set_title("EP flux convergence \n (higher latitude)")
 main_axes[1][1].set_title("EP flux convergence \n (lower latitude)")
 main_axes[2][0].set_title("EKE")
@@ -242,7 +242,7 @@ main_axes[3][0].set_title("eddy thermal forcing\n (transient)")
 main_axes[3][1].set_title("eddy thermal forcing\n (Quasi-stationary)")
 
 # ===== y-labels =====
-main_axes[0][0].set_ylabel("Rossby wave breaking index")
+main_axes[0][0].set_ylabel("likelihood / %")
 main_axes[1][0].set_ylabel(r"$- \nabla \cdot F$ / m $s^{-1}$ day$^{-1}$")
 main_axes[2][0].set_ylabel("EKE / m$^2$ s$^{-2}$")
 main_axes[2][1].set_ylabel("Eady growth rate / day$^{-1}$")
@@ -317,3 +317,5 @@ plt.savefig(
 )
 
 
+
+# %%
