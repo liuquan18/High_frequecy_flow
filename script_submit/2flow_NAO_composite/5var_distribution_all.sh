@@ -26,6 +26,12 @@ sbatch 5var_NAO_range_distribution_submit.sh 2090 M2_steady M2 MPI_GE_CMIP6_allp
 
 
 # EP flux divergence with ano
+
+
+sbatch ./5var_NAO_range_distribution_submit.sh 1850 ua ua MPI_GE_CMIP6_allplev None /work/mh0033/m300883/High_frequecy_flow/data/ _ano
+sbatch ./5var_NAO_range_distribution_submit.sh 2090 ua ua MPI_GE_CMIP6_allplev None /work/mh0033/m300883/High_frequecy_flow/data/ _ano
+
+
 sbatch ./5var_NAO_range_distribution_submit.sh 1850 Fdiv_p_transient div2 MPI_GE_CMIP6_allplev 25000 /work/mh0033/m300883/High_frequecy_flow/data/ _ano
 sbatch ./5var_NAO_range_distribution_submit.sh 2090 Fdiv_p_transient div2 MPI_GE_CMIP6_allplev 25000 /work/mh0033/m300883/High_frequecy_flow/data/ _ano
 
