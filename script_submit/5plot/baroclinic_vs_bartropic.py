@@ -97,7 +97,7 @@ ua_neg_diff_zm = ua_neg_diff_zm.assign_coords(plev=ua_neg_diff_zm.plev / 100)
 # Vertical profile: lat vs plev
 ua_diff_diff_zm = ua_pos_diff_zm - ua_neg_diff_zm
 
-fig, axes = plt.subplots(1, 3, figsize=(16, 6), sharey=True)
+fig, axes = plt.subplots(1, 3, figsize=(14, 4), sharey=True)
 
 levels = np.arange(-2, 2.1, 0.2)
 levels_diff = np.arange(-2, 2.1, 0.2)
@@ -109,17 +109,19 @@ for ax, da, title, lvls , label in zip(
     [levels, levels, levels_diff],
     ["a", "b", "c"],
 ):
-    cf = ax.contourf(
+    cf = ax.pcolormesh(
         da.lat, da.plev, da.values,
-        levels=lvls,
         cmap="RdBu_r",
-        extend="both",
+        shading="nearest",
+        vmin = -2.0,
+        vmax = 2.0,
+        snap = False,
     )
     ax.contour(
         da.lat, da.plev, da.values,
         levels=lvls,
         colors="k",
-        linewidths=0.5,
+        linewidths=0.2,
     )
     ax.set_xlabel("Latitude (°N)")
     ax.set_ylabel("Pressure (hPa)")
@@ -137,6 +139,9 @@ for ax, da, title, lvls , label in zip(
         fontweight="bold",
         va="top",
     )
+
+    # add vertical line at 60N
+    ax.axvline(60, color="k", linestyle="dotted", linewidth=2)
 
 plt.colorbar(cf, ax=axes, label="$\Delta$ua (m/s)", shrink=0.8, pad=0.02)
 # plt.tight_layout()
