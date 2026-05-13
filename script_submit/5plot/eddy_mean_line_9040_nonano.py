@@ -191,13 +191,13 @@ _plot_diff_bars(bar_axes[1][1], eke_core_pos_first_df, eke_core_neg_first_df, ek
 
 
 # ===== Titles =====
-main_axes[0][0].set_title("EP flux convergence \n (higher latitude)")
+main_axes[0][0].set_title("EP flux divergence \n (higher latitude)")
 main_axes[0][1].set_title("Eady growth rate / day$^{-1}$")
 main_axes[1][0].set_title("EKE northern flank")
 main_axes[1][1].set_title("EKE jet core")
 
 # ===== y-labels =====
-main_axes[0][0].set_ylabel(r"$- \nabla \cdot F$ / m $s^{-1}$ day$^{-1}$")
+main_axes[0][0].set_ylabel(r"$\nabla \cdot F$ / m $s^{-1}$ day$^{-1}$")
 main_axes[0][1].set_ylabel(r"$\sigma_E$ / day$^{-1}$")
 main_axes[1][0].set_ylabel("EKE / m$^2$ s$^{-2}$")
 main_axes[1][1].set_ylabel("EKE / m$^2$ s$^{-2}$")

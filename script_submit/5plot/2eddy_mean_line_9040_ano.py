@@ -234,8 +234,8 @@ _plot_diff_bars(bar_axes[3][1], steady_eddy_heat_d2y2_pos_first_df, steady_eddy_
 # ===== Titles =====
 main_axes[0][0].set_title("Anticyclonic wave breaking")
 main_axes[0][1].set_title("Cyclonic wave breaking")
-main_axes[1][0].set_title("EP flux convergence \n (higher latitude)")
-main_axes[1][1].set_title("EP flux convergence \n (lower latitude)")
+main_axes[1][0].set_title("EP flux divergence \n (higher latitude)")
+main_axes[1][1].set_title("EP flux divergence \n (lower latitude)")
 main_axes[2][0].set_title("EKE")
 main_axes[2][1].set_title("Baroclinicity")
 main_axes[3][0].set_title("eddy thermal forcing\n (transient)")
@@ -243,7 +243,7 @@ main_axes[3][1].set_title("eddy thermal forcing\n (Quasi-stationary)")
 
 # ===== y-labels =====
 main_axes[0][0].set_ylabel("likelihood / %")
-main_axes[1][0].set_ylabel(r"$- \nabla \cdot F$ / m $s^{-1}$ day$^{-1}$")
+main_axes[1][0].set_ylabel(r"$\nabla \cdot F$ / m $s^{-1}$ day$^{-1}$")
 main_axes[2][0].set_ylabel("EKE / m$^2$ s$^{-2}$")
 main_axes[2][1].set_ylabel("Eady growth rate / day$^{-1}$")
 main_axes[3][0].set_ylabel(r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1}$ s$^{-1}$")

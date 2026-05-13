@@ -97,7 +97,7 @@ ua_neg_diff_zm = ua_neg_diff_zm.assign_coords(plev=ua_neg_diff_zm.plev / 100)
 # Vertical profile: lat vs plev
 ua_diff_diff_zm = ua_pos_diff_zm - ua_neg_diff_zm
 
-fig, axes = plt.subplots(1, 3, figsize=(14, 4), sharey=True)
+fig, axes = plt.subplots(1, 3, figsize=(14, 3.5), sharey=True)
 
 levels = np.arange(-2, 2.1, 0.2)
 levels_diff = np.arange(-2, 2.1, 0.2)
