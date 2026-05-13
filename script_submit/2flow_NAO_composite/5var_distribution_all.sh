@@ -45,8 +45,8 @@ sbatch ./5var_NAO_range_distribution_submit.sh 1850 Fdiv_phi_steady div MPI_GE_C
 sbatch ./5var_NAO_range_distribution_submit.sh 2090 Fdiv_phi_steady div MPI_GE_CMIP6_allplev 25000 /work/mh0033/m300883/High_frequecy_flow/data/ _ano
 
 # eke with ano
-sbatch ./5var_NAO_range_distribution_submit.sh 1850 eke eke MPI_GE_CMIP6 25000 /work/mh0033/m300883/High_frequecy_flow/data/ _ano
-sbatch ./5var_NAO_range_distribution_submit.sh 2090 eke eke MPI_GE_CMIP6 25000 /work/mh0033/m300883/High_frequecy_flow/data/ _ano
+sbatch ./5var_NAO_range_distribution_submit.sh 1850 eke eke MPI_GE_CMIP6 50000 /work/mh0033/m300883/High_frequecy_flow/data/ _ano
+sbatch ./5var_NAO_range_distribution_submit.sh 2090 eke eke MPI_GE_CMIP6 50000 /work/mh0033/m300883/High_frequecy_flow/data/ _ano
 
 # baroclinicity with ano
 sbatch ./5var_NAO_range_distribution_submit.sh 1850 eady_growth_rate eady_growth_rate MPI_GE_CMIP6_allplev 85000 /work/mh0033/m300883/High_frequecy_flow/data/ _ano
@@ -74,8 +74,8 @@ sbatch ./5var_NAO_range_distribution_submit.sh 2090 Fdiv_p_steady div2 MPI_GE_CM
 sbatch ./5var_NAO_range_distribution_submit.sh 1850 Fdiv_phi_steady div MPI_GE_CMIP6_allplev 25000 /work/mh0033/m300883/High_frequecy_flow/data/
 sbatch ./5var_NAO_range_distribution_submit.sh 2090 Fdiv_phi_steady div MPI_GE_CMIP6_allplev 25000 /work/mh0033/m300883/High_frequecy_flow/data/
 
-sbatch ./5var_NAO_range_distribution_submit.sh 1850 eke eke MPI_GE_CMIP6 25000 /work/mh0033/m300883/High_frequecy_flow/data/
-sbatch ./5var_NAO_range_distribution_submit.sh 2090 eke eke MPI_GE_CMIP6 25000 /work/mh0033/m300883/High_frequecy_flow/data/
+sbatch ./5var_NAO_range_distribution_submit.sh 1850 eke eke MPI_GE_CMIP6 50000 /work/mh0033/m300883/High_frequecy_flow/data/
+sbatch ./5var_NAO_range_distribution_submit.sh 2090 eke eke MPI_GE_CMIP6 50000 /work/mh0033/m300883/High_frequecy_flow/data/
 
 sbatch ./5var_NAO_range_distribution_submit.sh 1850 eady_growth_rate eady_growth_rate MPI_GE_CMIP6_allplev 85000 /work/mh0033/m300883/High_frequecy_flow/data/
 sbatch ./5var_NAO_range_distribution_submit.sh 2090 eady_growth_rate eady_growth_rate MPI_GE_CMIP6_allplev 85000 /work/mh0033/m300883/High_frequecy_flow/data/

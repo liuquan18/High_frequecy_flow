@@ -12,7 +12,7 @@ from matplotlib.gridspec import GridSpec
 #%%
 # Load dataframes from saved CSV files
 
-def _load_csv(name, anomaly=False):
+def _load_csv(name):
     load_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0eddy_momentum_pd/anomaly"
     return pd.read_csv(os.path.join(load_dir, f"{name}.csv"))
 
@@ -219,11 +219,11 @@ _plot_quartet(main_axes[1][1], Fdiv_transient_lower_pos_first_df, Fdiv_transient
 _plot_diff_bars(bar_axes[1][0], Fdiv_transient_high_pos_first_df, Fdiv_transient_high_neg_first_df, Fdiv_transient_high_pos_last_df, Fdiv_transient_high_neg_last_df, "div")
 _plot_diff_bars(bar_axes[1][1], Fdiv_transient_lower_pos_first_df, Fdiv_transient_lower_neg_first_df, Fdiv_transient_lower_pos_last_df, Fdiv_transient_lower_neg_last_df, "div")
 
-# ===== Row 2: EKE / Baroclinicity =====
-_plot_quartet(main_axes[2][0], eke_pos_first_df, eke_neg_first_df, eke_pos_last_df, eke_neg_last_df, "eke")
-_plot_quartet(main_axes[2][1], baroc_pos_first_df, baroc_neg_first_df, baroc_pos_last_df, baroc_neg_last_df, "baroclinicity")
-_plot_diff_bars(bar_axes[2][0], eke_pos_first_df, eke_neg_first_df, eke_pos_last_df, eke_neg_last_df, "eke")
-_plot_diff_bars(bar_axes[2][1], baroc_pos_first_df, baroc_neg_first_df, baroc_pos_last_df, baroc_neg_last_df, "baroclinicity")
+# ===== Row 2: Baroclinicity / EKE =====
+_plot_quartet(main_axes[2][0], baroc_pos_first_df, baroc_neg_first_df, baroc_pos_last_df, baroc_neg_last_df, "baroclinicity")
+_plot_quartet(main_axes[2][1], eke_pos_first_df, eke_neg_first_df, eke_pos_last_df, eke_neg_last_df, "eke")
+_plot_diff_bars(bar_axes[2][0], baroc_pos_first_df, baroc_neg_first_df, baroc_pos_last_df, baroc_neg_last_df, "baroclinicity")
+_plot_diff_bars(bar_axes[2][1], eke_pos_first_df, eke_neg_first_df, eke_pos_last_df, eke_neg_last_df, "eke")
 
 # ===== Row 3: Transient heat / Steady heat =====
 _plot_quartet(main_axes[3][0], transient_eddy_heat_d2y2_pos_first_df, transient_eddy_heat_d2y2_neg_first_df, transient_eddy_heat_d2y2_pos_last_df, transient_eddy_heat_d2y2_neg_last_df, "transient_eddy_heat_d2y2")
@@ -236,16 +236,16 @@ main_axes[0][0].set_title("Anticyclonic wave breaking")
 main_axes[0][1].set_title("Cyclonic wave breaking")
 main_axes[1][0].set_title("EP flux divergence \n (higher latitude)")
 main_axes[1][1].set_title("EP flux divergence \n (lower latitude)")
-main_axes[2][0].set_title("EKE")
-main_axes[2][1].set_title("Baroclinicity")
+main_axes[2][0].set_title("Baroclinicity \n (higher latitude)")
+main_axes[2][1].set_title("EKE \n (lower latitude)")
 main_axes[3][0].set_title("eddy thermal forcing\n (transient)")
 main_axes[3][1].set_title("eddy thermal forcing\n (Quasi-stationary)")
 
 # ===== y-labels =====
 main_axes[0][0].set_ylabel("likelihood / %")
 main_axes[1][0].set_ylabel(r"$\nabla \cdot F$ / m $s^{-1}$ day$^{-1}$")
-main_axes[2][0].set_ylabel("EKE / m$^2$ s$^{-2}$")
-main_axes[2][1].set_ylabel("Eady growth rate / day$^{-1}$")
+main_axes[2][0].set_ylabel("Eady growth rate / day$^{-1}$")
+main_axes[2][1].set_ylabel("EKE / m$^2$ s$^{-2}$")
 main_axes[3][0].set_ylabel(r"$\frac{\partial^2}{\partial y^2} (v'\theta')$ / K $m^{-1}$ s$^{-1}$")
 main_axes[0][1].set_ylabel("")
 main_axes[1][1].set_ylabel("")
