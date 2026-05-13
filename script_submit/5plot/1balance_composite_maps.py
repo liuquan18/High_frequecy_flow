@@ -321,11 +321,11 @@ baroc_neg_first = baroc_neg_first * 86400
 baroc_pos_last = baroc_pos_last * 86400
 baroc_neg_last = baroc_neg_last * 86400
 
-# baroc select 85000
-baroc_pos_first = baroc_pos_first.sel(plev=85000)
-baroc_neg_first = baroc_neg_first.sel(plev=85000)
-baroc_pos_last = baroc_pos_last.sel(plev=85000)
-baroc_neg_last = baroc_neg_last.sel(plev=85000)
+# # baroc select 85000
+# baroc_pos_first = baroc_pos_first.sel(plev=85000)
+# baroc_neg_first = baroc_neg_first.sel(plev=85000)
+# baroc_pos_last = baroc_pos_last.sel(plev=85000)
+# baroc_neg_last = baroc_neg_last.sel(plev=85000)
 
 # smooth the baroc
 baroc_pos_first = map_smooth(baroc_pos_first, 5, 5)
@@ -344,8 +344,8 @@ awb_diff_levels = np.arange(-25, 26, 10)
 cwb_levels = np.arange(-20, 21, 8)
 cwb_diff_levels = np.arange(-10, 11, 4)
 
-eke_levels = np.arange(-120, 121, 20)
-eke_diff_levels = np.arange(-60, 61, 10)
+eke_levels = np.arange(-40, 41, 10)
+eke_diff_levels = np.arange(-20, 21, 5)
 
 ua_levels = np.arange(-30, 31, 10)
 ua_diff_levels = np.arange(-15, 16, 5)
