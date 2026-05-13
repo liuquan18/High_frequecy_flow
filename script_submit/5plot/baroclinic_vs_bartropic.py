@@ -117,12 +117,12 @@ for ax, da, title, lvls , label in zip(
         vmax = 2.0,
         snap = False,
     )
-    ax.contour(
-        da.lat, da.plev, da.values,
-        levels=lvls,
-        colors="k",
-        linewidths=0.2,
-    )
+    # ax.contour(
+    #     da.lat, da.plev, da.values,
+    #     levels=lvls,
+    #     colors="k",
+    #     linewidths=0.2,
+    # )
     ax.set_xlabel("Latitude (°N)")
     ax.set_ylabel("Pressure (hPa)")
     ax.set_title(title)
@@ -131,8 +131,8 @@ for ax, da, title, lvls , label in zip(
 
     # add panel label
     ax.text(
-        0.0,
-        1.05,
+        -0.1,
+        1.07,
         label,
         transform=ax.transAxes,
         fontsize=14,
@@ -142,8 +142,9 @@ for ax, da, title, lvls , label in zip(
 
     # add vertical line at 60N
     ax.axvline(60, color="k", linestyle="dotted", linewidth=2)
-
-plt.colorbar(cf, ax=axes, label="$\Delta$ua (m/s)", shrink=0.8, pad=0.02)
+axes[1].set_ylabel("")  # only show y-axis label on the first subplot
+axes[2].set_ylabel("")  # hide y-axis ticks on the last subplot
+plt.colorbar(cf, ax=axes, label="$\Delta$ua / $ms^{-1}$", shrink=0.8, pad=0.02)
 # plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/ua_diff_vertical_profile.pdf", dpi=150, bbox_inches="tight")
 plt.show()
