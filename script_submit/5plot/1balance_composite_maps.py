@@ -344,8 +344,8 @@ awb_diff_levels = np.arange(-25, 26, 10)
 cwb_levels = np.arange(-20, 21, 8)
 cwb_diff_levels = np.arange(-10, 11, 4)
 
-eke_levels = np.arange(-40, 41, 10)
-eke_diff_levels = np.arange(-20, 21, 5)
+eke_levels = np.arange(-40, 41, 8)
+eke_diff_levels = np.arange(-20, 21, 4)
 
 ua_levels = np.arange(-30, 31, 10)
 ua_diff_levels = np.arange(-15, 16, 5)
