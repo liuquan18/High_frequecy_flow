@@ -18,4 +18,4 @@ plev=$5
 base_dir=$6
 suffix=$7
 # mpirun -n 5 python 5var_NAO_range_distribution.py $decade $var $name $model_dir $plev $suffix
-python 7wb_NAO_range_distribution.py $decade $var $name $model_dir $plev $base_dir $suffix
+python 7wb_NAO_range_feedback.py $decade $var $name $model_dir $plev $base_dir $suffix

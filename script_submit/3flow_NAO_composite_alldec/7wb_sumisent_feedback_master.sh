@@ -8,5 +8,5 @@ plev=None #
 for decade in {1850..2090..10}
 do
     echo "submit: $decade"
-    sbatch 7wb_NAO_range_distribution_submit.sh $decade $var $var_name $model_dir $plev
+    sbatch 7wb_NAO_range_feedback_submit.sh $decade $var $var_name $model_dir $plev
 done
