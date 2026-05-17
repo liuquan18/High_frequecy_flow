@@ -8,6 +8,8 @@ import seaborn as sns
 import seaborn.objects as so
 import cmocean
 import os
+from scipy import stats
+import matplotlib.colors as mcolors
 
 from src.data_helper import read_composite
 from src.data_helper.read_variable import read_climatology
@@ -50,92 +52,218 @@ def _read_all(var_name, suffix = '', name=None, method="no_stat", phase = 'pos',
         read_comp_var(var_name, phase, decade, suffix=suffix, **kwargs).assign_coords(decade=decade)
         for decade in decades
     ]
+    # if plev.size is 1, dorp the plev dim
+    if "plev" in datasets[0].dims and datasets[0].plev.size == 1:
+        datasets = [ds.squeeze("plev", drop=True) for ds in datasets]
     return xr.concat(datasets, dim="event")
 
-# %%
-jet_loc_pos = _read_all("jetloc_", name = 'lat', method="no_stat", phase="pos")
-# %%
-awb_pos = _read_all("wb_anticyclonic_allisen", name = 'smooth_pv', method="no_stat", phase="pos")
-# %%
-jet_loc_pos_E2M = jet_loc_pos.sel(time = slice(-5, 5)).mean(dim = 'time')
-awb_pos_E2M = awb_pos.sel(time = slice(-5, 5)).mean(dim = 'time')
-# %%
-jet_loc_pos_M2E = jet_loc_pos.sel(time = slice(10, 20)).mean(dim = 'time')
-awb_pos_M2E = awb_pos.sel(time = slice(10, 20)).mean(dim = 'time')
-# %%
-jet_loc_E2M_df = jet_loc_pos_E2M.to_dataframe().reset_index()
-awb_E2M_df = awb_pos_E2M.to_dataframe('awb').reset_index()
-# %%
-jet_loc_M2E_df = jet_loc_pos_M2E.to_dataframe().reset_index()
-awb_M2E_df = awb_pos_M2E.to_dataframe('awb').reset_index()
-# %%
-E2M_df = pd.merge(jet_loc_E2M_df, awb_E2M_df, on=['event', 'decade'])
-M2E_df = pd.merge(jet_loc_M2E_df, awb_M2E_df, on=['event', 'decade'])
-# %%
 
+# ---- regression slope at each time step ----
+def regression_slope_timeseries(jl, awb, decade_sel=None, window=10):
+    """
+    For each time step compute the OLS slope of awb ~ jet_lat across all events.
 
-levels = np.arange(0.2, 1.0, 0.2)
+    Parameters
+    ----------
+    jl : DataArray (event, time)
+    awb : DataArray (event, time)
+    decade_sel : int or None  – filter to a single decade; None = all decades
+    y_agg : 'sum' or 'mean'  – rolling aggregation for the y variable
+    """
+    jl = jl.rolling(time=window, center=True).mean()
+    awb = awb.rolling(time=window, center=True).mean()
 
-#%%
-fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
-# sns.scatterplot(data=E2M_df, x='lat', y='awb', ax=axes[0], size = 1)
-sns.kdeplot(data=E2M_df, x='lat', y='awb', ax=axes[0], levels=levels, cmap='Reds', extend='max', linewidths=1)
-# sns.scatterplot(data=M2E_df, x='lat', y='awb', ax=axes[1], size = 1)
-sns.kdeplot(data=M2E_df, x='lat', y='awb', ax=axes[1], levels=levels, cmap='Reds', extend='max', linewidths=1)
+    if decade_sel is not None:
+        mask = jl.decade == decade_sel
+        jl  = jl.where(mask, drop=True)
+        awb = awb.where(mask, drop=True)
 
-axes[0].set_ylim(-0.02, 0.25)
-axes[1].set_ylim(-0.02, 0.25)
-axes[0].set_title('E2M')
-axes[1].set_title('M2E')
-# %%
-import matplotlib.colors as mcolors
+    times = jl.time.values
+    slopes  = np.full(len(times), np.nan)
+    ci_low  = np.full(len(times), np.nan)
+    ci_high = np.full(len(times), np.nan)
 
-# --- Bin edges derived from data ---
-x_bins = np.linspace(E2M_df['lat'].min(), E2M_df['lat'].max(), 50)
-y_bins = np.linspace(0, max(E2M_df['awb'].max(), M2E_df['awb'].max()), 50)
-x_centers = (x_bins[:-1] + x_bins[1:]) / 2
-y_centers = (y_bins[:-1] + y_bins[1:]) / 2
-X, Y = np.meshgrid(x_centers, y_centers)
+    for i, t in enumerate(times):
+        df = pd.DataFrame({
+            'x': jl.sel(time=t).values.flatten(),
+            'y': awb.sel(time=t).values.flatten(),
+        }).dropna()
+        if len(df) < 4:
+            continue
+        res = stats.linregress(df['x'], df['y'])
+        slopes[i] = res.slope
+        # 95 % CI:  slope ± t_{0.025, n-2} * stderr
+        t_crit = stats.t.ppf(0.975, df=len(df) - 2)
+        ci_low[i]  = res.slope - t_crit * res.stderr
+        ci_high[i] = res.slope + t_crit * res.stderr
+
+    return times, slopes, ci_low, ci_high
+
 
 def compute_jpdf(df, x_col, y_col, x_bins, y_bins):
     """2D histogram normalized to joint probability density."""
     H, _, _ = np.histogram2d(df[x_col], df[y_col], bins=[x_bins, y_bins], density=True)
     return np.ma.masked_where(H.T == 0, H.T)
 
-# Compute both JPDFs and find shared color range
-H_E2M = compute_jpdf(E2M_df, 'lat', 'awb', x_bins, y_bins)
-H_M2E = compute_jpdf(M2E_df, 'lat', 'awb', x_bins, y_bins)
+# %%
+jet_loc_pos = _read_all("jetloc", name = 'lat', method="no_stat", phase="pos")
+# %%
+awb_pos = _read_all("wb_anticyclonic_allisen", name = 'smooth_pv', method="no_stat", phase="pos")
+# into percent
+awb_pos = awb_pos * 100
+#%%
+baroc_neg = _read_all("eady_growth_rate", name = 'eady_growth_rate', method="no_stat", phase="neg")
+baroc_neg = baroc_neg * 86400  # convert from 1/s to 1/day
+#%%
+blocking_neg = _read_all("zg_hat", name = 'zg', method="no_stat", phase="neg")
+# %%
+E2M_window = slice(-5, 5)
+M2E_window = slice(10, 20)
 
-fill_levels = np.arange(0., 1, 0.1)
-contour_levels = np.arange(0.2, 1, 0.2)
+#%%
+# ---- Positive phase: E2M and M2E windows ----
+jet_loc_pos_E2M = jet_loc_pos.sel(time = E2M_window).mean(dim = 'time')
+awb_pos_E2M = awb_pos.sel(time = E2M_window).mean(dim = 'time')
+# 
+jet_loc_pos_M2E = jet_loc_pos.sel(time = M2E_window).mean(dim = 'time')
+awb_pos_M2E = awb_pos.sel(time = M2E_window).mean(dim = 'time')
+# 
+jet_loc_E2M_df = jet_loc_pos_E2M.to_dataframe().reset_index()
+awb_E2M_df = awb_pos_E2M.to_dataframe('awb').reset_index()
+# 
+jet_loc_M2E_df = jet_loc_pos_M2E.to_dataframe().reset_index()
+awb_M2E_df = awb_pos_M2E.to_dataframe('awb').reset_index()
+#
+E2M_pos_df = pd.merge(jet_loc_E2M_df, awb_E2M_df, on=['event', 'decade'])
+M2E_pos_df = pd.merge(jet_loc_M2E_df, awb_M2E_df, on=['event', 'decade'])
 
-# --- Figure layout: 1 row x 2 cols ---
-fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True, sharex=True)
+#%%
+# ---- Negative phase: E2M and M2E windows ----
+blocking_neg_E2M = blocking_neg.sel(time = E2M_window).mean(dim = 'time')
+baroc_neg_E2M    = baroc_neg.sel(time = E2M_window).mean(dim = 'time')
+
+blocking_neg_M2E = blocking_neg.sel(time = M2E_window).mean(dim = 'time')
+baroc_neg_M2E    = baroc_neg.sel(time = M2E_window).mean(dim = 'time')
+
+blocking_E2M_df = blocking_neg_E2M.to_dataframe().reset_index()
+baroc_E2M_df    = baroc_neg_E2M.to_dataframe().reset_index()
+
+blocking_M2E_df = blocking_neg_M2E.to_dataframe().reset_index()
+baroc_M2E_df    = baroc_neg_M2E.to_dataframe().reset_index()
+
+E2M_neg_df = pd.merge(blocking_E2M_df, baroc_E2M_df, on=['event', 'decade'])
+M2E_neg_df = pd.merge(blocking_M2E_df, baroc_M2E_df, on=['event', 'decade'])
+
+#%%
+times_pos, slopes_pos, ci_low_pos, ci_high_pos = regression_slope_timeseries(jet_loc_pos, awb_pos)
+times_neg, slopes_neg, ci_low_neg, ci_high_neg = regression_slope_timeseries(blocking_neg, baroc_neg)
+
+# %%
+
+# --- Bin edges for positive phase ---
+x_bins_pos = np.linspace(E2M_pos_df['lat'].min(), E2M_pos_df['lat'].max(), 50)
+y_bins_pos = np.linspace(0, max(E2M_pos_df['awb'].max(), M2E_pos_df['awb'].max()), 50)
+x_centers = (x_bins_pos[:-1] + x_bins_pos[1:]) / 2
+y_centers = (y_bins_pos[:-1] + y_bins_pos[1:]) / 2
+X, Y = np.meshgrid(x_centers, y_centers)
+
+# Compute both JPDFs and find shared color range (positive)
+H_E2M = compute_jpdf(E2M_pos_df, 'lat', 'awb', x_bins_pos, y_bins_pos)
+H_M2E = compute_jpdf(M2E_pos_df, 'lat', 'awb', x_bins_pos, y_bins_pos)
+
+# --- Bin edges for negative phase (blocking vs baroc) ---
+x_bins_neg = np.linspace(
+    min(E2M_neg_df['zg'].min(), M2E_neg_df['zg'].min()),
+    max(E2M_neg_df['zg'].max(), M2E_neg_df['zg'].max()), 50)
+y_bins_neg = np.linspace(
+    min(E2M_neg_df['eady_growth_rate'].min(), M2E_neg_df['eady_growth_rate'].min()),
+    max(E2M_neg_df['eady_growth_rate'].max(), M2E_neg_df['eady_growth_rate'].max()), 50)
+x_centers_neg = (x_bins_neg[:-1] + x_bins_neg[1:]) / 2
+y_centers_neg = (y_bins_neg[:-1] + y_bins_neg[1:]) / 2
+X_neg, Y_neg = np.meshgrid(x_centers_neg, y_centers_neg)
+
+# Compute both JPDFs and find shared color range (negative)
+H_E2M_neg = compute_jpdf(E2M_neg_df, 'zg', 'eady_growth_rate', x_bins_neg, y_bins_neg)
+H_M2E_neg = compute_jpdf(M2E_neg_df, 'zg', 'eady_growth_rate', x_bins_neg, y_bins_neg)
+
+
+fill_levels    = np.arange(0, 0.02, 0.001)
+contour_levels = np.arange(0.001, 0.02, 0.002)
+
+
+#%%
+# --- Two-row figure: row 1 = NAO+, row 2 = NAO- ---
+fig, (ax_slope_pos, ax_slope_neg) = plt.subplots(2, 1, figsize=(13, 12))
 
 decade_colors = {1850: 'purple', 2090: 'gold'}
 
-for ax, H, df, title in zip(axes, [H_E2M, H_M2E], [E2M_df, M2E_df], ['E2M', 'M2E']):
+# ---- Row 1: Positive phase (jet_loc vs AWB) ----
+
+ax_slope_pos.plot(times_pos, slopes_pos, color='k', linewidth=1.5, zorder = 100)
+ax_slope_pos.fill_between(times_pos, ci_low_pos, ci_high_pos, color='k', alpha=0.15, zorder = 100)
+ax_slope_pos.axvline(0, color='gray', linewidth=0.7, linestyle=':')
+ax_slope_pos.axvline(15, color='gray', linewidth=0.7, linestyle=':')
+ax_slope_pos.set_xlabel('lag (days)')
+ax_slope_pos.set_ylabel('slope  (awb / jet-lat)')
+ax_slope_pos.set_title('Regression slope: AWB ~ jet latitude at each lag  [NAO+ events]')
+ax_slope_pos.set_xlim(-5, 20)
+ax_slope_pos.set_ylim(0.05, 0.35)
+
+# JPDF insets for positive phase
+ax0 = ax_slope_pos.inset_axes([0.045, 0.52, 0.30, 0.44])   # upper left
+ax1 = ax_slope_pos.inset_axes([0.65, 0.08, 0.30, 0.44])    # bottom right
+
+for idx, (ax, H, title) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E],
+                                         ['E2M [-5, 5]', 'M2E [10, 20]'])):
     pcm = ax.contourf(X, Y, H, levels=fill_levels, cmap='Reds', extend='max')
-    ax.contour(X, Y, H, levels=contour_levels, colors='k', linewidths=0.7)
+    pcl = ax.contour(X, Y, H, levels=contour_levels, colors='k', linewidths=0.5)
+    ax.set_title(title, fontsize=9)
+    ax.set_xlabel('jet lat', fontsize=8)
+    ax.set_ylabel('awb', fontsize=8)
+    ax.set_ylim(0., 20)
+    ax.tick_params(labelsize=7)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
 
-    for decade, color in decade_colors.items():
-        df_dec = df[df['decade'] == decade]
-        H_dec = compute_jpdf(df_dec, 'lat', 'awb', x_bins, y_bins)
-        ax.contour(X, Y, H_dec, levels=[0.9], colors=color, linewidths=4)
+cbar_ax = ax_slope_pos.inset_axes([0.4, 0.52, 0.012, 0.44])
+fig.colorbar(pcm, cax=cbar_ax, label='JPDF')
 
-    ax.set_title(title)
-    ax.set_xlabel('lat')
-    ax.set_ylabel('awb')
-    ax.set_ylim(0., 0.2)
 
-legend_handles = [Line2D([0], [0], color=c, linewidth=2, label=str(d))
-                  for d, c in decade_colors.items()]
-axes[-1].legend(handles=legend_handles, title='decade', loc='upper left')
 
-fig.colorbar(pcm, ax=axes, label='JPDF', pad=0.02, shrink=0.8)
-# plt.tight_layout()
+# ---- Row 2: Negative phase (blocking vs baroc) ----
+ax_slope_neg.axvspan(-5, 5,  alpha=0.07, color='steelblue',  zorder=0)
+ax_slope_neg.axvspan(10, 20, alpha=0.07, color='darkorange', zorder=0)
+
+ax_slope_neg.plot(times_neg, slopes_neg, color='k', linewidth=1.5, zorder = 100)
+ax_slope_neg.fill_between(times_neg, ci_low_neg, ci_high_neg, color='k', alpha=0.15, zorder = 100)
+ax_slope_neg.axvline(0, color='gray', linewidth=0.7, linestyle=':')
+ax_slope_neg.axvline(15, color='gray', linewidth=0.7, linestyle=':')
+ax_slope_neg.set_xlabel('lag (days)')
+ax_slope_neg.set_ylabel('slope  (baroc / blocking)')
+ax_slope_neg.set_title('Regression slope: baroclinicity ~ blocking at each lag  [NAO- events]')
+ax_slope_neg.set_xlim(-5, 20)
+ax_slope_neg.set_ylim(-0.006, -0.002)
+
+# JPDF insets for negative phase
+ax2 = ax_slope_neg.inset_axes([0.045, 0.08, 0.30, 0.44])   # upper left
+ax3 = ax_slope_neg.inset_axes([0.65, 0.52, 0.30, 0.44])    # bottom right
+
+for idx, (ax, H, title) in enumerate(zip([ax2, ax3], [H_E2M_neg, H_M2E_neg],
+                                         ['E2M [-5, 5]', 'M2E [10, 20]'])):
+    pcm_neg = ax.contourf(X_neg, Y_neg, H, levels=fill_levels, cmap='Blues', extend='max')
+    pcl_neg = ax.contour(X_neg, Y_neg, H, levels=contour_levels, colors='k', linewidths=0.5)    
+    ax.set_title(title, fontsize=9)
+    ax.set_xlabel('blocking (zg)', fontsize=8)
+    ax.set_ylabel('baroc', fontsize=8)
+    ax.tick_params(labelsize=7)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+cbar_ax_neg = ax_slope_neg.inset_axes([0.4, 0.52, 0.012, 0.44])
+fig.colorbar(pcm_neg, cax=cbar_ax_neg, label='JPDF')
+
+plt.tight_layout()
 plt.show()
+
+
 # %%
-
-
-
