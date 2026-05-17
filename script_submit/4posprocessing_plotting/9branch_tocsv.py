@@ -101,9 +101,12 @@ def regression_slope_timeseries(jl, awb, decade_sel=None, window=10):
 
 
 def compute_jpdf(df, x_col, y_col, x_bins, y_bins):
-    """2D histogram normalized to joint probability density."""
+    """2D histogram normalized so the peak bin = 1 (relative probability density)."""
     H, _, _ = np.histogram2d(df[x_col], df[y_col], bins=[x_bins, y_bins], density=True)
-    return np.ma.masked_where(H.T == 0, H.T)
+    H = H.T
+    if H.max() > 0:
+        H = H / H.max()
+    return np.ma.masked_where(H == 0, H)
 
 # %%
 jet_loc_pos = _read_all("jetloc", name = 'lat', method="no_stat", phase="pos")
@@ -186,10 +189,9 @@ X_neg, Y_neg = np.meshgrid(x_centers_neg, y_centers_neg)
 H_E2M_neg = compute_jpdf(E2M_neg_df, 'zg', 'eady_growth_rate', x_bins_neg, y_bins_neg)
 H_M2E_neg = compute_jpdf(M2E_neg_df, 'zg', 'eady_growth_rate', x_bins_neg, y_bins_neg)
 
-
-fill_levels    = np.arange(0, 0.02, 0.001)
-contour_levels = np.arange(0.001, 0.02, 0.002)
-
+#%%
+fill_levels    = np.logspace(-2, -.2, 20)
+contour_levels = np.logspace(-1., -.2, 5)
 
 #%%
 # --- Two-row figure: row 1 = NAO+, row 2 = NAO- ---
@@ -222,7 +224,7 @@ ax0 = ax_slope_pos.inset_axes([0.05, 0.45, 0.30, 0.44])   # upper left
 ax1 = ax_slope_pos.inset_axes([0.65, 0.0, 0.30, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 'aii'], [E2M_pos_df, M2E_pos_df])):
-    pcm = ax.contourf(X, Y, H, levels=fill_levels, cmap='Reds', extend='max')
+    pcm = ax.contourf(X, Y, H, cmap='Reds', levels=fill_levels,  extend='max')
     pcl = ax.contour(X, Y, H, levels=contour_levels, colors='k', linewidths=0.5)
     ax.set_xlabel('jet lat', fontsize=8)
     ax.set_ylabel('awb', fontsize=8)
@@ -239,8 +241,12 @@ for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 
     _y0 = _slope * _x0 + _intercept
     ax.axline((_x0, _y0), slope=_slope, color='k', linewidth=1.2, linestyle='--')
 
+
 cbar_ax = ax_slope_pos.inset_axes([0.4, 0.52, 0.012, 0.44])
-fig.colorbar(pcm, cax=cbar_ax, label='JPDF')
+cbar = fig.colorbar(pcm, cax=cbar_ax, label='')
+cbar.set_ticks([ 1e-2, 1e-1, 1e0])
+cbar.set_ticklabels(['$10^{-2}$', '$10^{-1}$', '$10^{0}$'])
+cbar_ax.set_ylabel('JPDF', labelpad=10)
 
 
 # ---- Row 2: Negative phase (blocking vs baroc) ----
@@ -262,7 +268,7 @@ ax2 = ax_slope_neg.inset_axes([0.05, 0.08, 0.30, 0.44])   # upper left
 ax3 = ax_slope_neg.inset_axes([0.65, 0.45, 0.30, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax2, ax3], [H_E2M_neg, H_M2E_neg], ['bi', 'bii'], [E2M_neg_df, M2E_neg_df])):
-    pcm_neg = ax.contourf(X_neg, Y_neg, H, levels=fill_levels, cmap='Blues', extend='max')
+    pcm_neg = ax.contourf(X_neg, Y_neg, H, cmap='Blues', levels=fill_levels,  extend='max')
     pcl_neg = ax.contour(X_neg, Y_neg, H, levels=contour_levels, colors='k', linewidths=0.5)    
     ax.set_xlabel('blocking (zg)', fontsize=8)
     ax.set_ylabel('baroc', fontsize=8)
@@ -280,7 +286,10 @@ for idx, (ax, H, label, df) in enumerate(zip([ax2, ax3], [H_E2M_neg, H_M2E_neg],
     ax.axline((_x0, _y0), slope=_slope, color='k', linewidth=1.2, linestyle='--')
 
 cbar_ax_neg = ax_slope_neg.inset_axes([0.5, 0.45, 0.012, 0.44])
-fig.colorbar(pcm_neg, cax=cbar_ax_neg, label='JPDF')
+cbar_neg = fig.colorbar(pcm_neg, cax=cbar_ax_neg, label='')
+cbar_neg.set_ticks([1e-2, 1e-1, 1e0])
+cbar_neg.set_ticklabels(['$10^{-2}$', '$10^{-1}$', '$10^{0}$'])
+cbar_ax_neg.set_ylabel('JPDF', labelpad=10)
 
 plt.tight_layout()
 plt.show()
