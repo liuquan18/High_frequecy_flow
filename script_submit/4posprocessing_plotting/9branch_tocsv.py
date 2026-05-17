@@ -260,7 +260,7 @@ ax_slope_neg.axvline(15, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_neg.set_xlabel('lag (days)')
 ax_slope_neg.set_ylabel('slope  (baroc / blocking)')
 ax_slope_neg.set_xlim(-5, 20)
-ax_slope_neg.set_ylim(-0.0055, -0.002)
+ax_slope_neg.set_ylim(-0.005, -0.0028)
 ax_slope_neg.spines['top'].set_visible(False)
 ax_slope_neg.spines['right'].set_visible(False)
 ax_slope_neg.text(-0.0, 1.05, 'b', transform=ax_slope_neg.transAxes, fontsize=11,
