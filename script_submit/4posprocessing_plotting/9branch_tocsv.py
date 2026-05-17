@@ -208,7 +208,7 @@ ax_slope_pos.axvline(15, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_pos.set_xlabel('lag (days)')
 ax_slope_pos.set_ylabel('slope  (awb / jet-lat)')
 ax_slope_pos.set_xlim(-5, 20)
-ax_slope_pos.set_ylim(0.1, 0.3)
+ax_slope_pos.set_ylim(0.13, 0.3)
 # remove upper and right spines
 ax_slope_pos.spines['top'].set_visible(False)
 ax_slope_pos.spines['right'].set_visible(False)
@@ -220,8 +220,8 @@ ax_slope_pos.text(-0.0, 1.05, 'a', transform=ax_slope_pos.transAxes, fontsize=11
                   fontweight='bold', va='top', ha='right')
 
 # JPDF insets for positive phase
-ax0 = ax_slope_pos.inset_axes([0.05, 0.45, 0.30, 0.44])   # upper left
-ax1 = ax_slope_pos.inset_axes([0.65, 0.0, 0.30, 0.44])    # bottom right
+ax0 = ax_slope_pos.inset_axes([0.05, 0.5, 0.30, 0.44])   # upper left
+ax1 = ax_slope_pos.inset_axes([0.65, 0.08, 0.30, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 'aii'], [E2M_pos_df, M2E_pos_df])):
     pcm = ax.contourf(X, Y, H, cmap='Reds', levels=fill_levels,  extend='max')
@@ -231,8 +231,11 @@ for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 
     ax.set_ylim(0., 18)
     ax.tick_params(labelsize=7)
     ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.text(-0.0, 1.1, label, transform=ax.transAxes, fontsize=9,
+    ax.yaxis.set_label_position('right')
+    ax.yaxis.tick_right()
+    ax.spines['left'].set_visible(False)
+    ax.spines['right'].set_visible(True)
+    ax.text(1.0, 1.1, label, transform=ax.transAxes, fontsize=9,
             fontweight='bold', va='top', ha='right')
     # linear regression line
     _fit_df = df[['lat', 'awb']].dropna()
@@ -242,11 +245,11 @@ for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 
     ax.axline((_x0, _y0), slope=_slope, color='k', linewidth=1.2, linestyle='--')
 
 
-cbar_ax = ax_slope_pos.inset_axes([0.4, 0.52, 0.012, 0.44])
+cbar_ax = ax_slope_pos.inset_axes([0.4, 0.5, 0.012, 0.44])
 cbar = fig.colorbar(pcm, cax=cbar_ax, label='')
 cbar.set_ticks([ 1e-2, 1e-1, 1e0])
 cbar.set_ticklabels(['$10^{-2}$', '$10^{-1}$', '$10^{0}$'])
-cbar_ax.set_ylabel('JPDF', labelpad=10)
+cbar_ax.set_title('JPDF', pad=4, fontsize=10)
 
 
 # ---- Row 2: Negative phase (blocking vs baroc) ----
@@ -269,13 +272,13 @@ ax3 = ax_slope_neg.inset_axes([0.65, 0.45, 0.30, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax2, ax3], [H_E2M_neg, H_M2E_neg], ['bi', 'bii'], [E2M_neg_df, M2E_neg_df])):
     pcm_neg = ax.contourf(X_neg, Y_neg, H, cmap='Blues', levels=fill_levels,  extend='max')
-    pcl_neg = ax.contour(X_neg, Y_neg, H, levels=contour_levels, colors='k', linewidths=0.5)    
+    pcl_neg = ax.contour(X_neg, Y_neg, H, levels=contour_levels, colors='k', linewidths=0.5)
     ax.set_xlabel('blocking (zg)', fontsize=8)
     ax.set_ylabel('baroc', fontsize=8)
     ax.tick_params(labelsize=7)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
-    ax.set_ylim(2, 5.5)
+    ax.set_ylim(2.2, 5.5)
     ax.text(-0.0, 1.1, label, transform=ax.transAxes, fontsize=9,
             fontweight='bold', va='top', ha='right')
     # linear regression line
@@ -289,10 +292,10 @@ cbar_ax_neg = ax_slope_neg.inset_axes([0.5, 0.45, 0.012, 0.44])
 cbar_neg = fig.colorbar(pcm_neg, cax=cbar_ax_neg, label='')
 cbar_neg.set_ticks([1e-2, 1e-1, 1e0])
 cbar_neg.set_ticklabels(['$10^{-2}$', '$10^{-1}$', '$10^{0}$'])
-cbar_ax_neg.set_ylabel('JPDF', labelpad=10)
+cbar_ax_neg.set_title('JPDF', pad=4, fontsize=10)
 
 plt.tight_layout()
-plt.show()
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_jpdf.pdf", dpi=300, bbox_inches='tight')
 
 
 # %%
