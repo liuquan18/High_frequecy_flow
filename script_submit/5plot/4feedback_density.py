@@ -221,7 +221,7 @@ ax_slope_pos.text(-0.0, 1.05, 'a', transform=ax_slope_pos.transAxes, fontsize=11
 
 # JPDF insets for positive phase
 ax0 = ax_slope_pos.inset_axes([0.05, 0.5, 0.30, 0.44])   # upper left
-ax1 = ax_slope_pos.inset_axes([0.65, 0.08, 0.30, 0.44])    # bottom right
+ax1 = ax_slope_pos.inset_axes([0.65, 0.1, 0.30, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 'aii'], [E2M_pos_df, M2E_pos_df])):
     pcm = ax.contourf(X, Y, H, cmap='Reds', levels=fill_levels,  extend='max')
@@ -258,7 +258,7 @@ ax_slope_neg.fill_between(times_neg, ci_low_neg, ci_high_neg, color='k', alpha=0
 ax_slope_neg.axvline(0, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_neg.axvline(15, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_neg.set_xlabel('lag (days)')
-ax_slope_neg.set_ylabel('slope  (baroc / blocking)')
+ax_slope_neg.set_ylabel('slope  (Eady growth rate / blocking)')
 ax_slope_neg.set_xlim(-5, 20)
 ax_slope_neg.set_ylim(-0.005, -0.0028)
 ax_slope_neg.spines['top'].set_visible(False)
@@ -267,14 +267,14 @@ ax_slope_neg.text(-0.0, 1.05, 'b', transform=ax_slope_neg.transAxes, fontsize=11
                   fontweight='bold', va='top', ha='right')
 
 # JPDF insets for negative phase
-ax2 = ax_slope_neg.inset_axes([0.05, 0.08, 0.30, 0.44])   # upper left
+ax2 = ax_slope_neg.inset_axes([0.08, 0.1, 0.30, 0.44])   # upper left
 ax3 = ax_slope_neg.inset_axes([0.65, 0.45, 0.30, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax2, ax3], [H_E2M_neg, H_M2E_neg], ['bi', 'bii'], [E2M_neg_df, M2E_neg_df])):
     pcm_neg = ax.contourf(X_neg, Y_neg, H, cmap='Blues', levels=fill_levels,  extend='max')
     pcl_neg = ax.contour(X_neg, Y_neg, H, levels=contour_levels, colors='k', linewidths=0.5)
-    ax.set_xlabel('blocking (zg)', fontsize=8)
-    ax.set_ylabel('baroc', fontsize=8)
+    ax.set_xlabel('blocking (Z500 / m)', fontsize=8)
+    ax.set_ylabel('Eady growth rate / day$^{-1}$', fontsize=8)
     ax.tick_params(labelsize=7)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
