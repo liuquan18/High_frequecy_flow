@@ -88,20 +88,18 @@ theta_2PVU_poss = xr.concat([x for x in theta_2PVU_poss if x is not None], dim='
 theta_2PVU_negs = xr.concat([x for x in theta_2PVU_negs if x is not None], dim='event')
 
 #%%
-# postprocessing to align with the scatter plot
-# NAO region, -90, 40 lon, and zonal mean
-def _zonal_mean(da, lon_min=-90, lon_max=40):
+# greenland blocking
+def _zonal_mean(da, lon_min=-80, lon_max=-20, lat_min = 60, lat_max = 80):
     """Zonal mean over [lon_min, lon_max], handling both 0-360 and -180-180 grids."""
     if da.lon.max() > 180:
         # Convert 0-360 to -180-180
         da = da.assign_coords(lon=(da.lon + 180) % 360 - 180).sortby("lon")
     # only Northern Hemisphere, the same for composite mean
-    da = da.sel(lat=slice(0, 90))
-    return da.sel(lon=slice(lon_min, lon_max)).mean(dim="lon")
+    return da.sel(lon=slice(lon_min, lon_max), lat=slice(lat_min, lat_max)).mean(dim=("lon", "lat"))
 
 
-# theta_2PVU_poss = _zonal_mean(theta_2PVU_poss)
-# theta_2PVU_negs = _zonal_mean(theta_2PVU_negs)
+theta_2PVU_poss = _zonal_mean(theta_2PVU_poss)
+theta_2PVU_negs = _zonal_mean(theta_2PVU_negs)
 
 # #%%
 # # feedback, so only (0, 31) days, 
