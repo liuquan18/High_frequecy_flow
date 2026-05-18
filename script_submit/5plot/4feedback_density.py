@@ -2,25 +2,12 @@
 import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
 import pandas as pd
-import seaborn as sns
-import seaborn.objects as so
-import cmocean
-import os
 from scipy import stats
-import matplotlib.colors as mcolors
 
 from src.data_helper import read_composite
-from src.data_helper.read_variable import read_climatology
 import importlib
-import matplotlib
-from matplotlib.patches import Patch
-from matplotlib.lines import Line2D
-from matplotlib.ticker import MaxNLocator
 
-from src.plotting.util import map_smooth
-import src.plotting.util as util
 
 importlib.reload(read_composite)
 
@@ -59,7 +46,7 @@ def _read_all(var_name, suffix = '', name=None, method="no_stat", phase = 'pos',
 
 
 # ---- regression slope at each time step ----
-def regression_slope_timeseries(jl, awb, decade_sel=None, window=10):
+def regression_slope_timeseries(jl, awb, decade_sel=None, window=10, standardize=True):
     """
     For each time step compute the OLS slope of awb ~ jet_lat across all events.
 
@@ -69,6 +56,8 @@ def regression_slope_timeseries(jl, awb, decade_sel=None, window=10):
     awb : DataArray (event, time)
     decade_sel : int or None  – filter to a single decade; None = all decades
     y_agg : 'sum' or 'mean'  – rolling aggregation for the y variable
+    standardize : bool  – if True, z-score both variables before regression so
+                          the slope equals the Pearson correlation coefficient
     """
     jl = jl.rolling(time=window, center=True).mean()
     awb = awb.rolling(time=window, center=True).mean()
@@ -90,7 +79,12 @@ def regression_slope_timeseries(jl, awb, decade_sel=None, window=10):
         }).dropna()
         if len(df) < 4:
             continue
-        res = stats.linregress(df['x'], df['y'])
+        if standardize:
+            x = (df['x'] - df['x'].mean()) / df['x'].std()
+            y = (df['y'] - df['y'].mean()) / df['y'].std()
+        else:
+            x, y = df['x'], df['y']
+        res = stats.linregress(x, y)
         slopes[i] = res.slope
         # 95 % CI:  slope ± t_{0.025, n-2} * stderr
         t_crit = stats.t.ppf(0.975, df=len(df) - 2)
@@ -119,6 +113,7 @@ baroc_neg = _read_all("eady_growth_rate", name = 'eady_growth_rate', method="no_
 baroc_neg = baroc_neg * 86400  # convert from 1/s to 1/day
 #%%
 blocking_neg = _read_all("zg_hat", name = 'zg', method="no_stat", phase="neg")
+blocking_neg = blocking_neg / 1000 # convert to km
 # %%
 E2M_window = slice(-5, 5)
 M2E_window = slice(10, 20)
@@ -158,21 +153,21 @@ E2M_neg_df = pd.merge(blocking_E2M_df, baroc_E2M_df, on=['event', 'decade'])
 M2E_neg_df = pd.merge(blocking_M2E_df, baroc_M2E_df, on=['event', 'decade'])
 
 #%%
-times_pos, slopes_pos, ci_low_pos, ci_high_pos = regression_slope_timeseries(jet_loc_pos, awb_pos)
+times_pos, slopes_pos, ci_low_pos, ci_high_pos = regression_slope_timeseries(awb_pos, jet_loc_pos)
 times_neg, slopes_neg, ci_low_neg, ci_high_neg = regression_slope_timeseries(blocking_neg, baroc_neg)
 
 # %%
 
 # --- Bin edges for positive phase ---
-x_bins_pos = np.linspace(E2M_pos_df['lat'].min(), E2M_pos_df['lat'].max(), 50)
-y_bins_pos = np.linspace(0, max(E2M_pos_df['awb'].max(), M2E_pos_df['awb'].max()), 50)
+x_bins_pos = np.linspace(0, max(E2M_pos_df['awb'].max(), M2E_pos_df['awb'].max()), 50)
+y_bins_pos = np.linspace(E2M_pos_df['lat'].min(), E2M_pos_df['lat'].max(), 50)
 x_centers = (x_bins_pos[:-1] + x_bins_pos[1:]) / 2
 y_centers = (y_bins_pos[:-1] + y_bins_pos[1:]) / 2
 X, Y = np.meshgrid(x_centers, y_centers)
 
 # Compute both JPDFs and find shared color range (positive)
-H_E2M = compute_jpdf(E2M_pos_df, 'lat', 'awb', x_bins_pos, y_bins_pos)
-H_M2E = compute_jpdf(M2E_pos_df, 'lat', 'awb', x_bins_pos, y_bins_pos)
+H_E2M = compute_jpdf(E2M_pos_df, 'awb', 'lat', x_bins_pos, y_bins_pos)
+H_M2E = compute_jpdf(M2E_pos_df, 'awb', 'lat', x_bins_pos, y_bins_pos)
 
 # --- Bin edges for negative phase (blocking vs baroc) ---
 x_bins_neg = np.linspace(
@@ -206,9 +201,8 @@ ax_slope_pos.fill_between(times_pos, ci_low_pos, ci_high_pos, color='k', alpha=0
 ax_slope_pos.axvline(0, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_pos.axvline(15, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_pos.set_xlabel('lag (days)')
-ax_slope_pos.set_ylabel('slope  (awb / jet-lat)')
+ax_slope_pos.set_ylabel('slope  (jet-lat / awb)')
 ax_slope_pos.set_xlim(-5, 20)
-ax_slope_pos.set_ylim(0.13, 0.3)
 # remove upper and right spines
 ax_slope_pos.spines['top'].set_visible(False)
 ax_slope_pos.spines['right'].set_visible(False)
@@ -226,9 +220,9 @@ ax1 = ax_slope_pos.inset_axes([0.65, 0.1, 0.30, 0.44])    # bottom right
 for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 'aii'], [E2M_pos_df, M2E_pos_df])):
     pcm = ax.contourf(X, Y, H, cmap='Reds', levels=fill_levels,  extend='max')
     pcl = ax.contour(X, Y, H, levels=contour_levels, colors='k', linewidths=0.5)
-    ax.set_xlabel('jet lat', fontsize=8)
-    ax.set_ylabel('awb', fontsize=8)
-    ax.set_ylim(0., 18)
+    ax.set_xlabel('awb', fontsize=8)
+    ax.set_ylabel('jet lat', fontsize=8)
+    ax.set_xlim(0., 18)
     ax.tick_params(labelsize=7)
     ax.spines['top'].set_visible(False)
     ax.yaxis.set_label_position('right')
@@ -239,8 +233,8 @@ for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 
             fontweight='bold', va='top', ha='right')
     # linear regression line
     _fit_df = df[['lat', 'awb']].dropna()
-    _slope, _intercept, *_ = stats.linregress(_fit_df['lat'], _fit_df['awb'])
-    _x0 = _fit_df['lat'].mean()
+    _slope, _intercept, *_ = stats.linregress(_fit_df['awb'], _fit_df['lat'])
+    _x0 = _fit_df['awb'].mean()
     _y0 = _slope * _x0 + _intercept
     ax.axline((_x0, _y0), slope=_slope, color='k', linewidth=1.2, linestyle='--')
 
@@ -260,7 +254,7 @@ ax_slope_neg.axvline(15, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_neg.set_xlabel('lag (days)')
 ax_slope_neg.set_ylabel('slope  (Eady growth rate / blocking)')
 ax_slope_neg.set_xlim(-5, 20)
-ax_slope_neg.set_ylim(-0.005, -0.0028)
+# ax_slope_neg.set_ylim(-5, -2.8)
 ax_slope_neg.spines['top'].set_visible(False)
 ax_slope_neg.spines['right'].set_visible(False)
 ax_slope_neg.text(-0.0, 1.05, 'b', transform=ax_slope_neg.transAxes, fontsize=11,
@@ -273,7 +267,7 @@ ax3 = ax_slope_neg.inset_axes([0.65, 0.45, 0.30, 0.44])    # bottom right
 for idx, (ax, H, label, df) in enumerate(zip([ax2, ax3], [H_E2M_neg, H_M2E_neg], ['bi', 'bii'], [E2M_neg_df, M2E_neg_df])):
     pcm_neg = ax.contourf(X_neg, Y_neg, H, cmap='Blues', levels=fill_levels,  extend='max')
     pcl_neg = ax.contour(X_neg, Y_neg, H, levels=contour_levels, colors='k', linewidths=0.5)
-    ax.set_xlabel('blocking (Z500 / m)', fontsize=8)
+    ax.set_xlabel('blocking (Z500 / km)', fontsize=8)
     ax.set_ylabel('Eady growth rate / day$^{-1}$', fontsize=8)
     ax.tick_params(labelsize=7)
     ax.spines['top'].set_visible(False)
@@ -295,7 +289,7 @@ cbar_neg.set_ticklabels(['$10^{-2}$', '$10^{-1}$', '$10^{0}$'])
 cbar_ax_neg.set_title('JPDF', pad=4, fontsize=10)
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_jpdf.pdf", dpi=300, bbox_inches='tight')
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_jpdf.pdf", dpi=300, bbox_inches='tight')
 
 
 # %%
