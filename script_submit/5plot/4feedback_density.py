@@ -186,7 +186,7 @@ H_M2E_neg = compute_jpdf(M2E_neg_df, 'zg', 'eady_growth_rate', x_bins_neg, y_bin
 
 #%%
 fill_levels    = np.logspace(-2, -.2, 20)
-contour_levels = np.logspace(-1., -.2, 5)
+contour_levels = fill_levels[12::2]
 
 #%%
 # --- Two-row figure: row 1 = NAO+, row 2 = NAO- ---
@@ -202,6 +202,7 @@ ax_slope_pos.axvline(0, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_pos.axvline(15, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_pos.set_xlabel('lag (days)')
 ax_slope_pos.set_ylabel('slope  (jet-lat / awb)')
+ax_slope_pos.set_ylim(0.43, 0.54)
 ax_slope_pos.set_xlim(-5, 20)
 # remove upper and right spines
 ax_slope_pos.spines['top'].set_visible(False)
@@ -214,14 +215,14 @@ ax_slope_pos.text(-0.0, 1.05, 'a', transform=ax_slope_pos.transAxes, fontsize=11
                   fontweight='bold', va='top', ha='right')
 
 # JPDF insets for positive phase
-ax0 = ax_slope_pos.inset_axes([0.05, 0.5, 0.30, 0.44])   # upper left
-ax1 = ax_slope_pos.inset_axes([0.65, 0.1, 0.30, 0.44])    # bottom right
+ax0 = ax_slope_pos.inset_axes([0.05, 0.56, 0.30, 0.44])   # upper left
+ax1 = ax_slope_pos.inset_axes([0.65, 0.05, 0.30, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 'aii'], [E2M_pos_df, M2E_pos_df])):
     pcm = ax.contourf(X, Y, H, cmap='Reds', levels=fill_levels,  extend='max')
     pcl = ax.contour(X, Y, H, levels=contour_levels, colors='k', linewidths=0.5)
-    ax.set_xlabel('awb', fontsize=8)
-    ax.set_ylabel('jet lat', fontsize=8)
+    ax.set_xlabel(r'awb / $\%$', fontsize=8)
+    ax.set_ylabel(r'jet lat / $\degree$ N', fontsize=8)
     ax.set_xlim(0., 18)
     ax.tick_params(labelsize=7)
     ax.spines['top'].set_visible(False)
@@ -231,15 +232,18 @@ for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 
     ax.spines['right'].set_visible(True)
     ax.text(1.0, 1.1, label, transform=ax.transAxes, fontsize=9,
             fontweight='bold', va='top', ha='right')
-    # linear regression line
+    # linear regression line (standardized: slope = Pearson r, converted to data coords)
     _fit_df = df[['lat', 'awb']].dropna()
-    _slope, _intercept, *_ = stats.linregress(_fit_df['awb'], _fit_df['lat'])
+    _x_std = (_fit_df['awb'] - _fit_df['awb'].mean()) / _fit_df['awb'].std()
+    _y_std = (_fit_df['lat'] - _fit_df['lat'].mean()) / _fit_df['lat'].std()
+    _r, *_ = stats.linregress(_x_std, _y_std)
+    _slope = _r * _fit_df['lat'].std() / _fit_df['awb'].std()
     _x0 = _fit_df['awb'].mean()
-    _y0 = _slope * _x0 + _intercept
+    _y0 = _fit_df['lat'].mean()
     ax.axline((_x0, _y0), slope=_slope, color='k', linewidth=1.2, linestyle='--')
 
 
-cbar_ax = ax_slope_pos.inset_axes([0.4, 0.5, 0.012, 0.44])
+cbar_ax = ax_slope_pos.inset_axes([0.4, 0.56, 0.012, 0.44])
 cbar = fig.colorbar(pcm, cax=cbar_ax, label='')
 cbar.set_ticks([ 1e-2, 1e-1, 1e0])
 cbar.set_ticklabels(['$10^{-2}$', '$10^{-1}$', '$10^{0}$'])
@@ -254,7 +258,7 @@ ax_slope_neg.axvline(15, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_neg.set_xlabel('lag (days)')
 ax_slope_neg.set_ylabel('slope  (Eady growth rate / blocking)')
 ax_slope_neg.set_xlim(-5, 20)
-# ax_slope_neg.set_ylim(-5, -2.8)
+ax_slope_neg.set_ylim(-0.62, -0.42)
 ax_slope_neg.spines['top'].set_visible(False)
 ax_slope_neg.spines['right'].set_visible(False)
 ax_slope_neg.text(-0.0, 1.05, 'b', transform=ax_slope_neg.transAxes, fontsize=11,
@@ -262,12 +266,12 @@ ax_slope_neg.text(-0.0, 1.05, 'b', transform=ax_slope_neg.transAxes, fontsize=11
 
 # JPDF insets for negative phase
 ax2 = ax_slope_neg.inset_axes([0.08, 0.1, 0.30, 0.44])   # upper left
-ax3 = ax_slope_neg.inset_axes([0.65, 0.45, 0.30, 0.44])    # bottom right
+ax3 = ax_slope_neg.inset_axes([0.65, 0.56, 0.30, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax2, ax3], [H_E2M_neg, H_M2E_neg], ['bi', 'bii'], [E2M_neg_df, M2E_neg_df])):
     pcm_neg = ax.contourf(X_neg, Y_neg, H, cmap='Blues', levels=fill_levels,  extend='max')
     pcl_neg = ax.contour(X_neg, Y_neg, H, levels=contour_levels, colors='k', linewidths=0.5)
-    ax.set_xlabel('blocking (Z500 / km)', fontsize=8)
+    ax.set_xlabel('blocking (Z500) / km', fontsize=8)
     ax.set_ylabel('Eady growth rate / day$^{-1}$', fontsize=8)
     ax.tick_params(labelsize=7)
     ax.spines['top'].set_visible(False)
@@ -275,21 +279,26 @@ for idx, (ax, H, label, df) in enumerate(zip([ax2, ax3], [H_E2M_neg, H_M2E_neg],
     ax.set_ylim(2.2, 5.5)
     ax.text(-0.0, 1.1, label, transform=ax.transAxes, fontsize=9,
             fontweight='bold', va='top', ha='right')
-    # linear regression line
+    # linear regression line (standardized: slope = Pearson r, converted to data coords)
     _fit_df = df[['zg', 'eady_growth_rate']].dropna()
-    _slope, _intercept, *_ = stats.linregress(_fit_df['zg'], _fit_df['eady_growth_rate'])
+    _x_std = (_fit_df['zg'] - _fit_df['zg'].mean()) / _fit_df['zg'].std()
+    _y_std = (_fit_df['eady_growth_rate'] - _fit_df['eady_growth_rate'].mean()) / _fit_df['eady_growth_rate'].std()
+    _r, *_ = stats.linregress(_x_std, _y_std)
+    _slope = _r * _fit_df['eady_growth_rate'].std() / _fit_df['zg'].std()
     _x0 = _fit_df['zg'].mean()
-    _y0 = _slope * _x0 + _intercept
+    _y0 = _fit_df['eady_growth_rate'].mean()
     ax.axline((_x0, _y0), slope=_slope, color='k', linewidth=1.2, linestyle='--')
 
-cbar_ax_neg = ax_slope_neg.inset_axes([0.5, 0.45, 0.012, 0.44])
+cbar_ax_neg = ax_slope_neg.inset_axes([0.57, 0.56, 0.012, 0.44])
 cbar_neg = fig.colorbar(pcm_neg, cax=cbar_ax_neg, label='')
+cbar_neg.ax.yaxis.set_ticks_position('left')
+cbar_neg.ax.yaxis.set_label_position('left')
 cbar_neg.set_ticks([1e-2, 1e-1, 1e0])
 cbar_neg.set_ticklabels(['$10^{-2}$', '$10^{-1}$', '$10^{0}$'])
 cbar_ax_neg.set_title('JPDF', pad=4, fontsize=10)
 
 plt.tight_layout()
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_jpdf.pdf", dpi=300, bbox_inches='tight')
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/feedback_jpdf.pdf", dpi=300, bbox_inches='tight')
 
 
 # %%
