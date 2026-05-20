@@ -190,7 +190,7 @@ contour_levels = fill_levels[12::2]
 
 #%%
 # --- Two-row figure: row 1 = NAO+, row 2 = NAO- ---
-fig, (ax_slope_pos, ax_slope_neg) = plt.subplots(2, 1, figsize=(10, 10))
+fig, (ax_slope_pos, ax_slope_neg) = plt.subplots(2, 1, figsize=(9, 9))
 
 decade_colors = {1850: 'purple', 2090: 'gold'}
 
@@ -215,8 +215,8 @@ ax_slope_pos.text(-0.0, 1.05, 'a', transform=ax_slope_pos.transAxes, fontsize=11
                   fontweight='bold', va='top', ha='right')
 
 # JPDF insets for positive phase
-ax0 = ax_slope_pos.inset_axes([0.05, 0.56, 0.30, 0.44])   # upper left
-ax1 = ax_slope_pos.inset_axes([0.65, 0.05, 0.30, 0.44])    # bottom right
+ax0 = ax_slope_pos.inset_axes([0.05, 0.56, 0.40, 0.44])   # upper left
+ax1 = ax_slope_pos.inset_axes([0.55, 0.05, 0.40, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 'aii'], [E2M_pos_df, M2E_pos_df])):
     pcm = ax.contourf(X, Y, H, cmap='Reds', levels=fill_levels,  extend='max')
@@ -243,7 +243,7 @@ for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 
     ax.axline((_x0, _y0), slope=_slope, color='k', linewidth=1.2, linestyle='--')
 
 
-cbar_ax = ax_slope_pos.inset_axes([0.4, 0.56, 0.012, 0.44])
+cbar_ax = ax_slope_pos.inset_axes([0.5, 0.56, 0.012, 0.44])
 cbar = fig.colorbar(pcm, cax=cbar_ax, label='')
 cbar.set_ticks([ 1e-2, 1e-1, 1e0])
 cbar.set_ticklabels(['$10^{-2}$', '$10^{-1}$', '$10^{0}$'])
@@ -258,15 +258,15 @@ ax_slope_neg.axvline(15, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_neg.set_xlabel('lag (days)')
 ax_slope_neg.set_ylabel('slope  (Eady growth rate / blocking)')
 ax_slope_neg.set_xlim(-5, 20)
-ax_slope_neg.set_ylim(-0.62, -0.42)
+ax_slope_neg.set_ylim(-0.63, -0.42)
 ax_slope_neg.spines['top'].set_visible(False)
 ax_slope_neg.spines['right'].set_visible(False)
 ax_slope_neg.text(-0.0, 1.05, 'b', transform=ax_slope_neg.transAxes, fontsize=11,
                   fontweight='bold', va='top', ha='right')
 
 # JPDF insets for negative phase
-ax2 = ax_slope_neg.inset_axes([0.08, 0.1, 0.30, 0.44])   # upper left
-ax3 = ax_slope_neg.inset_axes([0.65, 0.56, 0.30, 0.44])    # bottom right
+ax2 = ax_slope_neg.inset_axes([0.08, 0.1, 0.40, 0.44])   # upper left
+ax3 = ax_slope_neg.inset_axes([0.55, 0.56, 0.40, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax2, ax3], [H_E2M_neg, H_M2E_neg], ['bi', 'bii'], [E2M_neg_df, M2E_neg_df])):
     pcm_neg = ax.contourf(X_neg, Y_neg, H, cmap='Blues', levels=fill_levels,  extend='max')
@@ -289,7 +289,7 @@ for idx, (ax, H, label, df) in enumerate(zip([ax2, ax3], [H_E2M_neg, H_M2E_neg],
     _y0 = _fit_df['eady_growth_rate'].mean()
     ax.axline((_x0, _y0), slope=_slope, color='k', linewidth=1.2, linestyle='--')
 
-cbar_ax_neg = ax_slope_neg.inset_axes([0.57, 0.56, 0.012, 0.44])
+cbar_ax_neg = ax_slope_neg.inset_axes([0.47, 0.56, 0.012, 0.44])
 cbar_neg = fig.colorbar(pcm_neg, cax=cbar_ax_neg, label='')
 cbar_neg.ax.yaxis.set_ticks_position('left')
 cbar_neg.ax.yaxis.set_label_position('left')
