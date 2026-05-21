@@ -159,8 +159,8 @@ times_neg, slopes_neg, ci_low_neg, ci_high_neg = regression_slope_timeseries(blo
 # %%
 
 # --- Bin edges for positive phase ---
-x_bins_pos = np.linspace(0, max(E2M_pos_df['awb'].max(), M2E_pos_df['awb'].max()), 50)
-y_bins_pos = np.linspace(E2M_pos_df['lat'].min(), E2M_pos_df['lat'].max(), 50)
+x_bins_pos = np.linspace(0, max(E2M_pos_df['awb'].max(), M2E_pos_df['awb'].max()), 80)
+y_bins_pos = np.linspace(E2M_pos_df['lat'].min(), E2M_pos_df['lat'].max(), 80)
 x_centers = (x_bins_pos[:-1] + x_bins_pos[1:]) / 2
 y_centers = (y_bins_pos[:-1] + y_bins_pos[1:]) / 2
 X, Y = np.meshgrid(x_centers, y_centers)
@@ -172,10 +172,10 @@ H_M2E = compute_jpdf(M2E_pos_df, 'awb', 'lat', x_bins_pos, y_bins_pos)
 # --- Bin edges for negative phase (blocking vs baroc) ---
 x_bins_neg = np.linspace(
     min(E2M_neg_df['zg'].min(), M2E_neg_df['zg'].min()),
-    max(E2M_neg_df['zg'].max(), M2E_neg_df['zg'].max()), 50)
+    max(E2M_neg_df['zg'].max(), M2E_neg_df['zg'].max()), 80)
 y_bins_neg = np.linspace(
     min(E2M_neg_df['eady_growth_rate'].min(), M2E_neg_df['eady_growth_rate'].min()),
-    max(E2M_neg_df['eady_growth_rate'].max(), M2E_neg_df['eady_growth_rate'].max()), 50)
+    max(E2M_neg_df['eady_growth_rate'].max(), M2E_neg_df['eady_growth_rate'].max()), 80)
 x_centers_neg = (x_bins_neg[:-1] + x_bins_neg[1:]) / 2
 y_centers_neg = (y_bins_neg[:-1] + y_bins_neg[1:]) / 2
 X_neg, Y_neg = np.meshgrid(x_centers_neg, y_centers_neg)
@@ -185,8 +185,8 @@ H_E2M_neg = compute_jpdf(E2M_neg_df, 'zg', 'eady_growth_rate', x_bins_neg, y_bin
 H_M2E_neg = compute_jpdf(M2E_neg_df, 'zg', 'eady_growth_rate', x_bins_neg, y_bins_neg)
 
 #%%
-fill_levels    = np.logspace(-2, -.2, 20)
-contour_levels = fill_levels[12::2]
+fill_levels    = np.logspace(-2, -0.1, 30)
+contour_levels = fill_levels[18::4]
 
 #%%
 # --- Two-row figure: row 1 = NAO+, row 2 = NAO- ---
@@ -200,8 +200,8 @@ ax_slope_pos.plot(times_pos, slopes_pos, color='k', linewidth=1.5, zorder = 100)
 ax_slope_pos.fill_between(times_pos, ci_low_pos, ci_high_pos, color='k', alpha=0.15, zorder = 100)
 ax_slope_pos.axvline(0, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_pos.axvline(15, color='gray', linewidth=0.7, linestyle=':')
-ax_slope_pos.set_xlabel('lag (days)')
-ax_slope_pos.set_ylabel('slope  (jet-lat / awb)')
+ax_slope_pos.set_xlabel('days relative to event onset')
+ax_slope_pos.set_ylabel('standardized slope  (jet lat / AWB)')
 ax_slope_pos.set_ylim(0.43, 0.54)
 ax_slope_pos.set_xlim(-5, 20)
 # remove upper and right spines
@@ -219,7 +219,7 @@ ax0 = ax_slope_pos.inset_axes([0.05, 0.56, 0.40, 0.44])   # upper left
 ax1 = ax_slope_pos.inset_axes([0.55, 0.05, 0.40, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax0, ax1], [H_E2M, H_M2E], ['ai', 'aii'], [E2M_pos_df, M2E_pos_df])):
-    pcm = ax.contourf(X, Y, H, cmap='Reds', levels=fill_levels,  extend='max')
+    pcm = ax.contourf(X, Y, H, cmap='Oranges', levels=fill_levels,  extend='max')
     pcl = ax.contour(X, Y, H, levels=contour_levels, colors='k', linewidths=0.5)
     ax.set_xlabel(r'awb / $\%$', fontsize=8)
     ax.set_ylabel(r'jet lat / $\degree$ N', fontsize=8)
@@ -255,8 +255,8 @@ ax_slope_neg.plot(times_neg, slopes_neg, color='k', linewidth=1.5, zorder = 100)
 ax_slope_neg.fill_between(times_neg, ci_low_neg, ci_high_neg, color='k', alpha=0.15, zorder = 100)
 ax_slope_neg.axvline(0, color='gray', linewidth=0.7, linestyle=':')
 ax_slope_neg.axvline(15, color='gray', linewidth=0.7, linestyle=':')
-ax_slope_neg.set_xlabel('lag (days)')
-ax_slope_neg.set_ylabel('slope  (Eady growth rate / blocking)')
+ax_slope_neg.set_xlabel('days relative to event onset')
+ax_slope_neg.set_ylabel('standardized slope  (Eady growth rate / blocking)')
 ax_slope_neg.set_xlim(-5, 20)
 ax_slope_neg.set_ylim(-0.63, -0.42)
 ax_slope_neg.spines['top'].set_visible(False)
@@ -269,7 +269,7 @@ ax2 = ax_slope_neg.inset_axes([0.08, 0.1, 0.40, 0.44])   # upper left
 ax3 = ax_slope_neg.inset_axes([0.55, 0.56, 0.40, 0.44])    # bottom right
 
 for idx, (ax, H, label, df) in enumerate(zip([ax2, ax3], [H_E2M_neg, H_M2E_neg], ['bi', 'bii'], [E2M_neg_df, M2E_neg_df])):
-    pcm_neg = ax.contourf(X_neg, Y_neg, H, cmap='Blues', levels=fill_levels,  extend='max')
+    pcm_neg = ax.contourf(X_neg, Y_neg, H, cmap='GnBu', levels=fill_levels,  extend='max')
     pcl_neg = ax.contour(X_neg, Y_neg, H, levels=contour_levels, colors='k', linewidths=0.5)
     ax.set_xlabel('blocking (Z500) / km', fontsize=8)
     ax.set_ylabel('Eady growth rate / day$^{-1}$', fontsize=8)
