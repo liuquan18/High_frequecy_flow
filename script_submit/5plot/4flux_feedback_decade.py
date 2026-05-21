@@ -217,7 +217,7 @@ sns.scatterplot(
     hue="decade",
     size = "days_pos",
     sizes = (20, 400),
-    palette = "Reds",
+    palette = "Oranges",
     legend=False,
 )
 
@@ -229,7 +229,7 @@ sns.scatterplot(
     hue="decade",
     size = "days_neg",
     sizes = (20, 400),
-    palette = "Blues",
+    palette = "GnBu",
     legend=False,
 )
 
