@@ -116,11 +116,18 @@ eke_neg_first_df = _load_csv("eke_neg_first_df")
 eke_pos_last_df = _load_csv("eke_pos_last_df")
 eke_neg_last_df = _load_csv("eke_neg_last_df")
 
+#%%
 baroc_pos_first_df = _load_csv("baroc_pos_first_df")    
 baroc_neg_first_df = _load_csv("baroc_neg_first_df")
 baroc_pos_last_df = _load_csv("baroc_pos_last_df")    
 baroc_neg_last_df = _load_csv("baroc_neg_last_df")
 
+baroc_pos_first_df["baroclinicity"] *= 86400  # convert from s^-1 to day^-1
+baroc_neg_first_df["baroclinicity"] *= 86400
+baroc_pos_last_df["baroclinicity"] *= 86400
+baroc_neg_last_df["baroclinicity"] *= 86400
+
+#%%
 # anomaly
 transient_eddy_heat_d2y2_pos_first_df = _load_csv("transient_eddy_heat_d2y2_pos_first_df")
 transient_eddy_heat_d2y2_neg_first_df = _load_csv("transient_eddy_heat_d2y2_neg_first_df")
