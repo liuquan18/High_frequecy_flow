@@ -62,18 +62,27 @@ def _zonal_mean(da, lon_min=-90, lon_max=40, time_window = (0, 20)):
 #%%
 # Convergence of transient eddy momentum flux
 Fdiv_phi_transient = _read_all("Fdiv_phi_transient", suffix="_ano", name="div")
+#%%
+Fdiv_p_transient = _read_all("Fdiv_p_transient", suffix="_ano", name="div2")
 # %%
 eke = _read_all("eke", suffix="_ano", name="eke")
-## %%
+# %%
 Fdiv_phi_diff_pos = Fdiv_phi_transient["pos_2090"] - Fdiv_phi_transient["pos_1850"]
 Fdiv_phi_diff_neg = Fdiv_phi_transient["neg_2090"] - Fdiv_phi_transient["neg_1850"]
+Fdiv_p_diff_pos = Fdiv_p_transient["pos_2090"] - Fdiv_p_transient["pos_1850"]
+Fdiv_p_diff_neg = Fdiv_p_transient["neg_2090"] - Fdiv_p_transient["neg_1850"]
 eke_diff_pos = eke["pos_2090"] - eke["pos_1850"]
 eke_diff_neg = eke["neg_2090"] - eke["neg_1850"]
 #%%
 Fdiv_phi_diff_pos_zm = _zonal_mean(Fdiv_phi_diff_pos)
 Fdiv_phi_diff_neg_zm = _zonal_mean(Fdiv_phi_diff_neg)
+Fdiv_p_diff_pos_zm = _zonal_mean(Fdiv_p_diff_pos)
+Fdiv_p_diff_neg_zm = _zonal_mean(Fdiv_p_diff_neg)
 eke_diff_pos_zm = _zonal_mean(eke_diff_pos)
 eke_diff_neg_zm = _zonal_mean(eke_diff_neg)
+#%%
+EPdiv_diff_pos_zm = Fdiv_phi_diff_pos_zm - Fdiv_p_diff_pos_zm
+EPdiv_diff_neg_zm = Fdiv_phi_diff_neg_zm - Fdiv_p_diff_neg_zm
 # %%
 
 
@@ -120,15 +129,21 @@ def _plot_sig_bars(ax, da_zm, color, label, ylabel="Value", ylim=None):
     ax.spines[["top", "right"]].set_visible(False)
 
 
-fig, axes = plt.subplots(2, 2, figsize=(8, 6))
+fig, axes = plt.subplots(3, 2, figsize=(8, 9))
 
-YLABEL_FDIV = r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m s$^{-1}$ day$^{-1}$"
-YLABEL_EKE  = r"EKE / m$^2$ s$^{-2}$"
+YLABEL_FDIV  = r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m s$^{-1}$ day$^{-1}$"
+YLABEL_EPDIV = r"$\nabla \cdot F$ / m s$^{-1}$ day$^{-1}$"
+YLABEL_EKE   = r"EKE / m$^2$ s$^{-2}$"
 
-_plot_sig_bars(axes[0, 0], Fdiv_phi_diff_pos_zm, COLOR_POS, "a", ylabel=YLABEL_FDIV, ylim=(-1, 1))
-_plot_sig_bars(axes[0, 1], eke_diff_pos_zm,       COLOR_POS, "b", ylabel=YLABEL_EKE,  ylim=(-1, 1))
-_plot_sig_bars(axes[1, 0], Fdiv_phi_diff_neg_zm, COLOR_NEG, "c", ylabel=YLABEL_FDIV, ylim=(-1, 1))
-_plot_sig_bars(axes[1, 1], eke_diff_neg_zm,       COLOR_NEG, "d", ylabel=YLABEL_EKE,  ylim=(-3, 3))
+# Row 0: Fdiv_phi
+_plot_sig_bars(axes[0, 0], Fdiv_phi_diff_pos_zm, COLOR_POS, "a", ylabel=YLABEL_FDIV,  ylim=(-1, 1))
+_plot_sig_bars(axes[0, 1], Fdiv_phi_diff_neg_zm, COLOR_NEG, "b", ylabel=YLABEL_FDIV,  ylim=(-1, 1))
+# Row 1: EPdiv
+_plot_sig_bars(axes[1, 0], EPdiv_diff_pos_zm,    COLOR_POS, "c", ylabel=YLABEL_EPDIV, ylim=(-1, 1))
+_plot_sig_bars(axes[1, 1], EPdiv_diff_neg_zm,    COLOR_NEG, "d", ylabel=YLABEL_EPDIV, ylim=(-1, 1))
+# Row 2: EKE
+_plot_sig_bars(axes[2, 0], eke_diff_pos_zm,      COLOR_POS, "e", ylabel=YLABEL_EKE,   ylim=(-3, 3))
+_plot_sig_bars(axes[2, 1], eke_diff_neg_zm,      COLOR_NEG, "f", ylabel=YLABEL_EKE,   ylim=(-3, 3))
 
 plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/difference_latitude.pdf", dpi=300, bbox_inches="tight", transparent=True)
