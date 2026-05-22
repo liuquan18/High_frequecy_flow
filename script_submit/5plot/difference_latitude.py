@@ -59,7 +59,6 @@ def _zonal_mean(da, lon_min=-90, lon_max=40, time_window = (0, 20)):
     return da.sel(lon=slice(lon_min, lon_max), lat = slice(20, 90), time=slice(*time_window)).mean(dim=("lon", "time"))
 
 #%%
-#%%
 # Convergence of transient eddy momentum flux
 Fdiv_phi_transient = _read_all("Fdiv_phi_transient", suffix="_ano", name="div")
 #%%
@@ -106,7 +105,7 @@ def _lat_mean_and_sig(da):
     return mean_lat, sig
 
 
-def _plot_sig_bars(ax, da_zm, color, label, ylabel="Value", ylim=None):
+def _plot_sig_bars(ax, da_zm, color, label, ylabel="Value", ylim=None, show_xlabel=True):
     """Bar chart with filled bars where one-sided significant, outline only otherwise."""
     mean_lat, sig = _lat_mean_and_sig(da_zm)
     lats = mean_lat.lat.values
@@ -120,27 +119,30 @@ def _plot_sig_bars(ax, da_zm, color, label, ylabel="Value", ylim=None):
     ax.axhline(0, color="k", lw=0.5)
     ax.text(0.02, 0.97, label, transform=ax.transAxes,
             fontsize=12, fontweight="bold", va="top", ha="left")
-    ax.set_xlabel("Latitude")
     ax.set_ylabel(ylabel)
     if ylim is not None:
         ax.set_ylim(ylim)
     ax.set_xticks([30, 50, 70])
-    ax.set_xticklabels(["30°N", "50°N", "70°N"])
+    if show_xlabel:
+        ax.set_xlabel("Latitude")
+        ax.set_xticklabels(["30°N", "50°N", "70°N"])
+    else:
+        ax.set_xticklabels([])
     ax.spines[["top", "right"]].set_visible(False)
 
 
-fig, axes = plt.subplots(3, 2, figsize=(8, 9))
+fig, axes = plt.subplots(3, 2, figsize=(8, 7))
 
 YLABEL_FDIV  = r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m s$^{-1}$ day$^{-1}$"
 YLABEL_EPDIV = r"$\nabla \cdot F$ / m s$^{-1}$ day$^{-1}$"
 YLABEL_EKE   = r"EKE / m$^2$ s$^{-2}$"
 
 # Row 0: Fdiv_phi
-_plot_sig_bars(axes[0, 0], Fdiv_phi_diff_pos_zm, COLOR_POS, "a", ylabel=YLABEL_FDIV,  ylim=(-1, 1))
-_plot_sig_bars(axes[0, 1], Fdiv_phi_diff_neg_zm, COLOR_NEG, "b", ylabel=YLABEL_FDIV,  ylim=(-1, 1))
+_plot_sig_bars(axes[0, 0], Fdiv_phi_diff_pos_zm, COLOR_POS, "a", ylabel=YLABEL_FDIV,  ylim=(-1, 1), show_xlabel=False)
+_plot_sig_bars(axes[0, 1], Fdiv_phi_diff_neg_zm, COLOR_NEG, "b", ylabel=YLABEL_FDIV,  ylim=(-1, 1), show_xlabel=False)
 # Row 1: EPdiv
-_plot_sig_bars(axes[1, 0], EPdiv_diff_pos_zm,    COLOR_POS, "c", ylabel=YLABEL_EPDIV, ylim=(-1, 1))
-_plot_sig_bars(axes[1, 1], EPdiv_diff_neg_zm,    COLOR_NEG, "d", ylabel=YLABEL_EPDIV, ylim=(-1, 1))
+_plot_sig_bars(axes[1, 0], EPdiv_diff_pos_zm,    COLOR_POS, "c", ylabel=YLABEL_EPDIV, ylim=(-1, 1), show_xlabel=False)
+_plot_sig_bars(axes[1, 1], EPdiv_diff_neg_zm,    COLOR_NEG, "d", ylabel=YLABEL_EPDIV, ylim=(-1, 1), show_xlabel=False)
 # Row 2: EKE
 _plot_sig_bars(axes[2, 0], eke_diff_pos_zm,      COLOR_POS, "e", ylabel=YLABEL_EKE,   ylim=(-3, 3))
 _plot_sig_bars(axes[2, 1], eke_diff_neg_zm,      COLOR_NEG, "f", ylabel=YLABEL_EKE,   ylim=(-3, 3))
