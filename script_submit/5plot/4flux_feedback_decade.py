@@ -23,7 +23,7 @@ read_comp_var = read_composite.read_comp_var
 MODEL_DIR = "MPI_GE_CMIP6_allplev"
 
 
-def _read_all(var_name, suffix = '', name=None, phase = 'pos', chunks=None, M2E_window = (5, 15)
+def _read_all(var_name, suffix = '', name=None, phase = 'pos', chunks=None, M2E_window = (0, 20)
 ):
     """Read pos composites for all decades, concatenated along a 'decade' dimension.
 
@@ -321,6 +321,7 @@ for j, rd in enumerate(_ref_days):
 ref_ax.text(0.4, 1.15, "NAO extremes/day",
             ha="center", va="top", transform=ref_ax.transAxes,
             fontsize=8.5, style="italic")
+
 
 # plt.tight_layout()
 plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/decade_scatter.pdf", dpi=300, bbox_inches='tight')
