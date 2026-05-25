@@ -65,6 +65,10 @@ Fdiv_phi_transient = _read_all("Fdiv_phi_transient", suffix="_ano", name="div")
 Fdiv_p_transient = _read_all("Fdiv_p_transient", suffix="_ano", name="div2")
 # %%
 eke = _read_all("eke", suffix="_ano", name="eke")
+
+#%%
+ua = _read_all("ua", suffix="", name="ua", method="no_stat")
+
 # %%
 Fdiv_phi_diff_pos = Fdiv_phi_transient["pos_2090"] - Fdiv_phi_transient["pos_1850"]
 Fdiv_phi_diff_neg = Fdiv_phi_transient["neg_2090"] - Fdiv_phi_transient["neg_1850"]
@@ -83,8 +87,17 @@ eke_diff_neg_zm = _zonal_mean(eke_diff_neg)
 EPdiv_diff_pos_zm = Fdiv_phi_diff_pos_zm - Fdiv_p_diff_pos_zm
 EPdiv_diff_neg_zm = Fdiv_phi_diff_neg_zm - Fdiv_p_diff_neg_zm
 # %%
+ua_diff_pos = ua["pos_2090"] - ua["pos_1850"]
+ua_diff_neg = ua["neg_2090"] - ua["neg_1850"]
+ua_diff_pos_zm = _zonal_mean(ua_diff_pos)
+ua_diff_neg_zm = _zonal_mean(ua_diff_neg)
+
+#%%
+ua_diff_pos_zm = ua_diff_pos_zm.assign_coords(plev=ua_diff_pos_zm.plev / 100)
+ua_diff_neg_zm = ua_diff_neg_zm.assign_coords(plev=ua_diff_neg_zm.plev / 100)
 
 
+#%%
 COLOR_POS = "#E57200"  # MPI orange
 COLOR_NEG = "#006C66"  # MPI green
 
@@ -131,11 +144,53 @@ def _plot_sig_bars(ax, da_zm, color, label, ylabel="Value", ylim=None, show_xlab
     ax.spines[["top", "right"]].set_visible(False)
 
 
-fig, axes = plt.subplots(3, 2, figsize=(8, 7))
+def _plot_profile(ax, da_zm, label, vmin=-2, vmax=2, show_xlabel=True, cmap="RdBu_r"):
+    """Pcolormesh lat-plev vertical profile with significance dots."""
+    # Select plev range 250-1000 hPa and sort lat
+    da_zm = da_zm.sortby("plev").sel(plev=slice(250, 1000)).sortby("lat")
+
+    event_axis = da_zm.dims.index("event")
+    mean_da = da_zm.mean(dim="event")
+    _, p_two = stats.ttest_1samp(da_zm.values, 0, axis=event_axis)
+    sig = (p_two / 2) < 0.05  # one-sided, direction of mean
+
+    lats = mean_da.lat.values
+    plevs = mean_da.plev.values
+
+    cf = ax.contourf(
+        lats, plevs, mean_da.values,
+        cmap=cmap, shading="nearest",
+        vmin=vmin, vmax=vmax,
+    )
+
+    # Overlay dots where significant
+    lat_grid, plev_grid = np.meshgrid(lats, plevs)
+    ax.scatter(
+        lat_grid[sig], plev_grid[sig],
+        s=25, color="k", marker=".", linewidths=0, zorder=5,
+    )
+
+    ax.set_ylim(1020, 250)
+    ax.yaxis.set_major_formatter(matplotlib.ticker.ScalarFormatter())
+    ax.set_ylabel(r"Pressure / hPa")
+    ax.set_xticks([30, 50, 70])
+    if show_xlabel:
+        ax.set_xlabel("Latitude")
+        ax.set_xticklabels(["30°N", "50°N", "70°N"])
+    else:
+        ax.set_xticklabels([])
+    ax.text(0.02, 0.97, label, transform=ax.transAxes,
+            fontsize=12, fontweight="bold", va="top", ha="left")
+    ax.spines[["top", "right"]].set_visible(False)
+    return cf
+
+#%%
+fig, axes = plt.subplots(4, 2, figsize=(8, 9), gridspec_kw={"height_ratios": [0.8, 0.8, 0.8, 1.2]})
 
 YLABEL_FDIV  = r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m s$^{-1}$ day$^{-1}$"
 YLABEL_EPDIV = r"$\nabla \cdot F$ / m s$^{-1}$ day$^{-1}$"
 YLABEL_EKE   = r"EKE / m$^2$ s$^{-2}$"
+
 
 # Row 0: Fdiv_phi
 _plot_sig_bars(axes[0, 0], Fdiv_phi_diff_pos_zm, COLOR_POS, "a", ylabel=YLABEL_FDIV,  ylim=(-1, 1), show_xlabel=False)
@@ -144,10 +199,19 @@ _plot_sig_bars(axes[0, 1], Fdiv_phi_diff_neg_zm, COLOR_NEG, "b", ylabel=YLABEL_F
 _plot_sig_bars(axes[1, 0], EPdiv_diff_pos_zm,    COLOR_POS, "c", ylabel=YLABEL_EPDIV, ylim=(-1, 1), show_xlabel=False)
 _plot_sig_bars(axes[1, 1], EPdiv_diff_neg_zm,    COLOR_NEG, "d", ylabel=YLABEL_EPDIV, ylim=(-1, 1), show_xlabel=False)
 # Row 2: EKE
-_plot_sig_bars(axes[2, 0], eke_diff_pos_zm,      COLOR_POS, "e", ylabel=YLABEL_EKE,   ylim=(-3, 3))
-_plot_sig_bars(axes[2, 1], eke_diff_neg_zm,      COLOR_NEG, "f", ylabel=YLABEL_EKE,   ylim=(-3, 3))
+_plot_sig_bars(axes[2, 0], eke_diff_pos_zm,      COLOR_POS, "e", ylabel=YLABEL_EKE,   ylim=(-3, 3), show_xlabel=False)
+_plot_sig_bars(axes[2, 1], eke_diff_neg_zm,      COLOR_NEG, "f", ylabel=YLABEL_EKE,   ylim=(-3, 3), show_xlabel=False)
+# Row 3: ua vertical profile
+cf_pos = _plot_profile(axes[3, 0], ua_diff_pos_zm, "g", vmin=-2, vmax=2)
+cf_neg = _plot_profile(axes[3, 1], ua_diff_neg_zm, "h", vmin=-2, vmax=2)
+axes[3, 1].set_ylabel("")
 
 plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/difference_latitude.pdf", dpi=300, bbox_inches="tight", transparent=True)
+
+# Shared colorbar at the bottom, below the profile row
+cbar_ax = fig.add_axes([0.25, -0.02, 0.5, 0.02])  # [left, bottom, width, height]
+fig.colorbar(cf_neg, cax=cbar_ax, orientation="horizontal", label=r"$\Delta$ua / m s$^{-1}$")
+
+# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/difference_latitude.pdf", dpi=300, bbox_inches="tight", transparent=True)
 
 # %%
