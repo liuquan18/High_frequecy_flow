@@ -23,7 +23,7 @@ read_comp_var = read_composite.read_comp_var
 MODEL_DIR = "MPI_GE_CMIP6_allplev"
 
 
-def _read_all(var_name, suffix = '', name=None, phase = 'pos', chunks=None, M2E_window = (0, 20)
+def _read_all(var_name, suffix = '', name=None, phase = 'pos', chunks=None, method = 'mean', M2E_window = (0, 20)
 ):
     """Read pos composites for all decades, concatenated along a 'decade' dimension.
 
@@ -37,6 +37,7 @@ def _read_all(var_name, suffix = '', name=None, phase = 'pos', chunks=None, M2E_
     kwargs["comp_path"] = "0composite_alldec"
     kwargs["erase_zero_line"] = False
     kwargs["time_window"] = M2E_window
+    kwargs["method"] = method
     decades = np.arange(1850, 2100, 10)
     datasets = [
         read_comp_var(var_name, phase, decade, suffix=suffix, **kwargs).assign_coords(decade=decade)
@@ -52,9 +53,9 @@ def _read_all(var_name, suffix = '', name=None, phase = 'pos', chunks=None, M2E_
 # %%
 jet_loc_pos = _read_all("jetloc", name = 'lat', phase="pos")
 # %%
-awb_pos = _read_all("wb_anticyclonic_allisen", name = 'smooth_pv', phase="pos")
+awb_pos = _read_all("wb_anticyclonic_allisen", name = 'smooth_pv', phase="pos", method='sum')
 # into percent
-awb_pos = awb_pos * 100
+awb_pos = awb_pos / 20 # only sum over event
 #%%
 baroc_neg = _read_all("eady_growth_rate", name = 'eady_growth_rate', phase="neg")
 baroc_neg = baroc_neg * 86400  # convert from 1/s to 1/day
@@ -254,7 +255,7 @@ axes[0, 1].set_xlabel("Decade")
 axes[0, 1].set_ylabel("Extreme NAO days / decade $^{-1}$")
 
 axes[1, 0].set_ylabel("Jet Latitude (°N)")
-axes[1, 0].set_xlabel("AWB occurrence / %")
+axes[1, 0].set_xlabel("AWB occurrence / day")
 axes[1, 1].set_xlabel("GB Index / km")
 axes[1, 1].set_ylabel("Eady growth rate / $day^{-1}$")
 axes[1, 1].xaxis.set_major_formatter(FormatStrFormatter("%.1f"))
