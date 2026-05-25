@@ -160,7 +160,18 @@ def _plot_profile(ax, da_zm, label, vmin=-2, vmax=2, show_xlabel=True, cmap="RdB
     cf = ax.contourf(
         lats, plevs, mean_da.values,
         cmap=cmap, shading="nearest",
-        vmin=vmin, vmax=vmax,
+        # vmin=vmin, vmax=vmax,
+        levels = np.arange(-2.4, 2.5, 0.4),
+        extend = 'both',
+    )
+
+    cl = ax.contour(
+        lats, plevs, mean_da.values,
+        colors = 'k', linewidths=0.5,
+        alpha = 0.7,
+        # vmin=vmin, vmax=vmax,
+        levels = np.arange(-2.4, 2.5, 0.4),
+        extend = 'both',
     )
 
     # Overlay dots where significant
@@ -212,6 +223,6 @@ plt.tight_layout()
 cbar_ax = fig.add_axes([0.25, -0.02, 0.5, 0.02])  # [left, bottom, width, height]
 fig.colorbar(cf_neg, cax=cbar_ax, orientation="horizontal", label=r"$\Delta$ua / m s$^{-1}$")
 
-# plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/difference_latitude.pdf", dpi=300, bbox_inches="tight", transparent=True)
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/difference_latitude.pdf", dpi=300, bbox_inches="tight", transparent=True)
 
 # %%
