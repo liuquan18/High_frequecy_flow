@@ -128,7 +128,7 @@ def _plot_contour_time(ax, da_zm, label, levels, cmap="RdBu_r", show_ylabel=True
     ax.scatter(time_2d[sig.T], lat_2d[sig.T], s=3, color="k", marker=".", linewidths=0, zorder=5)
 
     ax.axvline(0, color="k", lw=0.8, ls="--")
-    ax.set_xlabel("Lag / days")
+    ax.set_xlabel("days relative to onset")
     ax.set_yticks([30, 50, 70])
     ax.set_xlim(-10, 20)
     ax.set_ylim(20, 80)
@@ -153,20 +153,23 @@ CLABEL_FDIV  = r"$-\frac{\partial}{\partial y} (\overline{u'v'})$ / m s$^{-1}$ d
 CLABEL_EPDIV = r"$\nabla \cdot F$ / m s$^{-1}$ day$^{-1}$"
 CLABEL_EKE   = r"EKE / m$^2$ s$^{-2}$"
 
-fig, axes = plt.subplots(3, 2, figsize=(9, 9))
+fig = plt.figure(figsize=(9, 9))
+gs = fig.add_gridspec(3, 3, width_ratios=[1, 1, 0.05], wspace=0.1, hspace=0.3)
+axes = np.array([[fig.add_subplot(gs[i, j]) for j in range(2)] for i in range(3)])
+caxes = [fig.add_subplot(gs[i, 2]) for i in range(3)]
 
 # Row 0: Fdiv_phi
 cf0 = _plot_contour_time(axes[0, 0], Fdiv_phi_diff_pos_zm, "a", LEVELS_FDIV)
 _plot_contour_time(axes[0, 1], Fdiv_phi_diff_neg_zm, "b", LEVELS_FDIV, show_ylabel=False)
-fig.colorbar(cf0, ax=axes[0, 1], label=CLABEL_FDIV, location="right", pad=0.02, shrink=0.9)
+fig.colorbar(cf0, cax=caxes[0], label=CLABEL_FDIV)
 # Row 1: EPdiv
 cf1 = _plot_contour_time(axes[1, 0], EPdiv_diff_pos_zm, "c", LEVELS_EPDIV)
 _plot_contour_time(axes[1, 1], EPdiv_diff_neg_zm, "d", LEVELS_EPDIV, show_ylabel=False)
-fig.colorbar(cf1, ax=axes[1, 1], label=CLABEL_EPDIV, location="right", pad=0.02, shrink=0.9)
+fig.colorbar(cf1, cax=caxes[1], label=CLABEL_EPDIV)
 # Row 2: EKE
 cf2 = _plot_contour_time(axes[2, 0], eke_diff_pos_zm, "e", LEVELS_EKE)
 _plot_contour_time(axes[2, 1], eke_diff_neg_zm, "f", LEVELS_EKE, show_ylabel=False)
-fig.colorbar(cf2, ax=axes[2, 1], label=CLABEL_EKE, location="right", pad=0.02, shrink=0.9)
+fig.colorbar(cf2, cax=caxes[2], label=CLABEL_EKE)
 
 for ax in axes[:2, :].flatten():
     ax.set_xlabel("")
