@@ -23,7 +23,7 @@ read_comp_var = read_composite.read_comp_var
 MODEL_DIR = "MPI_GE_CMIP6_allplev"
 
 
-def _read_all(var_name, suffix = '', name=None, phase = 'pos', chunks=None, method = 'mean', M2E_window = (0, 20)
+def _read_all(var_name, suffix = '', name=None, phase = 'pos', chunks=None, method = 'mean', M2E_window = (5, 20)
 ):
     """Read pos composites for all decades, concatenated along a 'decade' dimension.
 
