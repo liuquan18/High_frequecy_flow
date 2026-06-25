@@ -234,6 +234,18 @@ sns.scatterplot(
     legend=False,
 )
 
+# Add legends to scatter panels
+_orange = sns.color_palette("Oranges", 10)[6]
+axes[1, 0].legend(
+    handles=[Line2D([0], [0], marker='o', color='w', markerfacecolor=_orange, markersize=8, label='pos NAO')],
+    loc='upper left',
+)
+
+_blue = sns.color_palette("GnBu", 10)[7]
+axes[1, 1].legend(
+    handles=[Line2D([0], [0], marker='o', color='w', markerfacecolor=_blue, markersize=8, label='neg NAO')],
+    loc='upper right',
+)
 
 # remove upper and right spines
 for ax in axes.flatten():
