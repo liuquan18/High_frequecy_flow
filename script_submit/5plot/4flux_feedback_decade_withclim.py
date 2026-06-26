@@ -187,65 +187,30 @@ NAO_merge["decade"] = NAO_merge["decade"].astype(int)
 #%%
 dec_pos_df = dec_pos_df.merge(NAO_merge[["decade", "days_pos"]], on="decade")
 dec_neg_df = dec_neg_df.merge(NAO_merge[["decade", "days_neg"]], on="decade")
+#%%
+# ===== Difference plot: second row shows (NAO composite - climatology) =====
+
+# Compute difference dataframes
+_ratio_pos = dec_pos_df.merge(clim_pos_df, on='decade', suffixes=('_dec', '_clim'))
+_ratio_pos['awb_ratio'] = _ratio_pos['awb_dec'] / _ratio_pos['awb_clim']
+_ratio_pos['jet_lat_ratio'] = _ratio_pos['jet_lat_dec'] / _ratio_pos['jet_lat_clim']
+_ratio_pos['days_pos'] = _ratio_pos['days_pos']
+
+_ratio_neg = dec_neg_df.merge(clim_neg_df, on='decade', suffixes=('_dec', '_clim'))
+_ratio_neg['baroclinicity_ratio'] = _ratio_neg['baroclinicity_dec'] / _ratio_neg['baroclinicity_clim']
+_ratio_neg['GB_index_ratio'] = _ratio_neg['GB_index_dec'] / _ratio_neg['GB_index_clim']
+_ratio_neg['days_neg'] = _ratio_neg['days_neg']
 
 #%%
 fig, axes = plt.subplots(2, 2, figsize=(8, 9))
 fig.subplots_adjust(bottom=0.2, wspace=0.35, hspace=0.35)
 
-# Monthly NAO extremes
-ln = NAO_monthly_extremes.sel(extr_type="pos", mode="NAO", confidence="true").plot.line(
-    ax=axes[0, 0],
-    x="time",
-    color="k",
-    linewidth=1.5,
-    label="pos NAO",
-    add_legend=True,
-)
-
-NAO_monthly_extremes.sel(extr_type="neg", mode="NAO", confidence="true").plot.line(
-    ax=axes[0, 0],
-    x="time",
-    color="k",
-    linewidth=1.5,
-    linestyle="--",
-    label="neg NAO",
-    add_legend=True,
-)
-axes[0, 0].set_title("")  # Remove xarray auto-generated title
-# add legend with custom labels
-handles = [
-    Line2D([0], [0], color="k", linewidth=1.5, label="pos NAO"),
-    Line2D([0], [0], color="k", linewidth=1.5, linestyle="--", label="neg NAO"),
-]
-axes[0, 0].legend(handles=handles, loc="upper left")
-
-
-# Daily NAO
-sns.lineplot(
-    data=NAO_merge,
-    x="decade",
-    y="days_pos",
-    ax=axes[0, 1],
-    label="pos NAO",
-    color="k",
-    linewidth=1.5,
-)
-sns.lineplot(
-    data=NAO_merge,
-    x="decade",
-    y="days_neg",
-    ax=axes[0, 1],
-    label="neg NAO",
-    color="k",
-    linestyle="--",
-    linewidth=1.5,
-)
 
 sns.scatterplot(
     data=dec_pos_df,
     x="awb",
     y="jet_lat",
-    ax=axes[1, 0],
+    ax=axes[0, 0],
     hue="decade",
     size = "days_pos",
     sizes = (20, 400),
@@ -257,7 +222,7 @@ sns.scatterplot(
     data=clim_pos_df,
     x="awb",
     y="jet_lat",
-    ax=axes[1, 0],
+    ax=axes[0, 0],
     hue = "decade",
     sizes = (20, 400),
     palette = "Oranges",
@@ -269,7 +234,7 @@ sns.scatterplot(
     data=dec_neg_df,
     x="GB_index",
     y="baroclinicity",
-    ax=axes[1, 1],
+    ax=axes[0, 1],
     hue="decade",
     size = "days_neg",
     sizes = (20, 400),
@@ -282,7 +247,7 @@ sns.scatterplot(
     data=clim_neg_df,
     x="GB_index",
     y="baroclinicity",
-    ax=axes[1, 1],
+    ax=axes[0, 1],
     hue = "decade",
     sizes = (20, 400),
     palette = "GnBu",
@@ -290,9 +255,22 @@ sns.scatterplot(
     marker = "X",
 )
 
+
+
+# --- Difference scatter plots ---
+sns.scatterplot(
+    data=_ratio_pos, x="awb_ratio", y="jet_lat_ratio", ax=axes[1, 0],
+    hue="decade", size="days_pos", sizes=(20, 400), palette="Oranges", legend=False,
+)
+sns.scatterplot(
+    data=_ratio_neg, x="GB_index_ratio", y="baroclinicity_ratio", ax=axes[1, 1],
+    hue="decade", size="days_neg", sizes=(20, 400), palette="GnBu", legend=False,
+)
+
+
 # Add legends to scatter panels
 _orange = sns.color_palette("Oranges", 10)[6]
-axes[1, 0].legend(
+axes[0, 0].legend(
     handles=[
         Line2D([0], [0], marker='o', color='w', markerfacecolor=_orange, markersize=8, label='pos NAO'),
         Line2D([0], [0], marker='X', color='w', markerfacecolor=_orange, markersize=8, label='climatology'),
@@ -301,7 +279,7 @@ axes[1, 0].legend(
 )
 
 _blue = sns.color_palette("GnBu", 10)[7]
-axes[1, 1].legend(
+axes[0, 1].legend(
     handles=[
         Line2D([0], [0], marker='o', color='w', markerfacecolor=_blue, markersize=8, label='neg NAO'),
         Line2D([0], [0], marker='X', color='w', markerfacecolor=_blue, markersize=8, label='climatology'),
@@ -323,19 +301,18 @@ axes[1, 0].text(-0.08, 1.1, "c", transform=axes[1, 0].transAxes,
 axes[1, 1].text(-0.08, 1.1, "d", transform=axes[1, 1].transAxes,
                 ha="left", va="top", fontsize=12, fontweight="bold")
 
-axes[0, 0].set_xlabel("Year")
-axes[0, 0].set_ylabel("Extreme NAO months / decade $^{-1}$")
-axes[0, 1].set_xlabel("Decade")
-axes[0, 1].set_ylabel("Extreme NAO days / decade $^{-1}$")
-
-axes[1, 0].set_ylabel("Jet Latitude (°N)")
-axes[1, 0].set_xlabel("AWB occurrence / $\%$")
-axes[1, 1].set_xlabel("GB Index / km")
-axes[1, 1].set_ylabel("Eady growth rate / $day^{-1}$")
-axes[1, 1].xaxis.set_major_formatter(FormatStrFormatter("%.1f"))
-axes[1, 0].set_xlim(4.3, 6.5)
 
 
+axes[0, 0].set_ylabel("Jet Latitude (°N)")
+axes[0, 0].set_xlabel("AWB occurrence / $\%$")
+axes[0, 1].set_xlabel("GB Index / km")
+axes[0, 1].set_ylabel("Eady growth rate / $day^{-1}$")
+axes[0, 1].xaxis.set_major_formatter(FormatStrFormatter("%.1f"))
+
+axes[1, 0].set_ylabel("Jet Latitude ratio")
+axes[1, 0].set_xlabel("AWB ratio")
+axes[1, 1].set_xlabel("GB Index ratio")
+axes[1, 1].set_ylabel("Eady growth rate ratio")
 
 # ===== Combined bubble-colorband legend =====
 # Left panel: colored blocks + bubbles for every decade
@@ -399,95 +376,9 @@ ref_ax.text(0.4, 1.15, "NAO extremes/day",
 
 
 # plt.tight_layout()
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/decade_scatter.pdf", dpi=300, bbox_inches='tight')
+plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/decade_scatter_ratio.pdf", dpi=300, bbox_inches='tight')
+
 # %%
-# ===== Difference plot: second row shows (NAO composite - climatology) =====
-
-# Compute difference dataframes
-_diff_pos = dec_pos_df.merge(clim_pos_df, on='decade', suffixes=('_dec', '_clim'))
-_diff_pos['awb_diff'] = _diff_pos['awb_dec'] - _diff_pos['awb_clim']
-_diff_pos['jet_lat_diff'] = _diff_pos['jet_lat_dec'] - _diff_pos['jet_lat_clim']
-_diff_pos['days_pos'] = _diff_pos['days_pos']
-
-_diff_neg = dec_neg_df.merge(clim_neg_df, on='decade', suffixes=('_dec', '_clim'))
-_diff_neg['baroclinicity_diff'] = _diff_neg['baroclinicity_dec'] - _diff_neg['baroclinicity_clim']
-_diff_neg['GB_index_diff'] = _diff_neg['GB_index_dec'] - _diff_neg['GB_index_clim']
-_diff_neg['days_neg'] = _diff_neg['days_neg']
-
-#%%
-fig2, axes2 = plt.subplots(1, 2, figsize=(9, 5))
-fig2.subplots_adjust(bottom=0.25, wspace=0.35)
-
-# --- Difference scatter plots ---
-sns.scatterplot(
-    data=_diff_pos, x="awb_diff", y="jet_lat_diff", ax=axes2[0],
-    hue="decade", size="days_pos", sizes=(20, 400), palette="Oranges", legend=False,
-)
-sns.scatterplot(
-    data=_diff_neg, x="GB_index_diff", y="baroclinicity_diff", ax=axes2[1],
-    hue="decade", size="days_neg", sizes=(20, 400), palette="GnBu", legend=False,
-)
-
-# Legends
-_orange = sns.color_palette("Oranges", 10)[6]
-axes2[0].legend(
-    handles=[Line2D([0], [0], marker='o', color='w', markerfacecolor=_orange, markersize=8, label='pos NAO')],
-    loc='upper left',
-)
-_blue = sns.color_palette("GnBu", 10)[7]
-axes2[1].legend(
-    handles=[Line2D([0], [0], marker='o', color='w', markerfacecolor=_blue, markersize=8, label='neg NAO')],
-    loc='upper right',
-)
-
-# Spines and panel labels
-for ax in axes2.flatten():
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-for ax, lbl in zip(axes2, ['a', 'b']):
-    ax.text(-0.08, 1.1, lbl, transform=ax.transAxes,
-            ha="left", va="top", fontsize=12, fontweight="bold")
-
-
-axes2[0].set_ylabel("$\Delta$ Jet Latitude (°N)")
-axes2[0].set_xlabel("$\Delta$ AWB occurrence / $\%$")
-axes2[1].set_xlabel("$\Delta$ GB Index / km")
-axes2[1].set_ylabel("$\Delta$ Eady growth rate / $day^{-1}$")
-
-
-# Colorband + size reference legend (reuse same data)
-decades_all2 = NAO_merge["decade"].values
-_colors2 = sns.color_palette("Greys", n_colors=len(decades_all2))
-
-leg_ax2 = fig2.add_axes([0.09, 0.02, 0.7, 0.1])
-leg_ax2.set_xlim(1843, 2097)
-leg_ax2.set_ylim(-1.5, 1.2)
-leg_ax2.axis("off")
-_band_y2, _band_h2 = 0.0, 0.8
-for i, dec in enumerate(decades_all2):
-    leg_ax2.add_patch(plt.Rectangle((dec - 5, _band_y2), 10, _band_h2,
-                                    color=_colors2[i], zorder=3, clip_on=False))
-leg_ax2.add_patch(plt.Rectangle((1845, _band_y2), 250, _band_h2,
-                                 fill=False, edgecolor='black', linewidth=0.5, zorder=100, clip_on=False))
-for dec in decades_all2[::2]:
-    leg_ax2.text(dec, _band_y2 - 0.15, str(int(dec)),
-                 ha="center", va="top", fontsize=7, rotation=45)
-leg_ax2.text(0.5, 1.15, "Decade", ha="center", va="top",
-             transform=leg_ax2.transAxes, fontsize=8.5, style="italic")
-
-ref_ax2 = fig2.add_axes([0.80, 0.02, 0.16, 0.1])
-ref_ax2.set_xlim(-0.5, 3.5)
-ref_ax2.set_ylim(-1.5, 1.2)
-ref_ax2.axis("off")
-for j, rd in enumerate(_ref_days):
-    ref_ax2.scatter(j * 1.1, 0.4, s=_msize(rd), color="grey",
-                    edgecolors="white", linewidths=0.4, clip_on=False)
-    ref_ax2.text(j * 1.1, _band_y2 - 0.15, str(rd),
-                 ha="center", va="top", fontsize=7)
-ref_ax2.text(0.4, 1.15, "NAO extremes/day", ha="center", va="top",
-             transform=ref_ax2.transAxes, fontsize=8.5, style="italic")
-
-plt.savefig("/work/mh0033/m300883/High_frequecy_flow/docs/plots/0after_defense/decade_scatter_diff.pdf", dpi=300, bbox_inches='tight')
 
 #%%
 clim_pos_ano_df = clim_pos_df
