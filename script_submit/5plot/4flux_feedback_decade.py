@@ -55,7 +55,7 @@ jet_loc_pos = _read_all("jetloc", name = 'lat', phase="pos")
 # %%
 awb_pos = _read_all("wb_anticyclonic_allisen", name = 'smooth_pv', phase="pos", method='sum')
 # into percent
-awb_pos = awb_pos / 20 # only sum over event
+awb_pos = awb_pos / 15 # only sum over event
 #%%
 baroc_neg = _read_all("eady_growth_rate", name = 'eady_growth_rate', phase="neg")
 baroc_neg = baroc_neg * 86400  # convert from 1/s to 1/day
