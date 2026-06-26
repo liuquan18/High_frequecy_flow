@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=ensmean
-#SBATCH --time=01:00:00
+#SBATCH --time=00:20:00
 #SBATCH --partition=compute
 #SBATCH --nodes=25
 #SBATCH --ntasks=25
