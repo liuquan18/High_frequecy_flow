@@ -17,8 +17,9 @@ def read_data(var_name, model_dir = 'MPI_GE_CMIP6_allplev', plev=None):
     # yearly mean
     data_ym = data.groupby("time.year").mean(dim="time")
     
-    # lon to -180 to 180
-    data_ym = data_ym.assign_coords(lon=(data_ym.lon + 180) % 360 - 180).sortby("lon")
+    if 'lon' in data_ym.coords:
+        # lon to -180 to 180
+        data_ym = data_ym.assign_coords(lon=(data_ym.lon + 180) % 360 - 180).sortby("lon")
     return data_ym.load()
 
 # %%
@@ -32,9 +33,8 @@ baroclinicity = eady_growth_rate.sel(lon=slice(-90, 40), lat=slice(50, 70)).mean
 baroclinicity.to_dataframe().to_csv(f"{to_dir}baroclinicity.csv")
 # %%
 
-ua = read_data("ua", plev=25000)
-ua = ua.sel(lon = slice(-90, 40), lat = slice(0, 75)).mean(dim="lon")
-jet_lat = ua.ua.idxmax(dim="lat")
+jet_lat = read_data("jet_latitude")
+
 # %%
 jet_lat.to_dataframe().to_csv(f"{to_dir}jet_latitude.csv")
 # %%
