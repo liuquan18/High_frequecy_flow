@@ -253,18 +253,19 @@ sns.scatterplot(
     palette = "GnBu",
     legend=False,
     marker = "X",
+
 )
 
 
 
-# --- Difference scatter plots ---
+# --- ratio scatter plots ---
 sns.scatterplot(
     data=_ratio_pos, x="awb_ratio", y="jet_lat_ratio", ax=axes[1, 0],
-    hue="decade", size="days_pos", sizes=(20, 400), palette="Oranges", legend=False,
+    hue="decade", size="days_pos", sizes=(20, 400), palette="Oranges", legend=False, marker = "^"
 )
 sns.scatterplot(
     data=_ratio_neg, x="GB_index_ratio", y="baroclinicity_ratio", ax=axes[1, 1],
-    hue="decade", size="days_neg", sizes=(20, 400), palette="GnBu", legend=False,
+    hue="decade", size="days_neg", sizes=(20, 400), palette="GnBu", legend=False, marker = "v"
 )
 
 
@@ -274,6 +275,7 @@ axes[0, 0].legend(
     handles=[
         Line2D([0], [0], marker='o', color='w', markerfacecolor=_orange, markersize=8, label='pos NAO'),
         Line2D([0], [0], marker='X', color='w', markerfacecolor=_orange, markersize=8, label='climatology'),
+        Line2D([0], [0], marker='^', color='w', markerfacecolor=_orange, markersize=8, label='ratio'),
     ],
     loc='upper left',
 )
@@ -283,6 +285,7 @@ axes[0, 1].legend(
     handles=[
         Line2D([0], [0], marker='o', color='w', markerfacecolor=_blue, markersize=8, label='neg NAO'),
         Line2D([0], [0], marker='X', color='w', markerfacecolor=_blue, markersize=8, label='climatology'),
+        Line2D([0], [0], marker='v', color='w', markerfacecolor=_blue, markersize=8, label='ratio'),
     ],
     loc='best',
 )
