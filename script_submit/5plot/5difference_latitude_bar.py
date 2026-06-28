@@ -51,7 +51,7 @@ def _read_all(var_name, suffix = '_ano', name=None, method="no_stat", chunks=Non
         for decade in (1850, 2090)
     }
 
-def _zonal_mean(da, lon_min=-90, lon_max=40, time_window = (0, 20)):
+def _zonal_mean(da, lon_min=-90, lon_max=40, time_window = (-5, 20)):
     """Zonal mean over [lon_min, lon_max], handling both 0-360 and -180-180 grids."""
     if da.lon.max() > 180:
         # Convert 0-360 to -180-180
