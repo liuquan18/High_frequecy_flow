@@ -7,7 +7,11 @@ import seaborn as sns
 from matplotlib.patches import Ellipse
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FormatStrFormatter
+import matplotlib.patheffects as pe
 from src.data_helper.read_NAO_extremes import read_NAO_extremes
+
+COLOR_POS = "#E57200"  # MPI orange
+COLOR_NEG = "#006C66"  # MPI green
 
 
 from src.data_helper import read_composite
@@ -23,7 +27,7 @@ read_comp_var = read_composite.read_comp_var
 MODEL_DIR = "MPI_GE_CMIP6_allplev"
 
 
-def _read_all(var_name, suffix = '', name=None, phase = 'pos', chunks=None, method = 'mean', M2E_window = (5, 20)
+def _read_all(var_name, suffix = '', name=None, phase = 'pos', chunks=None, method = 'mean', M2E_window = (-5, 20)
 ):
     """Read pos composites for all decades, concatenated along a 'decade' dimension.
 
@@ -47,6 +51,17 @@ def _read_all(var_name, suffix = '', name=None, phase = 'pos', chunks=None, meth
     if "plev" in datasets[0].dims and datasets[0].plev.size == 1:
         datasets = [ds.squeeze("plev", drop=True) for ds in datasets]
     return xr.concat(datasets, dim="decade")
+
+def read_climatology(var,var_name = None):
+    base_dir = "/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0climatology_alldec/"
+    file_path = base_dir + f"{var}.csv"
+    df = pd.read_csv(file_path)
+    if var_name is not None:
+        df = df[['year', var_name]]
+    # rename year to decade
+    df = df.rename(columns={'year': 'decade'})
+    df['decade'] = df['decade'] - 9
+    return df
 
 # ---- 1850s and 2090s composite ----
 
@@ -157,9 +172,15 @@ NAO_merge["decade"] = NAO_merge["decade"].astype(int)
 dec_pos_df = dec_pos_df.merge(NAO_merge[["decade", "days_pos"]], on="decade")
 dec_neg_df = dec_neg_df.merge(NAO_merge[["decade", "days_neg"]], on="decade")
 
+
 #%%
-fig, axes = plt.subplots(2, 2, figsize=(8, 9))
-fig.subplots_adjust(bottom=0.2, wspace=0.35, hspace=0.35)
+ratio_pos = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0climatology_alldec/ratio_pos.csv")
+ratio_neg = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0climatology_alldec/ratio_neg.csv")
+
+
+#%%
+fig, axes = plt.subplots(3, 2, figsize=(9, 13))
+fig.subplots_adjust(bottom=0.18, wspace=0.5, hspace=0.3)
 
 # Monthly NAO extremes
 ln = NAO_monthly_extremes.sel(extr_type="pos", mode="NAO", confidence="true").plot.line(
@@ -210,15 +231,60 @@ sns.lineplot(
     linewidth=1.5,
 )
 
+# ===== Row 1: Climatological ratio / change panels =====
+# Left y-axis (main): bar plot; right y-axis (twinx): line plot
+axes[1, 0].bar(
+    ratio_pos["decade"], ratio_pos["awb_dec"],
+    width=8, color=COLOR_POS, alpha=0.45, zorder=2,
+)
+axes[1, 0].set_ylim(450, 700)
+
+ax1_line = axes[1, 0].twinx()
+ax1_line.spines["top"].set_visible(False)
+
+_n0 = len(ax1_line.lines)
+sns.lineplot(
+    data=ratio_pos, x="decade", y="awb_ratio",
+    color=COLOR_POS, linewidth=2.5, ax=ax1_line,
+)
+for _l in ax1_line.lines[_n0:]:
+    _l.set_path_effects([
+        pe.Stroke(linewidth=5, foreground="white"),
+        pe.Normal(),
+    ])
+
+# Right panel: left y-axis (main): bar plot; right y-axis (twinx): line plot
+axes[1, 1].bar(
+    ratio_neg["decade"], ratio_neg["baroclinicity_dec"],
+    width=8, color=COLOR_NEG, alpha=0.45, zorder=2,
+)
+axes[1, 1].set_ylim(3.39, 3.6)
+
+ax2_line = axes[1, 1].twinx()
+ax2_line.spines["top"].set_visible(False)
+
+_n1 = len(ax2_line.lines)
+sns.lineplot(
+    data=ratio_neg, x="decade", y="baroclinicity_ratio",
+    color=COLOR_NEG, linewidth=2.5, ax=ax2_line,
+)
+for _l in ax2_line.lines[_n1:]:
+    _l.set_path_effects([
+        pe.Stroke(linewidth=5, foreground="white"),
+        pe.Normal(),
+    ])
+
+
+# ===== Row 2: Scatter panels =====
 sns.scatterplot(
     data=dec_pos_df,
     x="awb",
     y="jet_lat",
-    ax=axes[1, 0],
+    ax=axes[2, 0],
     hue="decade",
-    size = "days_pos",
-    sizes = (20, 400),
-    palette = "Oranges",
+    size="days_pos",
+    sizes=(20, 400),
+    palette="Oranges",
     legend=False,
 )
 
@@ -226,23 +292,23 @@ sns.scatterplot(
     data=dec_neg_df,
     x="GB_index",
     y="baroclinicity",
-    ax=axes[1, 1],
+    ax=axes[2, 1],
     hue="decade",
-    size = "days_neg",
-    sizes = (20, 400),
-    palette = "GnBu",
+    size="days_neg",
+    sizes=(20, 400),
+    palette="GnBu",
     legend=False,
 )
 
 # Add legends to scatter panels
 _orange = sns.color_palette("Oranges", 10)[6]
-axes[1, 0].legend(
+axes[2, 0].legend(
     handles=[Line2D([0], [0], marker='o', color='w', markerfacecolor=_orange, markersize=8, label='pos NAO')],
     loc='upper left',
 )
 
 _blue = sns.color_palette("GnBu", 10)[7]
-axes[1, 1].legend(
+axes[2, 1].legend(
     handles=[Line2D([0], [0], marker='o', color='w', markerfacecolor=_blue, markersize=8, label='neg NAO')],
     loc='upper right',
 )
@@ -251,7 +317,10 @@ axes[1, 1].legend(
 for ax in axes.flatten():
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
-    # add a, b, c, d labels to the corners
+for ax in [ax1_line, ax2_line]:
+    ax.spines['top'].set_visible(False)
+
+# Panel labels a-f
 axes[0, 0].text(-0.08, 1.1, "a", transform=axes[0, 0].transAxes,
                 ha="left", va="top", fontsize=12, fontweight="bold")
 axes[0, 1].text(-0.08, 1.1, "b", transform=axes[0, 1].transAxes,
@@ -260,19 +329,30 @@ axes[1, 0].text(-0.08, 1.1, "c", transform=axes[1, 0].transAxes,
                 ha="left", va="top", fontsize=12, fontweight="bold")
 axes[1, 1].text(-0.08, 1.1, "d", transform=axes[1, 1].transAxes,
                 ha="left", va="top", fontsize=12, fontweight="bold")
+axes[2, 0].text(-0.08, 1.1, "e", transform=axes[2, 0].transAxes,
+                ha="left", va="top", fontsize=12, fontweight="bold")
+axes[2, 1].text(-0.08, 1.1, "f", transform=axes[2, 1].transAxes,
+                ha="left", va="top", fontsize=12, fontweight="bold")
 
 axes[0, 0].set_xlabel("Year")
 axes[0, 0].set_ylabel("Extreme NAO months / decade $^{-1}$")
 axes[0, 1].set_xlabel("Decade")
 axes[0, 1].set_ylabel("Extreme NAO days / decade $^{-1}$")
 
-axes[1, 0].set_ylabel("Jet Latitude (°N)")
-axes[1, 0].set_xlabel("AWB occurrence / day")
-axes[1, 1].set_xlabel("GB Index / km")
-axes[1, 1].set_ylabel("Eady growth rate / $day^{-1}$")
-axes[1, 1].xaxis.set_major_formatter(FormatStrFormatter("%.1f"))
-# axes[1, 0].set_xlim(5.7, 6.8)
+axes[1, 0].set_xlabel("Decade")
+axes[1, 0].set_ylabel("AWB occurrence / day")
+ax1_line.set_ylabel("AWB ratio")
 
+axes[1, 1].set_xlabel("Decade")
+axes[1, 1].set_ylabel("Eady growth rate / $day^{-1}$")
+ax2_line.set_ylabel("Baroclinicity ratio")
+
+axes[2, 0].set_ylabel("Jet Latitude (°N)")
+axes[2, 0].set_xlabel("AWB occurrence / day")
+axes[2, 1].set_xlabel("GB Index / km")
+axes[2, 1].set_ylabel("Eady growth rate / $day^{-1}$")
+axes[2, 1].xaxis.set_major_formatter(FormatStrFormatter("%.1f"))
+# axes[2, 0].set_xlim(5.7, 6.8)
 
 
 # ===== Combined bubble-colorband legend =====
