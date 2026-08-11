@@ -1,10 +1,11 @@
 #%%
 import xarray as xr
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from matplotlib.patches import Ellipse
+from matplotlib.patches import Ellipse, Circle
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FormatStrFormatter
 import matplotlib.patheffects as pe
@@ -179,8 +180,8 @@ ratio_neg = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMI
 
 
 #%%
-fig, axes = plt.subplots(3, 2, figsize=(9, 13))
-fig.subplots_adjust(bottom=0.18, wspace=0.5, hspace=0.3)
+fig, axes = plt.subplots(3, 2, figsize=(9, 13), gridspec_kw={"height_ratios": [1, 1.25, 1]})
+fig.subplots_adjust(bottom=0.18, wspace=0.5, hspace=0.25)
 
 # Monthly NAO extremes
 ln = NAO_monthly_extremes.sel(extr_type="pos", mode="NAO", confidence="true").plot.line(
@@ -231,15 +232,46 @@ sns.lineplot(
     linewidth=1.5,
 )
 
-# ===== Row 1: Climatological ratio / change panels =====
+# ===== Row 1: Scatter panels (was Row 2) =====
+# shared size scale so pos/neg panels and the size legend use identical, matching areas
+_size_vmin = min(dec_pos_df["days_pos"].min(), dec_neg_df["days_neg"].min())
+_size_vmax = max(dec_pos_df["days_pos"].max(), dec_neg_df["days_neg"].max())
+
+sns.scatterplot(
+    data=dec_pos_df,
+    x="awb",
+    y="jet_lat",
+    ax=axes[1, 0],
+    hue="decade",
+    size="days_pos",
+    sizes=(20, 400),
+    size_norm=(_size_vmin, _size_vmax),
+    palette="Oranges",
+    legend=False,
+)
+
+sns.scatterplot(
+    data=dec_neg_df,
+    x="GB_index",
+    y="baroclinicity",
+    ax=axes[1, 1],
+    hue="decade",
+    size="days_neg",
+    sizes=(20, 400),
+    size_norm=(_size_vmin, _size_vmax),
+    palette="GnBu",
+    legend=False,
+)
+
+# ===== Row 2: Climatological ratio / change panels (was Row 1) =====
 # Left y-axis (main): bar plot; right y-axis (twinx): line plot
-axes[1, 0].bar(
+axes[2, 0].bar(
     ratio_pos["decade"], ratio_pos["awb_dec"],
     width=8, color=COLOR_POS, alpha=0.45, zorder=2,
 )
-axes[1, 0].set_ylim(450, 700)
+axes[2, 0].set_ylim(450, 700)
 
-ax1_line = axes[1, 0].twinx()
+ax1_line = axes[2, 0].twinx()
 ax1_line.spines["top"].set_visible(False)
 
 _n0 = len(ax1_line.lines)
@@ -254,13 +286,13 @@ for _l in ax1_line.lines[_n0:]:
     ])
 
 # Right panel: left y-axis (main): bar plot; right y-axis (twinx): line plot
-axes[1, 1].bar(
+axes[2, 1].bar(
     ratio_neg["decade"], ratio_neg["baroclinicity_dec"],
     width=8, color=COLOR_NEG, alpha=0.45, zorder=2,
 )
-axes[1, 1].set_ylim(3.39, 3.6)
+axes[2, 1].set_ylim(3.39, 3.6)
 
-ax2_line = axes[1, 1].twinx()
+ax2_line = axes[2, 1].twinx()
 ax2_line.spines["top"].set_visible(False)
 
 _n1 = len(ax2_line.lines)
@@ -273,45 +305,6 @@ for _l in ax2_line.lines[_n1:]:
         pe.Stroke(linewidth=5, foreground="white"),
         pe.Normal(),
     ])
-
-
-# ===== Row 2: Scatter panels =====
-sns.scatterplot(
-    data=dec_pos_df,
-    x="awb",
-    y="jet_lat",
-    ax=axes[2, 0],
-    hue="decade",
-    size="days_pos",
-    sizes=(20, 400),
-    palette="Oranges",
-    legend=False,
-)
-
-sns.scatterplot(
-    data=dec_neg_df,
-    x="GB_index",
-    y="baroclinicity",
-    ax=axes[2, 1],
-    hue="decade",
-    size="days_neg",
-    sizes=(20, 400),
-    palette="GnBu",
-    legend=False,
-)
-
-# Add legends to scatter panels
-_orange = sns.color_palette("Oranges", 10)[6]
-axes[2, 0].legend(
-    handles=[Line2D([0], [0], marker='o', color='w', markerfacecolor=_orange, markersize=8, label='pos NAO')],
-    loc='upper left',
-)
-
-_blue = sns.color_palette("GnBu", 10)[7]
-axes[2, 1].legend(
-    handles=[Line2D([0], [0], marker='o', color='w', markerfacecolor=_blue, markersize=8, label='neg NAO')],
-    loc='upper right',
-)
 
 # remove upper and right spines
 for ax in axes.flatten():
@@ -339,81 +332,65 @@ axes[0, 0].set_ylabel("Extreme NAO months / decade $^{-1}$")
 axes[0, 1].set_xlabel("Decade")
 axes[0, 1].set_ylabel("Extreme NAO days / decade $^{-1}$")
 
-axes[1, 0].set_xlabel("Decade")
-axes[1, 0].set_ylabel("AWB occurrence / day")
+axes[1, 0].set_ylabel("Jet Latitude (°N)")
+axes[1, 0].set_xlabel("AWB occurrence / day")
+axes[1, 1].set_xlabel("GB Index / km")
+axes[1, 1].set_ylabel("Eady growth rate / $day^{-1}$")
+axes[1, 1].xaxis.set_major_formatter(FormatStrFormatter("%.1f"))
+# axes[1, 0].set_xlim(5.7, 6.8)
+
+axes[2, 0].set_xlabel("Decade")
+axes[2, 0].set_ylabel("AWB occurrence / day")
 ax1_line.set_ylabel("AWB ratio")
 
-axes[1, 1].set_xlabel("Decade")
-axes[1, 1].set_ylabel("Eady growth rate / $day^{-1}$")
+axes[2, 1].set_xlabel("Decade")
+axes[2, 1].set_ylabel("Eady growth rate / $day^{-1}$")
 ax2_line.set_ylabel("Baroclinicity ratio")
 
-axes[2, 0].set_ylabel("Jet Latitude (°N)")
-axes[2, 0].set_xlabel("AWB occurrence / day")
-axes[2, 1].set_xlabel("GB Index / km")
-axes[2, 1].set_ylabel("Eady growth rate / $day^{-1}$")
-axes[2, 1].xaxis.set_major_formatter(FormatStrFormatter("%.1f"))
-# axes[2, 0].set_xlim(5.7, 6.8)
 
-
-# ===== Combined bubble-colorband legend =====
-# Left panel: colored blocks + bubbles for every decade
-# Right panel: reference scale for bubble size (NAO days)
-
+# ===== Per-column decade colorbars (thin, matching each scatter panel's palette) =====
 decades_all = NAO_merge["decade"].values
-_colors = sns.color_palette("Greys", n_colors=len(decades_all))
-# --- size scaling (match seaborn sizes=(20,300)) ---
-_days_pos_dec = NAO_merge.set_index("decade")["days_pos"].reindex(decades_all.astype(int)).values
-_days_neg_dec = NAO_merge.set_index("decade")["days_neg"].reindex(decades_all.astype(int)).values
-_days_avg = (_days_pos_dec + _days_neg_dec) / 2
-_s_vmin, _s_vmax = _days_avg.min(), _days_avg.max()
-def _msize(v):
-    return 20 + (v - _s_vmin) / (_s_vmax - _s_vmin) * (300 - 20)
+_dec_norm = mpl.colors.Normalize(vmin=decades_all.min(), vmax=decades_all.max())
 
-# --- colorband axis (color + decade labels only) ---
-_grey_colors = sns.color_palette('Greys', n_colors=len(decades_all))
+_sm_pos = mpl.cm.ScalarMappable(norm=_dec_norm, cmap="Oranges")
+_sm_pos.set_array([])
+_cbar_pos = fig.colorbar(_sm_pos, ax=axes[1, 0], orientation="horizontal", location="bottom",
+                         fraction=0.035, shrink=0.95, pad=0.2, aspect=30)
+_cbar_pos.set_label("Decade", fontsize=8.5, style="italic")
+_cbar_pos.ax.tick_params(labelsize=7)
 
-leg_ax = fig.add_axes([0.09, 0.04, 0.7, 0.08])
-leg_ax.set_xlim(1843, 2097)
-leg_ax.set_ylim(-1.5, 1.2)
-leg_ax.axis("off")
+_sm_neg = mpl.cm.ScalarMappable(norm=_dec_norm, cmap="GnBu")
+_sm_neg.set_array([])
+_cbar_neg = fig.colorbar(_sm_neg, ax=axes[1, 1], orientation="horizontal", location="bottom",
+                         fraction=0.035, shrink=0.95, pad=0.2, aspect=30)
+_cbar_neg.set_label("Decade", fontsize=8.5, style="italic")
+_cbar_neg.ax.tick_params(labelsize=7)
 
-# draw colored band (rectangles)
-_band_y, _band_h = 0.0, 0.8
-for i, dec in enumerate(decades_all):
-    leg_ax.add_patch(
-        plt.Rectangle((dec - 5, _band_y), 10, _band_h,
-                      color=_colors[i], zorder=3, clip_on=False)
-    )
-# outer border around the entire colorband
-leg_ax.add_patch(
-    plt.Rectangle((1845, _band_y), 250, _band_h,
-                  fill=False, edgecolor='black', linewidth=0.5, zorder=100, clip_on=False)
-)
+# --- size legend: real scatter markers so areas exactly match the panels (shared size_norm) ---
+_orange = sns.color_palette("Oranges", 10)[6]
+_blue = sns.color_palette("GnBu", 10)[7]
+_ref_days = [25, 35, 45]
 
-# decade labels below band (every other decade)
-for dec in decades_all[::2]:
-    leg_ax.text(dec, _band_y - 0.15, str(int(dec)),
-                ha="center", va="top", fontsize=7, rotation=45)
 
-leg_ax.text(0.5, 1.15, "Decade",
-            ha="center", va="top", transform=leg_ax.transAxes,
-            fontsize=8.5, style="italic")
+def _bubble_size_legend(ax, color, bbox, title):
+    lax = ax.inset_axes(bbox)
+    lax.set_xlim(0, 1)
+    lax.set_ylim(0, 1)
+    lax.axis("off")
+    lax.patch.set_alpha(0)
 
-# --- size reference axis (right) ---
-ref_ax = fig.add_axes([0.80, 0.04, 0.16, 0.08])
-ref_ax.set_xlim(-0.5, 3.5)
-ref_ax.set_ylim(-1.5, 1.2)
-ref_ax.axis("off")
+    xs = [0.25, 0.45, 0.75]
+    y = 0.55
+    for x, v in zip(xs, _ref_days):
+        s = 20 + (v - _size_vmin) / (_size_vmax - _size_vmin) * (400 - 20)  # matches sns sizes=(20, 400)
+        lax.scatter(x, y, s=s, facecolors="none", edgecolors=color, linewidths=1.2, clip_on=False)
+        lax.text(x, 0.3, f"{v}", fontsize=6.5, ha="center", va="bottom")
+    lax.text(0.52, 0.95, title, fontsize=7, style="italic", ha="center", va="top")
+    return lax
 
-_ref_days = [round(_s_vmin), round((_s_vmin + _s_vmax) / 2), round(_s_vmax)]
-for j, rd in enumerate(_ref_days):
-    ref_ax.scatter(j * 1.1, 0.4, s=_msize(rd), color="grey",
-                   edgecolors="white", linewidths=0.4, clip_on=False)
-    ref_ax.text(j * 1.1, _band_y - 0.15, str(rd),
-                ha="center", va="top", fontsize=7)
-ref_ax.text(0.4, 1.15, "NAO extremes/day",
-            ha="center", va="top", transform=ref_ax.transAxes,
-            fontsize=8.5, style="italic")
+
+_bubble_size_legend(axes[1, 0], _orange, [0.03, 0.48, 0.42, 0.48], 'pos NAO extremes/day')
+_bubble_size_legend(axes[1, 1], _blue, [0.55, 0.48, 0.42, 0.48], 'neg NAO extremes/day')
 
 
 # plt.tight_layout()
