@@ -178,7 +178,8 @@ dec_neg_df = dec_neg_df.merge(NAO_merge[["decade", "days_neg"]], on="decade")
 ratio_pos = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0climatology_alldec/ratio_pos.csv")
 ratio_neg = pd.read_csv("/work/mh0033/m300883/High_frequecy_flow/data/MPI_GE_CMIP6_allplev/0climatology_alldec/ratio_neg.csv")
 
-
+#%%
+ratio_pos['awb_dec'] = ratio_pos['awb_dec'] / 50
 #%%
 fig, axes = plt.subplots(3, 2, figsize=(9, 13), gridspec_kw={"height_ratios": [1, 1.25, 1]})
 fig.subplots_adjust(bottom=0.18, wspace=0.5, hspace=0.25)
