@@ -1,4 +1,5 @@
 #%%
+from glob import glob
 import xarray as xr
 import numpy as np
 from src.plotting.util import erase_white_line
@@ -14,6 +15,7 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
     erase_empty = kwargs.get("erase_zero_line", True)
     model_dir = kwargs.get("model_dir", "MPI_GE_CMIP6_allplev")
     comp_path = (kwargs.get("comp_path", "0composite_distribution"))
+    chunks = kwargs.get("chunks", None)
 
     if time_window == 'all':
         logging.info("-30 to 30 days will be used as time window and time will be kept")
@@ -22,8 +24,8 @@ def read_comp_var(var, phase, decade, time_window=(-5, 5), **kwargs):
     basedir = (
         f"/work/mh0033/m300883/High_frequecy_flow/data/{model_dir}/{comp_path}/"
     )
-    file_name = basedir + f"{var}{suffix}_NAO_{phase}_{decade}.nc"
-    ds = xr.open_dataset(file_name)[name]
+    file_path = basedir + f"{var}{suffix}_NAO_{phase}_{decade}.nc"
+    ds = xr.open_dataset(file_path, chunks=chunks)[name]
     ds = ds.sel(time=slice(*time_window))
     if erase_empty:
         ds = erase_white_line(ds)

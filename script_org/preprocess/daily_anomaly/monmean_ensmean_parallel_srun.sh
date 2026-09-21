@@ -2,8 +2,8 @@
 #SBATCH --job-name=ensmean
 #SBATCH --time=01:00:00
 #SBATCH --partition=compute
-#SBATCH --nodes=25
-#SBATCH --ntasks=25
+#SBATCH --nodes=2
+#SBATCH --ntasks=2
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=200G
 #SBATCH --mail-type=FAIL
@@ -17,4 +17,5 @@ var=$1
 
 export var
 
-parallel --jobs $SLURM_NTASKS srun --nodes=1 --ntasks=1 --ntasks-per-node=1 ensmean.sh ::: {1850..2090..10} ::: $var
+# parallel --jobs $SLURM_NTASKS srun --nodes=1 --ntasks=1 --ntasks-per-node=1 ensmean.sh ::: {1850..2090..10} ::: $var
+parallel --jobs $SLURM_NTASKS srun --nodes=1 --ntasks=1 --ntasks-per-node=1 ensmean.sh ::: 1850 2090 ::: $var
