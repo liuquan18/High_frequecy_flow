@@ -43,3 +43,7 @@ awb = read_data("wb_anticyclonic_allisen", model_dir = 'MPI_GE_CMIP6')
 awb_index = awb.sel(lon=slice(-90, 40), lat=slice(40, 60)).mean(dim=("lon", "lat"))['smooth_pv']
 awb_index.to_dataframe().to_csv(f"{to_dir}awb_index.csv")
 # %%
+thermal = read_data("steady_eddy_heat_d2y2", plev = 85000)
+# %%
+thermal.to_dataframe().to_csv(f"{to_dir}eddy_heat_d2y2.csv")
+# %%
