@@ -245,8 +245,8 @@ main_axes[1][0].set_title("EP flux divergence \n (higher latitude)")
 main_axes[1][1].set_title("EP flux divergence \n (lower latitude)")
 main_axes[2][0].set_title("Baroclinicity \n (higher latitude)")
 main_axes[2][1].set_title("EKE \n (lower latitude)")
-main_axes[3][0].set_title("eddy thermal forcing\n (transient)")
-main_axes[3][1].set_title("eddy thermal forcing\n (Quasi-stationary)")
+main_axes[3][0].set_title("transient eddy thermal forcing\n (higher latitude)")
+main_axes[3][1].set_title("stationary eddy thermal forcing\n (higher latitude)")
 
 # ===== y-labels =====
 main_axes[0][0].set_ylabel("likelihood / %")
@@ -270,11 +270,14 @@ for r in range(4):
             bar_axes[r][c].set_xlabel("Days relative to extreme onset")
 
 # ===== Styling =====
+GRID_X = [-10, 0, 10]
 for r in range(4):
     for c in range(2):
         sns.despine(ax=main_axes[r][c], bottom=True)
         main_axes[r][c].tick_params(bottom=False)
-        main_axes[r][c].axvline(0, color="gray", linestyle="dotted", lw=1)
+        main_axes[r][c].set_axisbelow(True)
+        for x in GRID_X:
+            main_axes[r][c].axvline(x, color="0.85", linestyle="-", lw=0.8, zorder=0)
 
 # ===== Legend (top-right main panel) =====
 decade_handles = [
